@@ -12,44 +12,89 @@
     --line:rgba(255,255,255,0.08);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
-  .header{background:linear-gradient(135deg,#0a0d14 0%,#1a1040 100%);padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
-  .header::before{content:'ε';position:absolute;font-size:200px;font-weight:900;color:rgba(79,195,247,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+       background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
+
+  .header{background:linear-gradient(135deg,#0a0d14 0%,#1a1040 100%);
+    padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);
+    position:relative;overflow:hidden;}
+  .header::before{content:'ε';position:absolute;font-size:200px;font-weight:900;
+    color:rgba(79,195,247,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
   .header h1{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:8px;}
   .header h1 .accent{color:var(--blue);}
   .header p{font-size:0.88rem;color:var(--muted);}
+
   .section{max-width:680px;margin:32px auto 0;padding:0 20px;}
-  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--blue);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0;}
-  .sec-title{font-size:clamp(1.05rem,4vw,1.4rem);font-weight:900;margin-bottom:12px;line-height:1.4;}
-  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;}
+  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--blue);
+    text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--bg);
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:0.78rem;font-weight:900;flex-shrink:0;}
+
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;
+    padding:22px 20px;position:relative;overflow:hidden;}
   .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-  .card.blue-top::before{background:linear-gradient(90deg,var(--blue),#0288d1);}
-  .card.green-top::before{background:linear-gradient(90deg,var(--green),#00bfa5);}
-  .card.gold-top::before{background:linear-gradient(90deg,var(--gold),#ff9800);}
+  .card.blue-top::before  {background:linear-gradient(90deg,var(--blue),#0288d1);}
+  .card.green-top::before {background:linear-gradient(90deg,var(--green),#00bfa5);}
+  .card.gold-top::before  {background:linear-gradient(90deg,var(--gold),#ff9800);}
   .card.purple-top::before{background:linear-gradient(90deg,var(--purple),#7b1fa2);}
-  .card.red-top::before{background:linear-gradient(90deg,var(--red),#c62828);}
+  .card.red-top::before   {background:linear-gradient(90deg,var(--red),#c62828);}
+
   .card-desc{font-size:0.86rem;color:var(--muted);line-height:1.9;margin-bottom:14px;}
   svg{width:100%;height:auto;display:block;}
+
   .sl-row{display:flex;align-items:center;gap:10px;font-size:0.84rem;margin:10px 0 4px;flex-wrap:wrap;}
-  .sl-label{font-weight:700;color:var(--gold);min-width:80px;}
+  .sl-label{font-weight:700;min-width:100px;}
+  .sl-label.gold {color:var(--gold);}
+  .sl-label.green{color:var(--green);}
   .sl-wrap{flex:1;min-width:100px;}
-  input[type=range]{width:100%;accent-color:var(--gold);height:5px;}
-  .sl-val{font-size:1rem;font-weight:900;color:var(--gold);min-width:44px;text-align:right;}
-  .msg{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
+  input[type=range].gold {accent-color:var(--gold);}
+  input[type=range].green{accent-color:var(--green);}
+  input[type=range]{width:100%;height:5px;}
+  .sl-val{font-size:1rem;font-weight:900;min-width:50px;text-align:right;}
+  .sl-val.gold {color:var(--gold);}
+  .sl-val.green{color:var(--green);}
+
+  .msg{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;
+    padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
   .msg b{color:var(--gold);}
   .msg .g{color:var(--green);font-weight:700;}
   .msg .r{color:var(--red);font-weight:700;}
-  .preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-  .pbtn{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg3);font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;}
-  .pbtn.on,.pbtn:hover{background:rgba(79,195,247,0.12);color:var(--blue);border-color:var(--blue);}
-  .summary{background:linear-gradient(135deg,#0a0d14,#1a1040);border:1px solid rgba(255,213,79,0.3);border-radius:18px;padding:24px 20px;margin-top:32px;text-align:center;}
+
+  .def-box{background:var(--bg3);border:1px solid rgba(79,195,247,0.3);border-radius:12px;
+    padding:14px 18px;margin:14px 0;font-size:0.9rem;line-height:2;}
+  .def-box .quant{color:var(--blue);font-weight:900;}
+  .def-box .eps {color:var(--gold);font-weight:900;}
+  .def-box .dlt {color:var(--green);font-weight:900;}
+
+  .indicator{display:flex;align-items:center;gap:10px;margin-top:12px;
+    padding:10px 14px;border-radius:10px;font-size:0.9rem;font-weight:700;}
+  .indicator.ok {background:rgba(105,240,174,0.12);border:1px solid rgba(105,240,174,0.4);color:var(--green);}
+  .indicator.ng {background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);color:var(--red);}
+  .indicator .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+  .indicator.ok .dot{background:var(--green);}
+  .indicator.ng .dot{background:var(--red);}
+
+  .proof-steps{margin:14px 0;}
+  .proof-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+  .step-num{width:24px;height:24px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.75rem;font-weight:900;background:var(--blue);color:var(--bg);}
+  .step-body{font-size:0.84rem;line-height:1.7;padding-top:2px;}
+  .step-body code{background:var(--bg3);padding:1px 6px;border-radius:4px;
+    font-family:monospace;color:var(--gold);}
+
+  .summary{background:linear-gradient(135deg,#0a0d14,#1a1040);
+    border:1px solid rgba(255,213,79,0.3);border-radius:18px;
+    padding:24px 20px;margin-top:32px;text-align:center;}
   .summary h3{font-size:1.1rem;font-weight:900;color:var(--gold);margin-bottom:14px;}
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   @media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
-  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;text-align:left;border-left:3px solid var(--blue);}
-  .s-item .s-eq{font-size:0.9rem;font-weight:900;color:var(--blue);margin-bottom:4px;font-style:italic;}
+  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;
+    text-align:left;border-left:3px solid var(--blue);}
+  .s-item .s-eq{font-size:0.88rem;font-weight:900;color:var(--blue);margin-bottom:4px;}
   .s-item .s-desc{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+
   .footer-note{text-align:center;margin-top:40px;padding:0 20px;font-size:0.78rem;color:var(--muted);}
 </style>
 </head>
@@ -128,113 +173,170 @@
   </div>
 </nav>
 
+<!-- ヘッダー -->
 <div class="header">
   <h1>極限と<span class="accent">ε-δ</span>論法</h1>
-  <p>高校生～大学1年 ・ 解析学入門 ／ 「近づく」を厳密に定義する</p>
+  <p>高校生〜大学1年 ・ 解析学入門 ／ 「近づく」を厳密に定義する</p>
 </div>
 
-<!-- パート0：極限の直感 -->
+<!-- ══ Section 0: ε-δ定義の全体像 ══ -->
 <div class="section">
-  <div class="sec-label"><span class="num-badge">0</span>「近づく」とはどういうこと？</div>
+  <div class="sec-label"><span class="num-badge">0</span>ε-δ定義とは何か</div>
   <div class="card blue-top">
     <div class="card-desc">
-      x を a に近づけたとき f(x) はどこへ向かうか。<br>
-      スライダーで x を動かして確かめよう。
+      lim<sub>x→a</sub> f(x) = L の厳密な定義は以下のとおりです。
     </div>
-    <svg id="figLimit" viewBox="0 0 360 200"></svg>
+
+    <div class="def-box">
+      <span class="quant">∀</span><span class="eps">ε</span> &gt; 0,&nbsp;
+      <span class="quant">∃</span><span class="dlt">δ</span> &gt; 0&nbsp; s.t.&nbsp;
+      0 &lt; |x − a| &lt; <span class="dlt">δ</span>
+      &nbsp;⟹&nbsp;
+      |f(x) − L| &lt; <span class="eps">ε</span>
+    </div>
+
+    <div class="card-desc" style="margin-bottom:8px">
+      「<span style="color:var(--gold)">ε（出力誤差の上限）</span>を相手がどう小さく決めても、<br>
+       それに応じた <span style="color:var(--green)">δ（入力の許容幅）</span>を自分が見つけられる」<br>
+      ↓ スライダーで ε を変えて、δ が自動で決まる様子を確かめよう（f(x)=2x, a=1, L=2）。
+    </div>
+
+    <svg id="figDef" viewBox="0 0 360 260"></svg>
+
     <div class="sl-row">
-      <div class="sl-label">x の値</div>
-      <div class="sl-wrap"><input type="range" id="slX" min="-30" max="30" value="20"></div>
-      <div class="sl-val" id="dispX">2.0</div>
+      <div class="sl-label gold">ε（相手が決める）</div>
+      <div class="sl-wrap"><input type="range" class="gold" id="slEps0" min="3" max="28" value="14"></div>
+      <div class="sl-val gold" id="dEps0">0.70</div>
     </div>
-    <div class="msg" id="msgLimit"></div>
+    <div class="sl-row" style="opacity:0.6">
+      <div class="sl-label green">δ = ε/2（自動計算）</div>
+      <div class="sl-wrap"><input type="range" class="green" id="slDelta0_disp" min="3" max="28" value="7" disabled></div>
+      <div class="sl-val green" id="dDelta0">0.35</div>
+    </div>
+
+    <div class="msg" id="msgDef"></div>
   </div>
 </div>
 
-<!-- パート1：左極限・右極限 -->
+<!-- ══ Section 1: f(x)=x² でε-δゲームを体験 ══ -->
 <div class="section" style="margin-top:32px">
-  <div class="sec-label"><span class="num-badge">1</span>左極限・右極限・極限の存在</div>
+  <div class="sec-label"><span class="num-badge">1</span>ε-δゲーム ── f(x)=x²、a=2、L=4</div>
   <div class="card green-top">
     <div class="card-desc">
-      x を左から近づけた値と右から近づけた値が一致するとき、極限が存在します。<br>
-      関数を切り替えて比べよう。
+      相手（数学の神）が <span style="color:var(--gold)">ε</span> を設定します。<br>
+      あなたは <span style="color:var(--green)">δ</span> を選んで、定義の条件を満たしてください。<br>
+      「0 &lt; |x−2| &lt; δ のすべての x で |x²−4| &lt; ε が成り立つ」
     </div>
-    <div class="preset-btns">
-      <button class="pbtn on" onclick="setFunc('cont',this)">連続関数 x²</button>
-      <button class="pbtn" onclick="setFunc('jump',this)">不連続（跳び）</button>
-      <button class="pbtn" onclick="setFunc('sinc',this)">sin(x)/x</button>
-    </div>
-    <svg id="figLR" viewBox="0 0 360 200"></svg>
+
+    <svg id="figGame" viewBox="0 0 360 260"></svg>
+
     <div class="sl-row">
-      <div class="sl-label">近づき先 a</div>
-      <div class="sl-wrap"><input type="range" id="slA" min="-20" max="20" value="0"></div>
-      <div class="sl-val" id="dispA">0.0</div>
+      <div class="sl-label gold">ε（相手が設定）</div>
+      <div class="sl-wrap"><input type="range" class="gold" id="slEps1" min="4" max="40" value="16"></div>
+      <div class="sl-val gold" id="dEps1">0.80</div>
     </div>
-    <div class="msg" id="msgLR"></div>
+    <div class="sl-row">
+      <div class="sl-label green">δ（あなたが選ぶ）</div>
+      <div class="sl-wrap"><input type="range" class="green" id="slDelta1" min="1" max="25" value="10"></div>
+      <div class="sl-val green" id="dDelta1">0.50</div>
+    </div>
+
+    <div id="indicator1" class="indicator ng">
+      <div class="dot"></div>
+      <span id="indText1">判定中…</span>
+    </div>
+
+    <div class="msg" id="msgGame"></div>
   </div>
 </div>
 
-<!-- パート2：ε-δ定義 -->
+<!-- ══ Section 2: 不連続点では極限が存在しない ══ -->
 <div class="section" style="margin-top:32px">
-  <div class="sec-label"><span class="num-badge">2</span>ε-δ 定義を体験する</div>
+  <div class="sec-label"><span class="num-badge">2</span>不連続点では ε-δ を満たす δ が存在しない</div>
+  <div class="card red-top">
+    <div class="card-desc">
+      符号関数 sgn(x)（x&gt;0 なら 1、x&lt;0 なら −1）は x=0 で不連続です。<br>
+      ε = 0.5 と固定したとき、どんな δ を選んでも条件を満たせません。
+    </div>
+
+    <svg id="figDisc" viewBox="0 0 360 200"></svg>
+
+    <div class="sl-row">
+      <div class="sl-label green">δ（試してみる）</div>
+      <div class="sl-wrap"><input type="range" class="green" id="slDelta2" min="2" max="40" value="15"></div>
+      <div class="sl-val green" id="dDelta2">0.75</div>
+    </div>
+
+    <div id="indicator2" class="indicator ng">
+      <div class="dot"></div>
+      <span id="indText2">常に不成立</span>
+    </div>
+
+    <div class="msg" id="msgDisc"></div>
+  </div>
+</div>
+
+<!-- ══ Section 3: ε-δ証明の組み立て ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>ε-δ 証明の組み立て方</div>
   <div class="card gold-top">
     <div class="card-desc">
-      「ε を指定したら、それに対応する δ を見つけられる」<br>
-      それが lim f(x)=L の厳密な定義です。
+      lim<sub>x→1</sub> 2x = 2 の証明を、ε-δ の手順で組み立てます。
     </div>
-    <svg id="figED" viewBox="0 0 360 240"></svg>
-    <div class="sl-row">
-      <div class="sl-label">ε（縦幅）</div>
-      <div class="sl-wrap"><input type="range" id="slEps" min="1" max="40" value="15"></div>
-      <div class="sl-val" id="dispEps">0.75</div>
+
+    <svg id="figProof" viewBox="0 0 360 200"></svg>
+
+    <div class="proof-steps">
+      <div class="proof-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <b>ε を受け取る：</b>任意の ε &gt; 0 が与えられる。
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <b>δ を構成する：</b><code>δ = ε/2</code> と定める。
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <b>条件を検証する：</b>0 &lt; |x−1| &lt; δ と仮定する。<br>
+          |f(x) − 2| = |2x − 2| = 2|x − 1| &lt; 2δ = 2·(ε/2) = <b style="color:var(--green)">ε</b> &nbsp;✓
+        </div>
+      </div>
+      <div class="proof-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <b>結論：</b>∀ε&gt;0 に対して δ=ε/2 を取れば定義の条件が成り立つ。<br>
+          ゆえに lim<sub>x→1</sub> 2x = 2 &nbsp;□
+        </div>
+      </div>
     </div>
-    <div class="sl-row">
-      <div class="sl-label">δ（横幅）</div>
-      <div class="sl-wrap"><input type="range" id="slDelta" min="1" max="40" value="10"></div>
-      <div class="sl-val" id="dispDelta">0.5</div>
-    </div>
-    <div class="msg" id="msgED"></div>
   </div>
 </div>
 
-<!-- パート3：はさみうち定理 -->
-<div class="section" style="margin-top:32px">
-  <div class="sec-label"><span class="num-badge">3</span>はさみうち定理</div>
-  <div class="card purple-top">
-    <div class="card-desc">
-      g(x) ≤ f(x) ≤ h(x) で g,h が同じ極限 L を持つなら f も L に収束する。<br>
-      sin(x)/x → 1 (x→0) の証明の核心です。
-    </div>
-    <svg id="figSqueeze" viewBox="0 0 360 200"></svg>
-    <div class="sl-row">
-      <div class="sl-label">拡大倍率</div>
-      <div class="sl-wrap"><input type="range" id="slZoom" min="5" max="40" value="15"></div>
-      <div class="sl-val" id="dispZoom">1.5×</div>
-    </div>
-    <div class="msg" id="msgSqueeze"></div>
-  </div>
-</div>
-
-<!-- まとめ -->
+<!-- ══ まとめ ══ -->
 <div class="section">
   <div class="summary">
     <h3>ε-δ論法の核心 — 4つのポイント</h3>
     <div class="summary-grid">
       <div class="s-item">
-        <div class="s-eq">lim f(x) = L</div>
-        <div class="s-desc">x が a に近づくにつれ f(x) が L に近づく、という「動き」の記述。</div>
+        <div class="s-eq">∀ε &gt; 0（先攻：相手）</div>
+        <div class="s-desc">相手がどんなに小さな ε を出してきても対応できなければならない。「任意」が鍵。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--green)">
+        <div class="s-eq" style="color:var(--green)">∃δ &gt; 0（後攻：自分）</div>
+        <div class="s-desc">ε に依存した δ を「構成」できれば勝ち。存在を示すには具体的に作ればよい。</div>
       </div>
       <div class="s-item" style="border-left-color:var(--gold)">
-        <div class="s-eq" style="color:var(--gold)">∀ε>0, ∃δ>0</div>
-        <div class="s-desc">「ε を相手がどう決めても、それに応じた δ を我々が用意できる」</div>
-      </div>
-      <div class="s-item" style="border-left-color:var(--purple)">
-        <div class="s-eq" style="color:var(--purple)">0&lt;|x−a|&lt;δ → |f(x)−L|&lt;ε</div>
-        <div class="s-desc">x が δ 近傍にあれば f(x) は ε 近傍に収まる。</div>
+        <div class="s-eq" style="color:var(--gold)">0 &lt; |x−a| &lt; δ</div>
+        <div class="s-desc">x=a 自身（穴あき近傍）を除く。f(a) の値は極限値に無関係。</div>
       </div>
       <div class="s-item" style="border-left-color:var(--red)">
-        <div class="s-eq" style="color:var(--red)">はさみうち定理</div>
-        <div class="s-desc">g≤f≤h かつ lim g = lim h = L ⇒ lim f = L。</div>
+        <div class="s-eq" style="color:var(--red)">不連続 → 極限なし</div>
+        <div class="s-desc">ε を小さくしたとき対応する δ が存在しない ⟺ 極限が存在しない（または ≠L）。</div>
       </div>
     </div>
   </div>
@@ -244,187 +346,373 @@
 
 <script>
 (()=>{
-const NS='http://www.w3.org/2000/svg';
-function pe(svg,tag,attrs,txt){
-  const e=document.createElementNS(NS,tag);
-  for(const k in attrs) e.setAttribute(k,attrs[k]);
-  if(txt!==undefined) e.textContent=txt;
-  svg.appendChild(e); return e;
+'use strict';
+const NS = 'http://www.w3.org/2000/svg';
+
+function pe(svg, tag, attrs, txt) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (txt !== undefined) e.textContent = txt;
+  svg.appendChild(e);
+  return e;
 }
-function axis(svg,cx,cy,W,H,u){
-  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
-  pe(svg,'line',{x1:cx,y1:0,x2:cx,y2:H,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
-  for(let i=-5;i<=5;i++){
-    if(i===0)continue;
-    pe(svg,'text',{x:cx+i*u-3,y:cy+14,'font-size':8,fill:'rgba(255,255,255,0.3)'},i);
+
+function grid(svg, cx, cy, W, H, u) {
+  for (let i = -8; i <= 8; i++) {
+    pe(svg, 'line', {x1:cx+i*u, y1:0, x2:cx+i*u, y2:H,
+      stroke:'rgba(255,255,255,0.04)', 'stroke-width':1});
+    pe(svg, 'line', {x1:0, y1:cy-i*u, x2:W, y2:cy-i*u,
+      stroke:'rgba(255,255,255,0.04)', 'stroke-width':1});
+  }
+  pe(svg, 'line', {x1:0, y1:cy, x2:W, y2:cy, stroke:'rgba(255,255,255,0.18)', 'stroke-width':1});
+  pe(svg, 'line', {x1:cx, y1:0, x2:cx, y2:H, stroke:'rgba(255,255,255,0.18)', 'stroke-width':1});
+}
+
+function tickLabel(svg, cx, cy, u, xMax, yMax) {
+  for (let i = 1; i <= xMax; i++) {
+    pe(svg, 'text', {x:cx+i*u+2, y:cy+12, 'font-size':8, fill:'rgba(255,255,255,0.3)'}, i);
+    if (i > 0) pe(svg, 'text', {x:cx-i*u-8, y:cy+12, 'font-size':8, fill:'rgba(255,255,255,0.3)'}, -i);
+  }
+  for (let i = 1; i <= yMax; i++) {
+    pe(svg, 'text', {x:cx+4, y:cy-i*u+4, 'font-size':8, fill:'rgba(255,255,255,0.3)'}, i);
   }
 }
 
-// パート0
-function drawLimit(){
-  const xVal=parseInt(document.getElementById('slX').value)/10;
-  document.getElementById('dispX').textContent=xVal.toFixed(1);
-  const svg=document.getElementById('figLimit');svg.innerHTML='';
-  const W=360,H=200,cx=W/2,cy=H/2,u=40;
-  axis(svg,cx,cy,W,H,u);
-  // f(x) = x^2 / (x*2) simplified: just draw x^2/4 for visibility
-  const pts=[];
-  for(let px=0;px<W;px++){
-    const x=(px-cx)/u;
-    const y=x*x*0.5;
-    const py=cy-y*u;
-    pts.push(`${px},${py}`);
+// ──────────────────────────────────────────
+// Section 0: f(x)=2x, a=1, L=2, δ=ε/2
+// Coordinates: W=360, H=260, cx=110, cy=300, u=70
+// Visible x: [-1.57, 3.57], y: [0.57, 4.29]  (cy=300 so y=0 is at y-pixel=300, off-screen bottom)
+// At (1,2): px=180, py=160 → near center
+// ──────────────────────────────────────────
+const W0=360, H0=260, cx0=110, cy0=300, u0=70;
+
+function px0(x) { return cx0 + x * u0; }
+function py0(y) { return cy0 - y * u0; }
+
+function drawDef() {
+  const eps = parseInt(document.getElementById('slEps0').value) / 20;
+  const del = eps / 2;
+  document.getElementById('dEps0').textContent   = eps.toFixed(2);
+  document.getElementById('dDelta0').textContent = del.toFixed(2);
+  // mirror slider position for δ display (disabled slider)
+  document.getElementById('slDelta0_disp').value = parseInt(document.getElementById('slEps0').value) / 2;
+
+  const svg = document.getElementById('figDef');
+  svg.innerHTML = '';
+
+  grid(svg, cx0, cy0, W0, H0, u0);
+
+  // Draw f(x)=2x
+  const pts = [];
+  for (let px = 0; px < W0; px++) {
+    const x = (px - cx0) / u0;
+    const y = 2 * x;
+    const py = cy0 - y * u0;
+    if (py >= -10 && py <= H0 + 10) pts.push(px + ',' + py);
   }
-  pe(svg,'polyline',{points:pts.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none','stroke-linecap':'round'});
-  // moving point
-  const px=cx+xVal*u;
-  const py=cy-xVal*xVal*0.5*u;
-  pe(svg,'circle',{cx:px,cy:py,r:6,fill:'#ffd54f',stroke:'#ffd54f'});
-  pe(svg,'line',{x1:px,y1:cy,x2:px,y2:py,stroke:'rgba(255,213,79,0.5)','stroke-width':1,'stroke-dasharray':'3,3'});
-  pe(svg,'line',{x1:cx,y1:py,x2:px,y2:py,stroke:'rgba(255,213,79,0.5)','stroke-width':1,'stroke-dasharray':'3,3'});
-  const fval=xVal*xVal*0.5;
-  pe(svg,'text',{x:px+8,y:py-6,'font-size':10,'font-weight':700,fill:'#ffd54f'},`f(${xVal.toFixed(1)})=${fval.toFixed(2)}`);
-  document.getElementById('msgLimit').innerHTML=
-    `x = <b>${xVal.toFixed(2)}</b> のとき f(x) = x²/2 = <b style="color:var(--gold)">${fval.toFixed(3)}</b><br>`+
-    `x を 0 に近づけると f(x) → <span class="g">0</span>。これが lim<sub>x→0</sub> x²/2 = 0 の直感です。`;
-}
+  pe(svg, 'polyline', {points: pts.join(' '), stroke:'#4fc3f7', 'stroke-width':2.5, fill:'none'});
 
-// パート1
-let curFunc='cont';
-function f1(x){
-  if(curFunc==='cont') return x*x/4;
-  if(curFunc==='jump') return x>=0?1:-1;
-  if(curFunc==='sinc') return Math.abs(x)<0.001?1:Math.sin(x)/x;
-  return 0;
-}
-function setFunc(name,btn){
-  curFunc=name;
-  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  drawLR();
-}
-window.setFunc=setFunc;
+  // ε-band: horizontal strip around L=2
+  const L = 2, a = 1;
+  const Lpy = py0(L);
+  const epsPx = eps * u0;
+  pe(svg, 'rect', {
+    x:0, y:Lpy - epsPx, width:W0, height:epsPx * 2,
+    fill:'rgba(255,213,79,0.10)', stroke:'rgba(255,213,79,0.5)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
 
-function drawLR(){
-  const aVal=parseInt(document.getElementById('slA').value)/10;
-  document.getElementById('dispA').textContent=aVal.toFixed(1);
-  const svg=document.getElementById('figLR');svg.innerHTML='';
-  const W=360,H=200,cx=W/2,cy=H*0.6,u=40;
-  axis(svg,cx,cy,W,H,u);
-  // curve
-  const pts=[];
-  for(let px=0;px<W;px++){
-    const x=(px-cx)/u;
-    if(curFunc==='jump'&&Math.abs(x)<0.05)continue;
-    const y=f1(x);
-    const py=cy-y*u;
-    if(py>-20&&py<H+20) pts.push(`${px},${py}`);
-    else if(pts.length) pts.push('M');
+  // δ-band: vertical strip around a=1
+  const apx = px0(a);
+  const delPx = del * u0;
+  pe(svg, 'rect', {
+    x: apx - delPx, y:0, width: delPx * 2, height:H0,
+    fill:'rgba(105,240,174,0.09)', stroke:'rgba(105,240,174,0.5)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
+
+  // Draw f(x) inside δ-band highlighted
+  const ptsSel = [];
+  for (let px = Math.max(0, apx - delPx); px <= Math.min(W0, apx + delPx); px++) {
+    const x = (px - cx0) / u0;
+    if (Math.abs(x - a) < 1e-9) continue;
+    const y = 2 * x;
+    const py = cy0 - y * u0;
+    if (py >= 0 && py <= H0) ptsSel.push(px + ',' + py);
   }
-  let cur=[];
-  for(const p of pts){
-    if(p==='M'){if(cur.length>1)pe(svg,'polyline',{points:cur.join(' '),stroke:'#69f0ae','stroke-width':2,fill:'none'});cur=[];}
-    else cur.push(p);
-  }
-  if(cur.length>1) pe(svg,'polyline',{points:cur.join(' '),stroke:'#69f0ae','stroke-width':2,fill:'none'});
+  if (ptsSel.length > 1)
+    pe(svg, 'polyline', {points: ptsSel.join(' '), stroke:'#69f0ae', 'stroke-width':4, fill:'none', 'stroke-linecap':'round'});
 
-  const eps=0.05;
-  const fL=f1(aVal-eps), fR=f1(aVal+eps);
-  const ax=cx+aVal*u;
-  pe(svg,'line',{x1:ax,y1:0,x2:ax,y2:H,stroke:'rgba(255,213,79,0.4)','stroke-width':1,'stroke-dasharray':'4,3'});
-  pe(svg,'circle',{cx:ax,cy:cy-fL*u,r:5,fill:'#4fc3f7'});
-  pe(svg,'circle',{cx:ax,cy:cy-fR*u,r:5,fill:'#ff6b6b'});
-  const same=Math.abs(fL-fR)<0.05;
-  document.getElementById('msgLR').innerHTML=
-    `a = ${aVal.toFixed(1)} で:<br>`+
-    `左極限（<span style="color:#4fc3f7">青</span>）: <b>${fL.toFixed(3)}</b> ／ `+
-    `右極限（<span style="color:#ff6b6b">赤</span>）: <b>${fR.toFixed(3)}</b><br>`+
-    (same?`<span class="g">両側が一致 → 極限が存在します！</span>`:`<span class="r">不一致 → この点では極限が存在しません。</span>`);
+  // Labels
+  pe(svg, 'text', {x:4, y:Lpy - epsPx + 11, 'font-size':9, fill:'#ffd54f', 'font-weight':700}, 'L+ε');
+  pe(svg, 'text', {x:4, y:Lpy + epsPx - 3,  'font-size':9, fill:'#ffd54f', 'font-weight':700}, 'L−ε');
+  pe(svg, 'text', {x:apx - delPx + 2, y:H0 - 4, 'font-size':9, fill:'#69f0ae', 'font-weight':700}, 'a−δ');
+  pe(svg, 'text', {x:apx + delPx - 28, y:H0 - 4, 'font-size':9, fill:'#69f0ae', 'font-weight':700}, 'a+δ');
+
+  // a and L markers
+  pe(svg, 'circle', {cx:apx, cy:Lpy, r:6, fill:'#4fc3f7'});
+  pe(svg, 'text', {x:apx + 8, y:Lpy - 8, 'font-size':10, 'font-weight':700, fill:'#4fc3f7'}, '(a, L)=(1, 2)');
+
+  // Axis labels
+  pe(svg, 'text', {x:W0 - 16, y:cy0 - 4, 'font-size':10, fill:'rgba(255,255,255,0.35)'}, 'x');
+  pe(svg, 'text', {x:cx0 + 4,  y:12,       'font-size':10, fill:'rgba(255,255,255,0.35)'}, 'y');
+  tickLabel(svg, cx0, cy0, u0, 3, 3);
+
+  document.getElementById('msgDef').innerHTML =
+    '<b>f(x) = 2x, a = 1, L = 2</b><br>' +
+    '∀<span style="color:var(--gold)">ε</span> > 0 に対し、'
+    + '<span style="color:var(--green)">δ = ε/2</span> = ' + del.toFixed(3) + ' を取ると：<br>'
+    + '0 &lt; |x−1| &lt; δ ならば |2x−2| = 2|x−1| &lt; 2δ = ε ✓<br>'
+    + '緑の線分（δ帯内の f(x)）が<span style="color:var(--gold)">金の ε 帯</span>に完全に収まっています。';
 }
 
-// パート2：ε-δ
-function drawED(){
-  const epsRaw=parseInt(document.getElementById('slEps').value)/20;
-  const delRaw=parseInt(document.getElementById('slDelta').value)/20;
-  document.getElementById('dispEps').textContent=epsRaw.toFixed(2);
-  document.getElementById('dispDelta').textContent=delRaw.toFixed(2);
-  const svg=document.getElementById('figED');svg.innerHTML='';
-  const W=360,H=240,cx=W/2,cy=H/2,u=60;
-  // f(x)=2x, a=1, L=2
-  const a=1,L=2;
-  axis(svg,cx,cy,W,H,u);
-  // curve f(x)=2x
-  pe(svg,'line',{x1:0,y1:cy+u*0,x2:W,y2:cy-(W/u)*2*u+cy*2-cy,stroke:'rgba(255,255,255,0.2)','stroke-width':1});
-  const x1p=0,x1v=(x1p-cx)/u,y1v=2*x1v;
-  const x2p=W,x2v=(x2p-cx)/u,y2v=2*x2v;
-  pe(svg,'line',{x1:x1p,y1:cy-y1v*u,x2:x2p,y2:cy-y2v*u,stroke:'#4fc3f7','stroke-width':2});
-  // ε band (horizontal around L)
-  const Lpy=cy-L*u;
-  pe(svg,'rect',{x:0,y:Lpy-epsRaw*u,width:W,height:epsRaw*2*u,fill:'rgba(255,213,79,0.08)',stroke:'rgba(255,213,79,0.4)','stroke-width':1,'stroke-dasharray':'5,3'});
-  // δ band (vertical around a)
-  const apx=cx+a*u;
-  pe(svg,'rect',{x:apx-delRaw*u,y:0,width:delRaw*2*u,height:H,fill:'rgba(105,240,174,0.08)',stroke:'rgba(105,240,174,0.4)','stroke-width':1,'stroke-dasharray':'5,3'});
-  // check: for f(x)=2x near a=1, need δ≤ε/2
-  const needed=epsRaw/2;
-  const ok=delRaw<=needed+0.01;
-  pe(svg,'circle',{cx:apx,cy:Lpy,r:7,fill:ok?'#69f0ae':'#ff6b6b'});
-  pe(svg,'text',{x:apx+10,y:Lpy-8,'font-size':10,'font-weight':700,fill:'#ffd54f'},`L=2, a=1`);
-  pe(svg,'text',{x:8,y:Lpy-epsRaw*u+12,'font-size':9,fill:'#ffd54f'},`L+ε`);
-  pe(svg,'text',{x:8,y:Lpy+epsRaw*u-4,'font-size':9,fill:'#ffd54f'},`L−ε`);
-  pe(svg,'text',{x:apx-delRaw*u+2,y:H-6,'font-size':9,fill:'#69f0ae'},`a−δ`);
-  pe(svg,'text',{x:apx+delRaw*u-20,y:H-6,'font-size':9,fill:'#69f0ae'},`a+δ`);
-  document.getElementById('msgED').innerHTML=
-    `f(x) = 2x, a=1, L=2 の場合、δ ≤ ε/2 が必要。<br>`+
-    `ε=${epsRaw.toFixed(2)} → 必要な δ ≤ <b>${needed.toFixed(2)}</b>、あなたの δ = ${delRaw.toFixed(2)}<br>`+
-    (ok?`<span class="g">条件を満たしている！ ε-δ 成立です。</span>`:`<span class="r">δ が大きすぎ。もっと小さくしてみよう。</span>`);
+// ──────────────────────────────────────────
+// Section 1: f(x)=x², a=2, L=4
+// Coordinates: W=360, H=260, cx=40, cy=440, u=55
+// Visible: x in [-0.73, 5.8], y in [3.3, 8.0]  (cy-H=180 → y_min=(440-260)/55=3.3)
+// At (2,4): px=150, py=440-220=220  ← needs to center near 130
+// Let me use cx=40, cy=360, u=55:
+// At (2,4): px=150, py=360-220=140 ✓
+// Visible y: [(360-260)/55, 360/55] = [1.82, 6.55]
+// ──────────────────────────────────────────
+const W1=360, H1=260, cx1=40, cy1=360, u1=55;
+
+function px1(x) { return cx1 + x * u1; }
+function py1(y) { return cy1 - y * u1; }
+
+function drawGame() {
+  const eps = parseInt(document.getElementById('slEps1').value) / 20;
+  const del = parseInt(document.getElementById('slDelta1').value) / 20;
+  document.getElementById('dEps1').textContent   = eps.toFixed(2);
+  document.getElementById('dDelta1').textContent = del.toFixed(2);
+
+  const svg = document.getElementById('figGame');
+  svg.innerHTML = '';
+
+  grid(svg, cx1, cy1, W1, H1, u1);
+
+  // Draw f(x)=x²
+  const pts = [];
+  for (let px = 0; px < W1; px++) {
+    const x = (px - cx1) / u1;
+    if (x < 0) continue;
+    const y = x * x;
+    const py = cy1 - y * u1;
+    if (py >= -10 && py <= H1 + 10) pts.push(px + ',' + py);
+  }
+  pe(svg, 'polyline', {points: pts.join(' '), stroke:'#4fc3f7', 'stroke-width':2.5, fill:'none'});
+
+  // ε-band around L=4
+  const L = 4, a = 2;
+  const Lpy = py1(L);
+  const epsPx = eps * u1;
+  pe(svg, 'rect', {
+    x:0, y:Lpy - epsPx, width:W1, height:epsPx * 2,
+    fill:'rgba(255,213,79,0.10)', stroke:'rgba(255,213,79,0.5)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
+
+  // δ-band around a=2
+  const apx = px1(a);
+  const delPx = del * u1;
+  pe(svg, 'rect', {
+    x: apx - delPx, y:0, width: delPx * 2, height:H1,
+    fill:'rgba(105,240,174,0.09)', stroke:'rgba(105,240,174,0.5)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
+
+  // Highlight curve inside δ-band and check if it's inside ε-band
+  // Max |x²-4| for x in (2-δ, 2+δ) \ {2} = max at x=2+δ → (2+δ)²-4 = 4δ+δ²
+  const maxErr = 4 * del + del * del;
+  const ok = maxErr < eps;
+
+  const ptsOk = [], ptsBad = [];
+  for (let px = Math.max(0, apx - delPx - 1); px <= Math.min(W1, apx + delPx + 1); px++) {
+    const x = (px - cx1) / u1;
+    if (x < 0) continue;
+    if (Math.abs(x - a) < 0.001) continue;
+    const y = x * x;
+    const py = cy1 - y * u1;
+    if (py < 0 || py > H1) continue;
+    const inEps = Math.abs(y - L) < eps;
+    (inEps ? ptsOk : ptsBad).push(px + ',' + py);
+  }
+  if (ptsOk.length > 1)
+    pe(svg, 'polyline', {points: ptsOk.join(' '), stroke:'#69f0ae', 'stroke-width':4, fill:'none'});
+  if (ptsBad.length > 1)
+    pe(svg, 'polyline', {points: ptsBad.join(' '), stroke:'#ff6b6b', 'stroke-width':4, fill:'none'});
+
+  // Worst-case point: (2+δ, (2+δ)²)
+  const xWorst = a + del;
+  const yWorst = xWorst * xWorst;
+  const pxW = px1(xWorst), pyW = py1(yWorst);
+  if (pyW >= 0 && pyW <= H1) {
+    pe(svg, 'circle', {cx: pxW, cy: pyW, r: 5,
+      fill: ok ? '#69f0ae' : '#ff6b6b', stroke:'#fff', 'stroke-width':1.5});
+    pe(svg, 'text', {x: pxW + 7, y: pyW - 5, 'font-size':9, 'font-weight':700,
+      fill: ok ? '#69f0ae' : '#ff6b6b'},
+      'max err=' + maxErr.toFixed(3));
+  }
+
+  // Labels
+  pe(svg, 'text', {x:4, y:Lpy - epsPx + 11, 'font-size':9, fill:'#ffd54f', 'font-weight':700}, 'L+ε');
+  pe(svg, 'text', {x:4, y:Lpy + epsPx - 3,  'font-size':9, fill:'#ffd54f', 'font-weight':700}, 'L−ε');
+  pe(svg, 'text', {x:apx - delPx + 2, y:H1 - 4, 'font-size':9, fill:'#69f0ae', 'font-weight':700}, 'a−δ');
+  pe(svg, 'text', {x:apx + delPx - 28, y:H1 - 4, 'font-size':9, fill:'#69f0ae', 'font-weight':700}, 'a+δ');
+  pe(svg, 'text', {x:W1 - 16, y:cy1 > H1 ? H1 - 8 : cy1 - 4, 'font-size':10, fill:'rgba(255,255,255,0.35)'}, 'x');
+  tickLabel(svg, cx1, cy1, u1, 4, 5);
+
+  // Update indicator
+  const ind = document.getElementById('indicator1');
+  const txt = document.getElementById('indText1');
+  ind.className = 'indicator ' + (ok ? 'ok' : 'ng');
+  const optDelta = Math.min(1, eps / 5);
+  txt.textContent = ok
+    ? '条件成立！ δ 帯内のグラフが全て ε 帯に収まっています。'
+    : '条件不成立。δ が大きすぎます（最大誤差 ' + maxErr.toFixed(3) + ' ≥ ε=' + eps.toFixed(2) + '）';
+
+  document.getElementById('msgGame').innerHTML =
+    'f(x) = x², a = 2, L = 4<br>'
+    + '最大誤差：|f(2+δ)−4| = 4δ+δ² = <b>' + maxErr.toFixed(4) + '</b>'
+    + '　vs　ε = <b style="color:var(--gold)">' + eps.toFixed(2) + '</b><br>'
+    + (ok
+        ? '<span class="g">✓ 成立！</span> δ帯内のすべての x で |x²−4| &lt; ε が保証されています。'
+        : '<span class="r">✗ 不成立。</span> δ を小さくしよう。<br>'
+          + 'ヒント：δ = min(1, ε/5) = <b>' + optDelta.toFixed(3) + '</b> を試してみてください。')
+    + '<br><small style="color:var(--muted)">（証明: |x−2|&lt;δ≤1 → |x+2|&lt;5 → |x²−4|=|x+2||x−2|&lt;5δ≤ε）</small>';
 }
 
-// パート3：はさみうち
-function drawSqueeze(){
-  const zoom=parseInt(document.getElementById('slZoom').value)/10;
-  document.getElementById('dispZoom').textContent=zoom.toFixed(1)+'×';
-  const svg=document.getElementById('figSqueeze');svg.innerHTML='';
-  const W=360,H=200,cx=W/2,cy=H*0.55,u=60*zoom;
-  axis(svg,cx,cy,W,H,u);
-  // g(x)=-|x|, h(x)=|x|, f(x)=x*sin(1/x) near 0 (use x*sin(5/x) for visibility)
-  const ptsg=[],ptsh=[],ptsf=[];
-  for(let px=0;px<W;px++){
-    const x=(px-cx)/u;
-    if(Math.abs(x)<0.01)continue;
-    const g=-Math.abs(x), h=Math.abs(x);
-    const f=x*Math.sin(5/x);
-    const pyg=cy-g*u,pyh=cy-h*u,pyf=cy-f*u;
-    ptsg.push(`${px},${pyg}`);
-    ptsh.push(`${px},${pyh}`);
-    if(pyf>0&&pyf<H) ptsf.push(`${px},${pyf}`);
-    else ptsf.push('M');
+// ──────────────────────────────────────────
+// Section 2: sgn(x), ε=0.5 fixed, show any δ fails
+// ──────────────────────────────────────────
+const W2=360, H2=200, cx2=W2/2, cy2=H2/2, u2=60;
+
+function drawDisc() {
+  const del = parseInt(document.getElementById('slDelta2').value) / 20;
+  document.getElementById('dDelta2').textContent = del.toFixed(2);
+
+  const svg = document.getElementById('figDisc');
+  svg.innerHTML = '';
+
+  grid(svg, cx2, cy2, W2, H2, u2);
+  pe(svg, 'text', {x:W2-20, y:cy2-4, 'font-size':10, fill:'rgba(255,255,255,0.35)'}, 'x');
+  pe(svg, 'text', {x:cx2+4, y:12,    'font-size':10, fill:'rgba(255,255,255,0.35)'}, 'y');
+
+  // Draw sgn(x)
+  // x < 0: y=-1; x > 0: y=1  (open circles at x=0)
+  const pL = [], pR = [];
+  for (let px = 0; px < cx2 - 2; px++) {
+    const x = (px - cx2) / u2;
+    pL.push(px + ',' + (cy2 + u2));
   }
-  pe(svg,'polyline',{points:ptsg.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
-  pe(svg,'polyline',{points:ptsh.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
-  let cur=[];
-  for(const p of ptsf){
-    if(p==='M'){if(cur.length>1)pe(svg,'polyline',{points:cur.join(' '),stroke:'#ffd54f','stroke-width':1.5,fill:'none'});cur=[];}
-    else cur.push(p);
+  for (let px = cx2 + 2; px < W2; px++) {
+    const x = (px - cx2) / u2;
+    pR.push(px + ',' + (cy2 - u2));
   }
-  if(cur.length>1) pe(svg,'polyline',{points:cur.join(' '),stroke:'#ffd54f','stroke-width':1.5,fill:'none'});
-  pe(svg,'circle',{cx:cx,cy:cy,r:6,fill:'#69f0ae'});
-  pe(svg,'text',{x:cx+8,y:cy-8,'font-size':10,'font-weight':700,fill:'#69f0ae'},'→ 0');
-  pe(svg,'text',{x:W-80,y:50,'font-size':9,fill:'#4fc3f7'},'h(x)=|x|');
-  pe(svg,'text',{x:W-80,y:H-20,'font-size':9,fill:'#4fc3f7'},'g(x)=−|x|');
-  pe(svg,'text',{x:cx+8,y:cy+30,'font-size':9,fill:'#ffd54f'},'f(x)=x·sin(5/x)');
-  document.getElementById('msgSqueeze').innerHTML=
-    `<b>−|x| ≤ x·sin(5/x) ≤ |x|</b> が成り立つ。<br>`+
-    `x→0 で −|x|→0 かつ |x|→0 だから、はさみうちで f(x)→<span class="g">0</span>。<br>`+
-    `倍率を上げると f(x) が二つの青い直線にはさまれていくのが見えます。`;
+  pe(svg, 'polyline', {points: pL.join(' '), stroke:'#ce93d8', 'stroke-width':3, fill:'none'});
+  pe(svg, 'polyline', {points: pR.join(' '), stroke:'#ce93d8', 'stroke-width':3, fill:'none'});
+  pe(svg, 'circle', {cx: cx2, cy: cy2 + u2, r:4, fill:'none', stroke:'#ce93d8', 'stroke-width':2});
+  pe(svg, 'circle', {cx: cx2, cy: cy2 - u2, r:4, fill:'none', stroke:'#ce93d8', 'stroke-width':2});
+  pe(svg, 'text', {x:W2-60, y:cy2-u2-6, 'font-size':9, fill:'#ce93d8'}, 'sgn(x)=+1');
+  pe(svg, 'text', {x:W2-60, y:cy2+u2+14, 'font-size':9, fill:'#ce93d8'}, 'sgn(x)=−1');
+
+  // ε=0.5 band around L=0
+  const eps = 0.5;
+  const epsPx = eps * u2;
+  pe(svg, 'rect', {
+    x:0, y:cy2 - epsPx, width:W2, height:epsPx * 2,
+    fill:'rgba(255,213,79,0.12)', stroke:'rgba(255,213,79,0.55)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
+  pe(svg, 'text', {x:4, y:cy2 - epsPx + 11, 'font-size':9, fill:'#ffd54f', 'font-weight':700}, 'ε=0.5');
+  pe(svg, 'text', {x:4, y:cy2 + epsPx - 3, 'font-size':9, fill:'#ffd54f', 'font-weight':700}, '−ε');
+
+  // δ-band
+  const delPx = del * u2;
+  pe(svg, 'rect', {
+    x: cx2 - delPx, y:0, width: delPx * 2, height:H2,
+    fill:'rgba(105,240,174,0.08)', stroke:'rgba(105,240,174,0.5)',
+    'stroke-width':1.5, 'stroke-dasharray':'6,3'
+  });
+
+  // Show failure points
+  const xRight = Math.min(del * 0.5, del - 0.01);
+  const xLeft  = -xRight;
+  if (xRight > 0) {
+    pe(svg, 'circle', {cx: cx2 + xRight * u2, cy: cy2 - u2, r:7, fill:'#ff6b6b'});
+    pe(svg, 'circle', {cx: cx2 + xLeft  * u2, cy: cy2 + u2, r:7, fill:'#ff6b6b'});
+    pe(svg, 'text', {x: cx2 + xRight * u2 + 9, y: cy2 - u2 - 4, 'font-size':9, fill:'#ff6b6b', 'font-weight':700},
+      'sgn=' + '+1 ∉ ε帯');
+    pe(svg, 'text', {x: cx2 + xLeft * u2 + 9,  y: cy2 + u2 + 14, 'font-size':9, fill:'#ff6b6b', 'font-weight':700},
+      'sgn=−1 ∉ ε帯');
+  }
+
+  const ind = document.getElementById('indicator2');
+  const txt = document.getElementById('indText2');
+  ind.className = 'indicator ng';
+  txt.textContent = 'δ=' + del.toFixed(2) + ' でも不成立：δ帯内に ε 帯を外れる点が必ず存在';
+
+  document.getElementById('msgDisc').innerHTML =
+    'sgn(x) は x=0 で不連続。L をどこに置いても：<br>'
+    + '・x∈(0,δ) では sgn(x)=+1 → |+1 − L| &lt; 0.5 なら L∈(0.5, 1.5)<br>'
+    + '・x∈(−δ,0) では sgn(x)=−1 → |−1 − L| &lt; 0.5 なら L∈(−1.5, −0.5)<br>'
+    + 'これら2条件を同時に満たす L は<span class="r">存在しない</span>（0.5 &lt; ε &lt; 1 でも同様）。<br>'
+    + 'よって lim<sub>x→0</sub> sgn(x) は存在しない。';
 }
 
-document.getElementById('slX').addEventListener('input',drawLimit);
-document.getElementById('slA').addEventListener('input',drawLR);
-document.getElementById('slEps').addEventListener('input',drawED);
-document.getElementById('slDelta').addEventListener('input',drawED);
-document.getElementById('slZoom').addEventListener('input',drawSqueeze);
+// ──────────────────────────────────────────
+// Section 3: Proof diagram (static)
+// ──────────────────────────────────────────
+(function drawProof() {
+  const svg = document.getElementById('figProof');
+  const W = 360, H = 200;
 
-drawLimit();drawLR();drawED();drawSqueeze();
+  const boxes = [
+    {x:20,  y:20,  w:100, h:50, col:'#ffd54f', label:'① ε > 0 が与えられる', sub:'（相手の手番）'},
+    {x:140, y:20,  w:100, h:50, col:'#69f0ae', label:'② δ = ε/2 と定める',  sub:'（自分の手番）'},
+    {x:260, y:20,  w:82,  h:50, col:'#4fc3f7', label:'③ |x−1| < δ と仮定', sub:''},
+    {x:130, y:110, w:200, h:56, col:'#69f0ae', label:'④ |2x−2|=2|x−1|<2δ=ε', sub:'∴ lim 2x = 2  □'},
+  ];
+
+  boxes.forEach(b => {
+    pe(svg, 'rect', {x:b.x, y:b.y, width:b.w, height:b.h, rx:8,
+      fill:'rgba(0,0,0,0.35)', stroke:b.col, 'stroke-width':2});
+    pe(svg, 'text', {x:b.x+b.w/2, y:b.y+18, 'text-anchor':'middle',
+      'font-size':8.5, 'font-weight':700, fill:b.col}, b.label);
+    if (b.sub) pe(svg, 'text', {x:b.x+b.w/2, y:b.y+32, 'text-anchor':'middle',
+      'font-size':8, fill:'rgba(255,255,255,0.45)'}, b.sub);
+  });
+
+  // Arrows ① → ②, ② → ③
+  const arrowCoords = [
+    [120, 45, 140, 45],
+    [240, 45, 260, 45],
+    [301, 70, 230, 110],
+  ];
+  arrowCoords.forEach(([x1,y1,x2,y2]) => {
+    pe(svg, 'line', {x1,y1,x2,y2, stroke:'rgba(255,255,255,0.3)', 'stroke-width':1.5});
+    const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy);
+    if (len < 1) return;
+    const ux=dx/len, uy=dy/len, hw=6;
+    pe(svg, 'polygon', {
+      points:`${x2},${y2} ${x2-ux*hw-uy*hw*0.5},${y2-uy*hw+ux*hw*0.5} ${x2-ux*hw+uy*hw*0.5},${y2-uy*hw-ux*hw*0.5}`,
+      fill:'rgba(255,255,255,0.3)'
+    });
+  });
+})();
+
+// ──────────────────────────────────────────
+// Event listeners
+// ──────────────────────────────────────────
+document.getElementById('slEps0').addEventListener('input', drawDef);
+document.getElementById('slEps1').addEventListener('input', drawGame);
+document.getElementById('slDelta1').addEventListener('input', drawGame);
+document.getElementById('slDelta2').addEventListener('input', drawDisc);
+
+drawDef();
+drawGame();
+drawDisc();
+
 })();
 </script>
 </body>
