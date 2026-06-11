@@ -196,6 +196,25 @@
   .quiz-next:hover { background: #444; }
 </style>
 
+<script>
+(function(){
+  var id='kuku';
+  var isNew=!localStorage.getItem('stamp_'+id);
+  localStorage.setItem('stamp_'+id,'1');
+  if(isNew){
+    document.addEventListener('DOMContentLoaded',function(){
+      var s=document.createElement('style');
+      s.textContent='@keyframes stIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
+      document.head.appendChild(s);
+      var t=document.createElement('div');
+      t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
+      t.textContent='スタンプ GET！⭐';
+      document.body.appendChild(t);
+      setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
+    });
+  }
+})();
+</script>
 <style>
 /* ── SITE NAV ── */
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}

@@ -51,6 +51,22 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 
 .footer-note{text-align:center;padding:24px;font-size:.75rem;color:var(--gray);
   border-top:1px solid var(--line);}
+
+/* ── STAMP CARD ── */
+.stamp-section{margin-bottom:32px;}
+.stamp-s-label{font-size:.68rem;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
+.stamp-card{background:#1a2035;border:2px solid #c8a84b;border-radius:18px;padding:22px 16px 18px;}
+.stamp-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;}
+.stamp-item{display:flex;flex-direction:column;align-items:center;gap:5px;width:68px;}
+.stamp-icon{font-size:1.6rem;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #c8a84b;background:#111827;transition:all .3s;flex-shrink:0;}
+.stamp-item.got .stamp-icon{background:#1e2a40;box-shadow:0 0 14px rgba(200,168,75,.55);animation:sglow 1.2s ease-in-out infinite alternate;}
+.stamp-item.not .stamp-icon{filter:grayscale(1) opacity(.28);border-color:#2a2a3a;}
+.stamp-name{font-size:.6rem;text-align:center;line-height:1.4;}
+.stamp-item.got .stamp-name{color:var(--gold);}
+.stamp-item.not .stamp-name{color:#444;}
+.stamp-count{text-align:center;font-size:.88rem;color:var(--gray);padding-top:2px;}
+.stamp-count em{color:var(--gold);font-style:normal;font-weight:900;font-size:1.1rem;}
+@keyframes sglow{from{box-shadow:0 0 8px rgba(200,168,75,.35);}to{box-shadow:0 0 22px rgba(200,168,75,.85),0 0 6px rgba(255,220,100,.3);}}
 </style>
 </head>
 <body>
@@ -135,6 +151,13 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </div>
 
 <div class="container">
+  <div class="stamp-section">
+    <div class="stamp-s-label">スタンプカード</div>
+    <div class="stamp-card">
+      <div class="stamp-row" id="srow"></div>
+      <div class="stamp-count">7個中<em id="scnt">0</em>個達成</div>
+    </div>
+  </div>
   <div class="section-label">教材一覧</div>
   <div class="grid">
 
@@ -191,5 +214,83 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </div>
 
 <div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+
+<script>
+(function(){
+  var stamps=[
+    {id:'kazu',   e:'🔢', n:'かずの<br>かぞえかた'},
+    {id:'tashizan',e:'➕', n:'たしざん'},
+    {id:'hikizan', e:'➖', n:'ひきざん'},
+    {id:'kuku',    e:'✖️', n:'九九の表'},
+    {id:'bunsu',   e:'🍕', n:'分数の<br>足し算'},
+    {id:'sankaku', e:'📐', n:'三角形の<br>面積'},
+    {id:'en',      e:'⭕', n:'円の面積'}
+  ];
+  var row=document.getElementById('srow');
+  var cntEl=document.getElementById('scnt');
+  var cnt=0;
+  stamps.forEach(function(s){
+    var got=!!localStorage.getItem('stamp_'+s.id);
+    if(got) cnt++;
+    var d=document.createElement('div');
+    d.className='stamp-item '+(got?'got':'not');
+    d.innerHTML='<div class="stamp-icon">'+s.e+'</div><div class="stamp-name">'+s.n+'</div>';
+    row.appendChild(d);
+  });
+  cntEl.textContent=cnt;
+  if(cnt===7) fw();
+
+  function fw(){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;';
+    var cv=document.createElement('canvas');
+    cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+    cv.width=innerWidth; cv.height=innerHeight;
+    ov.appendChild(cv);
+    var info=document.createElement('div');
+    info.style.cssText='position:relative;z-index:1;text-align:center;user-select:none;';
+    info.innerHTML='<div style="font-size:4rem;margin-bottom:8px">🏆</div>'
+      +'<div style="font-size:clamp(1.5rem,5vw,2.2rem);font-weight:900;color:#c8a84b;text-shadow:0 0 24px rgba(200,168,75,.8);font-family:\'Noto Sans JP\',sans-serif;">算数マスター！</div>'
+      +'<div style="font-size:.95rem;color:#f0f4ff;margin-top:12px;font-family:\'Noto Sans JP\',sans-serif;">すべての教材を制覇した！</div>';
+    ov.appendChild(info);
+    document.body.appendChild(ov);
+    var ctx=cv.getContext('2d');
+    var cols=['#c8a84b','#e74c3c','#3498db','#2ecc71','#ff69b4','#f39c12'];
+    var pts=[];
+    function shoot(){
+      var x=.1*cv.width+Math.random()*.8*cv.width;
+      var y=.1*cv.height+Math.random()*.5*cv.height;
+      var c=cols[0|Math.random()*cols.length];
+      for(var i=0;i<60;i++){
+        var a=Math.PI*2*i/60,sp=2+Math.random()*4;
+        pts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,c:c,a:1,r:1.5+Math.random()*2});
+      }
+    }
+    for(var i=0;i<6;i++) setTimeout(shoot,i*280);
+    var iv=setInterval(shoot,650);
+    var raf;
+    (function loop(){
+      ctx.fillStyle='rgba(0,0,0,.13)';
+      ctx.fillRect(0,0,cv.width,cv.height);
+      for(var i=pts.length-1;i>=0;i--){
+        var p=pts[i];
+        p.x+=p.vx; p.y+=p.vy; p.vy+=.06; p.a-=.013;
+        if(p.a<=0){pts.splice(i,1);continue;}
+        ctx.globalAlpha=p.a; ctx.fillStyle=p.c;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+      raf=requestAnimationFrame(loop);
+    })();
+    function close(){
+      clearInterval(iv); cancelAnimationFrame(raf);
+      ov.style.transition='opacity .7s'; ov.style.opacity='0';
+      setTimeout(function(){ov.remove();},700);
+    }
+    setTimeout(close,5000);
+    ov.addEventListener('click',close);
+  }
+})();
+</script>
 </body>
 </html>
