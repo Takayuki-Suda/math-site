@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+  :root{--bg:#0a0d14;--bg2:#111827;--bg3:#1a2035;--blue:#4fc3f7;--green:#69f0ae;--red:#ff6b6b;--gold:#ffd54f;--purple:#ce93d8;--white:#e8eaf6;--muted:#7986a0;--line:rgba(255,255,255,0.08);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
+  .header{background:linear-gradient(135deg,#0a0d14,#0a1428);padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+  .header::before{content:'∮';position:absolute;font-size:200px;font-weight:900;color:rgba(105,240,174,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
+  .header h1{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:8px;}
+  .header h1 .accent{color:var(--green);}
+  .header p{font-size:0.88rem;color:var(--muted);}
+  .section{max-width:680px;margin:32px auto 0;padding:0 20px;}
+  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--green);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--green);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0;}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.blue-top::before{background:linear-gradient(90deg,var(--blue),#0288d1);}
+  .card.green-top::before{background:linear-gradient(90deg,var(--green),#00bfa5);}
+  .card.gold-top::before{background:linear-gradient(90deg,var(--gold),#ff9800);}
+  .card.purple-top::before{background:linear-gradient(90deg,var(--purple),#7b1fa2);}
+  .card.red-top::before{background:linear-gradient(90deg,var(--red),#c62828);}
+  .card-desc{font-size:0.86rem;color:var(--muted);line-height:1.9;margin-bottom:14px;}
+  svg{width:100%;height:auto;display:block;}
+  .sl-row{display:flex;align-items:center;gap:10px;font-size:0.84rem;margin:10px 0 4px;flex-wrap:wrap;}
+  .sl-label{font-weight:700;color:var(--green);min-width:80px;}
+  .sl-wrap{flex:1;min-width:100px;}
+  input[type=range]{width:100%;accent-color:var(--green);height:5px;}
+  .sl-val{font-size:1rem;font-weight:900;color:var(--green);min-width:44px;text-align:right;}
+  .msg{background:var(--bg3);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
+  .msg b{color:var(--gold);}
+  .msg .g{color:var(--green);font-weight:700;}
+  .msg .r{color:var(--red);font-weight:700;}
+  .preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .pbtn{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg3);font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;}
+  .pbtn.on,.pbtn:hover{background:rgba(105,240,174,0.12);color:var(--green);border-color:var(--green);}
+  .summary{background:linear-gradient(135deg,#0a0d14,#0a1428);border:1px solid rgba(105,240,174,0.3);border-radius:18px;padding:24px 20px;margin-top:32px;text-align:center;}
+  .summary h3{font-size:1.1rem;font-weight:900;color:var(--green);margin-bottom:14px;}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;text-align:left;border-left:3px solid var(--green);}
+  .s-item .s-eq{font-size:0.9rem;font-weight:900;color:var(--green);margin-bottom:4px;}
+  .s-item .s-desc{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+  .footer-note{text-align:center;margin-top:40px;padding:0 20px;font-size:0.78rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho_index.html">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho_kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho_tashizan.html">たしざん</a>
+          <a href="/math-site/sho_hikizan.html">ひきざん</a>
+          <a href="/math-site/sho_kuku.html">九九の表</a>
+          <a href="/math-site/sho_bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho_sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho_en.html">円の面積</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu_index.html">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu_moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu_houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu_ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu_niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu_sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko_index.html">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko_sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko_bibun.html">微分・接線</a>
+          <a href="/math-site/ko_sekibun.html">積分と面積</a>
+          <a href="/math-site/ko_daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko_kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai_index.html">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai_senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai_gun.html">群論</a>
+          <a href="/math-site/dai_fukuso.html">複素関数論</a>
+          <a href="/math-site/dai_fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai_seisuron.html">整数論</a>
+          <a href="/math-site/dai_tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="header">
+  <h1><span class="accent">多変数解析</span>・微分形式</h1>
+  <p>大学生 ・ 解析学 ／ 勾配・発散・回転・ストークスの定理</p>
+</div>
+
+<!-- パート0：勾配（gradient） -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">0</span>勾配（gradient）――最も急な登り坂の方向</div>
+  <div class="card green-top">
+    <div class="card-desc">
+      スカラー場 f(x,y) に対して grad f = (∂f/∂x, ∂f/∂y) は「最も急に増加する方向」を指します。<br>
+      スライダーで観察点を動かして確かめよう。
+    </div>
+    <svg id="figGrad" viewBox="0 0 360 220"></svg>
+    <div class="sl-row">
+      <div class="sl-label">観察点 x</div>
+      <div class="sl-wrap"><input type="range" id="slGx" min="-30" max="30" value="10"></div>
+      <div class="sl-val" id="dGx">1.0</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">観察点 y</div>
+      <div class="sl-wrap"><input type="range" id="slGy" min="-30" max="30" value="5"></div>
+      <div class="sl-val" id="dGy">0.5</div>
+    </div>
+    <div class="msg" id="msgGrad"></div>
+  </div>
+</div>
+
+<!-- パート1：発散（divergence） -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">1</span>発散（divergence）――源・吸い込み</div>
+  <div class="card blue-top">
+    <div class="card-desc">
+      ベクトル場 F=(P,Q) に対して div F = ∂P/∂x + ∂Q/∂y。<br>
+      流体の「湧き出し量」を表します。
+    </div>
+    <div class="preset-btns">
+      <button class="pbtn on" onclick="setField('source',this)">湧き出し div>0</button>
+      <button class="pbtn" onclick="setField('sink',this)">吸い込み div&lt;0</button>
+      <button class="pbtn" onclick="setField('rot',this)">回転 div=0</button>
+    </div>
+    <svg id="figDiv" viewBox="0 0 360 200"></svg>
+    <div class="msg" id="msgDiv"></div>
+  </div>
+</div>
+
+<!-- パート2：回転（curl） -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>回転（curl）――渦の強さ</div>
+  <div class="card gold-top">
+    <div class="card-desc">
+      2次元では curl F = ∂Q/∂x − ∂P/∂y。<br>
+      渦の強さと向きを表します。スライダーで渦の強さを変えよう。
+    </div>
+    <svg id="figCurl" viewBox="0 0 360 200"></svg>
+    <div class="sl-row">
+      <div class="sl-label">渦の強さ</div>
+      <div class="sl-wrap"><input type="range" id="slCurl" min="-20" max="20" value="10"></div>
+      <div class="sl-val" id="dCurl">1.0</div>
+    </div>
+    <div class="msg" id="msgCurl"></div>
+  </div>
+</div>
+
+<!-- パート3：ストークスの定理 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>ストークスの定理</div>
+  <div class="card purple-top">
+    <div class="card-desc">
+      ∮<sub>∂S</sub> F·ds = ∬<sub>S</sub> (curl F)·dA<br>
+      「境界での積分」=「内部での積分」。これがガウスの定理・グリーンの定理の一般化です。
+    </div>
+    <svg id="figStokes" viewBox="0 0 360 200"></svg>
+    <div class="msg" id="msgStokes">
+      <b>ストークスの定理の直感：</b><br>
+      境界（曲線）に沿った流れの合計 = 内部の渦（curl）の総量。<br>
+      「局所の渦」を全部足すと「大域の周回」になる。<br>
+      → グリーンの定理（平面）・発散定理（体積）はこれの特殊ケース。
+    </div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <h3>多変数解析の核心</h3>
+    <div class="summary-grid">
+      <div class="s-item">
+        <div class="s-eq">grad f = ∇f</div>
+        <div class="s-desc">スカラー場の「最急上昇方向」。等高線と直交する。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--blue)">
+        <div class="s-eq" style="color:var(--blue)">div F = ∇·F</div>
+        <div class="s-desc">ベクトル場の「湧き出し量」。正なら源、負なら吸い込み。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--gold)">
+        <div class="s-eq" style="color:var(--gold)">curl F = ∇×F</div>
+        <div class="s-desc">ベクトル場の「渦の強さと向き」。保存場では curl=0。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--purple)">
+        <div class="s-eq" style="color:var(--purple)">ストークスの定理</div>
+        <div class="s-desc">∮∂S F·ds = ∬S (∇×F)·dA。境界と内部をつなぐ橋。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg';
+const PI=Math.PI;
+function pe(svg,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  if(txt!==undefined)e.textContent=txt;
+  svg.appendChild(e);return e;
+}
+function arrowSVG(svg,x1,y1,x2,y2,color,w=1.5){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  if(len<2)return;
+  pe(svg,'line',{x1,y1,x2,y2,stroke:color,'stroke-width':w,'stroke-linecap':'round'});
+  const ux=dx/len,uy=dy/len,hw=5;
+  const ax=x2-ux*hw-uy*hw*0.5,ay=y2-uy*hw+ux*hw*0.5;
+  const bx=x2-ux*hw+uy*hw*0.5,by=y2-uy*hw-ux*hw*0.5;
+  pe(svg,'polygon',{points:`${x2},${y2} ${ax},${ay} ${bx},${by}`,fill:color});
+}
+
+// パート0：勾配
+function drawGrad(){
+  const gx=parseInt(document.getElementById('slGx').value)/10;
+  const gy=parseInt(document.getElementById('slGy').value)/10;
+  document.getElementById('dGx').textContent=gx.toFixed(1);
+  document.getElementById('dGy').textContent=gy.toFixed(1);
+  const svg=document.getElementById('figGrad');svg.innerHTML='';
+  const W=360,H=220,cx=W/2,cy=H/2,u=45;
+  // f(x,y) = x^2 + y^2 の等高線
+  for(let lv=1;lv<=4;lv++){
+    const r=Math.sqrt(lv)*u*1.3;
+    pe(svg,'circle',{cx,cy,r,fill:'none',stroke:`rgba(105,240,174,${0.08+lv*0.04})`,
+      'stroke-width':1.5,'stroke-dasharray':'4,3'});
+    pe(svg,'text',{x:cx+r+4,y:cy-3,'font-size':8,fill:'rgba(105,240,174,0.5)'},`f=${lv}`);
+  }
+  // 軸
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.1)','stroke-width':1});
+  pe(svg,'line',{x1:cx,y1:0,x2:cx,y2:H,stroke:'rgba(255,255,255,0.1)','stroke-width':1});
+  // 観察点
+  const px=cx+gx*u,py=cy-gy*u;
+  pe(svg,'circle',{cx:px,cy:py,r:6,fill:'#ffd54f'});
+  // 勾配ベクトル（grad f = (2x, 2y)）
+  const gradX=2*gx,gradY=2*gy;
+  const len=Math.hypot(gradX,gradY);
+  const scale=30/(len+0.01);
+  arrowSVG(svg,px,py,px+gradX*scale,py-gradY*scale,'#69f0ae',2.5);
+  pe(svg,'text',{x:px+gradX*scale+6,y:py-gradY*scale,'font-size':10,'font-weight':700,fill:'#69f0ae'},'∇f');
+  document.getElementById('msgGrad').innerHTML=
+    `点 (${gx.toFixed(1)}, ${gy.toFixed(1)}) での勾配：<br>`+
+    `f(x,y) = x²+y² → ∇f = (2x, 2y) = (<b>${(2*gx).toFixed(1)}</b>, <b>${(2*gy).toFixed(1)}</b>)<br>`+
+    `<span class="g">緑矢印</span>は最も急に増加する方向。等高線（破線の円）と直交します。`;
+}
+
+// パート1：発散
+let curField='source';
+function setField(name,btn){
+  curField=name;
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  drawDiv();
+}
+window.setField=setField;
+
+function getField(x,y){
+  if(curField==='source')return[x,y];
+  if(curField==='sink')return[-x,-y];
+  if(curField==='rot')return[-y,x];
+  return[x,y];
+}
+function drawDiv(){
+  const svg=document.getElementById('figDiv');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H/2;
+  const step=36;
+  for(let gx=step/2;gx<W;gx+=step){
+    for(let gy=step/2;gy<H;gy+=step){
+      const x=(gx-cx)/step*0.8,y=(gy-cy)/step*0.8;
+      const [fx,fy]=getField(x,y);
+      const len=Math.hypot(fx,fy);
+      const scale=step*0.38/(len+0.01);
+      const col=curField==='rot'?'#4fc3f7':curField==='source'?'#69f0ae':'#ff6b6b';
+      arrowSVG(svg,gx,gy,gx+fx*scale,gy-fy*scale,col,1.5);
+    }
+  }
+  const msgs={
+    source:'P=x, Q=y → div F = ∂P/∂x + ∂Q/∂y = 1 + 1 = <b>2 > 0</b>（湧き出し）<br>全ての点から外向きに流れ出している。',
+    sink:'P=−x, Q=−y → div F = −1 − 1 = <b>−2 < 0</b>（吸い込み）<br>全ての点に向かって流れ込んでいる。',
+    rot:'P=−y, Q=x → div F = 0 + 0 = <b>0</b>（非圧縮流）<br>渦巻いているが湧き出しも吸い込みもない。'
+  };
+  document.getElementById('msgDiv').innerHTML=msgs[curField];
+}
+
+// パート2：回転
+function drawCurl(){
+  const c=parseInt(document.getElementById('slCurl').value)/10;
+  document.getElementById('dCurl').textContent=c.toFixed(1);
+  const svg=document.getElementById('figCurl');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H/2;
+  const step=36;
+  for(let gx=step/2;gx<W;gx+=step){
+    for(let gy=step/2;gy<H;gy+=step){
+      const x=(gx-cx)/step*0.8,y=(gy-cy)/step*0.8;
+      const fx=-c*y,fy=c*x;
+      const len=Math.hypot(fx,fy);
+      const scale=step*0.38/(len+0.01);
+      const col=c>0?'#ffd54f':c<0?'#ce93d8':'#7986a0';
+      arrowSVG(svg,gx,gy,gx+fx*scale,gy-fy*scale,col,1.5);
+    }
+  }
+  const curlVal=2*c;
+  document.getElementById('msgCurl').innerHTML=
+    `F = (−${c.toFixed(1)}y, ${c.toFixed(1)}x) の渦場<br>`+
+    `curl F = ∂Q/∂x − ∂P/∂y = ${c.toFixed(1)} − (−${c.toFixed(1)}) = <b>${curlVal.toFixed(1)}</b><br>`+
+    (c>0?`<span class="g">反時計回り</span>（curl > 0）`:c<0?`<span class="r">時計回り</span>（curl < 0）`:`<span style="color:var(--muted)">渦なし（curl = 0）</span>`);
+}
+
+// パート3：ストークス
+(function(){
+  const svg=document.getElementById('figStokes');
+  const W=360,H=200,cx=W/2,cy=H/2;
+  // 曲面 S
+  pe(svg,'ellipse',{cx,cy,rx:120,ry:70,fill:'rgba(105,240,174,0.06)',stroke:'rgba(105,240,174,0.3)','stroke-width':1.5,'stroke-dasharray':'5,3'});
+  // 境界 ∂S（矢印付き楕円）
+  const r=120,ry=70;
+  for(let i=0;i<24;i++){
+    const a=i/24*2*PI,a2=(i+0.8)/24*2*PI;
+    const x1=cx+Math.cos(a)*r,y1=cy+Math.sin(a)*ry;
+    const x2=cx+Math.cos(a2)*r,y2=cy+Math.sin(a2)*ry;
+    arrowSVG(svg,x1,y1,x2,y2,'#69f0ae',2);
+  }
+  // 内部の curl 矢印
+  for(let i=0;i<5;i++){
+    const ax=cx+(i-2)*35,ay=cy;
+    pe(svg,'text',{x:ax,y:ay+5,'text-anchor':'middle','font-size':14,fill:'rgba(255,213,79,0.6)'},'↺');
+  }
+  pe(svg,'text',{x:cx,y:cy+ry+18,'text-anchor':'middle','font-size':9,fill:'rgba(255,255,255,0.4)'},'∂S（境界の周回積分）');
+  pe(svg,'text',{x:cx,y:cy-ry-10,'text-anchor':'middle','font-size':9,fill:'rgba(255,213,79,0.5)'},'S（内部の curl 積分）');
+  pe(svg,'text',{x:W-10,y:cy,'text-anchor':'end','font-size':18,'font-weight':900,fill:'rgba(255,255,255,0.15)'},'=');
+  pe(svg,'text',{x:cx,y:H-5,'text-anchor':'middle','font-size':10,'font-weight':700,fill:'#69f0ae'},'∮ F·ds  =  ∬ (∇×F)·dA');
+})();
+
+document.getElementById('slGx').addEventListener('input',drawGrad);
+document.getElementById('slGy').addEventListener('input',drawGrad);
+document.getElementById('slCurl').addEventListener('input',drawCurl);
+drawGrad();drawDiv();drawCurl();
+})();
+</script>
+</body>
+</html>

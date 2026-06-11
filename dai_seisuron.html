@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+  :root{--bg:#0a0d14;--bg2:#111827;--bg3:#1a2035;--blue:#4fc3f7;--green:#69f0ae;--red:#ff6b6b;--gold:#ffd54f;--purple:#ce93d8;--white:#e8eaf6;--muted:#7986a0;--line:rgba(255,255,255,0.08);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
+  .header{background:linear-gradient(135deg,#0a0d14,#0a1428);padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+  .header::before{content:'ℙ';position:absolute;font-size:200px;font-weight:900;color:rgba(255,213,79,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
+  .header h1{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:8px;}
+  .header h1 .accent{color:var(--gold);}
+  .header p{font-size:0.88rem;color:var(--muted);}
+  .section{max-width:680px;margin:32px auto 0;padding:0 20px;}
+  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0;}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.blue-top::before{background:linear-gradient(90deg,var(--blue),#0288d1);}
+  .card.green-top::before{background:linear-gradient(90deg,var(--green),#00bfa5);}
+  .card.gold-top::before{background:linear-gradient(90deg,var(--gold),#ff9800);}
+  .card.purple-top::before{background:linear-gradient(90deg,var(--purple),#7b1fa2);}
+  .card.red-top::before{background:linear-gradient(90deg,var(--red),#c62828);}
+  .card-desc{font-size:0.86rem;color:var(--muted);line-height:1.9;margin-bottom:14px;}
+  svg{width:100%;height:auto;display:block;}
+  .sl-row{display:flex;align-items:center;gap:10px;font-size:0.84rem;margin:10px 0 4px;flex-wrap:wrap;}
+  .sl-label{font-weight:700;color:var(--gold);min-width:80px;}
+  .sl-wrap{flex:1;min-width:100px;}
+  input[type=range]{width:100%;accent-color:var(--gold);height:5px;}
+  .sl-val{font-size:1rem;font-weight:900;color:var(--gold);min-width:44px;text-align:right;}
+  .msg{background:var(--bg3);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
+  .msg b{color:var(--gold);}
+  .msg .g{color:var(--green);font-weight:700;}
+  .msg .r{color:var(--red);font-weight:700;}
+  .prime-grid{display:flex;flex-wrap:wrap;gap:4px;margin:12px 0;}
+  .pnum{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;transition:background .2s;}
+  .pnum.prime{background:rgba(255,213,79,0.2);color:var(--gold);border:1px solid rgba(255,213,79,0.4);}
+  .pnum.composite{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid rgba(255,255,255,0.08);}
+  .pnum.one{background:rgba(255,107,107,0.1);color:var(--red);border:1px solid rgba(255,107,107,0.3);}
+  .summary{background:linear-gradient(135deg,#0a0d14,#0a1428);border:1px solid rgba(255,213,79,0.3);border-radius:18px;padding:24px 20px;margin-top:32px;text-align:center;}
+  .summary h3{font-size:1.1rem;font-weight:900;color:var(--gold);margin-bottom:14px;}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;text-align:left;border-left:3px solid var(--gold);}
+  .s-item .s-eq{font-size:0.9rem;font-weight:900;color:var(--gold);margin-bottom:4px;}
+  .s-item .s-desc{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+  .footer-note{text-align:center;margin-top:40px;padding:0 20px;font-size:0.78rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho_index.html">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho_kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho_tashizan.html">たしざん</a>
+          <a href="/math-site/sho_hikizan.html">ひきざん</a>
+          <a href="/math-site/sho_kuku.html">九九の表</a>
+          <a href="/math-site/sho_bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho_sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho_en.html">円の面積</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu_index.html">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu_moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu_houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu_ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu_niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu_sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko_index.html">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko_sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko_bibun.html">微分・接線</a>
+          <a href="/math-site/ko_sekibun.html">積分と面積</a>
+          <a href="/math-site/ko_daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko_kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai_index.html">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai_senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai_gun.html">群論</a>
+          <a href="/math-site/dai_fukuso.html">複素関数論</a>
+          <a href="/math-site/dai_fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai_seisuron.html">整数論</a>
+          <a href="/math-site/dai_tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="header">
+  <h1><span class="accent">整数論</span></h1>
+  <p>大学生 ・ 代数学 ／ 素数・合同式・フェルマーの小定理・RSA暗号</p>
+</div>
+
+<!-- パート0：エラトステネスの篩 -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">0</span>素数とエラトステネスの篩</div>
+  <div class="card gold-top">
+    <div class="card-desc">素数（1と自分自身以外で割り切れない数）を効率よく見つける方法です。</div>
+    <div id="primeGrid" class="prime-grid"></div>
+    <div class="sl-row">
+      <div class="sl-label">最大値</div>
+      <div class="sl-wrap"><input type="range" id="slMax" min="20" max="120" step="4" value="60"></div>
+      <div class="sl-val" id="dMax">60</div>
+    </div>
+    <div class="msg" id="msgPrime"></div>
+  </div>
+</div>
+
+<!-- パート1：合同式 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">1</span>合同式と数の環</div>
+  <div class="card blue-top">
+    <div class="card-desc">
+      a ≡ b (mod n) とは「a と b を n で割った余りが同じ」。<br>
+      時計の数と同じ仕組みです。
+    </div>
+    <svg id="figMod" viewBox="0 0 360 200"></svg>
+    <div class="sl-row">
+      <div class="sl-label">法 n</div>
+      <div class="sl-wrap"><input type="range" id="slMod" min="3" max="12" value="7"></div>
+      <div class="sl-val" id="dMod">7</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">数 a</div>
+      <div class="sl-wrap"><input type="range" id="slModA" min="0" max="50" value="23"></div>
+      <div class="sl-val" id="dModA">23</div>
+    </div>
+    <div class="msg" id="msgMod"></div>
+  </div>
+</div>
+
+<!-- パート2：フェルマーの小定理 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>フェルマーの小定理</div>
+  <div class="card green-top">
+    <div class="card-desc">
+      p が素数で gcd(a,p)=1 のとき：a<sup>p−1</sup> ≡ 1 (mod p)<br>
+      スライダーで確かめよう。
+    </div>
+    <svg id="figFermat" viewBox="0 0 360 160"></svg>
+    <div class="sl-row">
+      <div class="sl-label">素数 p</div>
+      <div class="sl-wrap"><input type="range" id="slFP" min="0" max="6" value="2"></div>
+      <div class="sl-val" id="dFP">7</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">底 a</div>
+      <div class="sl-wrap"><input type="range" id="slFA" min="2" max="10" value="3"></div>
+      <div class="sl-val" id="dFA">3</div>
+    </div>
+    <div class="msg" id="msgFermat"></div>
+  </div>
+</div>
+
+<!-- パート3：RSA暗号 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>RSA暗号の原理</div>
+  <div class="card purple-top">
+    <div class="card-desc">
+      RSA暗号はフェルマーの小定理の拡張（オイラーの定理）を利用します。<br>
+      大きな数の素因数分解が困難であることが安全性の根拠。
+    </div>
+    <svg id="figRSA" viewBox="0 0 360 180"></svg>
+    <div class="msg" id="msgRSA"></div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <h3>整数論の核心</h3>
+    <div class="summary-grid">
+      <div class="s-item">
+        <div class="s-eq">素数の無限性</div>
+        <div class="s-desc">ユークリッドの証明：有限個と仮定するとその積+1が新しい素数を生む。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--blue)">
+        <div class="s-eq" style="color:var(--blue)">a ≡ b (mod n)</div>
+        <div class="s-desc">n で割った余りが等しい。加減乗について合同は保存される。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--green)">
+        <div class="s-eq" style="color:var(--green)">フェルマーの小定理</div>
+        <div class="s-desc">p素数, gcd(a,p)=1 → aᵖ⁻¹≡1(mod p)。素数判定・暗号の基礎。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--purple)">
+        <div class="s-eq" style="color:var(--purple)">RSA暗号</div>
+        <div class="s-desc">公開鍵(e,n)で暗号化、秘密鍵(d,n)で復号。素因数分解の困難性が安全の源。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg';
+function pe(svg,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  if(txt!==undefined)e.textContent=txt;
+  svg.appendChild(e);return e;
+}
+function isPrime(n){if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;}
+function modpow(base,exp,mod){let r=1;base%=mod;while(exp>0){if(exp%2===1)r=r*base%mod;exp=Math.floor(exp/2);base=base*base%mod;}return r;}
+
+// パート0：篩
+function drawSieve(){
+  const max=parseInt(document.getElementById('slMax').value);
+  document.getElementById('dMax').textContent=max;
+  const div=document.getElementById('primeGrid');div.innerHTML='';
+  let pc=0;
+  for(let i=1;i<=max;i++){
+    const d=document.createElement('div');
+    d.className='pnum '+(i===1?'one':isPrime(i)?'prime':'composite');
+    d.textContent=i;
+    div.appendChild(d);
+    if(isPrime(i))pc++;
+  }
+  document.getElementById('msgPrime').innerHTML=
+    `1〜${max} の中に素数は <b style="color:var(--gold)">${pc}</b> 個。<br>`+
+    `<span style="color:var(--gold)">金</span>=素数、灰=合成数、<span style="color:var(--red)">赤</span>=1（素数でも合成数でもない）<br>`+
+    `素数定理：π(x) ≈ x/ln(x)（x以下の素数の個数）`;
+}
+
+// パート1：合同式
+function drawMod(){
+  const n=parseInt(document.getElementById('slMod').value);
+  const a=parseInt(document.getElementById('slModA').value);
+  document.getElementById('dMod').textContent=n;
+  document.getElementById('dModA').textContent=a;
+  const svg=document.getElementById('figMod');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H/2,r=72;
+  const PI=Math.PI;
+  // 時計盤
+  pe(svg,'circle',{cx,cy,r:r+10,fill:'none',stroke:'rgba(255,255,255,0.08)','stroke-width':2});
+  for(let i=0;i<n;i++){
+    const th=(i/n)*2*PI-PI/2;
+    const x=cx+Math.cos(th)*r,y=cy+Math.sin(th)*r;
+    const rem=a%n;
+    const col=i===rem?'#ffd54f':i===0?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.3)';
+    pe(svg,'circle',{cx:x,cy:y,r:i===rem?10:8,fill:i===rem?'rgba(255,213,79,0.2)':'rgba(255,255,255,0.05)',stroke:col,'stroke-width':2});
+    pe(svg,'text',{x,y:y+4,'text-anchor':'middle','font-size':10,'font-weight':700,fill:col},i);
+  }
+  // 針
+  const rem=a%n;
+  const th=(rem/n)*2*PI-PI/2;
+  pe(svg,'line',{x1:cx,y1:cy,x2:cx+Math.cos(th)*r*0.8,y2:cy+Math.sin(th)*r*0.8,stroke:'#ffd54f','stroke-width':3,'stroke-linecap':'round'});
+  pe(svg,'circle',{cx,cy,r:5,fill:'#ffd54f'});
+  pe(svg,'text',{x:cx,y:cy-r-18,'text-anchor':'middle','font-size':10,'font-weight':700,fill:'#ffd54f'},`Z/${n}Z（mod ${n}）`);
+  document.getElementById('msgMod').innerHTML=
+    `a = <b>${a}</b>、mod <b>${n}</b> → <b style="color:var(--gold)">${a%n}</b><br>`+
+    `${a} = ${Math.floor(a/n)} × ${n} + ${a%n}<br>`+
+    `同じ余り ${a%n} を持つ数：…, ${a%n}, ${a%n+n}, ${a%n+2*n}, … （等差数列）`;
+}
+
+// パート2：フェルマー
+const PRIMES=[5,7,11,13,17,19,23];
+function drawFermat(){
+  const pi=parseInt(document.getElementById('slFP').value);
+  const p=PRIMES[pi];
+  const a=parseInt(document.getElementById('slFA').value);
+  document.getElementById('dFP').textContent=p;
+  document.getElementById('dFA').textContent=a;
+  const svg=document.getElementById('figFermat');svg.innerHTML='';
+  const W=360,H=160,bx=30,by=H-20;
+  const vals=[];
+  for(let k=1;k<=p;k++)vals.push(modpow(a,k,p));
+  const bw=Math.min(24,(W-60)/p);
+  pe(svg,'line',{x1:bx,y1:by,x2:W-10,y2:by,stroke:'rgba(255,255,255,0.12)','stroke-width':1});
+  vals.forEach((v,i)=>{
+    const barH=v/(p-1)*(H-30);
+    const bxk=bx+(i+0.5)*(W-40)/p;
+    const highlight=i===p-2;
+    pe(svg,'rect',{x:bxk-bw/2,y:by-barH,width:bw,height:barH,
+      fill:highlight?'rgba(105,240,174,0.3)':'rgba(255,213,79,0.15)',
+      stroke:highlight?'#69f0ae':'rgba(255,213,79,0.5)','stroke-width':highlight?2:1,rx:3});
+    pe(svg,'text',{x:bxk,y:by-barH-4,'text-anchor':'middle','font-size':8,'font-weight':700,fill:highlight?'#69f0ae':'#ffd54f'},v);
+    pe(svg,'text',{x:bxk,y:by+12,'text-anchor':'middle','font-size':8,fill:'rgba(255,255,255,0.4)'},`${a}^${i+1}`);
+  });
+  const result=modpow(a,p-1,p);
+  document.getElementById('msgFermat').innerHTML=
+    `p = <b>${p}</b>（素数）、a = <b>${a}</b><br>`+
+    `a<sup>p−1</sup> = ${a}<sup>${p-1}</sup> ≡ <b style="color:${result===1?'var(--green)':'var(--red)'}">${result}</b> (mod ${p})<br>`+
+    (result===1?`<span class="g">フェルマーの小定理が確認できます！</span>`:`<span class="r">a が p の倍数のため定理は適用外。</span>`);
+}
+
+// パート3：RSA図解
+(function(){
+  const svg=document.getElementById('figRSA');
+  const W=360,H=180;
+  const steps=[
+    {x:30,y:50,w:80,h:36,label:'p, q 選択',sub:'大きな素数2つ',col:'#ffd54f'},
+    {x:140,y:50,w:80,h:36,label:'n=p×q',sub:'公開鍵の一部',col:'#4fc3f7'},
+    {x:250,y:50,w:90,h:36,label:'e,d 決定',sub:'公開鍵e・秘密鍵d',col:'#69f0ae'},
+    {x:60, y:120,w:100,h:36,label:'暗号化',sub:'c≡mᵉ (mod n)',col:'#ce93d8'},
+    {x:200,y:120,w:100,h:36,label:'復号',sub:'m≡cᵈ (mod n)',col:'#ff6b6b'},
+  ];
+  steps.forEach(s=>{
+    pe(svg,'rect',{x:s.x,y:s.y,width:s.w,height:s.h,rx:8,fill:`rgba(0,0,0,0.3)`,stroke:s.col,'stroke-width':1.5});
+    pe(svg,'text',{x:s.x+s.w/2,y:s.y+14,'text-anchor':'middle','font-size':10,'font-weight':700,fill:s.col},s.label);
+    pe(svg,'text',{x:s.x+s.w/2,y:s.y+28,'text-anchor':'middle','font-size':8,fill:'rgba(255,255,255,0.5)'},s.sub);
+  });
+  // 矢印
+  pe(svg,'line',{x1:110,y1:68,x2:140,y2:68,stroke:'rgba(255,255,255,0.3)','stroke-width':1.5,'marker-end':'url(#arr)'});
+  pe(svg,'line',{x1:220,y1:68,x2:250,y2:68,stroke:'rgba(255,255,255,0.3)','stroke-width':1.5});
+  pe(svg,'line',{x1:290,y1:86,x2:290,y2:105,stroke:'rgba(206,147,216,0.4)','stroke-width':1.5,'stroke-dasharray':'4,3'});
+  pe(svg,'line',{x1:290,y1:105,x2:250,y2:120,stroke:'rgba(206,147,216,0.4)','stroke-width':1.5,'stroke-dasharray':'4,3'});
+  pe(svg,'line',{x1:160,y1:138,x2:200,y2:138,stroke:'rgba(255,107,107,0.4)','stroke-width':1.5,'stroke-dasharray':'4,3'});
+  pe(svg,'text',{x:W/2,y:H-8,'text-anchor':'middle','font-size':8,fill:'rgba(255,255,255,0.35)'},
+    '安全性の根拠：n=p×q の素因数分解が計算機的に困難');
+})();
+
+document.getElementById('slMax').addEventListener('input',drawSieve);
+document.getElementById('slMod').addEventListener('input',drawMod);
+document.getElementById('slModA').addEventListener('input',drawMod);
+document.getElementById('slFP').addEventListener('input',drawFermat);
+document.getElementById('slFA').addEventListener('input',drawFermat);
+drawSieve();drawMod();drawFermat();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+  :root {
+    --bg:#0a0d14; --bg2:#111827; --bg3:#1a2035;
+    --blue:#4fc3f7; --green:#69f0ae; --red:#ff6b6b;
+    --gold:#ffd54f; --purple:#ce93d8; --white:#e8eaf6; --muted:#7986a0;
+    --line:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
+  .header{background:linear-gradient(135deg,#0a0d14 0%,#1a1040 100%);padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+  .header::before{content:'ε';position:absolute;font-size:200px;font-weight:900;color:rgba(79,195,247,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
+  .header h1{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:8px;}
+  .header h1 .accent{color:var(--blue);}
+  .header p{font-size:0.88rem;color:var(--muted);}
+  .section{max-width:680px;margin:32px auto 0;padding:0 20px;}
+  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--blue);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0;}
+  .sec-title{font-size:clamp(1.05rem,4vw,1.4rem);font-weight:900;margin-bottom:12px;line-height:1.4;}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.blue-top::before{background:linear-gradient(90deg,var(--blue),#0288d1);}
+  .card.green-top::before{background:linear-gradient(90deg,var(--green),#00bfa5);}
+  .card.gold-top::before{background:linear-gradient(90deg,var(--gold),#ff9800);}
+  .card.purple-top::before{background:linear-gradient(90deg,var(--purple),#7b1fa2);}
+  .card.red-top::before{background:linear-gradient(90deg,var(--red),#c62828);}
+  .card-desc{font-size:0.86rem;color:var(--muted);line-height:1.9;margin-bottom:14px;}
+  svg{width:100%;height:auto;display:block;}
+  .sl-row{display:flex;align-items:center;gap:10px;font-size:0.84rem;margin:10px 0 4px;flex-wrap:wrap;}
+  .sl-label{font-weight:700;color:var(--gold);min-width:80px;}
+  .sl-wrap{flex:1;min-width:100px;}
+  input[type=range]{width:100%;accent-color:var(--gold);height:5px;}
+  .sl-val{font-size:1rem;font-weight:900;color:var(--gold);min-width:44px;text-align:right;}
+  .msg{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
+  .msg b{color:var(--gold);}
+  .msg .g{color:var(--green);font-weight:700;}
+  .msg .r{color:var(--red);font-weight:700;}
+  .preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .pbtn{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg3);font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s;}
+  .pbtn.on,.pbtn:hover{background:rgba(79,195,247,0.12);color:var(--blue);border-color:var(--blue);}
+  .summary{background:linear-gradient(135deg,#0a0d14,#1a1040);border:1px solid rgba(255,213,79,0.3);border-radius:18px;padding:24px 20px;margin-top:32px;text-align:center;}
+  .summary h3{font-size:1.1rem;font-weight:900;color:var(--gold);margin-bottom:14px;}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;text-align:left;border-left:3px solid var(--blue);}
+  .s-item .s-eq{font-size:0.9rem;font-weight:900;color:var(--blue);margin-bottom:4px;font-style:italic;}
+  .s-item .s-desc{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+  .footer-note{text-align:center;margin-top:40px;padding:0 20px;font-size:0.78rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho_index.html">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho_kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho_tashizan.html">たしざん</a>
+          <a href="/math-site/sho_hikizan.html">ひきざん</a>
+          <a href="/math-site/sho_kuku.html">九九の表</a>
+          <a href="/math-site/sho_bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho_sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho_en.html">円の面積</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu_index.html">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu_moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu_houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu_ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu_niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu_sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko_index.html">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko_sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko_bibun.html">微分・接線</a>
+          <a href="/math-site/ko_sekibun.html">積分と面積</a>
+          <a href="/math-site/ko_daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko_kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai_index.html">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai_senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai_gun.html">群論</a>
+          <a href="/math-site/dai_fukuso.html">複素関数論</a>
+          <a href="/math-site/dai_fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai_seisuron.html">整数論</a>
+          <a href="/math-site/dai_tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="header">
+  <h1>極限と<span class="accent">ε-δ</span>論法</h1>
+  <p>高校生～大学1年 ・ 解析学入門 ／ 「近づく」を厳密に定義する</p>
+</div>
+
+<!-- パート0：極限の直感 -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">0</span>「近づく」とはどういうこと？</div>
+  <div class="card blue-top">
+    <div class="card-desc">
+      x を a に近づけたとき f(x) はどこへ向かうか。<br>
+      スライダーで x を動かして確かめよう。
+    </div>
+    <svg id="figLimit" viewBox="0 0 360 200"></svg>
+    <div class="sl-row">
+      <div class="sl-label">x の値</div>
+      <div class="sl-wrap"><input type="range" id="slX" min="-30" max="30" value="20"></div>
+      <div class="sl-val" id="dispX">2.0</div>
+    </div>
+    <div class="msg" id="msgLimit"></div>
+  </div>
+</div>
+
+<!-- パート1：左極限・右極限 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">1</span>左極限・右極限・極限の存在</div>
+  <div class="card green-top">
+    <div class="card-desc">
+      x を左から近づけた値と右から近づけた値が一致するとき、極限が存在します。<br>
+      関数を切り替えて比べよう。
+    </div>
+    <div class="preset-btns">
+      <button class="pbtn on" onclick="setFunc('cont',this)">連続関数 x²</button>
+      <button class="pbtn" onclick="setFunc('jump',this)">不連続（跳び）</button>
+      <button class="pbtn" onclick="setFunc('sinc',this)">sin(x)/x</button>
+    </div>
+    <svg id="figLR" viewBox="0 0 360 200"></svg>
+    <div class="sl-row">
+      <div class="sl-label">近づき先 a</div>
+      <div class="sl-wrap"><input type="range" id="slA" min="-20" max="20" value="0"></div>
+      <div class="sl-val" id="dispA">0.0</div>
+    </div>
+    <div class="msg" id="msgLR"></div>
+  </div>
+</div>
+
+<!-- パート2：ε-δ定義 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>ε-δ 定義を体験する</div>
+  <div class="card gold-top">
+    <div class="card-desc">
+      「ε を指定したら、それに対応する δ を見つけられる」<br>
+      それが lim f(x)=L の厳密な定義です。
+    </div>
+    <svg id="figED" viewBox="0 0 360 240"></svg>
+    <div class="sl-row">
+      <div class="sl-label">ε（縦幅）</div>
+      <div class="sl-wrap"><input type="range" id="slEps" min="1" max="40" value="15"></div>
+      <div class="sl-val" id="dispEps">0.75</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">δ（横幅）</div>
+      <div class="sl-wrap"><input type="range" id="slDelta" min="1" max="40" value="10"></div>
+      <div class="sl-val" id="dispDelta">0.5</div>
+    </div>
+    <div class="msg" id="msgED"></div>
+  </div>
+</div>
+
+<!-- パート3：はさみうち定理 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>はさみうち定理</div>
+  <div class="card purple-top">
+    <div class="card-desc">
+      g(x) ≤ f(x) ≤ h(x) で g,h が同じ極限 L を持つなら f も L に収束する。<br>
+      sin(x)/x → 1 (x→0) の証明の核心です。
+    </div>
+    <svg id="figSqueeze" viewBox="0 0 360 200"></svg>
+    <div class="sl-row">
+      <div class="sl-label">拡大倍率</div>
+      <div class="sl-wrap"><input type="range" id="slZoom" min="5" max="40" value="15"></div>
+      <div class="sl-val" id="dispZoom">1.5×</div>
+    </div>
+    <div class="msg" id="msgSqueeze"></div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <h3>ε-δ論法の核心 — 4つのポイント</h3>
+    <div class="summary-grid">
+      <div class="s-item">
+        <div class="s-eq">lim f(x) = L</div>
+        <div class="s-desc">x が a に近づくにつれ f(x) が L に近づく、という「動き」の記述。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--gold)">
+        <div class="s-eq" style="color:var(--gold)">∀ε>0, ∃δ>0</div>
+        <div class="s-desc">「ε を相手がどう決めても、それに応じた δ を我々が用意できる」</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--purple)">
+        <div class="s-eq" style="color:var(--purple)">0&lt;|x−a|&lt;δ → |f(x)−L|&lt;ε</div>
+        <div class="s-desc">x が δ 近傍にあれば f(x) は ε 近傍に収まる。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--red)">
+        <div class="s-eq" style="color:var(--red)">はさみうち定理</div>
+        <div class="s-desc">g≤f≤h かつ lim g = lim h = L ⇒ lim f = L。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg';
+function pe(svg,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]);
+  if(txt!==undefined) e.textContent=txt;
+  svg.appendChild(e); return e;
+}
+function axis(svg,cx,cy,W,H,u){
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'line',{x1:cx,y1:0,x2:cx,y2:H,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  for(let i=-5;i<=5;i++){
+    if(i===0)continue;
+    pe(svg,'text',{x:cx+i*u-3,y:cy+14,'font-size':8,fill:'rgba(255,255,255,0.3)'},i);
+  }
+}
+
+// パート0
+function drawLimit(){
+  const xVal=parseInt(document.getElementById('slX').value)/10;
+  document.getElementById('dispX').textContent=xVal.toFixed(1);
+  const svg=document.getElementById('figLimit');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H/2,u=40;
+  axis(svg,cx,cy,W,H,u);
+  // f(x) = x^2 / (x*2) simplified: just draw x^2/4 for visibility
+  const pts=[];
+  for(let px=0;px<W;px++){
+    const x=(px-cx)/u;
+    const y=x*x*0.5;
+    const py=cy-y*u;
+    pts.push(`${px},${py}`);
+  }
+  pe(svg,'polyline',{points:pts.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none','stroke-linecap':'round'});
+  // moving point
+  const px=cx+xVal*u;
+  const py=cy-xVal*xVal*0.5*u;
+  pe(svg,'circle',{cx:px,cy:py,r:6,fill:'#ffd54f',stroke:'#ffd54f'});
+  pe(svg,'line',{x1:px,y1:cy,x2:px,y2:py,stroke:'rgba(255,213,79,0.5)','stroke-width':1,'stroke-dasharray':'3,3'});
+  pe(svg,'line',{x1:cx,y1:py,x2:px,y2:py,stroke:'rgba(255,213,79,0.5)','stroke-width':1,'stroke-dasharray':'3,3'});
+  const fval=xVal*xVal*0.5;
+  pe(svg,'text',{x:px+8,y:py-6,'font-size':10,'font-weight':700,fill:'#ffd54f'},`f(${xVal.toFixed(1)})=${fval.toFixed(2)}`);
+  document.getElementById('msgLimit').innerHTML=
+    `x = <b>${xVal.toFixed(2)}</b> のとき f(x) = x²/2 = <b style="color:var(--gold)">${fval.toFixed(3)}</b><br>`+
+    `x を 0 に近づけると f(x) → <span class="g">0</span>。これが lim<sub>x→0</sub> x²/2 = 0 の直感です。`;
+}
+
+// パート1
+let curFunc='cont';
+function f1(x){
+  if(curFunc==='cont') return x*x/4;
+  if(curFunc==='jump') return x>=0?1:-1;
+  if(curFunc==='sinc') return Math.abs(x)<0.001?1:Math.sin(x)/x;
+  return 0;
+}
+function setFunc(name,btn){
+  curFunc=name;
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  drawLR();
+}
+window.setFunc=setFunc;
+
+function drawLR(){
+  const aVal=parseInt(document.getElementById('slA').value)/10;
+  document.getElementById('dispA').textContent=aVal.toFixed(1);
+  const svg=document.getElementById('figLR');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H*0.6,u=40;
+  axis(svg,cx,cy,W,H,u);
+  // curve
+  const pts=[];
+  for(let px=0;px<W;px++){
+    const x=(px-cx)/u;
+    if(curFunc==='jump'&&Math.abs(x)<0.05)continue;
+    const y=f1(x);
+    const py=cy-y*u;
+    if(py>-20&&py<H+20) pts.push(`${px},${py}`);
+    else if(pts.length) pts.push('M');
+  }
+  let cur=[];
+  for(const p of pts){
+    if(p==='M'){if(cur.length>1)pe(svg,'polyline',{points:cur.join(' '),stroke:'#69f0ae','stroke-width':2,fill:'none'});cur=[];}
+    else cur.push(p);
+  }
+  if(cur.length>1) pe(svg,'polyline',{points:cur.join(' '),stroke:'#69f0ae','stroke-width':2,fill:'none'});
+
+  const eps=0.05;
+  const fL=f1(aVal-eps), fR=f1(aVal+eps);
+  const ax=cx+aVal*u;
+  pe(svg,'line',{x1:ax,y1:0,x2:ax,y2:H,stroke:'rgba(255,213,79,0.4)','stroke-width':1,'stroke-dasharray':'4,3'});
+  pe(svg,'circle',{cx:ax,cy:cy-fL*u,r:5,fill:'#4fc3f7'});
+  pe(svg,'circle',{cx:ax,cy:cy-fR*u,r:5,fill:'#ff6b6b'});
+  const same=Math.abs(fL-fR)<0.05;
+  document.getElementById('msgLR').innerHTML=
+    `a = ${aVal.toFixed(1)} で:<br>`+
+    `左極限（<span style="color:#4fc3f7">青</span>）: <b>${fL.toFixed(3)}</b> ／ `+
+    `右極限（<span style="color:#ff6b6b">赤</span>）: <b>${fR.toFixed(3)}</b><br>`+
+    (same?`<span class="g">両側が一致 → 極限が存在します！</span>`:`<span class="r">不一致 → この点では極限が存在しません。</span>`);
+}
+
+// パート2：ε-δ
+function drawED(){
+  const epsRaw=parseInt(document.getElementById('slEps').value)/20;
+  const delRaw=parseInt(document.getElementById('slDelta').value)/20;
+  document.getElementById('dispEps').textContent=epsRaw.toFixed(2);
+  document.getElementById('dispDelta').textContent=delRaw.toFixed(2);
+  const svg=document.getElementById('figED');svg.innerHTML='';
+  const W=360,H=240,cx=W/2,cy=H/2,u=60;
+  // f(x)=2x, a=1, L=2
+  const a=1,L=2;
+  axis(svg,cx,cy,W,H,u);
+  // curve f(x)=2x
+  pe(svg,'line',{x1:0,y1:cy+u*0,x2:W,y2:cy-(W/u)*2*u+cy*2-cy,stroke:'rgba(255,255,255,0.2)','stroke-width':1});
+  const x1p=0,x1v=(x1p-cx)/u,y1v=2*x1v;
+  const x2p=W,x2v=(x2p-cx)/u,y2v=2*x2v;
+  pe(svg,'line',{x1:x1p,y1:cy-y1v*u,x2:x2p,y2:cy-y2v*u,stroke:'#4fc3f7','stroke-width':2});
+  // ε band (horizontal around L)
+  const Lpy=cy-L*u;
+  pe(svg,'rect',{x:0,y:Lpy-epsRaw*u,width:W,height:epsRaw*2*u,fill:'rgba(255,213,79,0.08)',stroke:'rgba(255,213,79,0.4)','stroke-width':1,'stroke-dasharray':'5,3'});
+  // δ band (vertical around a)
+  const apx=cx+a*u;
+  pe(svg,'rect',{x:apx-delRaw*u,y:0,width:delRaw*2*u,height:H,fill:'rgba(105,240,174,0.08)',stroke:'rgba(105,240,174,0.4)','stroke-width':1,'stroke-dasharray':'5,3'});
+  // check: for f(x)=2x near a=1, need δ≤ε/2
+  const needed=epsRaw/2;
+  const ok=delRaw<=needed+0.01;
+  pe(svg,'circle',{cx:apx,cy:Lpy,r:7,fill:ok?'#69f0ae':'#ff6b6b'});
+  pe(svg,'text',{x:apx+10,y:Lpy-8,'font-size':10,'font-weight':700,fill:'#ffd54f'},`L=2, a=1`);
+  pe(svg,'text',{x:8,y:Lpy-epsRaw*u+12,'font-size':9,fill:'#ffd54f'},`L+ε`);
+  pe(svg,'text',{x:8,y:Lpy+epsRaw*u-4,'font-size':9,fill:'#ffd54f'},`L−ε`);
+  pe(svg,'text',{x:apx-delRaw*u+2,y:H-6,'font-size':9,fill:'#69f0ae'},`a−δ`);
+  pe(svg,'text',{x:apx+delRaw*u-20,y:H-6,'font-size':9,fill:'#69f0ae'},`a+δ`);
+  document.getElementById('msgED').innerHTML=
+    `f(x) = 2x, a=1, L=2 の場合、δ ≤ ε/2 が必要。<br>`+
+    `ε=${epsRaw.toFixed(2)} → 必要な δ ≤ <b>${needed.toFixed(2)}</b>、あなたの δ = ${delRaw.toFixed(2)}<br>`+
+    (ok?`<span class="g">条件を満たしている！ ε-δ 成立です。</span>`:`<span class="r">δ が大きすぎ。もっと小さくしてみよう。</span>`);
+}
+
+// パート3：はさみうち
+function drawSqueeze(){
+  const zoom=parseInt(document.getElementById('slZoom').value)/10;
+  document.getElementById('dispZoom').textContent=zoom.toFixed(1)+'×';
+  const svg=document.getElementById('figSqueeze');svg.innerHTML='';
+  const W=360,H=200,cx=W/2,cy=H*0.55,u=60*zoom;
+  axis(svg,cx,cy,W,H,u);
+  // g(x)=-|x|, h(x)=|x|, f(x)=x*sin(1/x) near 0 (use x*sin(5/x) for visibility)
+  const ptsg=[],ptsh=[],ptsf=[];
+  for(let px=0;px<W;px++){
+    const x=(px-cx)/u;
+    if(Math.abs(x)<0.01)continue;
+    const g=-Math.abs(x), h=Math.abs(x);
+    const f=x*Math.sin(5/x);
+    const pyg=cy-g*u,pyh=cy-h*u,pyf=cy-f*u;
+    ptsg.push(`${px},${pyg}`);
+    ptsh.push(`${px},${pyh}`);
+    if(pyf>0&&pyf<H) ptsf.push(`${px},${pyf}`);
+    else ptsf.push('M');
+  }
+  pe(svg,'polyline',{points:ptsg.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
+  pe(svg,'polyline',{points:ptsh.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
+  let cur=[];
+  for(const p of ptsf){
+    if(p==='M'){if(cur.length>1)pe(svg,'polyline',{points:cur.join(' '),stroke:'#ffd54f','stroke-width':1.5,fill:'none'});cur=[];}
+    else cur.push(p);
+  }
+  if(cur.length>1) pe(svg,'polyline',{points:cur.join(' '),stroke:'#ffd54f','stroke-width':1.5,fill:'none'});
+  pe(svg,'circle',{cx:cx,cy:cy,r:6,fill:'#69f0ae'});
+  pe(svg,'text',{x:cx+8,y:cy-8,'font-size':10,'font-weight':700,fill:'#69f0ae'},'→ 0');
+  pe(svg,'text',{x:W-80,y:50,'font-size':9,fill:'#4fc3f7'},'h(x)=|x|');
+  pe(svg,'text',{x:W-80,y:H-20,'font-size':9,fill:'#4fc3f7'},'g(x)=−|x|');
+  pe(svg,'text',{x:cx+8,y:cy+30,'font-size':9,fill:'#ffd54f'},'f(x)=x·sin(5/x)');
+  document.getElementById('msgSqueeze').innerHTML=
+    `<b>−|x| ≤ x·sin(5/x) ≤ |x|</b> が成り立つ。<br>`+
+    `x→0 で −|x|→0 かつ |x|→0 だから、はさみうちで f(x)→<span class="g">0</span>。<br>`+
+    `倍率を上げると f(x) が二つの青い直線にはさまれていくのが見えます。`;
+}
+
+document.getElementById('slX').addEventListener('input',drawLimit);
+document.getElementById('slA').addEventListener('input',drawLR);
+document.getElementById('slEps').addEventListener('input',drawED);
+document.getElementById('slDelta').addEventListener('input',drawED);
+document.getElementById('slZoom').addEventListener('input',drawSqueeze);
+
+drawLimit();drawLR();drawED();drawSqueeze();
+})();
+</script>
+</body>
+</html>
