@@ -246,6 +246,16 @@
   }
   .score-wrap span { color: #006064; font-size: 1.1em; }
 
+  /* ── エフェクト＆バッジ ── */
+  @keyframes starFall{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes flashPink{0%{opacity:0}15%{opacity:.25}100%{opacity:0}}
+  @keyframes praiseIn{0%{transform:scale(.4);opacity:0}65%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  .quiz-praise{font-size:1.8rem;font-weight:900;color:#c62828;display:block;animation:praiseIn .4s ease;margin-bottom:2px;}
+  .master-badge{text-align:center;padding:18px;background:linear-gradient(135deg,#880e4f,#c62828);border-radius:14px;color:#fff;margin-top:16px;display:none;}
+  .master-badge.show{display:block;}
+  .master-badge .mb-icon{font-size:2.5rem;display:block;margin-bottom:6px;}
+  .master-badge .mb-lbl{font-size:1rem;font-weight:700;}
+
   /* ── パート4：たし算との関係 ── */
   .relation-box {
     background: #f9fbe7;
@@ -471,6 +481,10 @@
     <div class="score-wrap">
       せいかい <span id="scoreOk">0</span> ／ <span id="scoreTotal">0</span> もん
     </div>
+    <div class="master-badge" id="hikizanBadge">
+      <span class="mb-icon">🏅</span>
+      <div class="mb-lbl">ひきざんマスター バッジ かくとく！</div>
+    </div>
   </div>
 </div>
 
@@ -622,11 +636,18 @@ function checkQuiz(selected, btn) {
   const fb = document.getElementById('quizFeedback');
   if (selected === diff) {
     btn.classList.add('correct-ans');
-    fb.textContent = '🎉 せいかい！ すごい！';
-    fb.style.color = '#388e3c';
     scoreOk++;
+    const _prs=['すごい！','天才！','やるね！','かんぺき！','さすが！'];
+    fb.innerHTML='<span class="quiz-praise">'+_prs[Math.random()*_prs.length|0]+'</span>🎉 せいかい！ すごい！';
+    fb.style.color = '#388e3c';
     soundCorrect();
     speak(diff);
+    showStars();
+    flashScreen();
+    if(scoreOk>=10&&!localStorage.getItem('badge_hikizan')){
+      localStorage.setItem('badge_hikizan','1');
+      setTimeout(()=>{ document.getElementById('hikizanBadge').className='master-badge show'; },500);
+    }
   } else {
     btn.classList.add('wrong-ans');
     fb.textContent = `😢 ざんねん… こたえは ${diff} だよ！`;
@@ -732,6 +753,27 @@ function soundPop() {
     const ac = getAC(); const now = ac.currentTime;
     playTone(440, 'triangle', now, 0.1, 0.2, ac);
   } catch(e) {}
+}
+
+// ── エフェクト ──
+function showStars(){
+  for(let i=0;i<18;i++) setTimeout(()=>{
+    const s=document.createElement('div');
+    s.style.cssText='position:fixed;top:-30px;left:'+Math.random()*100+'%;font-size:'+(1.2+Math.random()*.8)+'rem;pointer-events:none;z-index:9998;animation:starFall '+(0.8+Math.random()*.7)+'s ease-in forwards;';
+    s.textContent=['⭐','✨','🌟'][Math.random()*3|0];
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),2000);
+  },i*65);
+}
+function flashScreen(){
+  const f=document.createElement('div');
+  f.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9997;background:rgba(198,40,40,0);animation:flashPink .7s ease;';
+  document.body.appendChild(f); setTimeout(()=>f.remove(),700);
+}
+
+// ── バッジ初期化 ──
+if(localStorage.getItem('badge_hikizan')){
+  document.getElementById('hikizanBadge').className='master-badge show';
 }
 </script>
 </body>

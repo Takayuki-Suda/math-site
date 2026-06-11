@@ -145,55 +145,35 @@
   }
   .hint-box b { color: var(--ink); }
 
-  /* ── クイズ ── */
-  .quiz-wrap {
-    margin-top: 16px;
-    background: #fff;
-    border: 1px solid #e0d8cc;
-    border-radius: 14px;
-    padding: 16px 18px;
-  }
-  .quiz-wrap h2 {
-    font-size: .95rem;
-    font-weight: 900;
-    margin-bottom: 10px;
-    border-left: 4px solid #f9c74f;
-    padding-left: 8px;
-  }
-  .quiz-q { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
-  .quiz-choices {
-    display: flex; flex-wrap: wrap; gap: 8px;
-  }
-  .quiz-btn {
-    flex: 1 1 80px;
-    padding: 10px 0;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    background: #fafafa;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .12s, border-color .12s;
-    font-family: inherit;
-  }
-  .quiz-btn:hover { background: #fff3cd; border-color: #f9c74f; }
-  .quiz-btn.correct { background: #d4ecd4; border-color: #4caf50; color: #2a6e2a; }
-  .quiz-btn.wrong   { background: #fde8e4; border-color: #e8523a; color: #8b1a0a; }
-  .quiz-result { margin-top: 10px; font-size: .9rem; font-weight: 700; min-height: 1.4em; }
-  .quiz-next {
-    margin-top: 10px;
-    padding: 8px 20px;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: .88rem;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-    display: none;
-  }
-  .quiz-next:hover { background: #444; }
+  /* ── 九九クイズモード ── */
+  @keyframes starFall{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes flashGold{0%{opacity:0}15%{opacity:.3}100%{opacity:0}}
+  @keyframes praiseIn{0%{transform:scale(.4);opacity:0}65%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+  .quiz-launch{display:block;width:100%;margin:20px 0 0;padding:18px;background:linear-gradient(135deg,#311b92 0%,#e8523a 100%);color:#fff;border:none;border-radius:16px;font-size:1.2rem;font-weight:900;letter-spacing:.08em;cursor:pointer;font-family:inherit;box-shadow:0 6px 22px rgba(49,27,146,.4);transition:transform .15s,box-shadow .15s;}
+  .quiz-launch:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(49,27,146,.5);}
+  .quiz-launch:active{transform:translateY(0);}
+  .qmode{margin-top:14px;background:#fff;border:3px solid #311b92;border-radius:18px;padding:20px;display:none;}
+  .qmode.open{display:block;}
+  .qm-prog-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .qm-bar{flex:1;height:14px;background:#e8e0d4;border-radius:7px;overflow:hidden;}
+  .qm-bar-fill{height:100%;background:linear-gradient(90deg,#311b92,#e8523a);border-radius:7px;transition:width .35s;}
+  .qm-score{font-size:.9rem;font-weight:700;white-space:nowrap;color:var(--ink);}
+  .qm-question{font-size:2.4rem;font-weight:900;text-align:center;color:var(--ink);letter-spacing:.12em;margin:8px 0 14px;min-height:3rem;}
+  .qm-display{background:var(--ink);border-radius:10px;padding:12px 18px;min-height:58px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;}
+  .qm-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .qpad{padding:16px 0;background:#f5f0e8;border:2px solid #e0d8cc;border-radius:12px;font-size:1.5rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .1s,transform .1s;}
+  .qpad:hover{background:#fde8c8;} .qpad:active{transform:scale(.92);}
+  .qpad.clr{background:#fde8e4;border-color:#e8523a;color:#c8401e;}
+  .qpad.ok{background:var(--ink);color:#f9c74f;border-color:var(--ink);font-size:1rem;letter-spacing:.06em;}
+  .qpad.ok:hover{background:#3d3320;}
+  .qm-feedback{min-height:64px;text-align:center;font-size:1rem;font-weight:700;padding:6px 0;line-height:1.7;}
+  .qm-praise{font-size:2rem;font-weight:900;color:#e8523a;display:block;animation:praiseIn .4s ease;margin-bottom:4px;}
+  .qm-next{display:none;width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;}
+  .qm-next:hover{background:#3d3320;}
+  .qm-badge-box{text-align:center;padding:18px 16px;background:linear-gradient(135deg,#1a237e,#311b92);border-radius:14px;color:#fff;margin-top:14px;display:none;}
+  .qm-badge-box.show{display:block;}
+  .qm-badge-icon{font-size:2.8rem;display:block;margin-bottom:6px;}
+  .qm-badge-lbl{font-size:1rem;font-weight:700;}
 </style>
 
 <script>
@@ -324,13 +304,23 @@
     たとえば 3×4 は「たて3、よこ4」の長方形の面積。タイルの数を数えると 12 個！掛け算はマス目の面積と同じ考え方です。
   </div>
 
-  <!-- クイズ -->
-  <div class="quiz-wrap">
-    <h2>🎯 チャレンジ！</h2>
-    <div class="quiz-q" id="quiz-q"></div>
-    <div class="quiz-choices" id="quiz-choices"></div>
-    <div class="quiz-result" id="quiz-result"></div>
-    <button class="quiz-next" id="quiz-next" onclick="nextQuiz()">次の問題 →</button>
+  <!-- クイズモード -->
+  <button class="quiz-launch" onclick="openKukuQuiz()">🎯 クイズに挑戦！</button>
+
+  <div class="qmode" id="qmode">
+    <div class="qm-prog-wrap">
+      <div class="qm-bar"><div class="qm-bar-fill" id="qmBarFill" style="width:0%"></div></div>
+      <div class="qm-score"><span id="qmOk">0</span> / 10 せいかい</div>
+    </div>
+    <div class="qm-question" id="qmQ"></div>
+    <div class="qm-display" id="qmDisp"></div>
+    <div class="qm-numpad" id="qmPad"></div>
+    <div class="qm-feedback" id="qmFb"></div>
+    <button class="qm-next" id="qmNext" onclick="qmNextQ()">つぎの もんだい →</button>
+    <div class="qm-badge-box" id="qmBadge">
+      <span class="qm-badge-icon">🏅</span>
+      <div class="qm-badge-lbl">九九マスター バッジ かくとく！</div>
+    </div>
   </div>
 </div>
 
@@ -395,56 +385,109 @@
     });
   }
 
-  // ── クイズ ──
-  let correctAns = 0;
+  // ── 九九クイズモード ──
+  let _qA=0, _qB=0, _qInput='', _qAnswered=false, _qOk=0;
 
-  function nextQuiz(){
-    const r = Math.ceil(Math.random()*9);
-    const c = Math.ceil(Math.random()*9);
-    correctAns = r * c;
-
-    document.getElementById("quiz-q").textContent = `${r} × ${c} = ？`;
-    document.getElementById("quiz-result").textContent = "";
-    document.getElementById("quiz-next").style.display = "none";
-
-    // 選択肢（正解＋ダミー3つ）
-    const choices = new Set([correctAns]);
-    while(choices.size < 4){
-      const d = correctAns + (Math.floor(Math.random()*7)-3) * (Math.ceil(Math.random()*3));
-      if(d > 0 && d <= 81 && d !== correctAns) choices.add(d);
-    }
-    const arr = [...choices].sort(() => Math.random()-.5);
-
-    const choicesEl = document.getElementById("quiz-choices");
-    choicesEl.innerHTML = "";
-    arr.forEach(v => {
-      const btn = document.createElement("button");
-      btn.className = "quiz-btn";
-      btn.textContent = v;
-      btn.onclick = () => checkAnswer(v, btn);
-      choicesEl.appendChild(btn);
+  function _qBuildPad(){
+    const pad=document.getElementById('qmPad');
+    pad.innerHTML='';
+    [7,8,9,4,5,6,1,2,3].forEach(n=>{
+      const b=document.createElement('button');
+      b.className='qpad'; b.textContent=n;
+      b.addEventListener('click',()=>{ if(!_qAnswered&&_qInput.length<2){_qInput+=n;_qUpdDisp();} });
+      pad.appendChild(b);
     });
+    const b0=document.createElement('button'); b0.className='qpad'; b0.textContent='0';
+    b0.addEventListener('click',()=>{ if(!_qAnswered&&_qInput.length>0&&_qInput.length<2){_qInput+='0';_qUpdDisp();} });
+    const bc=document.createElement('button'); bc.className='qpad clr'; bc.textContent='C';
+    bc.addEventListener('click',()=>{ if(!_qAnswered){_qInput='';_qUpdDisp();} });
+    const be=document.createElement('button'); be.className='qpad ok'; be.textContent='けってい';
+    be.addEventListener('click',_qCheck);
+    pad.appendChild(b0); pad.appendChild(bc); pad.appendChild(be);
   }
 
-  function checkAnswer(val, btn){
-    document.querySelectorAll(".quiz-btn").forEach(b => b.onclick = null);
-    const result = document.getElementById("quiz-result");
-    if(val === correctAns){
-      btn.classList.add("correct");
-      result.style.color = "#2a6e2a";
-      result.textContent = "⭕ 正解！ よくできました！";
+  function _qUpdDisp(){
+    const d=document.getElementById('qmDisp');
+    if(!_qInput){
+      d.style.color='#888'; d.style.fontSize='1rem'; d.textContent='こたえを にゅうりょく';
     } else {
-      btn.classList.add("wrong");
-      document.querySelectorAll(".quiz-btn").forEach(b => {
-        if(parseInt(b.textContent) === correctAns) b.classList.add("correct");
-      });
-      result.style.color = "#c8401e";
-      result.textContent = `❌ 惜しい！ 答えは ${correctAns} だよ。`;
+      d.style.color='#f9c74f'; d.style.fontSize='2.2rem'; d.textContent=_qInput;
     }
-    document.getElementById("quiz-next").style.display = "inline-block";
   }
 
-  nextQuiz();
-  window.nextQuiz = nextQuiz;
+  function _qNewQ(){
+    _qA=1+(Math.random()*9|0); _qB=1+(Math.random()*9|0);
+    _qInput=''; _qAnswered=false;
+    document.getElementById('qmQ').textContent=`${_qA} × ${_qB} ＝ ？`;
+    _qUpdDisp();
+    const fb=document.getElementById('qmFb'); fb.innerHTML=''; fb.style.color='';
+    document.getElementById('qmNext').style.display='none';
+    _qBuildPad();
+    clearHighlight();
+  }
+
+  function _qCheck(){
+    if(_qAnswered||!_qInput) return;
+    _qAnswered=true;
+    const ans=_qA*_qB, given=parseInt(_qInput);
+    const fb=document.getElementById('qmFb');
+    if(given===ans){
+      _qOk++;
+      const prs=['すごい！','天才！','やるね！','かんぺき！','さすが！','やるじゃん！'];
+      fb.innerHTML=`<span class="qm-praise">${prs[Math.random()*prs.length|0]}</span>⭕ せいかい！ ${_qA}×${_qB}＝${ans}`;
+      fb.style.color='#2a6e2a';
+      _qUpdProg();
+      _qShowStars();
+      _qFlash();
+      highlight(_qA,_qB);
+      if(_qOk>=10&&!localStorage.getItem('badge_kuku')){
+        localStorage.setItem('badge_kuku','1');
+        setTimeout(()=>{ document.getElementById('qmBadge').className='qm-badge-box show'; },500);
+      }
+    } else {
+      fb.innerHTML=`おしい！ もういちど！<br><small style="color:#888">こたえは ${ans} だよ。下の表をみてみよう 🔍</small>`;
+      fb.style.color='#c8401e';
+      highlight(_qA,_qB);
+    }
+    document.getElementById('qmNext').style.display='block';
+  }
+
+  function _qUpdProg(){
+    const n=Math.min(_qOk,10);
+    document.getElementById('qmBarFill').style.width=(n*10)+'%';
+    document.getElementById('qmOk').textContent=n;
+  }
+
+  function _qShowStars(){
+    for(let i=0;i<18;i++) setTimeout(()=>{
+      const s=document.createElement('div');
+      s.style.cssText='position:fixed;top:-30px;left:'+Math.random()*100+'%;font-size:'+(1.2+Math.random()*.8)+'rem;pointer-events:none;z-index:9998;animation:starFall '+(0.8+Math.random()*.7)+'s ease-in forwards;';
+      s.textContent=['⭐','✨','🌟'][Math.random()*3|0];
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),2000);
+    },i*65);
+  }
+
+  function _qFlash(){
+    const f=document.createElement('div');
+    f.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9997;background:rgba(249,199,79,0);animation:flashGold .7s ease;';
+    document.body.appendChild(f); setTimeout(()=>f.remove(),700);
+  }
+
+  function openKukuQuiz(){
+    const q=document.getElementById('qmode');
+    q.className='qmode open';
+    q.scrollIntoView({behavior:'smooth',block:'nearest'});
+    if(localStorage.getItem('badge_kuku')){
+      document.getElementById('qmBadge').className='qm-badge-box show';
+      document.getElementById('qmOk').textContent='10';
+      document.getElementById('qmBarFill').style.width='100%';
+      _qOk=10;
+    }
+    _qNewQ();
+  }
+
+  window.openKukuQuiz=openKukuQuiz;
+  window.qmNextQ=function(){ _qNewQ(); };
 })();
 </script>

@@ -67,6 +67,18 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 .stamp-count{text-align:center;font-size:.88rem;color:var(--gray);padding-top:2px;}
 .stamp-count em{color:var(--gold);font-style:normal;font-weight:900;font-size:1.1rem;}
 @keyframes sglow{from{box-shadow:0 0 8px rgba(200,168,75,.35);}to{box-shadow:0 0 22px rgba(200,168,75,.85),0 0 6px rgba(255,220,100,.3);}}
+/* ── マスターバッジ ── */
+.badge-section{margin-bottom:32px;}
+.badge-card{background:#1a2035;border:2px solid #c8a84b;border-radius:18px;padding:22px 16px 18px;}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:6px;}
+.badge-slot{display:flex;flex-direction:column;align-items:center;gap:6px;width:90px;}
+.badge-icon-w{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:2px solid #c8a84b;background:#111827;transition:all .3s;}
+.badge-slot.got .badge-icon-w{box-shadow:0 0 16px rgba(200,168,75,.5);animation:bglow 1.4s ease-in-out infinite alternate;}
+.badge-slot.not .badge-icon-w{filter:grayscale(1) opacity(.28);border-color:#2a2a3a;}
+.badge-name2{font-size:.62rem;text-align:center;line-height:1.4;}
+.badge-slot.got .badge-name2{color:var(--gold);}
+.badge-slot.not .badge-name2{color:#444;}
+@keyframes bglow{from{box-shadow:0 0 8px rgba(200,168,75,.35);}to{box-shadow:0 0 24px rgba(200,168,75,.85),0 0 8px rgba(255,220,100,.3);}}
 </style>
 </head>
 <body>
@@ -151,6 +163,13 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </div>
 
 <div class="container">
+  <div class="badge-section">
+    <div class="stamp-s-label">マスターバッジ</div>
+    <div class="badge-card">
+      <div class="badge-row" id="badgeRow"></div>
+    </div>
+  </div>
+
   <div class="stamp-section">
     <div class="stamp-s-label">スタンプカード</div>
     <div class="stamp-card">
@@ -217,6 +236,22 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 
 <script>
 (function(){
+  // ── マスターバッジ ──
+  var badges=[
+    {id:'kuku',   icon:'🏅', name:'九九<br>マスター'},
+    {id:'tashizan',icon:'🏅', name:'たしざん<br>マスター'},
+    {id:'hikizan', icon:'🏅', name:'ひきざん<br>マスター'}
+  ];
+  var brow=document.getElementById('badgeRow');
+  badges.forEach(function(b){
+    var got=!!localStorage.getItem('badge_'+b.id);
+    var d=document.createElement('div');
+    d.className='badge-slot '+(got?'got':'not');
+    d.innerHTML='<div class="badge-icon-w">'+(got?b.icon:'？')+'</div><div class="badge-name2">'+b.name+'</div>';
+    brow.appendChild(d);
+  });
+
+  // ── スタンプカード ──
   var stamps=[
     {id:'kazu',   e:'🔢', n:'かずの<br>かぞえかた'},
     {id:'tashizan',e:'➕', n:'たしざん'},
