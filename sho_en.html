@@ -271,6 +271,76 @@
 </style>
 </head>
 <body>
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho_index.html">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho_kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho_tashizan.html">たしざん</a>
+          <a href="/math-site/sho_hikizan.html">ひきざん</a>
+          <a href="/math-site/sho_kuku.html">九九の表</a>
+          <a href="/math-site/sho_bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho_sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho_en.html">円の面積</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu_index.html">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu_moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu_houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu_ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu_niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu_sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko_index.html">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko_sankakuhi.html">三角比</a>
+          <a href="/math-site/ko_bibun.html">微分</a>
+          <a href="/math-site/ko_sekibun.html">積分と面積</a>
+          <a href="/math-site/ko_daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko_kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai_index.html">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai_senkei.html">線形写像と次元定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
 
 <!-- ヒーロー -->
 <div class="hero">
