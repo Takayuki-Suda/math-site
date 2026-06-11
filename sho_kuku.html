@@ -1,0 +1,331 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>九九の表</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fffbf2;
+    --ink: #2a1f0e;
+    --grid-bg: #fff;
+    --header-bg: #2a1f0e;
+    --header-fg: #fff;
+    --accent: #e8523a;
+    --highlight-row: #fff3cd;
+    --highlight-col: #d4ecd4;
+    --highlight-cell: #e8523a;
+    --cell-hover: #fde8c8;
+    --tile-on: #e8523a;
+    --tile-off: #e8e0d4;
+    --shadow: rgba(42,31,14,.10);
+  }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 18px 12px 32px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 580px; margin: 0 auto; }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+  }
+  .lead { font-size: .88rem; color: #666; margin-bottom: 16px; }
+
+  /* ── 答えパネル ── */
+  .answer-panel {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+  }
+  .answer-eq {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    flex: 1;
+  }
+  .answer-eq .r { color: #f9c74f; }
+  .answer-eq .c { color: #90e0a0; }
+  .answer-eq .ans { color: var(--accent); }
+  .answer-tiles {
+    display: grid;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .tile {
+    width: 13px; height: 13px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  /* ── 表 ── */
+  .table-wrap {
+    background: var(--grid-bg);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 6px 20px var(--shadow);
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td, th {
+    width: 44px; height: 44px;
+    text-align: center;
+    font-size: .92rem;
+    font-weight: 700;
+    border: 2px solid #e8e0d4;
+    cursor: pointer;
+    user-select: none;
+  }
+  th {
+    background: var(--header-bg);
+    color: var(--header-fg);
+    font-size: .85rem;
+    cursor: default;
+    border-color: #444;
+  }
+  th.corner { background: transparent; border-color: transparent; }
+  td { background: #f5f0e8; }
+  td:hover { background: #f5c97a; }
+  td.hl-row { background: var(--highlight-row); }
+  td.hl-col { background: var(--highlight-col); }
+  td.hl-both {
+    background: var(--highlight-cell);
+    color: #fff;
+    outline: 3px solid #c0321c;
+    outline-offset: -1px;
+  }
+
+  /* ── ヒント ── */
+  .hint-box {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid #e0d8cc;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 14px;
+    font-size: .85rem;
+    color: #555;
+    line-height: 1.7;
+  }
+  .hint-box b { color: var(--ink); }
+
+  /* ── クイズ ── */
+  .quiz-wrap {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #e0d8cc;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .quiz-wrap h2 {
+    font-size: .95rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    border-left: 4px solid #f9c74f;
+    padding-left: 8px;
+  }
+  .quiz-q { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+  .quiz-choices {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-btn {
+    flex: 1 1 80px;
+    padding: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #fafafa;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+    font-family: inherit;
+  }
+  .quiz-btn:hover { background: #fff3cd; border-color: #f9c74f; }
+  .quiz-btn.correct { background: #d4ecd4; border-color: #4caf50; color: #2a6e2a; }
+  .quiz-btn.wrong   { background: #fde8e4; border-color: #e8523a; color: #8b1a0a; }
+  .quiz-result { margin-top: 10px; font-size: .9rem; font-weight: 700; min-height: 1.4em; }
+  .quiz-next {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: none;
+  }
+  .quiz-next:hover { background: #444; }
+</style>
+
+<div class="wrap">
+  <h1>九九の表</h1>
+  <p class="lead">マスにさわると、その掛け算が面積タイルで光ります。どの段が得意か確かめてみよう！</p>
+
+  <!-- 答えパネル -->
+  <div class="answer-panel">
+    <div class="answer-eq" id="eq">
+      <span>← マスをさわってみよう</span>
+    </div>
+    <div class="answer-tiles" id="tiles"></div>
+  </div>
+
+  <!-- 九九の表 -->
+  <div class="table-wrap">
+    <table id="kuku">
+      <thead>
+        <tr>
+          <th class="corner">×</th>
+          <script>for(let c=1;c<=9;c++) document.write(`<th>${c}</th>`);</script>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ヒント -->
+  <div class="hint-box" id="hint">
+    <b>面積で考えよう</b><br>
+    たとえば 3×4 は「たて3、よこ4」の長方形の面積。タイルの数を数えると 12 個！掛け算はマス目の面積と同じ考え方です。
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz-wrap">
+    <h2>🎯 チャレンジ！</h2>
+    <div class="quiz-q" id="quiz-q"></div>
+    <div class="quiz-choices" id="quiz-choices"></div>
+    <div class="quiz-result" id="quiz-result"></div>
+    <button class="quiz-next" id="quiz-next" onclick="nextQuiz()">次の問題 →</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // 表を生成
+  const tbody = document.getElementById("tbody");
+  for(let r=1; r<=9; r++){
+    const tr = document.createElement("tr");
+    // 行ヘッダ
+    const th = document.createElement("th");
+    th.textContent = r;
+    tr.appendChild(th);
+    for(let c=1; c<=9; c++){
+      const td = document.createElement("td");
+      td.textContent = r * c;
+      td.dataset.r = r;
+      td.dataset.c = c;
+      td.addEventListener("mouseenter", () => highlight(r, c));
+      td.addEventListener("click",      () => highlight(r, c));
+      td.addEventListener("mouseleave", clearHighlight);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  function highlight(r, c){
+    clearHighlight();
+    document.querySelectorAll("#kuku td").forEach(td => {
+      const tr2 = parseInt(td.dataset.r), tc = parseInt(td.dataset.c);
+      if(tr2 === r && tc === c) td.classList.add("hl-both");
+      else if(tr2 === r)        td.classList.add("hl-row");
+      else if(tc === c)         td.classList.add("hl-col");
+    });
+
+    // 答えパネル
+    const ans = r * c;
+    const eq = document.getElementById("eq");
+    eq.innerHTML =
+      `<span class="r">${r}</span> × <span class="c">${c}</span> = <span class="ans">${ans}</span>`;
+
+    // タイル（r行 × c列のグリッド）
+    const tilesEl = document.getElementById("tiles");
+    tilesEl.innerHTML = "";
+    tilesEl.style.gridTemplateColumns = `repeat(${c}, 13px)`;
+    for(let i=0; i < r * c; i++){
+      const t = document.createElement("div");
+      t.className = "tile";
+      tilesEl.appendChild(t);
+    }
+
+    // ヒント
+    const hint = document.getElementById("hint");
+    hint.innerHTML = `<b>面積で考えよう</b><br>
+      <span style="color:#c8401e;font-weight:700">${r}</span> × <span style="color:#2a6e2a;font-weight:700">${c}</span> は「たて${r}、よこ${c}」の長方形の面積。
+      タイルが <b>${ans} 個</b> 並んでいます！`;
+  }
+
+  function clearHighlight(){
+    document.querySelectorAll("#kuku td").forEach(td => {
+      td.classList.remove("hl-row","hl-col","hl-both");
+    });
+  }
+
+  // ── クイズ ──
+  let correctAns = 0;
+
+  function nextQuiz(){
+    const r = Math.ceil(Math.random()*9);
+    const c = Math.ceil(Math.random()*9);
+    correctAns = r * c;
+
+    document.getElementById("quiz-q").textContent = `${r} × ${c} = ？`;
+    document.getElementById("quiz-result").textContent = "";
+    document.getElementById("quiz-next").style.display = "none";
+
+    // 選択肢（正解＋ダミー3つ）
+    const choices = new Set([correctAns]);
+    while(choices.size < 4){
+      const d = correctAns + (Math.floor(Math.random()*7)-3) * (Math.ceil(Math.random()*3));
+      if(d > 0 && d <= 81 && d !== correctAns) choices.add(d);
+    }
+    const arr = [...choices].sort(() => Math.random()-.5);
+
+    const choicesEl = document.getElementById("quiz-choices");
+    choicesEl.innerHTML = "";
+    arr.forEach(v => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-btn";
+      btn.textContent = v;
+      btn.onclick = () => checkAnswer(v, btn);
+      choicesEl.appendChild(btn);
+    });
+  }
+
+  function checkAnswer(val, btn){
+    document.querySelectorAll(".quiz-btn").forEach(b => b.onclick = null);
+    const result = document.getElementById("quiz-result");
+    if(val === correctAns){
+      btn.classList.add("correct");
+      result.style.color = "#2a6e2a";
+      result.textContent = "⭕ 正解！ よくできました！";
+    } else {
+      btn.classList.add("wrong");
+      document.querySelectorAll(".quiz-btn").forEach(b => {
+        if(parseInt(b.textContent) === correctAns) b.classList.add("correct");
+      });
+      result.style.color = "#c8401e";
+      result.textContent = `❌ 惜しい！ 答えは ${correctAns} だよ。`;
+    }
+    document.getElementById("quiz-next").style.display = "inline-block";
+  }
+
+  nextQuiz();
+  window.nextQuiz = nextQuiz;
+})();
+</script>

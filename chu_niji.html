@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二次関数 y = a(x-p)² + q</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #f4f7fb;
+  --white: #ffffff;
+  --ink: #1a2332;
+  --muted: #7a8a9a;
+  --red: #d62828;
+  --blue: #1a56c4;
+  --green: #2a7a3a;
+  --purple: #6a3aaa;
+  --orange: #e8650a;
+  --grid: #dde4ef;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 0 0 56px;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1a0a2e 0%, #3a1a6e 100%);
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(160,100,255,0.2);
+  color: #c0a0ff;
+  border: 1px solid rgba(160,100,255,0.4);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Kaisei Decol', serif;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+  line-height: 1.3;
+}
+.hero h1 .formula {
+  font-family: var(--mono);
+  color: #c0a0ff;
+  font-size: 0.85em;
+}
+.hero p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  position: relative;
+}
+
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 16px 0;
+}
+
+.graph-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+canvas { display: block; width: 100%; border-radius: 8px; }
+
+.controls {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.formula-display {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+.v-a { color: var(--red); }
+.v-p { color: var(--green); }
+.v-q { color: var(--purple); }
+
+.slider-group { margin-bottom: 20px; }
+.slider-group:last-child { margin-bottom: 0; }
+.slider-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.slider-letter {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 20px;
+}
+.slider-letter.a { color: var(--red); }
+.slider-letter.p { color: var(--green); }
+.slider-letter.q { color: var(--purple); }
+.slider-meaning { font-size: 0.82rem; color: var(--muted); flex: 1; }
+.slider-value {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 48px;
+  text-align: right;
+}
+.slider-value.a { color: var(--red); }
+.slider-value.p { color: var(--green); }
+.slider-value.q { color: var(--purple); }
+
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  background: #e0e0e0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid currentColor;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+input[type=range].a-range::-webkit-slider-thumb { border-color: var(--red); }
+input[type=range].p-range::-webkit-slider-thumb { border-color: var(--green); }
+input[type=range].q-range::-webkit-slider-thumb { border-color: var(--purple); }
+
+/* タブ */
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab-btn {
+  padding: 7px 14px;
+  border-radius: 24px;
+  border: 2px solid #dde4ef;
+  background: #fff;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all 0.2s;
+}
+.tab-btn.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.explain-box {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 0.87rem;
+  line-height: 1.85;
+  color: var(--ink);
+  display: none;
+}
+.explain-box.show { display: block; }
+.explain-box .ha { color: var(--red); font-weight: 700; }
+.explain-box .hp { color: var(--green); font-weight: 700; }
+.explain-box .hq { color: var(--purple); font-weight: 700; }
+
+/* 頂点・軸情報 */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media(max-width:480px){ .info-grid { grid-template-columns: 1fr; } }
+
+.info-card {
+  border-radius: 12px;
+  padding: 14px 14px;
+  text-align: center;
+}
+.info-card.vertex { background: rgba(106,58,170,0.08); border: 1.5px solid rgba(106,58,170,0.25); }
+.info-card.axis   { background: rgba(42,122,58,0.08);  border: 1.5px solid rgba(42,122,58,0.25); }
+.info-card.opens  { background: rgba(214,40,40,0.08);  border: 1.5px solid rgba(214,40,40,0.25); }
+.info-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px; }
+.info-card.vertex .info-label { color: var(--purple); }
+.info-card.axis   .info-label { color: var(--green); }
+.info-card.opens  .info-label { color: var(--red); }
+.info-val {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.info-card.vertex .info-val { color: var(--purple); }
+.info-card.axis   .info-val { color: var(--green); }
+.info-card.opens  .info-val { color: var(--red); }
+
+/* 次のステップ */
+.next-section { max-width: 780px; margin: 8px auto 0; padding: 0 16px; }
+.next-card {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1.5px solid #4a9eff;
+  border-radius: 16px; padding: 20px 22px;
+  text-decoration: none; color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(74,158,255,0.2); }
+.next-icon { font-size: 1.8rem; flex-shrink: 0; }
+.next-body { flex: 1; }
+.next-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(74,158,255,0.15); color: #4a9eff;
+  border: 1px solid rgba(74,158,255,0.35); margin-bottom: 6px;
+}
+.next-title { font-size: 0.95rem; font-weight: 700; color: #f0f0ff; margin-bottom: 3px; }
+.next-desc  { font-size: 0.78rem; color: #8080b0; line-height: 1.6; }
+.next-arrow { font-size: 1.3rem; color: #4a9eff; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">中学3年・高校1年</div>
+  <h1>二次関数・放物線<br><span class="formula">y = a(x − p)² + q</span></h1>
+  <p>a・p・q を動かして、放物線の形と位置を体感しよう。</p>
+</div>
+
+<div class="main">
+
+  <!-- 情報カード -->
+  <div class="controls" style="padding-bottom:20px; margin-bottom:20px;">
+    <div class="info-grid">
+      <div class="info-card vertex">
+        <div class="info-label">頂点</div>
+        <div class="info-val" id="vertexVal">(0, 0)</div>
+      </div>
+      <div class="info-card axis">
+        <div class="info-label">軸</div>
+        <div class="info-val" id="axisVal">x = 0</div>
+      </div>
+      <div class="info-card opens">
+        <div class="info-label">開き方</div>
+        <div class="info-val" id="opensVal">上に開く</div>
+      </div>
+    </div>
+
+    <div class="formula-display" id="formulaDisp">
+      y = <span class="v-a">1</span>(x − <span class="v-p">0</span>)² + <span class="v-q">0</span>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter a">a</span>
+        <span class="slider-meaning">放物線の開き方・向き（正:上向き、負:下向き）</span>
+        <span class="slider-value a" id="aVal">1</span>
+      </div>
+      <input type="range" class="a-range" id="aSlider" min="-3" max="3" step="0.5" value="1">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter p">p</span>
+        <span class="slider-meaning">頂点の x 座標（左右の移動）</span>
+        <span class="slider-value p" id="pVal">0</span>
+      </div>
+      <input type="range" class="p-range" id="pSlider" min="-4" max="4" step="0.5" value="0">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter q">q</span>
+        <span class="slider-meaning">頂点の y 座標（上下の移動）</span>
+        <span class="slider-value q" id="qVal">0</span>
+      </div>
+      <input type="range" class="q-range" id="qSlider" min="-4" max="4" step="0.5" value="0">
+    </div>
+  </div>
+
+  <!-- グラフ -->
+  <div class="graph-card">
+    <canvas id="graph" height="380"></canvas>
+  </div>
+
+  <!-- タブ説明 -->
+  <div class="controls" style="padding-bottom:20px;">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="what">二次関数とは？</button>
+      <button class="tab-btn" data-tab="a">a の意味</button>
+      <button class="tab-btn" data-tab="pq">p・q の意味</button>
+      <button class="tab-btn" data-tab="vertex">頂点と軸</button>
+    </div>
+
+    <div class="explain-box show" id="tab-what">
+      <strong>二次関数</strong>とは、x の2乗が含まれる関数です。グラフは<strong>放物線</strong>（U字型の曲線）になります。<br><br>
+      <strong>y = a(x − p)² + q</strong> という形で表すと、頂点・軸・開き方がひと目でわかります。<br><br>
+      ボールを投げたときの軌跡や、橋のアーチの形など、自然界にも多く現れます。
+    </div>
+
+    <div class="explain-box" id="tab-a">
+      <span class="ha">a（係数）</span>は放物線の「開き方」と「向き」を決めます。<br><br>
+      ・<span class="ha">a &gt; 0</span> → 上に開く（谷型）<br>
+      ・<span class="ha">a &lt; 0</span> → 下に開く（山型）<br>
+      ・<span class="ha">|a| が大きい</span> → 細くとがった放物線<br>
+      ・<span class="ha">|a| が小さい</span> → 横に広がった放物線<br><br>
+      a だけを動かして確かめてみよう！p と q は 0 のまま。
+    </div>
+
+    <div class="explain-box" id="tab-pq">
+      <span class="hp">p</span> と <span class="hq">q</span> は放物線の<strong>位置</strong>を決めます。<br><br>
+      ・<span class="hp">p を変える</span> → 放物線が左右に移動（形は変わらない）<br>
+      ・<span class="hq">q を変える</span> → 放物線が上下に移動（形は変わらない）<br><br>
+      注意：<span class="hp">p = 2</span> のとき式は y = a(<strong>x − 2</strong>)² + q。符号に気をつけよう！<br><br>
+      a を固定して p・q だけ動かすと、形はそのままで平行移動するのが確認できます。
+    </div>
+
+    <div class="explain-box" id="tab-vertex">
+      <strong>頂点</strong>とは放物線の「てっぺん（または底）」の点です。<br><br>
+      y = a(x − p)² + q の頂点は <span class="hq">(<span class="hp">p</span>, <span class="hq">q</span>)</span> です。<br><br>
+      <strong>軸</strong>とは放物線の左右対称の直線で、<span class="hp">x = p</span> になります。<br><br>
+      上の「頂点」「軸」の表示がリアルタイムで変わるのを確認しよう！
+    </div>
+  </div>
+
+</div>
+
+<!-- 次のステップ -->
+<div class="next-section">
+  <a class="next-card" href="https://sites.google.com/view/suda-math-aizu/中学生/三平方の定理">
+    <div class="next-icon">📐</div>
+    <div class="next-body">
+      <span class="next-tag">中学3年</span>
+      <div class="next-title">三平方の定理を体感する</div>
+      <div class="next-desc">a²＋b²＝c² がなぜ成り立つのか。動かしながら証明しよう。</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</div>
+
+<script>
+const PI = Math.PI;
+
+function getVals() {
+  return {
+    a: parseFloat(document.getElementById('aSlider').value),
+    p: parseFloat(document.getElementById('pSlider').value),
+    q: parseFloat(document.getElementById('qSlider').value),
+  };
+}
+
+function drawGraph() {
+  const canvas = document.getElementById('graph');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 380;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const { a, p, q } = getVals();
+  const cx = W / 2, cy = H / 2;
+  const unit = Math.min(W, H) / 12;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景
+  ctx.fillStyle = '#f8faff';
+  ctx.fillRect(0, 0, W, H);
+
+  // グリッド
+  ctx.strokeStyle = '#dde4ef';
+  ctx.lineWidth = 1;
+  for (let x = cx % unit; x <= W; x += unit) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = cy % unit; y <= H; y += unit) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // 軸
+  ctx.strokeStyle = '#b8c8de';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+  // 軸ラベル
+  ctx.fillStyle = '#7a8a9a';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  for (let i = -5; i <= 5; i++) {
+    if (i === 0) continue;
+    ctx.fillText(i, cx + i * unit, cy + 18);
+    ctx.textAlign = 'right';
+    ctx.fillText(-i, cx - 8, cy + i * unit + 4);
+    ctx.textAlign = 'center';
+  }
+  ctx.fillStyle = '#1a2332';
+  ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+  ctx.fillText('x', W - 8, cy - 8);
+  ctx.textAlign = 'left';
+  ctx.fillText('y', cx + 6, 14);
+
+  // 対称軸（緑の破線）
+  const axisX = cx + p * unit;
+  if (axisX >= 0 && axisX <= W) {
+    ctx.strokeStyle = 'rgba(42,122,58,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(axisX, 0); ctx.lineTo(axisX, H); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(42,122,58,0.8)';
+    ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`x=${p}`, axisX, 14);
+  }
+
+  // 放物線
+  if (a !== 0) {
+    ctx.strokeStyle = '#6a3aaa';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    let started = false;
+    for (let px2 = 0; px2 <= W; px2 += 1) {
+      const xv = (px2 - cx) / unit;
+      const yv = a * (xv - p) ** 2 + q;
+      const py2 = cy - yv * unit;
+      if (py2 < -H || py2 > H * 2) { started = false; continue; }
+      if (!started) { ctx.moveTo(px2, py2); started = true; }
+      else ctx.lineTo(px2, py2);
+    }
+    ctx.stroke();
+  } else {
+    // a=0: 直線 y=q
+    const py2 = cy - q * unit;
+    ctx.strokeStyle = '#6a3aaa';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(0, py2); ctx.lineTo(W, py2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // 頂点
+  const vx = cx + p * unit;
+  const vy = cy - q * unit;
+  if (vy >= 0 && vy <= H) {
+    ctx.beginPath();
+    ctx.arc(vx, vy, 7, 0, 2 * PI);
+    ctx.fillStyle = '#6a3aaa';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    // 頂点ラベル
+    ctx.fillStyle = '#6a3aaa';
+    ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+    ctx.textAlign = p >= 0 ? 'left' : 'right';
+    const offset = p >= 0 ? 12 : -12;
+    ctx.fillText(`(${p}, ${q})`, vx + offset, vy - 10);
+  }
+}
+
+function updateAll() {
+  const { a, p, q } = getVals();
+
+  document.getElementById('aVal').textContent = a;
+  document.getElementById('pVal').textContent = p;
+  document.getElementById('qVal').textContent = q;
+
+  // 式の表示
+  let aStr = a === 1 ? '' : a === -1 ? '−' : String(a);
+  let pStr = p === 0 ? 'x' : p > 0 ? `(x − <span class="v-p">${p}</span>)` : `(x + <span class="v-p">${Math.abs(p)}</span>)`;
+  let qStr = q >= 0 ? ` + <span class="v-q">${q}</span>` : ` − <span class="v-q">${Math.abs(q)}</span>`;
+  let formula;
+  if (a === 0) {
+    formula = `y = <span class="v-q">${q}</span>（一次関数ではありません）`;
+  } else {
+    formula = `y = <span class="v-a">${aStr || ''}</span>${a === 1 ? '' : a === -1 ? '' : ''}${pStr}²${qStr}`;
+    if (a === 1) formula = `y = ${pStr}²${qStr}`;
+    if (a === -1) formula = `y = −${pStr}²${qStr}`;
+  }
+  document.getElementById('formulaDisp').innerHTML = formula;
+
+  // 情報カード
+  document.getElementById('vertexVal').textContent = `(${p}, ${q})`;
+  document.getElementById('axisVal').textContent = `x = ${p}`;
+  document.getElementById('opensVal').textContent =
+    a > 0 ? '上に開く ∪' : a < 0 ? '下に開く ∩' : '（水平線）';
+
+  drawGraph();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.explain-box').forEach(b => b.classList.remove('show'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('show');
+  });
+});
+
+['aSlider','pSlider','qSlider'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateAll);
+});
+
+window.addEventListener('load', updateAll);
+window.addEventListener('resize', updateAll);
+</script>
+</body>
+</html>

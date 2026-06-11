@@ -1,0 +1,399 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分数の足し算</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f0f7ff;
+    --ink: #1a2a3a;
+    --a-color: #e05a2b;
+    --b-color: #2b7ae0;
+    --sum-color: #2a8a4a;
+    --panel: #fff;
+    --line: #d0dce8;
+  }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 18px 12px 32px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+  }
+  .lead { font-size: .88rem; color: #555; margin-bottom: 16px; }
+
+  .sliders {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .frac-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .frac-row:last-child { margin-bottom: 0; }
+  .frac-label {
+    font-size: 1.5rem;
+    font-weight: 900;
+    min-width: 64px;
+    text-align: center;
+  }
+  .frac-label.a { color: var(--a-color); }
+  .frac-label.b { color: var(--b-color); }
+  .slider-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .slider-line { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+  .slider-line span { min-width: 28px; font-weight: 700; }
+  input[type=range] { flex: 1; }
+  input[type=range].ra { accent-color: var(--a-color); }
+  input[type=range].rb { accent-color: var(--b-color); }
+
+  .pizza-section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .pizza-section h2 {
+    font-size: .92rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--a-color);
+    padding-left: 8px;
+  }
+  .pizza-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .pizza-row:last-child { margin-bottom: 0; }
+  .pizza-row svg { flex-shrink: 0; }
+  .pizza-info { font-size: .88rem; }
+  .pizza-info .big { font-size: 1.1rem; font-weight: 700; }
+  .pizza-divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 12px 0;
+  }
+  .section-label {
+    font-size: .8rem;
+    font-weight: 700;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .calc-panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .calc-panel h2 {
+    font-size: .92rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--b-color);
+    padding-left: 8px;
+  }
+  .step {
+    background: #f4f8ff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: .9rem;
+    line-height: 1.8;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step .no {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .frac-inline {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 700;
+    font-size: .92rem;
+    vertical-align: middle;
+    margin: 0 2px;
+    line-height: 1.2;
+  }
+  .frac-inline .num { border-bottom: 2px solid currentColor; padding: 0 3px; }
+  .frac-inline .den { padding: 0 3px; }
+
+  .answer-box {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+  .answer-box .big {
+    font-size: 2rem;
+    display: block;
+    margin-top: 4px;
+    color: #7effa0;
+  }
+</style>
+
+<div class="wrap">
+  <h1>分数の足し算</h1>
+  <p class="lead">ピザを切って、分母がちがう分数の足し算を見てみよう！</p>
+
+  <!-- 式パネル -->
+  <div style="background:var(--ink);color:#fff;border-radius:14px;padding:16px 20px;
+              margin-bottom:14px;text-align:center;font-size:1.8rem;font-weight:900;
+              letter-spacing:.04em;">
+    <span style="color:#ffb366" id="eq-a">1/2</span>
+    　＋　
+    <span style="color:#6eb8ff" id="eq-b">1/3</span>
+    　＝　
+    <span style="color:#7effa0">？</span>
+  </div>
+
+  <div class="sliders">
+    <div class="frac-row">
+      <div class="frac-label a" id="label-a">1/2</div>
+      <div class="slider-group">
+        <div class="slider-line">
+          <span style="color:var(--a-color)">分母</span>
+          <input type="range" class="ra" id="ad" min="2" max="6" value="2">
+          <span id="ad-v">2</span>
+        </div>
+        <div class="slider-line">
+          <span style="color:var(--a-color)">分子</span>
+          <input type="range" class="ra" id="an" min="1" max="6" value="1">
+          <span id="an-v">1</span>
+        </div>
+      </div>
+    </div>
+    <div class="frac-row">
+      <div class="frac-label b" id="label-b">1/3</div>
+      <div class="slider-group">
+        <div class="slider-line">
+          <span style="color:var(--b-color)">分母</span>
+          <input type="range" class="rb" id="bd" min="2" max="6" value="3">
+          <span id="bd-v">3</span>
+        </div>
+        <div class="slider-line">
+          <span style="color:var(--b-color)">分子</span>
+          <input type="range" class="rb" id="bn" min="1" max="6" value="1">
+          <span id="bn-v">1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pizza-section">
+    <h2>ピザで見てみよう</h2>
+    <div class="section-label">足す前</div>
+    <div class="pizza-row">
+      <svg id="pizza-a" width="80" height="80" viewBox="0 0 80 80"></svg>
+      <div class="pizza-info">
+        <div class="big" id="pa-frac" style="color:var(--a-color)"></div>
+        <div id="pa-desc"></div>
+      </div>
+    </div>
+    <div class="pizza-row">
+      <svg id="pizza-b" width="80" height="80" viewBox="0 0 80 80"></svg>
+      <div class="pizza-info">
+        <div class="big" id="pb-frac" style="color:var(--b-color)"></div>
+        <div id="pb-desc"></div>
+      </div>
+    </div>
+
+    <div id="lcm-section">
+      <hr class="pizza-divider">
+      <div class="section-label">通分すると（同じ大きさに切り直す）</div>
+      <div class="pizza-row">
+        <svg id="pizza-la" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="pizza-info">
+          <div class="big" id="pla-frac" style="color:var(--a-color)"></div>
+          <div id="pla-desc"></div>
+        </div>
+      </div>
+      <div class="pizza-row">
+        <svg id="pizza-lb" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="pizza-info">
+          <div class="big" id="plb-frac" style="color:var(--b-color)"></div>
+          <div id="plb-desc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-panel">
+    <h2>計算の手順</h2>
+    <div class="step" id="step1"></div>
+    <div class="step" id="step2"></div>
+    <div class="step" id="step3"></div>
+  </div>
+
+  <div class="answer-box">
+    <span>答え</span>
+    <span class="big" id="answer"></span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+
+  function gcd(a,b){ return b===0?a:gcd(b,a%b); }
+  function lcm(a,b){ return a*b/gcd(a,b); }
+  function reduce(n,d){ const g=gcd(Math.abs(n),Math.abs(d)); return [n/g,d/g]; }
+
+  function drawPizza(id, slices, filled, fillColor){
+    const svg = document.getElementById(id);
+    svg.innerHTML = "";
+    const cx=40, cy=40, r=36;
+    function pe(tag,attrs){
+      const e=document.createElementNS(NS,tag);
+      for(const k in attrs) e.setAttribute(k,attrs[k]);
+      svg.appendChild(e); return e;
+    }
+    pe("circle",{cx,cy,r:r+2,fill:"#e8d5b0"});
+    for(let i=0;i<slices;i++){
+      const a1=(i/slices)*2*Math.PI-Math.PI/2;
+      const a2=((i+1)/slices)*2*Math.PI-Math.PI/2;
+      const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+      const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+      const large=(a2-a1>Math.PI)?1:0;
+      const fill = i<filled ? fillColor : "#f5e8d0";
+      pe("path",{d:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`,
+        fill, stroke:"#c8a878","stroke-width":"1.5"});
+    }
+    pe("circle",{cx,cy,r:3,fill:"#c8a878"});
+  }
+
+  function fi(n,d,col){
+    return `<span class="frac-inline" style="color:${col}"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+  }
+
+  function update(){
+    let ad=parseInt(document.getElementById("ad").value);
+    let an=parseInt(document.getElementById("an").value);
+    let bd=parseInt(document.getElementById("bd").value);
+    let bn=parseInt(document.getElementById("bn").value);
+
+    // 分子を分母以下に強制
+    const anMax = ad;
+    const bnMax = bd;
+    if(an > anMax){
+      an = anMax;
+      document.getElementById("an").value = an;
+    }
+    if(bn > bnMax){
+      bn = bnMax;
+      document.getElementById("bn").value = bn;
+    }
+    document.getElementById("an").max = anMax;
+    document.getElementById("bn").max = bnMax;
+
+    document.getElementById("an-v").textContent = an;
+    document.getElementById("ad-v").textContent = ad;
+    document.getElementById("bn-v").textContent = bn;
+    document.getElementById("bd-v").textContent = bd;
+    document.getElementById("label-a").textContent = `${an}/${ad}`;
+    document.getElementById("label-b").textContent = `${bn}/${bd}`;
+    document.getElementById("eq-a").textContent = `${an}/${ad}`;
+    document.getElementById("eq-b").textContent = `${bn}/${bd}`;
+
+    // 元のピザ
+    drawPizza("pizza-a", ad, an, "#e05a2b");
+    document.getElementById("pa-frac").textContent = `${an}/${ad}`;
+    document.getElementById("pa-desc").textContent = `${ad}等分の ${an}切れ`;
+
+    drawPizza("pizza-b", bd, bn, "#2b7ae0");
+    document.getElementById("pb-frac").textContent = `${bn}/${bd}`;
+    document.getElementById("pb-desc").textContent = `${bd}等分の ${bn}切れ`;
+
+    const L = lcm(ad, bd);
+    const ma = L/ad, mb = L/bd;
+    const newAN = an*ma, newBN = bn*mb;
+
+    // 同じ分母なら通分セクション非表示
+    const lcmSection = document.getElementById("lcm-section");
+    if(ad === bd){
+      lcmSection.style.display = "none";
+    } else if(L > 12){
+      // LCMが大きすぎる場合もピザ非表示
+      lcmSection.style.display = "none";
+    } else {
+      lcmSection.style.display = "block";
+      drawPizza("pizza-la", L, newAN, "#e05a2b");
+      document.getElementById("pla-frac").textContent = `${newAN}/${L}`;
+      document.getElementById("pla-desc").textContent = `${L}等分の ${newAN}切れ`;
+
+      drawPizza("pizza-lb", L, newBN, "#2b7ae0");
+      document.getElementById("plb-frac").textContent = `${newBN}/${L}`;
+      document.getElementById("plb-desc").textContent = `${L}等分の ${newBN}切れ`;
+    }
+
+    // 計算ステップ
+    const sumN = newAN + newBN;
+    const [rN, rD] = reduce(sumN, L);
+
+    if(ad === bd){
+      document.getElementById("step1").innerHTML =
+        `<span class="no">①</span>分母が同じ（${ad}）なので、そのまま分子を足します`;
+      document.getElementById("step2").innerHTML =
+        `<span class="no">②</span>
+        ${fi(an,ad,"var(--a-color)")} ＋ ${fi(bn,bd,"var(--b-color)")}
+        ＝ ${fi(an+"＋"+bn, ad, "var(--sum-color)")}
+        ＝ ${fi(sumN, L, "var(--sum-color)")}`;
+      document.getElementById("step3").innerHTML =
+        sumN!==rN
+          ? `<span class="no">③</span>約分すると ${fi(rN,rD,"var(--sum-color)")} になります`
+          : `<span class="no">③</span>これ以上約分できません`;
+    } else {
+      document.getElementById("step1").innerHTML =
+        `<span class="no">①</span>分母がちがう（${ad} と ${bd}）ので <b>通分</b> します。
+        最小公倍数 → <b>${L}</b>`;
+      document.getElementById("step2").innerHTML =
+        `<span class="no">②</span>
+        ${fi(an,ad,"var(--a-color)")} ＝ ${fi(an+"×"+ma, ad+"×"+ma, "var(--a-color)")} ＝ ${fi(newAN,L,"var(--a-color)")}
+        &emsp;
+        ${fi(bn,bd,"var(--b-color)")} ＝ ${fi(bn+"×"+mb, bd+"×"+mb, "var(--b-color)")} ＝ ${fi(newBN,L,"var(--b-color)")}`;
+      document.getElementById("step3").innerHTML =
+        `<span class="no">③</span>
+        ${fi(newAN,L,"var(--a-color)")} ＋ ${fi(newBN,L,"var(--b-color)")}
+        ＝ ${fi(newAN+"＋"+newBN, L, "var(--sum-color)")}
+        ＝ ${fi(sumN, L, "var(--sum-color)")}
+        ${sumN!==rN ? "＝ "+fi(rN,rD,"var(--sum-color)")+"（約分）" : ""}`;
+    }
+
+    // 答え
+    const whole = Math.floor(rN/rD);
+    const remN  = rN % rD;
+    let ans = remN===0 ? `${rN}` : whole>0 ? `${whole} と ${remN}/${rD}` : `${rN}/${rD}`;
+    document.getElementById("answer").textContent = ans;
+  }
+
+  ["an","ad","bn","bd"].forEach(id=>
+    document.getElementById(id).addEventListener("input", update));
+  update();
+})();
+</script>

@@ -1,0 +1,92 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: transparent;
+    padding: 24px 16px 32px;
+  }
+  .lead { font-size: .95rem; color: #444; margin-bottom: 20px; line-height: 1.7; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .card {
+    flex: 1 1 220px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.07);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+  .card-icon { font-size: 2rem; line-height: 1; }
+  .card-tag {
+    display: inline-block; font-size: .72rem; font-weight: 700;
+    background: #e8eaf6; color: #1a237e;
+    border-radius: 4px; padding: 2px 8px; width: fit-content;
+  }
+  .card-tag.soon { background: #f0f0f0; color: #999; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #1a2332; line-height: 1.4; }
+  .card-desc { font-size: .82rem; color: #666; line-height: 1.6; }
+  .card-arrow { margin-top: auto; font-size: .82rem; color: #1a237e; font-weight: 700; }
+  .coming { opacity: .5; pointer-events: none; }
+</style>
+
+<p class="lead">図や動きで「なぜそうなるのか」を体感できる大学数学の教材です。</p>
+
+<div class="grid">
+
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/大学生/線形代数">
+    <div class="card-icon">🔢</div>
+    <span class="card-tag">線形代数</span>
+    <div class="card-title">線形写像と次元定理</div>
+    <div class="card-desc">行列＝空間の変形。グリッドが変形する様子、行列式の面積の意味、rank+nullity=nを視覚化。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+
+  <div class="card coming">
+    <div class="card-icon">⭕</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">群論</div>
+    <div class="card-desc">対称性・演算表・部分群・剰余類をインタラクティブに確かめます。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+  <div class="card coming">
+    <div class="card-icon">𝑖</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">複素関数論</div>
+    <div class="card-desc">複素平面上の写像・コーシーの積分定理・留数定理を図で見ます。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+  <div class="card coming">
+    <div class="card-icon">〜</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">フーリエ解析</div>
+    <div class="card-desc">波を正弦波に分解するフーリエ級数・変換をアニメーションで体感します。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+  <div class="card coming">
+    <div class="card-icon">🔐</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">整数論</div>
+    <div class="card-desc">素数・合同式・RSA暗号の仕組みを視覚的に確かめます。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+  <div class="card coming">
+    <div class="card-icon">∮</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">多変数解析・微分形式</div>
+    <div class="card-desc">勾配・発散・回転とストークスの定理を3D図で確かめます。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+</div>

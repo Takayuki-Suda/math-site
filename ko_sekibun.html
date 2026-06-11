@@ -1,0 +1,370 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>積分を「面積」で見る</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f0f4ff;
+    color: #0d1b2a;
+    padding: 18px 12px 32px;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 { font-size: 1.35rem; font-weight: 900;
+       border-bottom: 3px solid #0d1b2a;
+       padding-bottom: 8px; margin-bottom: 4px; }
+  .lead { font-size: .88rem; color: #555; margin-bottom: 14px; }
+
+  .formula-panel {
+    background: #0d1b2a; color: #fff;
+    border-radius: 14px; padding: 14px 20px;
+    margin-bottom: 14px; text-align: center;
+    font-size: 1.3rem; font-weight: 900; letter-spacing: .02em;
+  }
+  .formula-panel .int { color: #80d8ff; }
+  .formula-panel .ans { color: #b9f6ca; }
+
+  .panel {
+    background: #fff; border: 1px solid #c8d4e8;
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
+  }
+  .panel h2 { font-size: .95rem; font-weight: 900; margin-bottom: 4px; }
+  .panel h2.blue  { border-left: 4px solid #1565c0; padding-left: 8px; }
+  .panel h2.orange{ border-left: 4px solid #ef6c00; padding-left: 8px; }
+  .panel h2.green { border-left: 4px solid #2e7d32; padding-left: 8px; }
+  .sub { font-size: .82rem; color: #666; margin-bottom: 12px; }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  .sl-row { display: flex; align-items: center; gap: 10px;
+            font-size: .85rem; margin-bottom: 10px; }
+  .sl-row label { font-weight: 700; min-width: 90px; color: #ef6c00; }
+  .sl-row input  { flex: 1; accent-color: #ef6c00; }
+  .sl-row .val   { min-width: 36px; font-weight: 700; text-align: right; }
+
+  .info-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .info-box {
+    flex: 1 1 80px; background: #f0f4ff;
+    border-radius: 10px; padding: 8px 10px;
+    font-size: .82rem; text-align: center;
+  }
+  .info-box .v { font-size: 1.05rem; font-weight: 900; display: block; margin-top: 2px; }
+
+  .msg {
+    background: #f0f4ff; border-radius: 10px;
+    padding: 10px 14px; font-size: .88rem;
+    line-height: 1.75; margin-top: 10px;
+  }
+
+  /* 関数選択 */
+  .fn-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .fn-btn {
+    flex: 1; padding: 7px 4px;
+    border: 2px solid #c8d4e8; border-radius: 10px;
+    background: #f5f5f5; font-size: .8rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; color: #555;
+  }
+  .fn-btn.on { background: #1565c0; color: #fff; border-color: #1565c0; }
+
+  /* 計算パネル */
+  .calc-step {
+    background: #f0f7f0; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 8px;
+    font-size: .9rem; line-height: 1.8;
+  }
+  .calc-step:last-child { margin-bottom: 0; }
+  .no { display: inline-block; background: #0d1b2a; color: #fff;
+        font-size: .7rem; font-weight: 700; border-radius: 3px;
+        padding: 1px 6px; margin-right: 6px; vertical-align: middle; }
+  .hl { color: #2e7d32; font-weight: 700; }
+  .hl2 { color: #1565c0; font-weight: 700; }
+
+  .answer-box {
+    background: #0d1b2a; color: #fff; border-radius: 14px;
+    padding: 14px 20px; text-align: center;
+    font-size: 1.1rem; font-weight: 900; margin-bottom: 14px;
+  }
+  .answer-box .big { font-size: 1.8rem; display: block; margin-top: 4px; color: #b9f6ca; }
+</style>
+
+<div class="wrap">
+  <h1>積分を「面積」で見る</h1>
+  <p class="lead">積分とは何か、そしてなぜ面積が一発で求められるのかを見てみよう。</p>
+
+  <div class="formula-panel">
+    <span class="int">∫</span><sub>a</sub><sup>b</sup>
+    f(x) dx ＝ 曲線の下の<span class="ans">面積</span>
+  </div>
+
+  <!-- ① リーマン和 -->
+  <div class="panel">
+    <h2 class="orange">① 短冊を細かくするほど正確になる</h2>
+    <p class="sub">曲線の下を「細い長方形（短冊）」で埋めて面積を近似します。短冊を増やすほど、本物の面積に近づきます。</p>
+    <div class="sl-row">
+      <label>短冊の数 n</label>
+      <input type="range" id="sl-n" min="1" max="50" value="4">
+      <span class="val" id="v-n">4</span>
+    </div>
+    <svg id="fig-riemann" viewBox="0 0 360 200"></svg>
+    <div class="info-row">
+      <div class="info-box">短冊の数<span class="v" id="i-n" style="color:#ef6c00">4</span></div>
+      <div class="info-box">短冊の合計<span class="v" id="i-sum" style="color:#ef6c00">?</span></div>
+      <div class="info-box">本物の面積<span class="v" id="i-true" style="color:#2e7d32">?</span></div>
+      <div class="info-box">ずれ<span class="v" id="i-err" style="color:#c62828">?</span></div>
+    </div>
+    <div class="msg" id="msg-r"></div>
+  </div>
+
+  <!-- ② 積分で一発計算 -->
+  <div class="panel">
+    <h2 class="green">② 積分を使うと面積が一発で求まる！</h2>
+    <p class="sub">関数を選んで、積分の計算ステップと答えを確認しよう。</p>
+    <div class="fn-tabs">
+      <button class="fn-btn on" onclick="setFn(0)">x²</button>
+      <button class="fn-btn"    onclick="setFn(1)">x³</button>
+      <button class="fn-btn"    onclick="setFn(2)">x² + 2x</button>
+      <button class="fn-btn"    onclick="setFn(3)">sin x</button>
+    </div>
+    <svg id="fig-calc" viewBox="0 0 360 200"></svg>
+    <div id="calc-steps"></div>
+  </div>
+
+  <div class="answer-box">
+    <span>短冊を無限に細かくした極限 ＝ 積分</span>
+    <span class="big">∫f(x)dx で面積が一発！</span>
+  </div>
+
+  <div class="panel">
+    <h2 class="blue">まとめ</h2>
+    <div class="calc-step">
+      <span class="no">①</span>
+      曲線の下を <b>細い長方形で埋める</b> → 短冊が多いほど正確<br>
+      <b>無限に細かくした極限</b> が積分 ∫f(x)dx の意味です。
+    </div>
+    <div class="calc-step">
+      <span class="no">②</span>
+      積分は <b>不定積分（原始関数）F(x)</b> を使って<br>
+      <span class="hl">∫<sub>a</sub><sup>b</sup> f(x)dx ＝ F(b) − F(a)</span> で一発計算できます。<br>
+      短冊を無限に数えなくても、<b>引き算だけで答えが出ます。</b>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+
+  function pe(svg, tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    if(txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  // ── 関数定義 ──
+  const FNS = [
+    {
+      label: "f(x) = x²",
+      f: x => x*x,
+      F: x => x*x*x/3,
+      a: 0, b: 3,
+      trueArea: () => 3*3*3/3 - 0,   // 9
+      steps: (a,b) => [
+        `f(x) ＝ x² の不定積分は <b class="hl">F(x) ＝ x³ ÷ 3</b>`,
+        `<span class="hl2">∫<sub>${a}</sub><sup>${b}</sup> x² dx</span>
+         ＝ F(${b}) − F(${a})
+         ＝ ${b}³÷3 − ${a}³÷3
+         ＝ <b class="hl">${(b*b*b/3 - a*a*a/3).toFixed(2)}</b>`,
+      ]
+    },
+    {
+      label: "f(x) = x³",
+      f: x => x*x*x,
+      F: x => x*x*x*x/4,
+      a: 0, b: 2,
+      trueArea: () => 2*2*2*2/4,  // 4
+      steps: (a,b) => [
+        `f(x) ＝ x³ の不定積分は <b class="hl">F(x) ＝ x⁴ ÷ 4</b>`,
+        `<span class="hl2">∫<sub>${a}</sub><sup>${b}</sup> x³ dx</span>
+         ＝ F(${b}) − F(${a})
+         ＝ ${b}⁴÷4 − ${a}⁴÷4
+         ＝ <b class="hl">${(b*b*b*b/4 - a*a*a*a/4).toFixed(2)}</b>`,
+      ]
+    },
+    {
+      label: "f(x) = x² + 2x",
+      f: x => x*x + 2*x,
+      F: x => x*x*x/3 + x*x,
+      a: 0, b: 2,
+      trueArea: () => 2*2*2/3 + 2*2,  // 8/3+4 ≒ 6.667
+      steps: (a,b) => [
+        `f(x) ＝ x²＋2x の不定積分は <b class="hl">F(x) ＝ x³÷3 ＋ x²</b>`,
+        `<span class="hl2">∫<sub>${a}</sub><sup>${b}</sup> (x²＋2x) dx</span>
+         ＝ F(${b}) − F(${a})
+         ＝ (${b}³÷3＋${b}²) − 0
+         ＝ <b class="hl">${(b*b*b/3+b*b - (a*a*a/3+a*a)).toFixed(3)}</b>`,
+      ]
+    },
+    {
+      label: "f(x) = sin x",
+      f: x => Math.sin(x),
+      F: x => -Math.cos(x),
+      a: 0, b: Math.PI,
+      trueArea: () => 2,
+      steps: (a,b) => [
+        `f(x) ＝ sin x の不定積分は <b class="hl">F(x) ＝ −cos x</b>`,
+        `<span class="hl2">∫<sub>0</sub><sup>π</sup> sin x dx</span>
+         ＝ F(π) − F(0)
+         ＝ (−cos π) − (−cos 0)
+         ＝ 1 − (−1)
+         ＝ <b class="hl">2</b>`,
+      ]
+    },
+  ];
+
+  let fnIdx = 0;
+
+  // ── リーマン和描画 ──
+  function drawRiemann(){
+    const n = parseInt(document.getElementById("sl-n").value);
+    document.getElementById("v-n").textContent = n;
+    document.getElementById("i-n").textContent = n;
+
+    const fn = FNS[0]; // リーマン和はx²で固定
+    const {f, F, a, b} = fn;
+
+    const svg = document.getElementById("fig-riemann");
+    svg.innerHTML = "";
+    const W=360, H=200, padL=36, padR=16, padT=14, padB=26;
+    const xR = b-a, yMax = f(b)*1.2;
+    const tx = x => padL+(x-a)/xR*(W-padL-padR);
+    const ty = y => H-padB-y/yMax*(H-padT-padB);
+
+    // 短冊
+    const dx = (b-a)/n;
+    let rSum = 0;
+    for(let i=0;i<n;i++){
+      const x0=a+i*dx, x1=x0+dx, fy=f(x0+dx/2);
+      rSum += fy*dx;
+      pe(svg,"rect",{x:tx(x0),y:ty(fy),width:tx(x1)-tx(x0),height:ty(0)-ty(fy),
+        fill:"#ef6c00","fill-opacity":n>20?0.65:0.4,
+        stroke:"#bf360c","stroke-width":n>20?0.3:0.8});
+    }
+
+    // 真の面積塗り
+    let fillD="";
+    for(let i=0;i<=80;i++){
+      const x=a+(b-a)*i/80;
+      fillD += i===0?`M ${tx(x)} ${ty(f(x))}`:`L ${tx(x)} ${ty(f(x))}`;
+    }
+    fillD += ` L ${tx(b)} ${ty(0)} L ${tx(a)} ${ty(0)} Z`;
+    pe(svg,"path",{d:fillD,fill:"#42a5f5","fill-opacity":0.12});
+
+    // 軸
+    pe(svg,"line",{x1:tx(a)-8,y1:ty(0),x2:tx(b)+8,y2:ty(0),stroke:"#aaa","stroke-width":1.5});
+    pe(svg,"line",{x1:tx(a),y1:padT-4,x2:tx(a),y2:ty(0)+8,stroke:"#aaa","stroke-width":1.5});
+    for(let xi=a;xi<=b;xi++){
+      pe(svg,"text",{x:tx(xi),y:ty(0)+13,"text-anchor":"middle","font-size":10,fill:"#888"},xi);
+    }
+    pe(svg,"text",{x:tx(b)+12,y:ty(0)+4,"font-size":11,fill:"#888"},"x");
+
+    // 曲線
+    let curve="";
+    for(let i=0;i<=80;i++){
+      const x=a+(b-a)*i/80;
+      curve += i===0?`M ${tx(x)} ${ty(f(x))}`:`L ${tx(x)} ${ty(f(x))}`;
+    }
+    pe(svg,"path",{d:curve,fill:"none",stroke:"#1565c0","stroke-width":2.5});
+    pe(svg,"text",{x:tx(a+0.2),y:ty(f(b))-5,"font-size":11,"font-weight":700,fill:"#1565c0"},"f(x)=x²");
+
+    const trueArea = F(b)-F(a);
+    const err = Math.abs(rSum-trueArea);
+    document.getElementById("i-sum").textContent = rSum.toFixed(3);
+    document.getElementById("i-true").textContent = trueArea.toFixed(3);
+    document.getElementById("i-err").textContent = err.toFixed(3);
+
+    const msgEl = document.getElementById("msg-r");
+    if(n<=2){
+      msgEl.innerHTML = `短冊が <b>${n}本</b>。大きすぎてずれが目立ちます。<br>スライダーを右に動かしてみよう！`;
+    } else if(n<=8){
+      msgEl.innerHTML = `短冊が <b>${n}本</b>。だいたいの形はつかめてきました（ずれ: ${err.toFixed(3)}）。`;
+    } else if(n<=20){
+      msgEl.innerHTML = `<b>${n}本</b> になると、かなり近づいてきました！（ずれ: ${err.toFixed(3)}）`;
+    } else {
+      msgEl.innerHTML = `<b>${n}本！</b> ほぼ曲線と重なります。ずれ <b>${err.toFixed(3)}</b> → 限りなくゼロへ。<br>これを「無限に細かくした極限」にしたものが <b>積分</b> です。`;
+    }
+  }
+
+  // ── 積分計算図 ──
+  function drawCalc(){
+    const fn = FNS[fnIdx];
+    const {f, F, a, b} = fn;
+
+    const svg = document.getElementById("fig-calc");
+    svg.innerHTML = "";
+    const W=360, H=200, padL=36, padR=16, padT=14, padB=26;
+
+    // b がπの場合は数値で
+    const bNum = b;
+    const xR = bNum-a;
+    const yMax = Math.max(...Array.from({length:81},(_,i)=>Math.abs(f(a+xR*i/80))))*1.25 || 1;
+    const tx = x => padL+(x-a)/xR*(W-padL-padR);
+    const ty = y => H-padB-y/yMax*(H-padT-padB);
+
+    // 塗り
+    let fillD="";
+    for(let i=0;i<=80;i++){
+      const x=a+xR*i/80;
+      fillD += i===0?`M ${tx(x)} ${ty(f(x))}`:`L ${tx(x)} ${ty(f(x))}`;
+    }
+    fillD += ` L ${tx(bNum)} ${ty(0)} L ${tx(a)} ${ty(0)} Z`;
+    pe(svg,"path",{d:fillD,fill:"#2e7d32","fill-opacity":0.25});
+
+    // 軸
+    pe(svg,"line",{x1:tx(a)-8,y1:ty(0),x2:tx(bNum)+8,y2:ty(0),stroke:"#aaa","stroke-width":1.5});
+    pe(svg,"line",{x1:tx(a),y1:padT-4,x2:tx(a),y2:ty(0)+8,stroke:"#aaa","stroke-width":1.5});
+    // x軸ラベル
+    if(fnIdx===3){
+      // sin: 0とπ
+      pe(svg,"text",{x:tx(0),y:ty(0)+13,"text-anchor":"middle","font-size":10,fill:"#888"},"0");
+      pe(svg,"text",{x:tx(Math.PI),y:ty(0)+13,"text-anchor":"middle","font-size":10,fill:"#888"},"π");
+    } else {
+      for(let xi=a;xi<=bNum;xi++){
+        pe(svg,"text",{x:tx(xi),y:ty(0)+13,"text-anchor":"middle","font-size":10,fill:"#888"},xi);
+      }
+    }
+    pe(svg,"text",{x:tx(bNum)+12,y:ty(0)+4,"font-size":11,fill:"#888"},"x");
+
+    // 曲線
+    let curve="";
+    for(let i=0;i<=80;i++){
+      const x=a+xR*i/80;
+      curve += i===0?`M ${tx(x)} ${ty(f(x))}`:`L ${tx(x)} ${ty(f(x))}`;
+    }
+    pe(svg,"path",{d:curve,fill:"none",stroke:"#1565c0","stroke-width":2.5});
+    pe(svg,"text",{x:tx(a+xR*0.08),y:ty(yMax*0.9),"font-size":11,"font-weight":700,fill:"#1565c0"},fn.label);
+
+    // 面積の値
+    const area = F(bNum)-F(a);
+    pe(svg,"text",{x:tx(a+xR*0.45),y:ty(yMax*0.35),"text-anchor":"middle",
+      "font-size":15,"font-weight":900,fill:"#2e7d32"},`面積 = ${area.toFixed(3)}`);
+
+    // 計算ステップ
+    const stepsHTML = fn.steps(a, fnIdx===3?"π":b).map((s,i) =>
+      `<div class="calc-step"><span class="no">${i+1}</span>${s}</div>`
+    ).join("");
+    document.getElementById("calc-steps").innerHTML = stepsHTML;
+  }
+
+  window.setFn = function(i){
+    fnIdx = i;
+    document.querySelectorAll(".fn-btn").forEach((b,j)=>b.classList.toggle("on",j===i));
+    drawCalc();
+  };
+
+  document.getElementById("sl-n").addEventListener("input", drawRiemann);
+  drawRiemann();
+  drawCalc();
+})();
+</script>

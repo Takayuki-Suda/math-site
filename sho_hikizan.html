@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Yu Gothic", sans-serif;
+    background: #fff8f0;
+    color: #333;
+    padding: 0 0 48px;
+    overflow-x: hidden;
+  }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #ef5350 0%, #ab47bc 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(171,71,188,0.25);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .header p { font-size: clamp(0.85rem, 3vw, 1rem); color: rgba(255,255,255,0.9); }
+
+  /* ── セクション共通 ── */
+  .section { max-width: 680px; margin: 32px auto 0; padding: 0 20px; }
+  .section-title {
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700; color: #555;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .num-badge {
+    background: #ab47bc; color: #fff;
+    border-radius: 50%; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+
+  /* ── パート1：皿から取り除く ── */
+  .plate-box {
+    background: #fce4ec;
+    border-radius: 24px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .plate-desc {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: #880e4f; font-weight: 700;
+    margin-bottom: 16px; line-height: 1.8;
+  }
+
+  /* スライダー行 */
+  .slider-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .slider-label { font-size: clamp(0.85rem, 3vw, 1rem); font-weight: 700; color: #880e4f; min-width: 70px; }
+  .slider-wrap  { flex: 1; min-width: 140px; }
+  input[type=range] { width: 100%; accent-color: #e91e63; height: 6px; }
+  .slider-val {
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+    font-weight: 900; color: #880e4f; min-width: 28px; text-align: right;
+  }
+
+  /* お皿 */
+  .plate-area {
+    background: #fff;
+    border-radius: 50%;
+    width: clamp(240px, 80vw, 340px);
+    height: clamp(240px, 80vw, 340px);
+    margin: 16px auto;
+    border: 6px solid #f48fb1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-content: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(233,30,99,0.15);
+  }
+  .cookie {
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    line-height: 1;
+    display: inline-block;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    cursor: default;
+  }
+  .cookie.removing {
+    transform: scale(0) rotate(30deg);
+    opacity: 0;
+  }
+  .cookie.entering {
+    animation: popIn .25s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .formula-bar {
+    background: #fff;
+    border-radius: 14px;
+    border: 3px solid #f48fb1;
+    padding: 12px 20px;
+    margin-top: 12px;
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+    font-weight: 900;
+    color: #880e4f;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  .formula-bar .ans { color: #e53935; font-size: 1.25em; }
+  .formula-yomi {
+    text-align: center; margin-top: 6px;
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: #ba68c8; font-weight: 700; letter-spacing: 0.12em;
+  }
+
+  /* ── パート2：消して残りを数える ── */
+  .cross-box {
+    background: #e8eaf6;
+    border-radius: 24px;
+    padding: 24px 20px;
+  }
+  .cross-formula {
+    text-align: center;
+    font-size: clamp(1.4rem, 6vw, 2rem);
+    font-weight: 900; color: #283593;
+    margin-bottom: 16px;
+    letter-spacing: 0.1em;
+  }
+  .cross-items {
+    display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .cross-item {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    line-height: 1;
+    cursor: pointer;
+    transition: all .25s;
+    display: inline-block;
+    position: relative;
+  }
+  .cross-item.crossed {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  .cross-item.crossed::after {
+    content: '✕';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 1.1em;
+    color: #e53935;
+    font-weight: 900;
+    pointer-events: none;
+  }
+  .cross-hint {
+    text-align: center;
+    font-size: clamp(0.82rem, 3vw, 0.95rem);
+    color: #5c6bc0; font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .cross-result {
+    text-align: center;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    font-weight: 700; color: #283593;
+    min-height: 1.5em;
+  }
+  .cross-new-btn {
+    display: block; margin: 14px auto 0;
+    padding: 10px 28px;
+    background: #3949ab; color: #fff;
+    border: none; border-radius: 100px;
+    font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background .15s;
+  }
+  .cross-new-btn:hover { background: #283593; }
+
+  /* ── パート3：クイズ ── */
+  .quiz-box {
+    background: #e0f7fa;
+    border-radius: 24px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .quiz-q {
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    font-weight: 900; color: #006064;
+    letter-spacing: 0.1em; margin-bottom: 8px;
+  }
+  .quiz-visual {
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+    letter-spacing: 4px; margin-bottom: 20px;
+    line-height: 1.8; min-height: 40px; word-break: break-all;
+  }
+  .num-pad {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; max-width: 320px; margin: 0 auto 16px;
+  }
+  .pad-btn {
+    padding: 14px 0; border-radius: 14px;
+    border: 2px solid #80deea; background: #fff;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 900; color: #006064;
+    cursor: pointer; font-family: inherit;
+    transition: all .15s;
+  }
+  .pad-btn:hover  { background: #e0f7fa; transform: scale(1.08); }
+  .pad-btn.correct-ans { background: #c8e6c9; border-color: #388e3c; color: #1b5e20; }
+  .pad-btn.wrong-ans   { background: #ffcdd2; border-color: #c62828; color: #b71c1c;
+                         animation: shake .3s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%     { transform: translateX(-5px); }
+    75%     { transform: translateX(5px); }
+  }
+  .quiz-feedback {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    font-weight: 700; min-height: 1.5em; color: #388e3c; margin-bottom: 12px;
+  }
+  .next-btn {
+    padding: 12px 32px; background: #00838f; color: #fff;
+    border: none; border-radius: 100px;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    display: none; transition: background .15s;
+  }
+  .next-btn:hover { background: #006064; }
+  .score-wrap {
+    display: flex; justify-content: center; gap: 20px;
+    margin-top: 16px; font-size: 0.9rem; color: #888; font-weight: 700;
+  }
+  .score-wrap span { color: #006064; font-size: 1.1em; }
+
+  /* ── パート4：たし算との関係 ── */
+  .relation-box {
+    background: #f9fbe7;
+    border-radius: 24px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .relation-desc {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: #558b2f; font-weight: 700;
+    margin-bottom: 20px; line-height: 1.9;
+  }
+  .triangle-wrap {
+    display: flex; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .triangle-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    max-width: 320px;
+    width: 100%;
+  }
+  .rel-card {
+    background: #fff;
+    border: 3px solid #c5e1a5;
+    border-radius: 16px;
+    padding: 14px 10px;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    font-weight: 900; color: #33691e;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+  }
+  .rel-card:hover { border-color: #7cb342; background: #f9fbe7; transform: scale(1.04); }
+  .rel-card.top    { grid-column: 1 / 3; font-size: clamp(1.2rem, 5vw, 1.5rem); background: #dcedc8; }
+  .rel-card.active { border-color: #33691e; background: #dcedc8; box-shadow: 0 4px 12px rgba(51,105,30,0.2); }
+  .rel-msg {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    font-weight: 700; color: #558b2f; min-height: 1.5em;
+  }
+  .rel-shuffle-btn {
+    margin-top: 14px; padding: 10px 28px;
+    background: #7cb342; color: #fff;
+    border: none; border-radius: 100px;
+    font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background .15s;
+  }
+  .rel-shuffle-btn:hover { background: #558b2f; }
+
+  .footer-note {
+    text-align: center; margin-top: 40px; padding: 0 20px;
+    font-size: 0.82rem; color: #aaa;
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>➖ ひきざんを まなぼう！</h1>
+  <p>１ねんせい ・ さんすう</p>
+</div>
+
+<!-- ══ パート1：お皿からとりのぞく ══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="num-badge">1</div>
+    おさらから とりのぞこう
+  </div>
+  <div class="plate-box">
+    <div class="plate-desc">
+      スライダーで「はじめ」と「とる」かずをきめよう。<br>
+      とりのぞいた🍪は うすく なるよ！
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">はじめ</div>
+      <div class="slider-wrap">
+        <input type="range" id="sliderTotal" min="1" max="10" value="7" oninput="updatePlate()">
+      </div>
+      <div class="slider-val" id="valTotal">7</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">とる</div>
+      <div class="slider-wrap">
+        <input type="range" id="sliderTake" min="0" max="7" value="3" oninput="updatePlate()">
+      </div>
+      <div class="slider-val" id="valTake">3</div>
+    </div>
+
+    <div class="plate-area" id="plateArea"></div>
+
+    <div class="formula-bar" id="formulaBar">7 － 3 ＝ <span class="ans">4</span></div>
+    <div class="formula-yomi" id="formulaYomi">なな ひく さん は し</div>
+  </div>
+</div>
+
+<!-- ══ パート2：✕をつけて残りを数える ══ -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">2</div>
+    ✕を つけて のこりを かぞえよう
+  </div>
+  <div class="cross-box">
+    <div class="cross-formula" id="crossFormula">8 － 5 ＝ ？</div>
+    <div class="cross-hint">とる かずだけ えもじを タップして ✕を つけよう！</div>
+    <div class="cross-items" id="crossItems"></div>
+    <div class="cross-result" id="crossResult"></div>
+    <button class="cross-new-btn" onclick="newCrossQuestion()">つぎの もんだい →</button>
+  </div>
+</div>
+
+<!-- ══ パート3：クイズ ══ -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">3</div>
+    クイズ！ こたえを えらぼう
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q" id="quizQ">8 － 3 ＝ ？</div>
+    <div class="quiz-visual" id="quizVisual"></div>
+    <div class="num-pad" id="numPad"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuiz()">つぎの もんだい →</button>
+    <div class="score-wrap">
+      せいかい <span id="scoreOk">0</span> ／ <span id="scoreTotal">0</span> もん
+    </div>
+  </div>
+</div>
+
+<!-- ══ パート4：たし算との関係 ══ -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">4</div>
+    たしざんと ひきざんの なかよし
+  </div>
+  <div class="relation-box">
+    <div class="relation-desc">
+      たしざんと ひきざんは うらおもて！<br>
+      カードを タップして かくにんしよう。
+    </div>
+    <div class="triangle-wrap">
+      <div class="triangle-cards" id="triCards">
+        <div class="rel-card top" id="triTop" onclick="triClick('top')">3 ＋ 4 ＝ 7</div>
+        <div class="rel-card" id="triLeft"  onclick="triClick('left')">7 － 4 ＝ 3</div>
+        <div class="rel-card" id="triRight" onclick="triClick('right')">7 － 3 ＝ 4</div>
+      </div>
+    </div>
+    <div class="rel-msg" id="relMsg">カードを タップしてみよう！</div>
+    <button class="rel-shuffle-btn" onclick="newRelation()">ほかの かずで みる</button>
+  </div>
+</div>
+
+<div class="footer-note">
+  須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松
+</div>
+
+<script>
+// ── 読み方 ──
+const YOMI = ['れい','いち','に','さん','し','ご','ろく','なな','はち','きゅう','じゅう'];
+
+// ── パート1：お皿 ──
+function updatePlate() {
+  const total = parseInt(document.getElementById('sliderTotal').value);
+  const take  = parseInt(document.getElementById('sliderTake').value);
+
+  // takeがtotalを超えないよう調整
+  const sliderTake = document.getElementById('sliderTake');
+  sliderTake.max = total;
+  const t = Math.min(take, total);
+  sliderTake.value = t;
+
+  document.getElementById('valTotal').textContent = total;
+  document.getElementById('valTake').textContent  = t;
+
+  const remain = total - t;
+  const plate  = document.getElementById('plateArea');
+  plate.innerHTML = '';
+
+  for (let i = 0; i < total; i++) {
+    const span = document.createElement('span');
+    span.className = 'cookie' + (i < t ? ' removing' : ' entering');
+    span.style.animationDelay = (i * 0.04) + 's';
+    span.textContent = '🍪';
+    plate.appendChild(span);
+  }
+
+  document.getElementById('formulaBar').innerHTML =
+    `${total} － ${t} ＝ <span class="ans">${remain}</span>`;
+  document.getElementById('formulaYomi').textContent =
+    `${YOMI[total]} ひく ${YOMI[t]} は ${YOMI[remain]}`;
+}
+updatePlate();
+
+// ── パート2：×をつける ──
+const CROSS_EMOJIS = ['🍎','🌟','🐸','🌸','🍪','🐶','🍓','🐠','🌻','🎈'];
+let crossTotal = 0, crossTake = 0, crossedCount = 0;
+
+function newCrossQuestion() {
+  crossTotal = Math.floor(Math.random() * 6) + 3; // 3〜8
+  crossTake  = Math.floor(Math.random() * (crossTotal - 1)) + 1;
+  crossedCount = 0;
+
+  document.getElementById('crossFormula').textContent = `${crossTotal} － ${crossTake} ＝ ？`;
+  document.getElementById('crossResult').textContent  = '';
+
+  const emoji    = CROSS_EMOJIS[Math.floor(Math.random() * CROSS_EMOJIS.length)];
+  const container = document.getElementById('crossItems');
+  container.innerHTML = '';
+
+  for (let i = 0; i < crossTotal; i++) {
+    const span = document.createElement('span');
+    span.className = 'cross-item';
+    span.textContent = emoji;
+    span.addEventListener('click', () => crossOne(span));
+    container.appendChild(span);
+  }
+}
+
+function crossOne(span) {
+  if (span.classList.contains('crossed')) return;
+  if (crossedCount >= crossTake) return;
+
+  span.classList.add('crossed');
+  crossedCount++;
+  soundTap(crossedCount);
+  speak(crossedCount);
+
+  if (crossedCount === crossTake) {
+    const remain = crossTotal - crossTake;
+    document.getElementById('crossResult').textContent =
+      `✅ ${crossTotal} － ${crossTake} ＝ ${remain}（${YOMI[crossTotal]} ひく ${YOMI[crossTake]} は ${YOMI[remain]}）`;
+    speak(remain);
+  }
+}
+newCrossQuestion();
+
+// ── パート3：クイズ ──
+let quizA = 0, quizB = 0, quizAnswered = false;
+let scoreOk = 0, scoreTotal = 0;
+const QUIZ_EM = ['🍎','🌟','🐸','🌸','🍪','🐶','🍓','🐠','🌻','🎈'];
+
+function generateQuiz() {
+  quizAnswered = false;
+  quizA = Math.floor(Math.random() * 7) + 3; // 3〜9
+  quizB = Math.floor(Math.random() * (quizA - 1)) + 1;
+  const diff = quizA - quizB;
+  const emoji = QUIZ_EM[Math.floor(Math.random() * QUIZ_EM.length)];
+
+  document.getElementById('quizQ').textContent = `${quizA} － ${quizB} ＝ ？`;
+  // 全部表示して後ろをうすく
+  let vis = '';
+  for (let i = 0; i < quizA; i++) {
+    vis += i < diff ? emoji : '💨';
+  }
+  document.getElementById('quizVisual').textContent = vis;
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const pad = document.getElementById('numPad');
+  pad.innerHTML = '';
+  for (let n = 0; n <= 9; n++) {
+    const btn = document.createElement('button');
+    btn.className = 'pad-btn';
+    btn.textContent = n;
+    btn.onclick = () => checkQuiz(n, btn);
+    pad.appendChild(btn);
+  }
+}
+
+function checkQuiz(selected, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  scoreTotal++;
+  const diff = quizA - quizB;
+  const fb = document.getElementById('quizFeedback');
+  if (selected === diff) {
+    btn.classList.add('correct-ans');
+    fb.textContent = '🎉 せいかい！ すごい！';
+    fb.style.color = '#388e3c';
+    scoreOk++;
+    soundCorrect();
+    speak(diff);
+  } else {
+    btn.classList.add('wrong-ans');
+    fb.textContent = `😢 ざんねん… こたえは ${diff} だよ！`;
+    fb.style.color = '#c62828';
+    soundWrong();
+    document.querySelectorAll('.pad-btn').forEach(b => {
+      if (Number(b.textContent) === diff) b.classList.add('correct-ans');
+    });
+  }
+  document.getElementById('scoreOk').textContent    = scoreOk;
+  document.getElementById('scoreTotal').textContent = scoreTotal;
+  document.getElementById('nextBtn').style.display  = 'inline-block';
+}
+function nextQuiz() { generateQuiz(); }
+generateQuiz();
+
+// ── パート4：たし算との関係 ──
+let relA = 3, relB = 4;
+
+const TRI_MSG = {
+  top:   (a, b) => `${a} と ${b} を あわせると ${a+b}！（たしざん）`,
+  left:  (a, b) => `${a+b} から ${b} とると ${a}！（ひきざん）`,
+  right: (a, b) => `${a+b} から ${a} とると ${b}！（ひきざん）`,
+};
+
+function updateRelCards() {
+  const s = relA + relB;
+  document.getElementById('triTop').textContent   = `${relA} ＋ ${relB} ＝ ${s}`;
+  document.getElementById('triLeft').textContent  = `${s} － ${relB} ＝ ${relA}`;
+  document.getElementById('triRight').textContent = `${s} － ${relA} ＝ ${relB}`;
+  ['top','left','right'].forEach(k =>
+    document.getElementById('tri' + k.charAt(0).toUpperCase() + k.slice(1))
+      .classList.remove('active'));
+  document.getElementById('relMsg').textContent = 'カードを タップしてみよう！';
+}
+
+function triClick(key) {
+  ['top','left','right'].forEach(k => {
+    const el = document.getElementById('tri' + k.charAt(0).toUpperCase() + k.slice(1));
+    el.classList.toggle('active', k === key);
+  });
+  document.getElementById('relMsg').textContent = TRI_MSG[key](relA, relB);
+  speak(key === 'top' ? relA + relB : key === 'left' ? relA : relB);
+}
+
+function newRelation() {
+  relA = Math.floor(Math.random() * 5) + 1;
+  relB = Math.floor(Math.random() * 5) + 1;
+  while (relA + relB > 10) {
+    relA = Math.floor(Math.random() * 5) + 1;
+    relB = Math.floor(Math.random() * 5) + 1;
+  }
+  updateRelCards();
+}
+updateRelCards();
+
+// ── 音声 ──
+function speak(n) {
+  if (!window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(String(n));
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// ── 効果音エンジン（Web Audio API）──
+let _ac = null;
+function getAC() {
+  if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  return _ac;
+}
+function playTone(freq, type, startTime, duration, gainVal, ac) {
+  const osc = ac.createOscillator();
+  const g   = ac.createGain();
+  osc.connect(g); g.connect(ac.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, startTime);
+  g.gain.setValueAtTime(gainVal, startTime);
+  g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.start(startTime); osc.stop(startTime + duration + 0.05);
+}
+function soundCorrect() {
+  try {
+    const ac = getAC(); const now = ac.currentTime;
+    [523, 659, 784, 1047].forEach((f, i) => playTone(f, 'sine', now + i * 0.1, 0.25, 0.3, ac));
+  } catch(e) {}
+}
+function soundWrong() {
+  try {
+    const ac = getAC(); const now = ac.currentTime;
+    playTone(220, 'sawtooth', now, 0.15, 0.2, ac);
+    playTone(180, 'sawtooth', now + 0.15, 0.2, 0.2, ac);
+  } catch(e) {}
+}
+function soundTap(n) {
+  try {
+    const ac = getAC(); const now = ac.currentTime;
+    playTone(300 + n * 40, 'sine', now, 0.12, 0.25, ac);
+  } catch(e) {}
+}
+function soundPop() {
+  try {
+    const ac = getAC(); const now = ac.currentTime;
+    playTone(440, 'triangle', now, 0.1, 0.2, ac);
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: transparent;
+    padding: 24px 16px 32px;
+  }
+  .lead { font-size: .95rem; color: #444; margin-bottom: 20px; line-height: 1.7; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .card {
+    flex: 1 1 220px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.07);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+  .card-icon { font-size: 2rem; line-height: 1; }
+  .card-tag {
+    display: inline-block; font-size: .72rem; font-weight: 700;
+    background: #fff8e1; color: #f57f17;
+    border-radius: 4px; padding: 2px 8px; width: fit-content;
+  }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #1a2332; line-height: 1.4; }
+  .card-desc { font-size: .82rem; color: #666; line-height: 1.6; }
+  .card-arrow { margin-top: auto; font-size: .82rem; color: #f57f17; font-weight: 700; }
+
+  /* ── 次のステップ（最初は非表示） ── */
+  .next-section {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid #eee;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .next-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .next-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #bbb;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .next-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: #ccc;
+  }
+  .next-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1.5px solid #4a9eff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(74,158,255,0.15), transparent);
+    animation: shimmer 2.5s ease 0.8s forwards;
+  }
+  @keyframes shimmer {
+    0%   { left: -100%; }
+    100% { left: 150%; }
+  }
+  .next-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(74,158,255,0.2);
+  }
+  .next-card-icon { font-size: 2rem; flex-shrink: 0; }
+  .next-card-body { flex: 1; }
+  .next-card-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(74,158,255,0.15);
+    color: #4a9eff;
+    border: 1px solid rgba(74,158,255,0.35);
+    margin-bottom: 7px;
+    letter-spacing: 0.5px;
+  }
+  .next-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f0f0ff;
+    margin-bottom: 4px;
+  }
+  .next-card-desc {
+    font-size: .8rem;
+    color: #8080b0;
+    line-height: 1.6;
+  }
+  .next-card-arrow { font-size: 1.4rem; color: #4a9eff; flex-shrink: 0; }
+</style>
+
+<p class="lead">図やアニメーションを見ながら、算数を楽しく学べる教材です。</p>
+
+<div class="grid">
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/小学生/九九の表">
+    <div class="card-icon">✖️</div>
+    <span class="card-tag">小学2年〜</span>
+    <div class="card-title">九九の表</div>
+    <div class="card-desc">マスにさわると掛け算がタイルで光ります。クイズで得意な段を確かめよう。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/小学生/分数の足し算">
+    <div class="card-icon">🍕</div>
+    <span class="card-tag">小学4〜6年</span>
+    <div class="card-title">分数の足し算</div>
+    <div class="card-desc">ピザを切って通分を視覚化。分母がちがう分数の足し算がわかります。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/小学生/三角形の面積">
+    <div class="card-icon">📐</div>
+    <span class="card-tag">小学5年〜</span>
+    <div class="card-title">三角形の面積</div>
+    <div class="card-desc">「底辺×高さ÷2」がなぜ成り立つか、図のステップで確かめます。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/小学生/円の面積">
+    <div class="card-icon">⭕</div>
+    <span class="card-tag">小学6年〜</span>
+    <div class="card-title">円の面積</div>
+    <div class="card-desc">なぜ π×r×r なの？円をピースに切って並べると長方形になる！スライダーで確かめよう。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+</div>
+
+<!-- 次のステップ：3秒後にフワッと出現 -->
+<div class="next-section" id="nextSection">
+  <div class="next-label">小学生を終えたら</div>
+  <a class="next-card" href="https://sites.google.com/view/suda-math-aizu/小学生/中学数学への扉">
+    <div class="next-card-icon">🚪</div>
+    <div class="next-card-body">
+      <span class="next-card-tag">中学数学へ進もう</span>
+      <div class="next-card-title">中学数学ってどんな世界？</div>
+      <div class="next-card-desc">文字・グラフ・証明…算数の次に待っている新しい世界を覗いてみよう。</div>
+    </div>
+    <div class="next-card-arrow">→</div>
+  </a>
+</div>
+
+<script>
+  setTimeout(() => {
+    document.getElementById('nextSection').classList.add('visible');
+  }, 3000);
+</script>

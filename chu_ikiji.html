@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一次関数 y = ax + b</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #f4f7fb;
+  --white: #ffffff;
+  --ink: #1a2332;
+  --muted: #7a8a9a;
+  --blue: #1a56c4;
+  --blue-light: #e8f0fe;
+  --red: #d62828;
+  --green: #2a7a3a;
+  --orange: #e8650a;
+  --grid: #dde4ef;
+  --grid-main: #b8c8de;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 0 0 56px;
+}
+
+/* ヒーロー */
+.hero {
+  background: linear-gradient(135deg, #1a2332 0%, #1a3a6e 100%);
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(74,158,255,0.2);
+  color: #90c0ff;
+  border: 1px solid rgba(74,158,255,0.4);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Kaisei Decol', serif;
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+}
+.hero h1 .formula {
+  font-family: var(--mono);
+  color: #90c0ff;
+}
+.hero p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.65);
+  position: relative;
+}
+
+/* メインレイアウト */
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 16px 0;
+}
+
+/* グラフカード */
+.graph-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* コントロール */
+.controls {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.formula-display {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+.formula-display .a-val { color: var(--red); }
+.formula-display .b-val { color: var(--blue); }
+
+.slider-group {
+  margin-bottom: 20px;
+}
+.slider-group:last-child { margin-bottom: 0; }
+
+.slider-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.slider-letter {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 20px;
+}
+.slider-letter.a { color: var(--red); }
+.slider-letter.b { color: var(--blue); }
+
+.slider-meaning {
+  font-size: 0.82rem;
+  color: var(--muted);
+  flex: 1;
+}
+.slider-value {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 48px;
+  text-align: right;
+}
+.slider-value.a { color: var(--red); }
+.slider-value.b { color: var(--blue); }
+
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range].a-range {
+  background: linear-gradient(to right, var(--red) 0%, var(--red) 50%, #e0e0e0 50%, #e0e0e0 100%);
+}
+input[type=range].b-range {
+  background: linear-gradient(to right, var(--blue) 0%, var(--blue) 50%, #e0e0e0 50%, #e0e0e0 100%);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid currentColor;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+input[type=range].a-range::-webkit-slider-thumb { border-color: var(--red); }
+input[type=range].b-range::-webkit-slider-thumb { border-color: var(--blue); }
+
+/* タブ説明 */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: 2px solid #dde4ef;
+  background: #fff;
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.explain-box {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 20px;
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: var(--ink);
+  display: none;
+}
+.explain-box.show { display: block; }
+.explain-box strong { color: var(--blue); }
+.explain-box .highlight-a { color: var(--red); font-weight: 700; }
+.explain-box .highlight-b { color: var(--blue); font-weight: 700; }
+
+/* 特殊ケース表示 */
+.special-box {
+  background: linear-gradient(135deg, #fff8ee, #fff3e0);
+  border: 2px solid #ffcc80;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--orange);
+  font-weight: 700;
+  display: none;
+  text-align: center;
+}
+.special-box.show { display: block; }
+
+/* 2点を読む */
+.points-section {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.section-title {
+  font-family: 'Kaisei Decol', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  flex-shrink: 0;
+}
+
+.points-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media(max-width:480px){ .points-grid { grid-template-columns: 1fr; } }
+
+.point-card {
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+}
+.point-card.p1 { background: rgba(214,40,40,0.07); border: 1.5px solid rgba(214,40,40,0.25); }
+.point-card.p2 { background: rgba(42,122,58,0.07); border: 1.5px solid rgba(42,122,58,0.25); }
+.point-card-label { font-size: 10px; letter-spacing: 2px; margin-bottom: 6px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; }
+.point-card.p1 .point-card-label { color: var(--red); }
+.point-card.p2 .point-card-label { color: var(--green); }
+.point-val { font-size: 1rem; font-weight: 700; }
+.point-card.p1 .point-val { color: var(--red); }
+.point-card.p2 .point-val { color: var(--green); }
+
+/* 次のステップ */
+.next-section {
+  max-width: 780px;
+  margin: 8px auto 0;
+  padding: 0 16px;
+}
+.next-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1.5px solid #4a9eff;
+  border-radius: 16px;
+  padding: 20px 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(74,158,255,0.2);
+}
+.next-icon { font-size: 1.8rem; flex-shrink: 0; }
+.next-body { flex: 1; }
+.next-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(74,158,255,0.15); color: #4a9eff;
+  border: 1px solid rgba(74,158,255,0.35);
+  margin-bottom: 6px;
+}
+.next-title { font-size: 0.95rem; font-weight: 700; color: #f0f0ff; margin-bottom: 3px; }
+.next-desc  { font-size: 0.78rem; color: #8080b0; line-height: 1.6; }
+.next-arrow { font-size: 1.3rem; color: #4a9eff; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">中学1〜2年</div>
+  <h1>一次関数<br><span class="formula">y = ax + b</span></h1>
+  <p>a と b を動かすと、グラフがどう変わるか体感しよう。</p>
+</div>
+
+<div class="main">
+
+  <!-- グラフ -->
+  <div class="graph-card">
+    <canvas id="graph" height="380"></canvas>
+  </div>
+
+  <!-- コントロール -->
+  <div class="controls">
+    <div class="formula-display" id="formulaDisp">
+      y = <span class="a-val" id="aDisp">1</span>x +
+      <span class="b-val" id="bDisp">0</span>
+    </div>
+
+    <!-- a スライダー -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter a">a</span>
+        <span class="slider-meaning">傾き（グラフの角度）</span>
+        <span class="slider-value a" id="aVal">1</span>
+      </div>
+      <input type="range" class="a-range" id="aSlider" min="-4" max="4" step="0.5" value="1">
+    </div>
+
+    <!-- b スライダー -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter b">b</span>
+        <span class="slider-meaning">切片（y軸との交点）</span>
+        <span class="slider-value b" id="bVal">0</span>
+      </div>
+      <input type="range" class="b-range" id="bSlider" min="-5" max="5" step="0.5" value="0">
+    </div>
+
+    <div class="special-box" id="specialBox"></div>
+  </div>
+
+  <!-- 説明タブ -->
+  <div class="controls" style="padding-bottom:20px;">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="what">一次関数とは？</button>
+      <button class="tab-btn" data-tab="a">a（傾き）の意味</button>
+      <button class="tab-btn" data-tab="b">b（切片）の意味</button>
+      <button class="tab-btn" data-tab="read">グラフの読み方</button>
+    </div>
+
+    <div class="explain-box show" id="tab-what">
+      <strong>一次関数</strong>とは、x が1つ増えると y がある量だけ増える（または減る）関係のことです。<br><br>
+      式 <strong>y = ax + b</strong> で表され、グラフにすると<strong>必ず直線</strong>になります。<br><br>
+      たとえば「1分歩くと80m進む」なら、x分後の距離 y は <strong>y = 80x</strong>（a=80, b=0）と書けます。
+    </div>
+
+    <div class="explain-box" id="tab-a">
+      <span class="highlight-a">a（傾き）</span>は「x が 1 増えたとき、y がいくつ増えるか」を表します。<br><br>
+      ・<span class="highlight-a">a が大きい（正）</span> → グラフが急な上がり坂<br>
+      ・<span class="highlight-a">a が小さい（正）</span> → グラフがゆるやかな上がり坂<br>
+      ・<span class="highlight-a">a がマイナス</span> → グラフが下がり坂<br>
+      ・<span class="highlight-a">a = 0</span> → 水平な直線（y = b）<br><br>
+      スライダーで a を動かして確かめよう！
+    </div>
+
+    <div class="explain-box" id="tab-b">
+      <span class="highlight-b">b（切片）</span>は「x = 0 のとき y がいくつか」、つまり<strong>y 軸との交点</strong>を表します。<br><br>
+      ・<span class="highlight-b">b = 3</span> → グラフは (0, 3) を通る<br>
+      ・<span class="highlight-b">b = -2</span> → グラフは (0, -2) を通る<br>
+      ・<span class="highlight-b">b = 0</span> → グラフは原点 (0, 0) を通る<br><br>
+      b を変えても<strong>傾きは変わらない</strong>（平行移動するだけ）。スライダーで確かめよう！
+    </div>
+
+    <div class="explain-box" id="tab-read">
+      グラフから a と b を読み取る手順はこうです。<br><br>
+      ① グラフが <strong>y 軸と交わる点</strong>を見る → それが <span class="highlight-b">b</span><br>
+      ② 右に 1 進んだとき <strong>y がいくつ増えるか</strong>を数える → それが <span class="highlight-a">a</span><br><br>
+      下の「2点の座標」を使って確かめてみよう。
+    </div>
+  </div>
+
+  <!-- 2点の座標 -->
+  <div class="points-section">
+    <div class="section-title">グラフ上の2点</div>
+    <div class="points-grid">
+      <div class="point-card p1">
+        <div class="point-card-label">点 P（x = -3）</div>
+        <div class="point-val" id="p1val">(-3, -3)</div>
+      </div>
+      <div class="point-card p2">
+        <div class="point-card-label">点 Q（x = 3）</div>
+        <div class="point-val" id="p2val">(3, 3)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 次のステップ -->
+<div class="next-section">
+  <a class="next-card" href="https://sites.google.com/view/suda-math-aizu/中学生/三平方の定理">
+    <div class="next-icon">📐</div>
+    <div class="next-body">
+      <span class="next-tag">中学3年</span>
+      <div class="next-title">三平方の定理を体感する</div>
+      <div class="next-desc">a²＋b²＝c² がなぜ成り立つのか。動かしながら証明しよう。</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</div>
+
+<script>
+const PI = Math.PI;
+
+// ===== グラフ描画 =====
+function getAB() {
+  return {
+    a: parseFloat(document.getElementById('aSlider').value),
+    b: parseFloat(document.getElementById('bSlider').value)
+  };
+}
+
+function drawGraph() {
+  const canvas = document.getElementById('graph');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 380;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const { a, b } = getAB();
+  const cx = W / 2, cy = H / 2;
+  const unit = Math.min(W, H) / 12; // 1単位のピクセル数
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景
+  ctx.fillStyle = '#f8faff';
+  ctx.fillRect(0, 0, W, H);
+
+  // グリッド（細）
+  ctx.strokeStyle = '#dde4ef';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += unit) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy - (x - cx)); ctx.lineTo(W, cy - (x - cx));
+  }
+  // グリッド（細、Y方向）
+  for (let y = cy % unit; y <= H; y += unit) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  for (let x = cx % unit; x <= W; x += unit) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+
+  // 軸
+  ctx.strokeStyle = '#b8c8de';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+  // 軸ラベル
+  ctx.fillStyle = '#7a8a9a';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  for (let i = -5; i <= 5; i++) {
+    if (i === 0) continue;
+    // X軸の数字
+    ctx.fillText(i, cx + i * unit, cy + 18);
+    // Y軸の数字
+    ctx.textAlign = 'right';
+    ctx.fillText(-i, cx - 8, cy + i * unit + 4);
+    ctx.textAlign = 'center';
+  }
+  ctx.fillStyle = '#1a2332';
+  ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+  ctx.fillText('x', W - 8, cy - 8);
+  ctx.textAlign = 'left';
+  ctx.fillText('y', cx + 6, 14);
+
+  // 直線を描く
+  if (a !== 0 || b !== 0 || true) {
+    // y = ax + b
+    const x1 = -cx / unit;
+    const x2 = (W - cx) / unit;
+    const y1 = a * x1 + b;
+    const y2 = a * x2 + b;
+    const px1 = cx + x1 * unit;
+    const py1 = cy - y1 * unit;
+    const px2 = cx + x2 * unit;
+    const py2 = cy - y2 * unit;
+
+    // グラデーション線
+    const grad = ctx.createLinearGradient(px1, py1, px2, py2);
+    grad.addColorStop(0, 'rgba(26,86,196,0.6)');
+    grad.addColorStop(0.5, '#1a56c4');
+    grad.addColorStop(1, 'rgba(26,86,196,0.6)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(px1, py1);
+    ctx.lineTo(px2, py2);
+    ctx.stroke();
+
+    // 切片の点（y軸交点）
+    const bpx = cx;
+    const bpy = cy - b * unit;
+    ctx.beginPath();
+    ctx.arc(bpx, bpy, 6, 0, 2 * PI);
+    ctx.fillStyle = '#1a56c4';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // b ラベル
+    if (Math.abs(bpy - cy) > 12 || true) {
+      ctx.fillStyle = '#1a56c4';
+      ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+      ctx.textAlign = 'left';
+      ctx.fillText(`b=${b}`, bpx + 10, bpy - 4);
+    }
+
+    // 傾きの三角（x=1の区間）
+    if (a !== 0) {
+      const tx = cx + unit;  // x=1
+      const ty = cy - (a * 1 + b) * unit;
+      const ox = cx;
+      const oy = cy - b * unit;
+
+      ctx.strokeStyle = '#d62828';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      // 横線
+      ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(tx, oy); ctx.stroke();
+      // 縦線
+      ctx.beginPath(); ctx.moveTo(tx, oy); ctx.lineTo(tx, ty); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // a ラベル
+      const midX = (ox + tx) / 2;
+      const midY = (oy + ty) / 2;
+      ctx.fillStyle = '#d62828';
+      ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`a=${a}`, tx + 22, midY);
+      ctx.fillText('+1', midX, oy + 14);
+    }
+
+    // 2点P, Q を描く
+    [[-3, a * -3 + b], [3, a * 3 + b]].forEach(([xv, yv], i) => {
+      const px = cx + xv * unit;
+      const py = cy - yv * unit;
+      if (py < 0 || py > H) return;
+      ctx.beginPath();
+      ctx.arc(px, py, 5, 0, 2 * PI);
+      ctx.fillStyle = i === 0 ? '#d62828' : '#2a7a3a';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+  }
+}
+
+// ===== 更新処理 =====
+function updateAll() {
+  const { a, b } = getAB();
+
+  // スライダーの背景グラデーションを更新
+  const aSlider = document.getElementById('aSlider');
+  const bSlider = document.getElementById('bSlider');
+  const aPct = ((a - (-4)) / (4 - (-4))) * 100;
+  const bPct = ((b - (-5)) / (5 - (-5))) * 100;
+  aSlider.style.background = `linear-gradient(to right, #d62828 0%, #d62828 ${aPct}%, #e0e0e0 ${aPct}%, #e0e0e0 100%)`;
+  bSlider.style.background = `linear-gradient(to right, #1a56c4 0%, #1a56c4 ${bPct}%, #e0e0e0 ${bPct}%, #e0e0e0 100%)`;
+
+  // 数値表示
+  document.getElementById('aVal').textContent = a;
+  document.getElementById('bVal').textContent = b;
+
+  // 式の表示
+  let formula = 'y = ';
+  if (a === 0) {
+    formula += `<span class="a-val">0</span>x `;
+  } else if (a === 1) {
+    formula += `<span class="a-val"> </span>x `;
+  } else if (a === -1) {
+    formula += `<span class="a-val">−</span>x `;
+  } else {
+    formula += `<span class="a-val">${a}</span>x `;
+  }
+  if (b >= 0) formula += `+ <span class="b-val">${b}</span>`;
+  else        formula += `− <span class="b-val">${Math.abs(b)}</span>`;
+  document.getElementById('formulaDisp').innerHTML = formula;
+
+  // 特殊ケース
+  const special = document.getElementById('specialBox');
+  if (a === 0 && b === 0) {
+    special.textContent = 'a = 0 なので y = 0、x 軸と重なります。';
+    special.classList.add('show');
+  } else if (a === 0) {
+    special.textContent = `a = 0 なので傾きなし。y = ${b} の水平な直線になります。`;
+    special.classList.add('show');
+  } else {
+    special.classList.remove('show');
+  }
+
+  // 2点
+  const p1y = a * (-3) + b;
+  const p2y = a * 3 + b;
+  document.getElementById('p1val').textContent = `(−3,  ${p1y})`;
+  document.getElementById('p2val').textContent = `(3,  ${p2y})`;
+
+  drawGraph();
+}
+
+// ===== タブ =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.explain-box').forEach(b => b.classList.remove('show'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('show');
+  });
+});
+
+// ===== イベント =====
+document.getElementById('aSlider').addEventListener('input', updateAll);
+document.getElementById('bSlider').addEventListener('input', updateAll);
+window.addEventListener('load', updateAll);
+window.addEventListener('resize', updateAll);
+</script>
+</body>
+</html>

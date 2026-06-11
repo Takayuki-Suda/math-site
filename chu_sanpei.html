@@ -1,0 +1,348 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三平方の定理</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332;
+    --paper: #f7f4ec;
+    --line: #d8d2c4;
+    --a: #2e7d6b;
+    --b: #c2683a;
+    --c: #3a5fa8;
+    --accent: #b03a48;
+  }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 18px 14px 28px;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 1.45rem;
+    letter-spacing: .03em;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+  }
+  .lead { font-size: .92rem; color: #555; margin-bottom: 18px; }
+  .stage {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 6px 20px rgba(40,40,60,.06);
+  }
+  svg { width: 100%; height: auto; display: block; touch-action: none; }
+  .eq {
+    text-align: center;
+    font-size: 1.35rem;
+    margin: 16px 0 6px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .eq .va { color: var(--a); }
+  .eq .vb { color: var(--b); }
+  .eq .vc { color: var(--c); }
+  .check {
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--accent);
+    font-weight: 700;
+    min-height: 1.5em;
+    margin-bottom: 14px;
+  }
+  .controls { display: flex; gap: 14px; margin: 10px 0 4px; }
+  .ctrl { flex: 1; }
+  .ctrl label { font-size: .85rem; font-weight: 700; display: block; margin-bottom: 2px; }
+  .ctrl .la { color: var(--a); }
+  .ctrl .lb { color: var(--b); }
+  input[type=range] { width: 100%; }
+  input[type=range].sa { accent-color: var(--a); }
+  input[type=range].sb { accent-color: var(--b); }
+  .note {
+    font-size: .82rem;
+    color: #666;
+    margin-top: 14px;
+    padding: 12px;
+    background: #fff;
+    border-left: 4px solid var(--c);
+    border-radius: 0 8px 8px 0;
+  }
+  .hint { font-size:.8rem; color:#888; text-align:center; margin-top:6px; }
+
+  /* 証明 */
+  .proof {
+    margin-top: 22px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 18px 20px;
+  }
+  .proof h2 {
+    font-size: 1.05rem;
+    border-left: 4px solid var(--accent);
+    padding-left: 10px;
+    margin-bottom: 14px;
+  }
+  .proof-step {
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: .92rem;
+    line-height: 1.7;
+  }
+  .proof-step .step-no {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .kw { font-weight: 700; color: var(--accent); }
+  .proof-conc {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--paper);
+    border-radius: 8px;
+    border: 2px dashed var(--c);
+    color: var(--c);
+  }
+</style>
+
+<div class="wrap">
+  <h1>三平方の定理を「面積」で見る</h1>
+  <p class="lead">直角三角形の三辺につく正方形。緑＋橙の面積が、青の面積とぴったり同じになります。スライダーで形を変えても、いつでも成り立ちます。</p>
+
+  <div class="stage">
+    <svg id="fig" viewBox="0 0 360 360" aria-label="三平方の定理の図"></svg>
+  </div>
+
+  <div class="eq">
+    <span class="va">a²</span> + <span class="vb">b²</span> = <span class="vc">c²</span>
+  </div>
+  <div class="eq" id="numeq" style="font-size:1.05rem;"></div>
+  <div class="check" id="check"></div>
+
+  <div class="controls">
+    <div class="ctrl">
+      <label class="la">辺 a の長さ</label>
+      <input type="range" class="sa" id="ra" min="2" max="9" step="0.5" value="3">
+    </div>
+    <div class="ctrl">
+      <label class="lb">辺 b の長さ</label>
+      <input type="range" class="sb" id="rb" min="2" max="9" step="0.5" value="4">
+    </div>
+  </div>
+  <p class="hint">スライダーを動かしてみよう</p>
+  <div class="proof">
+    <h2>証明（面積を2通りで数える）</h2>
+
+    <svg id="proof-fig" viewBox="0 0 300 310" style="width:100%;max-width:300px;display:block;margin:0 auto 16px" aria-label="証明の図"></svg>
+
+    <div class="proof-step">
+      <span class="step-no">前提</span>
+      辺 <span style="color:#2e7d6b;font-weight:700">a</span>、<span style="color:#c2683a;font-weight:700">b</span>、<span style="color:#3a5fa8;font-weight:700">c</span>（斜辺）の直角三角形4つを、一辺 (a＋b) の大きな正方形の<b>内側</b>に並べます。
+    </div>
+
+    <div class="proof-step">
+      <span class="step-no">① 大きな正方形の面積</span>
+      一辺が (a＋b) なので<br>
+      　大きな正方形の面積 ＝ <b>(a＋b)²　＝ a² ＋ 2ab ＋ b²</b>
+    </div>
+
+    <div class="proof-step">
+      <span class="step-no">② 面積の等式をつくる</span>
+      大きな正方形 ＝ 内側の正方形（c²） ＋ 4つの直角三角形<br>
+      　a² ＋ 2ab ＋ b²　＝　c²　＋　4 × (½ab)<br>
+      　a² ＋ 2ab ＋ b²　＝　c²　＋　2ab
+    </div>
+
+    <div class="proof-step">
+      <span class="step-no">③ 両辺から 2ab を引く</span>
+      <b>a² ＋ b² ＝ c²</b>　　　　　…証明完了 ✓
+    </div>
+
+    <div class="proof-conc">a² ＋ b² ＝ c²　　✓</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("fig");
+  const ra = document.getElementById("ra");
+  const rb = document.getElementById("rb");
+  const numeq = document.getElementById("numeq");
+  const check = document.getElementById("check");
+
+  function el(tag, attrs){
+    const e = document.createElementNS(NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function draw(){
+    const a = parseFloat(ra.value);
+    const b = parseFloat(rb.value);
+    const c = Math.sqrt(a*a + b*b);
+    const u = Math.min(18, 230 / (a + b));
+
+    svg.innerHTML = "";
+
+    const ox = 175, oy = 215;
+    const A = {x: ox, y: oy};
+    const B = {x: ox + b*u, y: oy};
+    const C = {x: ox, y: oy - a*u};
+
+    // b²（橙）
+    svg.appendChild(el("rect",{x:ox, y:oy, width:b*u, height:b*u,
+      fill:"#c2683a","fill-opacity":.25, stroke:"#c2683a","stroke-width":2}));
+    // a²（緑）
+    svg.appendChild(el("rect",{x:ox-a*u, y:oy-a*u, width:a*u, height:a*u,
+      fill:"#2e7d6b","fill-opacity":.25, stroke:"#2e7d6b","stroke-width":2}));
+
+    // c²（青・斜辺外側）
+    const dx = C.x - B.x, dy = C.y - B.y;
+    let nx = dy, ny = -dx;
+    const len = Math.hypot(nx, ny);
+    nx/=len; ny/=len;
+    const midBC = {x:(B.x+C.x)/2, y:(B.y+C.y)/2};
+    const toA = {x: A.x - midBC.x, y: A.y - midBC.y};
+    if(nx*toA.x + ny*toA.y > 0){ nx=-nx; ny=-ny; }
+    const ux = nx, uy = ny;
+    const B2 = {x: B.x + ux*c*u, y: B.y + uy*c*u};
+    const C2 = {x: C.x + ux*c*u, y: C.y + uy*c*u};
+    svg.appendChild(el("polygon",{
+      points:`${B.x},${B.y} ${B2.x},${B2.y} ${C2.x},${C2.y} ${C.x},${C.y}`,
+      fill:"#3a5fa8","fill-opacity":.25, stroke:"#3a5fa8","stroke-width":2}));
+
+    // 三角形
+    svg.appendChild(el("polygon",{points:`${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}`,
+      fill:"#1a2332","fill-opacity":.06, stroke:"#1a2332","stroke-width":2.5}));
+
+    // 直角マーク
+    const m = 12;
+    svg.appendChild(el("path",{d:`M ${A.x+m} ${A.y} L ${A.x+m} ${A.y-m} L ${A.x} ${A.y-m}`,
+      fill:"none", stroke:"#1a2332","stroke-width":1.5}));
+
+    function label(x,y,txt,color){
+      const t = el("text",{x,y,"text-anchor":"middle","font-size":15,
+        "font-weight":700, fill:color});
+      t.textContent = txt; svg.appendChild(t);
+    }
+    label(ox - a*u/2, oy - a*u/2, "a²", "#2e7d6b");
+    label(ox + b*u/2, oy + b*u/2, "b²", "#c2683a");
+    const mid = {x:(B.x+C.x)/2 + ux*c*u/2, y:(B.y+C.y)/2 + uy*c*u/2};
+    label(mid.x, mid.y, "c²", "#3a5fa8");
+
+    const a2 = a*a, b2 = b*b, c2 = c*c;
+    numeq.innerHTML =
+      `<span style="color:#2e7d6b">${a2.toFixed(2)*1}</span> + ` +
+      `<span style="color:#c2683a">${b2.toFixed(2)*1}</span> = ` +
+      `<span style="color:#3a5fa8">${c2.toFixed(2)*1}</span>　（c = ${c.toFixed(3)*1}）`;
+
+    const isInt = Math.abs(c - Math.round(c)) < 1e-9 &&
+                  Number.isInteger(a) && Number.isInteger(b);
+    if(isInt){
+      check.textContent = `✓ きれいな整数！ ${a}・${b}・${Math.round(c)} の直角三角形`;
+    } else {
+      check.textContent = `緑 ${a2.toFixed(1)*1} ＋ 橙 ${b2.toFixed(1)*1} ＝ 青 ${c2.toFixed(1)*1} ✓`;
+    }
+
+    drawProof(a, b);
+  }
+
+  function drawProof(a, b) {
+    const ps = document.getElementById("proof-fig");
+    if(!ps) return;
+    ps.innerHTML = "";
+
+    function pe(tag, attrs, txt){
+      const e = document.createElementNS(NS, tag);
+      for(const k in attrs) e.setAttribute(k, attrs[k]);
+      if(txt !== undefined) e.textContent = txt;
+      return e;
+    }
+
+    const pad = 26, size = 248;
+    const sc = size / (a + b);
+    const ak = a * sc, bk = b * sc;
+    const ox = pad, oy = pad, S = size;
+
+    // 内側の正方形の4頂点（各辺を b:a に分ける）
+    const P0 = {x: ox + bk,     y: oy};
+    const P1 = {x: ox + S,      y: oy + bk};
+    const P2 = {x: ox + S - bk, y: oy + S};
+    const P3 = {x: ox,          y: oy + S - bk};
+
+    // 大正方形
+    ps.appendChild(pe("rect",{x:ox,y:oy,width:S,height:S,
+      fill:"none",stroke:"#1a2332","stroke-width":2}));
+
+    // c²（青・内側の正方形）
+    ps.appendChild(pe("polygon",{
+      points:`${P0.x},${P0.y} ${P1.x},${P1.y} ${P2.x},${P2.y} ${P3.x},${P3.y}`,
+      fill:"#3a5fa8","fill-opacity":0.2,stroke:"#3a5fa8","stroke-width":2}));
+
+    // 4つの直角三角形（灰）
+    ps.appendChild(pe("polygon",{
+      points:`${ox},${oy} ${P0.x},${P0.y} ${P3.x},${P3.y}`,
+      fill:"#888","fill-opacity":0.18,stroke:"#555","stroke-width":1.2}));
+    ps.appendChild(pe("polygon",{
+      points:`${P0.x},${P0.y} ${ox+S},${oy} ${P1.x},${P1.y}`,
+      fill:"#888","fill-opacity":0.18,stroke:"#555","stroke-width":1.2}));
+    ps.appendChild(pe("polygon",{
+      points:`${P1.x},${P1.y} ${ox+S},${oy+S} ${P2.x},${P2.y}`,
+      fill:"#888","fill-opacity":0.18,stroke:"#555","stroke-width":1.2}));
+    ps.appendChild(pe("polygon",{
+      points:`${P3.x},${P3.y} ${P2.x},${P2.y} ${ox},${oy+S}`,
+      fill:"#888","fill-opacity":0.18,stroke:"#555","stroke-width":1.2}));
+
+    // 直角マーク（左上の三角、直角は大正方形左上）
+    const m = 10;
+    ps.appendChild(pe("path",{d:`M ${ox+m} ${oy} L ${ox+m} ${oy+m} L ${ox} ${oy+m}`,
+      fill:"none",stroke:"#1a2332","stroke-width":1.2}));
+
+    function lbl(x, y, txt, color, anchor="middle"){
+      ps.appendChild(pe("text",{x,y,"text-anchor":anchor,
+        "font-size":12,"font-weight":700,fill:color}, txt));
+    }
+
+    // 辺ラベル（上辺: b | a）
+    lbl(ox + bk/2,       oy - 6, "b", "#c2683a");
+    lbl(ox + bk + ak/2,  oy - 6, "a", "#2e7d6b");
+    // 右辺: b | a
+    lbl(ox+S+10, oy + bk/2,      "b", "#c2683a", "start");
+    lbl(ox+S+10, oy + bk + ak/2, "a", "#2e7d6b", "start");
+    // 下辺: a | b
+    lbl(ox + ak/2,       oy+S+14, "a", "#2e7d6b");
+    lbl(ox + ak + bk/2,  oy+S+14, "b", "#c2683a");
+    // 左辺: a | b
+    lbl(ox-8, oy + ak/2,      "a", "#2e7d6b", "end");
+    lbl(ox-8, oy + ak + bk/2, "b", "#c2683a", "end");
+
+    // c² ラベル
+    const cx2=(P0.x+P1.x+P2.x+P3.x)/4, cy2=(P0.y+P1.y+P2.y+P3.y)/4;
+    lbl(cx2, cy2+5, "c²", "#3a5fa8");
+
+    // キャプション
+    lbl(ox+S/2, oy+S+30, "(a＋b)² ＝ c² ＋ 4×(½ab)", "#1a2332");
+  }
+
+  ra.addEventListener("input", draw);
+  rb.addEventListener("input", draw);
+  draw();
+})();
+</script>

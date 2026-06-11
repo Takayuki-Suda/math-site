@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方程式ってなに？</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #fdf9f4;
+  --white: #ffffff;
+  --ink: #1a2332;
+  --muted: #7a8a9a;
+  --orange: #e8650a;
+  --orange-light: #fff3e8;
+  --blue: #1a56c4;
+  --green: #2a7a3a;
+  --red: #d62828;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 0 0 56px;
+}
+
+.hero {
+  background: linear-gradient(135deg, #2c1200 0%, #7a3000 100%);
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '⚖️';
+  position: absolute;
+  font-size: 160px;
+  opacity: 0.06;
+  top: -20px; right: -10px;
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,160,60,0.2);
+  color: #ffb870;
+  border: 1px solid rgba(255,160,60,0.4);
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  padding: 4px 14px; border-radius: 20px; margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Kaisei Decol', serif;
+  font-size: clamp(1.7rem, 5vw, 2.8rem);
+  color: #fff; margin-bottom: 10px; position: relative; line-height: 1.3;
+}
+.hero p { font-size: 0.9rem; color: rgba(255,255,255,0.6); position: relative; }
+
+.main { max-width: 760px; margin: 0 auto; padding: 28px 16px 0; }
+
+/* 天秤セクション */
+.scale-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+}
+
+.scale-title {
+  font-family: 'Kaisei Decol', serif;
+  font-size: 1.1rem; color: var(--orange);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.scale-title::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--orange); flex-shrink: 0;
+}
+
+canvas { display: block; width: 100%; }
+
+/* 問題選択 */
+.problem-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.prob-btn {
+  padding: 8px 16px; border-radius: 24px;
+  border: 2px solid #e0d0bc; background: #fff;
+  color: var(--muted); font-size: 0.83rem; font-weight: 700;
+  cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+  transition: all 0.2s;
+}
+.prob-btn.active {
+  background: var(--orange); border-color: var(--orange); color: #fff;
+}
+
+/* 解き方ステップ */
+.steps-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px; margin-bottom: 20px;
+}
+
+.step-list { display: flex; flex-direction: column; gap: 14px; }
+
+.step-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg);
+  border-left: 4px solid transparent;
+  transition: all 0.3s;
+  opacity: 0.4;
+}
+.step-item.active {
+  opacity: 1;
+  border-left-color: var(--orange);
+  background: var(--orange-light);
+}
+.step-item.done {
+  opacity: 0.75;
+  border-left-color: var(--green);
+}
+
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--orange); color: #fff;
+  font-weight: 700; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-family: var(--mono);
+}
+.step-item.done .step-num { background: var(--green); }
+
+.step-body { flex: 1; }
+.step-label { font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: 1px; margin-bottom: 4px; }
+.step-item.done .step-label { color: var(--green); }
+.step-formula {
+  font-family: var(--mono); font-size: 1rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 4px;
+}
+.step-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+.step-controls {
+  display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+}
+.step-btn {
+  padding: 10px 20px; border-radius: 24px; border: none;
+  font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif; transition: all 0.2s;
+}
+.step-btn.next { background: var(--orange); color: #fff; }
+.step-btn.next:hover { background: #c4540a; }
+.step-btn.reset { background: #f0f0f0; color: var(--muted); }
+.step-btn.reset:hover { background: #e0e0e0; }
+.step-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* 答え表示 */
+.answer-box {
+  text-align: center; padding: 20px;
+  background: linear-gradient(135deg, #e8f5eb, #f0faf0);
+  border: 2px solid #a0d8a8; border-radius: 16px;
+  margin-top: 16px; display: none;
+}
+.answer-box.show { display: block; }
+.answer-big {
+  font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+  color: var(--green); margin-bottom: 8px;
+}
+.answer-check { font-size: 0.85rem; color: #558b5a; }
+
+/* なぜxを使うのか */
+.why-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px; margin-bottom: 20px;
+}
+.why-title {
+  font-family: 'Kaisei Decol', serif;
+  font-size: 1.1rem; color: var(--blue);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.why-title::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--blue); flex-shrink: 0;
+}
+.why-body { font-size: 0.88rem; line-height: 1.9; color: var(--ink); }
+.why-body strong { color: var(--blue); }
+
+/* 次のステップ */
+.next-section { max-width: 760px; margin: 8px auto 0; padding: 0 16px; }
+.next-card {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1.5px solid #4a9eff; border-radius: 16px;
+  padding: 20px 22px; text-decoration: none; color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(74,158,255,0.2); }
+.next-icon { font-size: 1.8rem; flex-shrink: 0; }
+.next-body { flex: 1; }
+.next-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(74,158,255,0.15); color: #4a9eff;
+  border: 1px solid rgba(74,158,255,0.35); margin-bottom: 6px;
+}
+.next-title { font-size: 0.95rem; font-weight: 700; color: #f0f0ff; margin-bottom: 3px; }
+.next-desc  { font-size: 0.78rem; color: #8080b0; line-height: 1.6; }
+.next-arrow { font-size: 1.3rem; color: #4a9eff; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">中学1年</div>
+  <h1>方程式って<br>なに？</h1>
+  <p>x という「謎の数」を、天秤で探し出そう。</p>
+</div>
+
+<div class="main">
+
+  <!-- 天秤 -->
+  <div class="scale-card">
+    <div class="scale-title">天秤で考える</div>
+    <div class="problem-tabs" id="probTabs">
+      <button class="prob-btn active" data-idx="0">問題①　2x = 6</button>
+      <button class="prob-btn" data-idx="1">問題②　x + 3 = 7</button>
+      <button class="prob-btn" data-idx="2">問題③　3x − 2 = 7</button>
+    </div>
+    <canvas id="scaleCanvas" height="220"></canvas>
+  </div>
+
+  <!-- ステップ解法 -->
+  <div class="steps-card">
+    <div class="scale-title" style="margin-bottom:16px;">解き方のステップ</div>
+    <div class="step-list" id="stepList"></div>
+    <div class="step-controls">
+      <button class="step-btn next" id="nextBtn">次のステップ →</button>
+      <button class="step-btn reset" id="resetBtn">最初から</button>
+    </div>
+    <div class="answer-box" id="answerBox">
+      <div class="answer-big" id="answerText">x = 3</div>
+      <div class="answer-check" id="answerCheck">確認：2×3 = 6 ✓</div>
+    </div>
+  </div>
+
+  <!-- なぜxを使うのか -->
+  <div class="why-card">
+    <div class="why-title">なぜ x を使うの？</div>
+    <div class="why-body">
+      「ある数に3を足したら7になった。その数はいくつ？」<br><br>
+      頭の中で考えると「7から3を引けば4」とわかります。でも問題が複雑になると頭だけでは難しい。<br><br>
+      そこで<strong>「わからない数を x と置く」</strong>という方法が登場します。<br><br>
+      x + 3 = 7 という式を作って、両辺から3を引くと x = 4。<br>
+      この「<strong>両辺に同じ操作をする</strong>」ルールが方程式の核心です。<br><br>
+      天秤が釣り合っているとき、両側から同じ重さのものを取っても釣り合ったまま。これと同じです。
+    </div>
+  </div>
+
+</div>
+
+<!-- 次のステップ -->
+<div class="next-section">
+  <a class="next-card" href="https://sites.google.com/view/suda-math-aizu/中学生/一次関数グラフ">
+    <div class="next-icon">📈</div>
+    <div class="next-body">
+      <span class="next-tag">中学2年</span>
+      <div class="next-title">一次関数・グラフへ進もう</div>
+      <div class="next-desc">方程式の次は関数。y = ax + b のグラフを動かして体感しよう。</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</div>
+
+<script>
+const PI = Math.PI;
+
+// ===== 問題データ =====
+const problems = [
+  {
+    label: '2x = 6',
+    answer: 3,
+    check: '2 × 3 = 6',
+    steps: [
+      { label: 'はじめの式', formula: '2x = 6', desc: '「2倍するとx」が6になる。xはいくつ？' },
+      { label: '両辺を2で割る', formula: '2x ÷ 2 = 6 ÷ 2', desc: '天秤の両側を2で割っても釣り合ったまま。' },
+      { label: '答え', formula: 'x = 3', desc: '両辺を2で割ると x だけ残る。' },
+    ],
+    // 天秤の左右の重さ表現
+    left: (x) => [{ label: 'x', count: 2, color: '#e8650a' }],
+    right: () => [{ label: '1', count: 6, color: '#1a56c4' }],
+    xVal: 3,
+  },
+  {
+    label: 'x + 3 = 7',
+    answer: 4,
+    check: '4 + 3 = 7',
+    steps: [
+      { label: 'はじめの式', formula: 'x + 3 = 7', desc: 'xに3を足すと7になる。xはいくつ？' },
+      { label: '両辺から3を引く', formula: 'x + 3 − 3 = 7 − 3', desc: '天秤の両側から3を取り除く。' },
+      { label: '答え', formula: 'x = 4', desc: '3同士が消えて x だけ残る。' },
+    ],
+    left: (x) => [{ label: 'x', count: 1, color: '#e8650a' }, { label: '1', count: 3, color: '#7a8a9a' }],
+    right: () => [{ label: '1', count: 7, color: '#1a56c4' }],
+    xVal: 4,
+  },
+  {
+    label: '3x − 2 = 7',
+    answer: 3,
+    check: '3 × 3 − 2 = 7',
+    steps: [
+      { label: 'はじめの式', formula: '3x − 2 = 7', desc: '3倍したxから2を引くと7。xはいくつ？' },
+      { label: '両辺に2を足す', formula: '3x − 2 + 2 = 7 + 2', desc: 'まず−2を消す。両側に2を足す。' },
+      { label: '整理する', formula: '3x = 9', desc: '左の−2+2が消えて3x、右は7+2=9。' },
+      { label: '両辺を3で割る', formula: '3x ÷ 3 = 9 ÷ 3', desc: '両側を3で割る。' },
+      { label: '答え', formula: 'x = 3', desc: 'x が求まった！' },
+    ],
+    left: (x) => [{ label: 'x', count: 3, color: '#e8650a' }],
+    right: () => [{ label: '1', count: 9, color: '#1a56c4' }],
+    xVal: 3,
+  },
+];
+
+let currentProb = 0;
+let currentStep = 0;
+
+// ===== 天秤描画 =====
+function drawScale(probIdx, stepIdx) {
+  const canvas = document.getElementById('scaleCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 220;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  ctx.clearRect(0, 0, W, H);
+
+  const prob = problems[probIdx];
+  const totalSteps = prob.steps.length;
+  const isAnswered = stepIdx >= totalSteps - 1;
+
+  // 天秤の傾き（答え前は釣り合い、解く過程中は少し傾く）
+  const tilt = 0; // 常に釣り合い表示
+
+  const cx = W / 2, baseY = H * 0.78;
+  const armW = W * 0.34;
+
+  // 支柱
+  ctx.strokeStyle = '#8a7060';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, baseY);
+  ctx.lineTo(cx, baseY - H * 0.4);
+  ctx.stroke();
+
+  // 台座
+  ctx.fillStyle = '#8a7060';
+  ctx.beginPath();
+  ctx.roundRect(cx - 40, baseY, 80, 14, 7);
+  ctx.fill();
+
+  // 横棒
+  ctx.strokeStyle = '#6a5040';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cx - armW, baseY - H * 0.4);
+  ctx.lineTo(cx + armW, baseY - H * 0.4);
+  ctx.stroke();
+
+  // 支点の円
+  ctx.beginPath();
+  ctx.arc(cx, baseY - H * 0.4, 7, 0, 2 * PI);
+  ctx.fillStyle = '#6a5040';
+  ctx.fill();
+
+  const panY = baseY - H * 0.4 + 30;
+  const panW = armW * 0.72;
+  const panH = 12;
+
+  // 左の皿（左辺）
+  const lx = cx - armW;
+  ctx.strokeStyle = '#a08060';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(lx, baseY - H * 0.4);
+  ctx.lineTo(lx, panY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(lx, panY, panW / 2, panH / 2, 0, 0, 2 * PI);
+  ctx.fillStyle = '#d4b896';
+  ctx.fill();
+  ctx.strokeStyle = '#a08060';
+  ctx.stroke();
+
+  // 右の皿（右辺）
+  const rx = cx + armW;
+  ctx.beginPath();
+  ctx.moveTo(rx, baseY - H * 0.4);
+  ctx.lineTo(rx, panY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(rx, panY, panW / 2, panH / 2, 0, 0, 2 * PI);
+  ctx.fillStyle = '#d4b896';
+  ctx.fill();
+  ctx.strokeStyle = '#a08060';
+  ctx.stroke();
+
+  // 左辺のブロック（問題ラベル）
+  const leftLabel = prob.steps[Math.min(stepIdx, totalSteps - 1)].formula.split('=')[0].trim();
+  const rightLabel = prob.steps[Math.min(stepIdx, totalSteps - 1)].formula.split('=')[1]?.trim() || '';
+
+  ctx.font = `bold ${Math.min(18, W * 0.038)}px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+
+  // 左辺
+  ctx.fillStyle = isAnswered ? '#2a7a3a' : '#e8650a';
+  ctx.fillText(leftLabel, lx, panY - 20);
+
+  // 右辺
+  ctx.fillStyle = isAnswered ? '#2a7a3a' : '#1a56c4';
+  ctx.fillText(rightLabel, rx, panY - 20);
+
+  // 釣り合いマーク
+  if (isAnswered) {
+    ctx.fillStyle = '#2a7a3a';
+    ctx.font = `bold ${Math.min(16, W * 0.033)}px 'Noto Sans JP', sans-serif`;
+    ctx.fillText('釣り合っている ✓', cx, H * 0.12);
+  } else {
+    ctx.fillStyle = '#7a8a9a';
+    ctx.font = `${Math.min(13, W * 0.027)}px 'Noto Sans JP', sans-serif`;
+    ctx.fillText('⚖ 両辺は常に等しい', cx, H * 0.12);
+  }
+
+  // ステップ表示
+  ctx.fillStyle = '#e8650a';
+  ctx.font = `bold ${Math.min(13, W * 0.027)}px 'Noto Sans JP', sans-serif`;
+  ctx.fillText(prob.label, cx, H * 0.96);
+}
+
+// ===== ステップ表示 =====
+function renderSteps() {
+  const prob = problems[currentProb];
+  const list = document.getElementById('stepList');
+  list.innerHTML = '';
+
+  prob.steps.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'step-item' +
+      (i === currentStep ? ' active' : i < currentStep ? ' done' : '');
+    div.innerHTML = `
+      <div class="step-num">${i + 1}</div>
+      <div class="step-body">
+        <div class="step-label">${s.label}</div>
+        <div class="step-formula">${s.formula}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>`;
+    list.appendChild(div);
+  });
+
+  const isLast = currentStep >= prob.steps.length - 1;
+  document.getElementById('nextBtn').disabled = isLast;
+
+  const answerBox = document.getElementById('answerBox');
+  if (isLast) {
+    answerBox.classList.add('show');
+    document.getElementById('answerText').textContent = `x = ${prob.answer}`;
+    document.getElementById('answerCheck').textContent = `確認：${prob.check} ✓`;
+  } else {
+    answerBox.classList.remove('show');
+  }
+
+  drawScale(currentProb, currentStep);
+}
+
+// ===== 問題切替 =====
+document.getElementById('probTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.prob-btn');
+  if (!btn) return;
+  document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentProb = parseInt(btn.dataset.idx);
+  currentStep = 0;
+  renderSteps();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  const prob = problems[currentProb];
+  if (currentStep < prob.steps.length - 1) {
+    currentStep++;
+    renderSteps();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  currentStep = 0;
+  renderSteps();
+});
+
+window.addEventListener('load', () => { renderSteps(); });
+window.addEventListener('resize', () => { drawScale(currentProb, currentStep); });
+</script>
+</body>
+</html>

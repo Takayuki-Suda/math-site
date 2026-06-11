@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root {
+    --bg:     #0a0d14;
+    --bg2:    #111827;
+    --bg3:    #1a2035;
+    --blue:   #4fc3f7;
+    --green:  #69f0ae;
+    --red:    #ff6b6b;
+    --gold:   #ffd54f;
+    --purple: #ce93d8;
+    --white:  #e8eaf6;
+    --muted:  #7986a0;
+    --line:   rgba(255,255,255,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+    background: var(--bg); color: var(--white);
+    padding: 0 0 60px; line-height: 1.8; overflow-x: hidden;
+  }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #0a0d14 0%, #1a1040 100%);
+    padding: 32px 20px 28px; text-align: center;
+    border-bottom: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: 'V';
+    position: absolute; font-size: 200px; font-weight: 900;
+    color: rgba(79,195,247,0.03); top: -30px; right: -10px;
+    pointer-events: none; line-height: 1;
+  }
+  .header h1 {
+    font-size: clamp(1.4rem,5vw,2.1rem); font-weight: 900;
+    margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  .header h1 .accent { color: var(--blue); }
+  .header p { font-size: 0.88rem; color: var(--muted); }
+
+  /* ── セクション共通 ── */
+  .section { max-width: 680px; margin: 32px auto 0; padding: 0 20px; }
+  .sec-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--blue); text-transform: uppercase; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .num-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--blue); color: var(--bg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 900; flex-shrink: 0;
+  }
+  .sec-title {
+    font-size: clamp(1.05rem,4vw,1.4rem); font-weight: 900;
+    margin-bottom: 12px; line-height: 1.4;
+  }
+
+  /* ── カード ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--line);
+    border-radius: 18px; padding: 22px 20px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card.blue-top::before   { background: linear-gradient(90deg,var(--blue),#0288d1); }
+  .card.green-top::before  { background: linear-gradient(90deg,var(--green),#00bfa5); }
+  .card.gold-top::before   { background: linear-gradient(90deg,var(--gold),#ff9800); }
+  .card.purple-top::before { background: linear-gradient(90deg,var(--purple),#7b1fa2); }
+  .card.red-top::before    { background: linear-gradient(90deg,var(--red),#c62828); }
+
+  .card-desc {
+    font-size: 0.86rem; color: var(--muted); line-height: 1.9; margin-bottom: 14px;
+  }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  /* ── スライダー ── */
+  .sl-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.84rem; margin: 10px 0 4px; flex-wrap: wrap;
+  }
+  .sl-label { font-weight: 700; color: var(--gold); min-width: 80px; }
+  .sl-wrap  { flex: 1; min-width: 100px; }
+  input[type=range] { width: 100%; accent-color: var(--gold); height: 5px; }
+  .sl-val { font-size: 1rem; font-weight: 900; color: var(--gold); min-width: 44px; text-align: right; }
+
+  /* ── メッセージ ── */
+  .msg {
+    background: var(--bg3); border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 10px 14px; font-size: 0.84rem; line-height: 1.85;
+    margin-top: 12px; color: var(--white);
+  }
+  .msg b { color: var(--gold); }
+  .msg .g { color: var(--green); font-weight: 700; }
+  .msg .r { color: var(--red);   font-weight: 700; }
+
+  /* ── プリセットボタン ── */
+  .preset-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pbtn {
+    padding: 6px 12px; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--bg3);
+    font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; color: var(--muted);
+    transition: all .15s;
+  }
+  .pbtn.on, .pbtn:hover {
+    background: rgba(79,195,247,0.12); color: var(--blue); border-color: var(--blue);
+  }
+
+  /* ── 行列入力 ── */
+  .mat-wrap {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .mat-label { font-size: 1.1rem; font-weight: 900; color: var(--blue); }
+  .mat-bracket {
+    display: flex; flex-direction: column; gap: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .mat-row { display: flex; gap: 8px; align-items: center; }
+  .mat-row input[type=range] { width: 88px; }
+  .mat-val { font-size: 0.9rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+  /* ── ランクボタン ── */
+  .rank-btns { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .rbtn {
+    flex: 1; min-width: 80px; padding: 8px 4px;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: var(--bg3); font-size: 0.78rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; color: var(--muted); text-align: center;
+    transition: all .15s;
+  }
+  .rbtn.on { background: rgba(255,213,79,0.12); color: var(--gold); border-color: var(--gold); }
+
+  /* ── 次元ボックス ── */
+  .dim-row { display: flex; gap: 8px; align-items: stretch; margin: 14px 0; flex-wrap: wrap; }
+  .dim-box {
+    flex: 1; min-width: 80px; background: var(--bg3);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 8px; text-align: center;
+  }
+  .dim-box .dname { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+  .dim-box .dval  { font-size: 1.8rem; font-weight: 900; }
+  .dim-box .dsub  { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+  .dim-eq { display: flex; align-items: center; font-size: 1.3rem; font-weight: 900; color: var(--gold); }
+
+  /* ── まとめパネル ── */
+  .summary {
+    background: linear-gradient(135deg,#0a0d14,#1a1040);
+    border: 1px solid rgba(255,213,79,0.3);
+    border-radius: 18px; padding: 24px 20px; margin-top: 32px; text-align: center;
+  }
+  .summary h3 { font-size: 1.1rem; font-weight: 900; color: var(--gold); margin-bottom: 14px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media(max-width:480px){ .summary-grid { grid-template-columns: 1fr; } }
+  .s-item {
+    background: var(--bg3); border-radius: 12px; padding: 12px 14px;
+    text-align: left; border-left: 3px solid var(--blue);
+  }
+  .s-item .s-eq { font-size: 0.9rem; font-weight: 900; color: var(--blue); margin-bottom: 4px; font-style: italic; }
+  .s-item .s-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+
+  .footer-note {
+    text-align: center; margin-top: 40px; padding: 0 20px;
+    font-size: 0.78rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>線形代数の<span class="accent">世界</span>へようこそ</h1>
+  <p>大学生 ・ 線形代数学 ／ ベクトル空間・線形写像・次元定理</p>
+</div>
+
+<!-- ══ パート0：導入 ── なぜ線形代数か ══ -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">0</span>なぜ線形代数を学ぶのか</div>
+  <div class="card blue-top">
+    <div class="card-desc">
+      線形代数は「空間を変形する言語」です。<br>
+      機械学習・量子力学・コンピュータグラフィックス・Google検索……<br>
+      現代のあらゆる技術の根幹にあります。
+    </div>
+    <svg id="figIntro" viewBox="0 0 360 120"></svg>
+    <div class="msg" id="msgIntro"></div>
+  </div>
+</div>
+
+<!-- ══ パート1：ベクトル空間とは ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">1</span>ベクトル空間とは</div>
+  <div class="card green-top">
+    <div class="card-desc">
+      「足し算」と「スカラー倍」ができる集合がベクトル空間です。<br>
+      矢印を動かして、ベクトルの足し算を体感しよう。
+    </div>
+
+    <svg id="figVecSpace" viewBox="0 0 360 240"></svg>
+
+    <div class="sl-row">
+      <div class="sl-label">v₁ の角度</div>
+      <div class="sl-wrap">
+        <input type="range" id="slV1Angle" min="0" max="360" value="30">
+      </div>
+      <div class="sl-val" id="dispV1">30°</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">v₂ の角度</div>
+      <div class="sl-wrap">
+        <input type="range" id="slV2Angle" min="0" max="360" value="100">
+      </div>
+      <div class="sl-val" id="dispV2">100°</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">スカラー c</div>
+      <div class="sl-wrap">
+        <input type="range" id="slScalar" min="-2" max="2" step="0.1" value="1.5">
+      </div>
+      <div class="sl-val" id="dispScalar">1.5</div>
+    </div>
+
+    <div class="msg" id="msgVecSpace"></div>
+  </div>
+</div>
+
+<!-- ══ パート2：線形写像とは ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>線形写像とは ── 空間の変形</div>
+  <div class="card gold-top">
+    <div class="card-desc">
+      線形写像は「足し算とスカラー倍を保つ変換」です。<br>
+      行列がまさに線形写像の正体。グリッドがどう変形するか見てみよう。
+    </div>
+
+    <div class="preset-btns">
+      <button class="pbtn on" onclick="setPreset('identity',this)">恒等写像</button>
+      <button class="pbtn" onclick="setPreset('rotate45',this)">回転 45°</button>
+      <button class="pbtn" onclick="setPreset('scale',this)">拡大</button>
+      <button class="pbtn" onclick="setPreset('shear',this)">せん断</button>
+      <button class="pbtn" onclick="setPreset('reflect',this)">反射</button>
+      <button class="pbtn" onclick="setPreset('project',this)">射影</button>
+    </div>
+
+    <div class="mat-wrap">
+      <div class="mat-label">A =</div>
+      <div class="mat-bracket">
+        <div class="mat-row">
+          <input type="range" id="a11" min="-3" max="3" step="0.25" value="1"
+            style="accent-color:var(--blue)" oninput="updateMat()">
+          <span class="mat-val" id="v11" style="color:var(--blue)">1.00</span>
+          <input type="range" id="a12" min="-3" max="3" step="0.25" value="0"
+            style="accent-color:var(--blue)" oninput="updateMat()">
+          <span class="mat-val" id="v12" style="color:var(--blue)">0.00</span>
+        </div>
+        <div class="mat-row">
+          <input type="range" id="a21" min="-3" max="3" step="0.25" value="0"
+            style="accent-color:var(--green)" oninput="updateMat()">
+          <span class="mat-val" id="v21" style="color:var(--green)">0.00</span>
+          <input type="range" id="a22" min="-3" max="3" step="0.25" value="1"
+            style="accent-color:var(--green)" oninput="updateMat()">
+          <span class="mat-val" id="v22" style="color:var(--green)">1.00</span>
+        </div>
+      </div>
+      <div style="font-size:0.85rem;color:var(--muted);line-height:1.9">
+        det(A) =<br>
+        <span id="detInline" style="font-size:1.2rem;font-weight:900;color:var(--gold)">1.00</span>
+      </div>
+    </div>
+
+    <svg id="figLinMap" viewBox="0 0 360 260"></svg>
+    <div class="msg" id="msgLinMap"></div>
+  </div>
+</div>
+
+<!-- ══ パート3：行列式 ── 面積の変化率 ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>行列式 ── 面積の変化率</div>
+  <div class="card purple-top">
+    <div class="card-desc">
+      det(A) は変換後の「面積の変化率」です。<br>
+      元の正方形（面積1）が変換後にどう変わるか確認しよう。
+    </div>
+    <svg id="figDet" viewBox="0 0 360 220"></svg>
+    <div style="text-align:center;font-size:1.5rem;font-weight:900;margin:10px 0">
+      det(A) = <span id="detVal" style="color:var(--gold)">1.000</span>
+      <div id="detMsg" style="font-size:0.85rem;color:var(--muted);font-weight:400;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ パート4：次元定理の威力 ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">4</span>次元定理の威力 ── rank + nullity = n</div>
+  <div class="card red-top">
+    <div class="card-desc">
+      <b style="color:var(--white)">情報は必ず保存される。</b><br>
+      「写せる部分（像）」と「潰れた部分（核）」を合わせると元の空間の次元になる。<br>
+      これが次元定理の威力です。
+    </div>
+
+    <div class="rank-btns">
+      <button class="rbtn on" onclick="setRank(2,this)">rank 2（全単射）</button>
+      <button class="rbtn"    onclick="setRank(1,this)">rank 1（直線へ）</button>
+      <button class="rbtn"    onclick="setRank(0,this)">rank 0（零写像）</button>
+    </div>
+
+    <svg id="figDim" viewBox="0 0 360 200"></svg>
+
+    <div class="dim-row">
+      <div class="dim-box">
+        <div class="dname">nullity（核の次元）</div>
+        <div class="dval" id="dKer" style="color:var(--red)">0</div>
+        <div class="dsub" id="dKerSub">「潰れた」次元</div>
+      </div>
+      <div class="dim-eq">＋</div>
+      <div class="dim-box">
+        <div class="dname">rank（像の次元）</div>
+        <div class="dval" id="dIm" style="color:var(--green)">2</div>
+        <div class="dsub" id="dImSub">「写せた」次元</div>
+      </div>
+      <div class="dim-eq">=</div>
+      <div class="dim-box">
+        <div class="dname">dim V（元の次元）</div>
+        <div class="dval" style="color:var(--blue)">2</div>
+        <div class="dsub">入力空間 ℝ²</div>
+      </div>
+    </div>
+    <div class="msg" id="msgDim"></div>
+  </div>
+</div>
+
+<!-- ══ まとめ ══ -->
+<div class="section">
+  <div class="summary">
+    <h3>線形代数の核心 — 4つの見方</h3>
+    <div class="summary-grid">
+      <div class="s-item">
+        <div class="s-eq">ベクトル空間 V</div>
+        <div class="s-desc">足し算とスカラー倍ができる。矢印の世界を抽象化したもの。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--gold)">
+        <div class="s-eq" style="color:var(--gold)">線形写像 T: V→W</div>
+        <div class="s-desc">足し算・スカラー倍を保つ変換。行列がその正体。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--purple)">
+        <div class="s-eq" style="color:var(--purple)">det(A)</div>
+        <div class="s-desc">面積（体積）の変化率。0なら逆写像なし（特異）。</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--red)">
+        <div class="s-eq" style="color:var(--red)">rank + nullity = n</div>
+        <div class="s-desc">潰れた次元＋写せた次元＝元の次元。情報は保存される。</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:0.82rem;color:var(--muted);line-height:2">
+      固有値・固有ベクトルへ → 主成分分析（PCA）・Google PageRank・量子力学へ
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松
+</div>
+
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg';
+const PI=Math.PI, rad=d=>d*PI/180;
+
+function pe(svg,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]);
+  if(txt!==undefined) e.textContent=txt;
+  svg.appendChild(e); return e;
+}
+
+function arrow(svg,x1,y1,x2,y2,color,w=2){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  if(len<2) return;
+  pe(svg,'line',{x1,y1,x2,y2,stroke:color,'stroke-width':w,'stroke-linecap':'round'});
+  const ux=dx/len,uy=dy/len,hw=7;
+  const ax=x2-ux*hw-uy*hw*0.5,ay=y2-uy*hw+ux*hw*0.5;
+  const bx=x2-ux*hw+uy*hw*0.5,by=y2-uy*hw-ux*hw*0.5;
+  pe(svg,'polygon',{points:`${x2},${y2} ${ax},${ay} ${bx},${by}`,fill:color});
+}
+
+// ── パート0：導入 ──
+function drawIntro(){
+  const svg=document.getElementById('figIntro');
+  svg.innerHTML='';
+  const apps=[
+    {x:40, y:60,  label:'機械学習', color:'#4fc3f7'},
+    {x:120,y:60,  label:'量子力学', color:'#ce93d8'},
+    {x:200,y:60,  label:'CG/3D',    color:'#69f0ae'},
+    {x:280,y:60,  label:'検索エンジン',color:'#ffd54f'},
+    {x:160,y:20,  label:'線形代数', color:'#ff6b6b'},
+  ];
+  // 中心から放射
+  apps.slice(0,4).forEach(a=>{
+    pe(svg,'line',{x1:160,y1:28,x2:a.x,y2:a.y-4,
+      stroke:a.color,'stroke-width':1,'stroke-opacity':0.4,'stroke-dasharray':'3,3'});
+  });
+  apps.forEach(a=>{
+    const r=a.label==='線形代数'?22:16;
+    pe(svg,'circle',{cx:a.x,cy:a.y,r,fill:a.color,'fill-opacity':0.15,stroke:a.color,'stroke-width':1.5});
+    pe(svg,'text',{x:a.x,y:a.y+4,'text-anchor':'middle','font-size':a.label==='線形代数'?10:9,
+      'font-weight':700,fill:a.color},a.label);
+  });
+  // 矢印2本
+  pe(svg,'text',{x:180,y:100,'font-size':10,fill:'#7986a0'},
+    '行列 = すべての基礎にある「変形操作」');
+
+  document.getElementById('msgIntro').innerHTML =
+    '線形代数の主役は <b>行列</b> と <b>ベクトル</b>。<br>'+
+    '「空間を変形する」という視点で学ぶと、全てがつながります。';
+}
+
+// ── パート1：ベクトル空間 ──
+function drawVecSpace(){
+  const a1=parseInt(document.getElementById('slV1Angle').value);
+  const a2=parseInt(document.getElementById('slV2Angle').value);
+  const c=parseFloat(document.getElementById('slScalar').value);
+  document.getElementById('dispV1').textContent=a1+'°';
+  document.getElementById('dispV2').textContent=a2+'°';
+  document.getElementById('dispScalar').textContent=c.toFixed(1);
+
+  const svg=document.getElementById('figVecSpace');
+  svg.innerHTML='';
+  const W=360,H=240,cx=W/2,cy=H/2,unit=60;
+
+  // グリッド
+  for(let i=-3;i<=3;i++){
+    pe(svg,'line',{x1:cx+i*unit,y1:0,x2:cx+i*unit,y2:H,stroke:'rgba(255,255,255,0.05)','stroke-width':1});
+    pe(svg,'line',{x1:0,y1:cy+i*unit,x2:W,y2:cy+i*unit,stroke:'rgba(255,255,255,0.05)','stroke-width':1});
+  }
+  // 軸
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'line',{x1:cx,y1:0,x2:cx,y2:H,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+
+  const v1x=Math.cos(rad(a1)), v1y=Math.sin(rad(a1));
+  const v2x=Math.cos(rad(a2)), v2y=Math.sin(rad(a2));
+
+  // v1（青）
+  arrow(svg,cx,cy,cx+v1x*unit,cy-v1y*unit,'#4fc3f7',2.5);
+  pe(svg,'text',{x:cx+v1x*unit+8,y:cy-v1y*unit-4,'font-size':12,'font-weight':900,fill:'#4fc3f7'},'v₁');
+
+  // v2（緑）
+  arrow(svg,cx,cy,cx+v2x*unit,cy-v2y*unit,'#69f0ae',2.5);
+  pe(svg,'text',{x:cx+v2x*unit+8,y:cy-v2y*unit-4,'font-size':12,'font-weight':900,fill:'#69f0ae'},'v₂');
+
+  // v1+v2（白・平行四辺形の対角線）
+  const sumX=v1x+v2x, sumY=v1y+v2y;
+  pe(svg,'line',{x1:cx+v1x*unit,y1:cy-v1y*unit,
+                  x2:cx+sumX*unit,y2:cy-sumY*unit,
+    stroke:'rgba(255,255,255,0.3)','stroke-width':1,'stroke-dasharray':'4,3'});
+  pe(svg,'line',{x1:cx+v2x*unit,y1:cy-v2y*unit,
+                  x2:cx+sumX*unit,y2:cy-sumY*unit,
+    stroke:'rgba(255,255,255,0.3)','stroke-width':1,'stroke-dasharray':'4,3'});
+  arrow(svg,cx,cy,cx+sumX*unit,cy-sumY*unit,'#fff',2);
+  pe(svg,'text',{x:cx+sumX*unit+8,y:cy-sumY*unit,'font-size':11,'font-weight':900,fill:'#fff'},'v₁+v₂');
+
+  // c・v1（金）
+  const cvX=v1x*c, cvY=v1y*c;
+  arrow(svg,cx,cy,cx+cvX*unit,cy-cvY*unit,'#ffd54f',2);
+  pe(svg,'text',{x:cx+cvX*unit+8,y:cy-cvY*unit+14,'font-size':11,'font-weight':900,fill:'#ffd54f'},
+    `${c.toFixed(1)}v₁`);
+
+  document.getElementById('msgVecSpace').innerHTML =
+    '<b>ベクトルの2大演算：</b><br>'+
+    '① <span style="color:#fff">v₁＋v₂</span>（白）：平行四辺形の対角線<br>'+
+    '② <span style="color:#ffd54f">c・v₁</span>（金）：スカラー倍で伸縮。c<0なら反転<br>'+
+    'この2つの演算が閉じている集合が <b>ベクトル空間</b> です。';
+}
+
+// ── パート2：線形写像 ──
+function getM(){
+  return [
+    [+document.getElementById('a11').value, +document.getElementById('a12').value],
+    [+document.getElementById('a21').value, +document.getElementById('a22').value],
+  ];
+}
+function detM(M){ return M[0][0]*M[1][1]-M[0][1]*M[1][0]; }
+function applyM(M,v){ return [M[0][0]*v[0]+M[0][1]*v[1], M[1][0]*v[0]+M[1][1]*v[1]]; }
+
+function drawLinMap(){
+  const M=getM(), d=detM(M);
+  document.getElementById('detInline').textContent=d.toFixed(2);
+
+  const svg=document.getElementById('figLinMap');
+  svg.innerHTML='';
+  const W=360,H=260,cx=W/2,cy=H/2,u=42;
+  const tx=(x,y)=>({px:cx+x*u,py:cy-y*u});
+  const txM=(x,y)=>{const v=applyM(M,[x,y]);return{px:cx+v[0]*u,py:cy-v[1]*u};};
+
+  // 元のグリッド（薄い）
+  for(let i=-4;i<=4;i++){
+    const p0=tx(i,-4),p1=tx(i,4);
+    pe(svg,'line',{x1:p0.px,y1:p0.py,x2:p1.px,y2:p1.py,stroke:'rgba(255,255,255,0.06)','stroke-width':1});
+    const q0=tx(-4,i),q1=tx(4,i);
+    pe(svg,'line',{x1:q0.px,y1:q0.py,x2:q1.px,y2:q1.py,stroke:'rgba(255,255,255,0.06)','stroke-width':1});
+  }
+  // 変換後グリッド
+  for(let i=-4;i<=4;i++){
+    const p0=txM(i,-4),p1=txM(i,4);
+    pe(svg,'line',{x1:p0.px,y1:p0.py,x2:p1.px,y2:p1.py,stroke:'rgba(79,195,247,0.22)','stroke-width':1});
+    const q0=txM(-4,i),q1=txM(4,i);
+    pe(svg,'line',{x1:q0.px,y1:q0.py,x2:q1.px,y2:q1.py,stroke:'rgba(105,240,174,0.22)','stroke-width':1});
+  }
+  // 軸
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.12)','stroke-width':1});
+  pe(svg,'line',{x1:cx,y1:0,x2:cx,y2:H,stroke:'rgba(255,255,255,0.12)','stroke-width':1});
+
+  // 元の基底（白・薄）
+  const e1=tx(1,0),e2=tx(0,1);
+  arrow(svg,cx,cy,e1.px,e1.py,'rgba(255,255,255,0.3)',1.5);
+  arrow(svg,cx,cy,e2.px,e2.py,'rgba(255,255,255,0.3)',1.5);
+
+  // 変換後の基底
+  const Ae1=txM(1,0),Ae2=txM(0,1);
+  arrow(svg,cx,cy,Ae1.px,Ae1.py,'#4fc3f7',2.5);
+  pe(svg,'text',{x:Ae1.px+7,y:Ae1.py-4,'font-size':10,'font-weight':700,fill:'#4fc3f7'},
+    `T(e₁)=(${M[0][0].toFixed(1)},${M[1][0].toFixed(1)})`);
+  arrow(svg,cx,cy,Ae2.px,Ae2.py,'#69f0ae',2.5);
+  pe(svg,'text',{x:Ae2.px+7,y:Ae2.py-4,'font-size':10,'font-weight':700,fill:'#69f0ae'},
+    `T(e₂)=(${M[0][1].toFixed(1)},${M[1][1].toFixed(1)})`);
+
+  // 線形性のデモ（v=(1,1)を変換）
+  const vx=0.8,vy=0.6;
+  const vTx=tx(vx,vy),vMTx=txM(vx,vy);
+  pe(svg,'circle',{cx:vTx.px,cy:vTx.py,r:4,fill:'#fff','fill-opacity':0.4});
+  arrow(svg,cx,cy,vMTx.px,vMTx.py,'rgba(255,213,79,0.7)',2);
+  pe(svg,'text',{x:vMTx.px+6,y:vMTx.py,'font-size':9,fill:'#ffd54f'},'T(v)');
+
+  // メッセージ
+  const absD=Math.abs(d);
+  let msg='';
+  if(absD<0.01){
+    msg='det≈0 → <span class="r">空間が潰れる</span>（逆写像なし・特異）<br>線形独立でなくなった。';
+  } else if(d<0){
+    msg=`det=${d.toFixed(2)} → <span class="r">向きが反転</span>。面積は ${absD.toFixed(2)} 倍。`;
+  } else if(Math.abs(d-1)<0.01){
+    msg='det=1 → <span class="g">面積不変</span>（等積変換）。回転・反射など。';
+  } else {
+    msg=`det=${d.toFixed(2)} → 面積は <b>${absD.toFixed(2)} 倍</b> に変化。`;
+  }
+  msg+='<br>線形写像の条件：<b>T(u+v)=T(u)+T(v)</b>、<b>T(cv)=cT(v)</b>';
+  document.getElementById('msgLinMap').innerHTML=msg;
+
+  drawDet(M,d);
+}
+
+function drawDet(M,d){
+  const svg=document.getElementById('figDet');
+  svg.innerHTML='';
+  const W=360,H=220,cx=110,cy=H/2,u=55;
+  const txM=(x,y)=>{const v=applyM(M,[x,y]);return{px:cx+v[0]*u,py:cy-v[1]*u};};
+  const tx=(x,y)=>({px:cx+x*u,py:cy-y*u});
+
+  // 軸
+  pe(svg,'line',{x1:0,y1:cy,x2:cx+u*3.5,y2:cy,stroke:'rgba(255,255,255,0.12)','stroke-width':1});
+  pe(svg,'line',{x1:cx,y1:20,x2:cx,y2:H-20,stroke:'rgba(255,255,255,0.12)','stroke-width':1});
+
+  // 元の正方形
+  const c0=[[0,0],[1,0],[1,1],[0,1]];
+  const p0=c0.map(([x,y])=>tx(x,y));
+  pe(svg,'polygon',{points:p0.map(p=>`${p.px},${p.py}`).join(' '),
+    fill:'rgba(255,255,255,0.06)',stroke:'rgba(255,255,255,0.3)','stroke-width':1.5,'stroke-dasharray':'4,3'});
+  pe(svg,'text',{x:tx(0.5,0.5).px,y:tx(0.5,0.5).py+4,'text-anchor':'middle','font-size':9,
+    fill:'rgba(255,255,255,0.5)'},'面積=1');
+
+  // 変換後
+  const p1=c0.map(([x,y])=>txM(x,y));
+  pe(svg,'polygon',{points:p1.map(p=>`${p.px},${p.py}`).join(' '),
+    fill:'rgba(255,213,79,0.18)',stroke:'#ffd54f','stroke-width':2});
+  const absD=Math.abs(d);
+  const mx=p1.reduce((s,p)=>s+p.px,0)/4, my=p1.reduce((s,p)=>s+p.py,0)/4;
+  pe(svg,'text',{x:mx,y:my+4,'text-anchor':'middle','font-size':11,'font-weight':700,
+    fill:'#ffd54f'},`面積=${absD.toFixed(2)}`);
+
+  // 右側テキスト
+  const rx=cx+u*3.6;
+  pe(svg,'text',{x:rx,y:cy-50,'font-size':11,'font-weight':700,fill:'#ffd54f'},'|det(A)|');
+  pe(svg,'text',{x:rx,y:cy-34,'font-size':12,'font-weight':900,fill:'#ffd54f'},`= ${absD.toFixed(3)}`);
+  pe(svg,'text',{x:rx,y:cy-12,'font-size':10,fill:d<0?'#ff6b6b':'#69f0ae'},
+    d<0?'向き反転':'向き同じ');
+  pe(svg,'text',{x:rx,y:cy+16,'font-size':9,fill:'#7986a0'},'元の面積: 1');
+  pe(svg,'text',{x:rx,y:cy+34,'font-size':9,fill:'#7986a0'},'変換後:');
+  pe(svg,'text',{x:rx,y:cy+50,'font-size':12,'font-weight':900,fill:'#ffd54f'},`${absD.toFixed(3)}`);
+
+  const dEl=document.getElementById('detVal');
+  dEl.textContent=d.toFixed(3);
+  dEl.style.color=d<-0.01?'#ff6b6b':d>0.01?'#ffd54f':'#7986a0';
+  document.getElementById('detMsg').textContent=
+    absD<0.01?'det=0 → 特異行列（逆行列なし）':
+    d<0?'det<0 → 向きが反転':
+    'det>0 → 向きは変わらない';
+}
+
+// ── パート4：次元定理 ──
+let curRank=2;
+function drawDim(){
+  const svg=document.getElementById('figDim');
+  svg.innerHTML='';
+  const W=360,H=200,lx=90,rx=260,cy=100,r=65;
+
+  // 入力空間
+  pe(svg,'ellipse',{cx:lx,cy,rx:r,ry:r*0.7,
+    fill:'rgba(79,195,247,0.07)',stroke:'rgba(79,195,247,0.4)','stroke-width':2});
+  pe(svg,'text',{x:lx,y:cy-r*0.7-8,'text-anchor':'middle','font-size':10,fill:'#4fc3f7'},'V = ℝ²');
+
+  if(curRank===2){
+    pe(svg,'ellipse',{cx:rx,cy,rx:r,ry:r*0.7,
+      fill:'rgba(105,240,174,0.12)',stroke:'rgba(105,240,174,0.5)','stroke-width':2});
+    pe(svg,'text',{x:rx,y:cy,'text-anchor':'middle','font-size':10,'font-weight':700,fill:'#69f0ae'},'Im(T)');
+    pe(svg,'text',{x:rx,y:cy+15,'text-anchor':'middle','font-size':9,fill:'#69f0ae'},'dim=2');
+    pe(svg,'circle',{cx:lx,cy,r:5,fill:'#ff6b6b'});
+    pe(svg,'text',{x:lx,y:cy+18,'text-anchor':'middle','font-size':9,fill:'#ff6b6b'},'Ker={0}');
+    arrow(svg,lx+r,cy,rx-r,cy,'rgba(255,255,255,0.3)',1.5);
+    document.getElementById('dKer').textContent='0';
+    document.getElementById('dIm').textContent='2';
+    document.getElementById('dKerSub').textContent='核は原点のみ';
+    document.getElementById('dImSub').textContent='平面全体に写る';
+    document.getElementById('msgDim').innerHTML=
+      '<b>rank=2（全単射・同型）</b><br>'+
+      '全ての入力が異なる出力へ。情報の損失ゼロ。<br>'+
+      '<b>0 + 2 = 2 ✓</b>　→ 逆写像が存在する！';
+
+  } else if(curRank===1){
+    pe(svg,'line',{x1:rx,y1:cy-r*0.6,x2:rx,y2:cy+r*0.6,
+      stroke:'rgba(105,240,174,0.7)','stroke-width':3});
+    pe(svg,'text',{x:rx+12,y:cy,'text-anchor':'start','font-size':9,fill:'#69f0ae'},'Im(T)');
+    pe(svg,'text',{x:rx+12,y:cy+14,'text-anchor':'start','font-size':9,fill:'#69f0ae'},'dim=1');
+    pe(svg,'line',{x1:lx-r*0.7,y1:cy+r*0.4,x2:lx+r*0.7,y2:cy-r*0.4,
+      stroke:'rgba(255,107,107,0.7)','stroke-width':3});
+    pe(svg,'text',{x:lx-r*0.5,y:cy+r*0.5+12,'text-anchor':'middle','font-size':9,fill:'#ff6b6b'},'Ker（直線）');
+    arrow(svg,lx+r,cy,rx-12,cy,'rgba(255,255,255,0.3)',1.5);
+    document.getElementById('dKer').textContent='1';
+    document.getElementById('dIm').textContent='1';
+    document.getElementById('dKerSub').textContent='核は直線（1次元）';
+    document.getElementById('dImSub').textContent='像も直線（1次元）';
+    document.getElementById('msgDim').innerHTML=
+      '<b>rank=1</b><br>'+
+      'ある方向は原点に潰れる（情報の損失1次元分）。<br>'+
+      '像は直線にしかならない。det=0。<br>'+
+      '<b>1 + 1 = 2 ✓</b>';
+
+  } else {
+    pe(svg,'circle',{cx:lx,cy,r,
+      fill:'rgba(255,107,107,0.08)',stroke:'rgba(255,107,107,0.4)','stroke-width':2});
+    pe(svg,'text',{x:lx,y:cy,'text-anchor':'middle','font-size':10,'font-weight':700,fill:'#ff6b6b'},'Ker=V');
+    pe(svg,'text',{x:lx,y:cy+15,'text-anchor':'middle','font-size':9,fill:'#ff6b6b'},'（全体が核）');
+    pe(svg,'circle',{cx:rx,cy,r:7,fill:'rgba(105,240,174,0.4)',stroke:'rgba(105,240,174,0.7)','stroke-width':2});
+    pe(svg,'text',{x:rx,y:cy+20,'text-anchor':'middle','font-size':9,fill:'#69f0ae'},'Im={0}');
+    arrow(svg,lx+r,cy,rx-12,cy,'rgba(255,255,255,0.15)',1.5);
+    document.getElementById('dKer').textContent='2';
+    document.getElementById('dIm').textContent='0';
+    document.getElementById('dKerSub').textContent='全空間が核';
+    document.getElementById('dImSub').textContent='像は原点のみ';
+    document.getElementById('msgDim').innerHTML=
+      '<b>rank=0（零写像）</b><br>'+
+      '全情報が消える。完全な情報損失。<br>'+
+      '<b>2 + 0 = 2 ✓</b>　→ 次元は必ず保存される！';
+  }
+}
+
+// ── イベント ──
+const PRESETS={
+  identity:[[1,0],[0,1]],
+  rotate45:[[Math.cos(PI/4),-Math.sin(PI/4)],[Math.sin(PI/4),Math.cos(PI/4)]],
+  scale:[[2,0],[0,1.5]],
+  shear:[[1,1],[0,1]],
+  reflect:[[1,0],[0,-1]],
+  project:[[1,0],[0,0]],
+};
+
+window.setPreset=function(name,btn){
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const m=PRESETS[name];
+  const ids=['a11','a12','a21','a22'];
+  const vals=[m[0][0],m[0][1],m[1][0],m[1][1]];
+  ids.forEach((id,i)=>{
+    document.getElementById(id).value=vals[i];
+    document.getElementById('v'+id.slice(1)).textContent=vals[i].toFixed(2);
+  });
+  drawLinMap();
+};
+
+window.updateMat=function(){
+  ['11','12','21','22'].forEach(s=>{
+    const v=+document.getElementById('a'+s).value;
+    document.getElementById('v'+s).textContent=v.toFixed(2);
+  });
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
+  drawLinMap();
+};
+
+window.setRank=function(r,btn){
+  curRank=r;
+  document.querySelectorAll('.rbtn').forEach((b,i)=>b.classList.toggle('on',[2,1,0][i]===r));
+  drawDim();
+};
+
+document.getElementById('slV1Angle').addEventListener('input',drawVecSpace);
+document.getElementById('slV2Angle').addEventListener('input',drawVecSpace);
+document.getElementById('slScalar').addEventListener('input',drawVecSpace);
+
+// 初期描画
+drawIntro();
+drawVecSpace();
+drawLinMap();
+drawDim();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root {
+    --bg:     #0d1b2a;
+    --bg2:    #132236;
+    --bg3:    #1a2e47;
+    --gold:   #f5a623;
+    --blue:   #4fc3f7;
+    --green:  #69f0ae;
+    --red:    #ff5252;
+    --white:  #e8f0ff;
+    --muted:  #7a9ab8;
+    --line:   rgba(79,195,247,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    padding: 0 0 48px;
+    overflow-x: hidden;
+  }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1a2e47 100%);
+    padding: 32px 20px 28px;
+    text-align: center;
+    border-bottom: 2px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: "f'(x)";
+    position: absolute;
+    font-size: 120px; font-weight: 900; font-style: italic;
+    color: rgba(79,195,247,0.04);
+    top: -10px; right: -10px; line-height: 1;
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    font-weight: 900; color: var(--white);
+    margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  .header h1 .accent { color: var(--gold); }
+  .header p { font-size: clamp(0.85rem, 3vw, 1rem); color: var(--muted); }
+
+  /* ── セクション共通 ── */
+  .section { max-width: 680px; margin: 32px auto 0; padding: 0 20px; }
+  .sec-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .num-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold); color: var(--bg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 900; flex-shrink: 0;
+  }
+  .sec-title {
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-weight: 900; margin-bottom: 16px; line-height: 1.4;
+  }
+
+  /* ── カード共通 ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px 20px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card.gold-top::before  { background: linear-gradient(90deg, var(--gold), #ff9800); }
+  .card.blue-top::before  { background: linear-gradient(90deg, var(--blue), #0288d1); }
+  .card.green-top::before { background: linear-gradient(90deg, var(--green), #00bfa5); }
+  .card.red-top::before   { background: linear-gradient(90deg, var(--red), #ff9100); }
+
+  /* ── SVGグラフ共通 ── */
+  svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+
+  /* ── スライダー ── */
+  .sl-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.85rem; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .sl-label { font-weight: 700; color: var(--gold); min-width: 80px; }
+  .sl-wrap  { flex: 1; min-width: 100px; }
+  input[type=range] { width: 100%; accent-color: var(--gold); height: 6px; }
+  .sl-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); min-width: 48px; text-align: right; }
+
+  /* ── 情報ボックス ── */
+  .info-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .info-box {
+    flex: 1 1 80px; background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px;
+    font-size: 0.78rem; text-align: center; color: var(--muted);
+  }
+  .info-box .v {
+    font-size: 1.1rem; font-weight: 900; display: block;
+    margin-top: 4px; color: var(--white);
+  }
+
+  /* ── メッセージ ── */
+  .msg {
+    background: var(--bg3); border-radius: 10px;
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px; font-size: 0.88rem;
+    line-height: 1.8; margin-top: 14px; color: var(--white);
+  }
+  .msg b { color: var(--gold); }
+  .msg .blue  { color: var(--blue); font-weight: 700; }
+  .msg .green { color: var(--green); font-weight: 700; }
+  .msg .red   { color: var(--red); font-weight: 700; }
+
+  /* ── 関数タブ ── */
+  .fn-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .fn-btn {
+    flex: 1 1 60px; padding: 8px 4px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    background: var(--bg3); font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; color: var(--muted);
+    transition: all .15s;
+  }
+  .fn-btn.on { background: var(--blue); color: var(--bg); border-color: var(--blue); }
+  .fn-btn:hover { border-color: var(--blue); }
+
+  /* ── 計算ステップ ── */
+  .calc-step {
+    background: var(--bg3); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 8px;
+    font-size: 0.9rem; line-height: 1.85;
+    border-left: 3px solid var(--green);
+    color: var(--white);
+  }
+  .calc-step:last-child { margin-bottom: 0; }
+  .no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    background: var(--green); color: var(--bg);
+    font-size: 0.72rem; font-weight: 900; border-radius: 50%;
+    margin-right: 8px; flex-shrink: 0; vertical-align: middle;
+  }
+  .hl  { color: var(--green); font-weight: 700; }
+  .hl2 { color: var(--blue);  font-weight: 700; }
+  .hlr { color: var(--red);   font-weight: 700; }
+
+  /* ── まとめパネル ── */
+  .summary {
+    background: linear-gradient(135deg, var(--bg3), #1a2e47);
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 20px; padding: 24px 20px;
+    text-align: center; margin-top: 36px;
+  }
+  .summary .big-formula {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 900; color: var(--gold);
+    font-style: italic; letter-spacing: 0.05em;
+    margin: 12px 0;
+  }
+  .summary p { font-size: 0.88rem; color: var(--muted); line-height: 1.9; }
+
+  /* ── 次のステップバナー ── */
+  .next-banner {
+    background: linear-gradient(135deg, #1a2e47, #0d2a1a);
+    border: 1px solid rgba(105,240,174,0.3);
+    border-radius: 20px; padding: 24px 20px;
+    text-align: center; margin-top: 16px;
+  }
+  .next-banner h3 { font-size: clamp(1rem, 4vw, 1.2rem); margin-bottom: 8px; color: var(--green); }
+  .next-banner p  { font-size: 0.85rem; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
+  .next-link {
+    display: inline-block; padding: 10px 28px;
+    background: var(--green); color: var(--bg);
+    font-weight: 900; font-size: 0.9rem;
+    border-radius: 100px; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .next-link:hover { opacity: 0.85; }
+
+  .footer-note {
+    text-align: center; margin-top: 40px;
+    font-size: 0.78rem; color: var(--muted);
+    padding: 0 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>微分を <span class="accent">「傾き」</span> で見る</h1>
+  <p>高校生 ・ 数学Ⅱ</p>
+</div>
+
+<!-- ══ パート1：接線を動かす ══ -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">1</span>接線をうごかしてみよう</div>
+  <div class="card gold-top">
+    <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;line-height:1.8">
+      曲線上の1点における「<b style="color:var(--white)">その瞬間の傾き</b>」が微分係数 f'(a) です。<br>
+      スライダーで点を動かして、接線の傾きを確認しよう。
+    </p>
+
+    <!-- 関数選択 -->
+    <div class="fn-tabs" id="tanFnTabs">
+      <button class="fn-btn on" onclick="setTanFn(0,this)">x²</button>
+      <button class="fn-btn"    onclick="setTanFn(1,this)">x³</button>
+      <button class="fn-btn"    onclick="setTanFn(2,this)">sin x</button>
+      <button class="fn-btn"    onclick="setTanFn(3,this)">x²−2x</button>
+    </div>
+
+    <svg id="figTan" viewBox="0 0 360 220"></svg>
+
+    <div class="sl-row" style="margin-top:14px">
+      <div class="sl-label">点 x ＝</div>
+      <div class="sl-wrap">
+        <input type="range" id="slA" min="-30" max="30" value="10">
+      </div>
+      <div class="sl-val" id="dispA">1.0</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-box">x の値<span class="v" id="infoX">1.0</span></div>
+      <div class="info-box">f(x)<span class="v" id="infoFx">1.00</span></div>
+      <div class="info-box">f'(x)（傾き）<span class="v" id="infoFpx" style="color:var(--gold)">2.00</span></div>
+    </div>
+    <div class="msg" id="msgTan"></div>
+  </div>
+</div>
+
+<!-- ══ パート2：差分→微分の極限 ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>「極限」で傾きを求める</div>
+  <div class="card blue-top">
+    <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;line-height:1.8">
+      2点を結ぶ直線の傾きを <b style="color:var(--white)">h → 0 に近づける</b> と、接線の傾きになる！<br>
+      スライダーで h を小さくしてみよう。
+    </p>
+
+    <svg id="figLimit" viewBox="0 0 360 220"></svg>
+
+    <div class="sl-row" style="margin-top:14px">
+      <div class="sl-label">h ＝</div>
+      <div class="sl-wrap">
+        <input type="range" id="slH" min="1" max="40" value="20">
+      </div>
+      <div class="sl-val" id="dispH">2.0</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-box">h<span class="v" id="infoH">2.00</span></div>
+      <div class="info-box">差分の傾き<span class="v" id="infoDiff" style="color:var(--blue)">?</span></div>
+      <div class="info-box">真の傾き f'(1)<span class="v" id="infoTrue" style="color:var(--green)">2.00</span></div>
+    </div>
+    <div class="msg" id="msgLimit"></div>
+  </div>
+</div>
+
+<!-- ══ パート3：微分の計算ルール ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>微分の計算ルール</div>
+  <div class="card green-top">
+
+    <div class="fn-tabs" id="diffFnTabs">
+      <button class="fn-btn on" onclick="setDiffFn(0,this)">x²</button>
+      <button class="fn-btn"    onclick="setDiffFn(1,this)">x³</button>
+      <button class="fn-btn"    onclick="setDiffFn(2,this)">x⁴</button>
+      <button class="fn-btn"    onclick="setDiffFn(3,this)">3x²＋2x</button>
+      <button class="fn-btn"    onclick="setDiffFn(4,this)">sin x</button>
+    </div>
+
+    <svg id="figDiff" viewBox="0 0 360 200"></svg>
+    <div id="diffSteps" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <p style="color:var(--muted);font-size:0.85rem">微分の定義</p>
+    <div class="big-formula">f'(x) ＝ lim<sub>h→0</sub> [f(x+h)−f(x)] / h</div>
+    <p>
+      曲線上の2点を結ぶ「平均の変化率」を、<br>
+      h → 0 にした極限が微分係数。<br>
+      これが「その瞬間の傾き」＝接線の傾きです。
+    </p>
+  </div>
+
+  <div class="next-banner">
+    <h3>∫ 次は「積分」へ</h3>
+    <p>微分の逆演算が積分。<br>面積を「無限に細い短冊の和の極限」として求める。</p>
+    <a class="next-link" href="https://sites.google.com/view/suda-math-aizu/高校生/積分と面積">積分を見てみる →</a>
+  </div>
+</div>
+
+<div class="footer-note">
+  須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松
+</div>
+
+<script>
+(function(){
+const NS = "http://www.w3.org/2000/svg";
+function pe(svg, tag, attrs, txt){
+  const e = document.createElementNS(NS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  if(txt !== undefined) e.textContent = txt;
+  svg.appendChild(e); return e;
+}
+
+// ══ 効果音エンジン ══
+let _ac = null;
+function getAC(){ if(!_ac) _ac = new (window.AudioContext||window.webkitAudioContext)(); return _ac; }
+function playTone(freq, type, st, dur, gain, ac){
+  const osc=ac.createOscillator(), g=ac.createGain();
+  osc.connect(g); g.connect(ac.destination);
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq, st);
+  g.gain.setValueAtTime(gain, st);
+  g.gain.exponentialRampToValueAtTime(0.001, st+dur);
+  osc.start(st); osc.stop(st+dur+0.05);
+}
+function soundSlide(v){
+  try{ const ac=getAC(),now=ac.currentTime;
+    playTone(200+v*3,'sine',now,0.08,0.15,ac); }catch(e){}
+}
+function soundTab(){
+  try{ const ac=getAC(),now=ac.currentTime;
+    playTone(523,'triangle',now,0.1,0.2,ac);
+    playTone(659,'triangle',now+0.08,0.1,0.15,ac); }catch(e){}
+}
+function soundLimit(){
+  try{ const ac=getAC(),now=ac.currentTime;
+    [440,554,659,880].forEach((f,i)=>playTone(f,'sine',now+i*0.07,0.15,0.2,ac)); }catch(e){}
+}
+
+// ══ 関数定義 ══
+const TAN_FNS = [
+  { label:"f(x)=x²",   f:x=>x*x,       fp:x=>2*x,    a:-2.5, b:2.5 },
+  { label:"f(x)=x³",   f:x=>x*x*x,     fp:x=>3*x*x,  a:-1.8, b:1.8 },
+  { label:"f(x)=sin x",f:x=>Math.sin(x),fp:x=>Math.cos(x), a:-3.1, b:3.1 },
+  { label:"f(x)=x²−2x",f:x=>x*x-2*x,   fp:x=>2*x-2,  a:-1.5, b:3.5 },
+];
+const DIFF_FNS = [
+  { label:"f(x)=x²",      f:x=>x*x,         fp:x=>2*x,
+    steps:[`f(x) ＝ <span class="hl2">x²</span>`,
+           `べき乗の微分：nxⁿ⁻¹ のルールより<br><span class="hl">f'(x) ＝ 2x</span>`] },
+  { label:"f(x)=x³",      f:x=>x*x*x,       fp:x=>3*x*x,
+    steps:[`f(x) ＝ <span class="hl2">x³</span>`,
+           `<span class="hl">f'(x) ＝ 3x²</span>`] },
+  { label:"f(x)=x⁴",      f:x=>x*x*x*x,     fp:x=>4*x*x*x,
+    steps:[`f(x) ＝ <span class="hl2">x⁴</span>`,
+           `<span class="hl">f'(x) ＝ 4x³</span>`] },
+  { label:"f(x)=3x²＋2x", f:x=>3*x*x+2*x,   fp:x=>6*x+2,
+    steps:[`f(x) ＝ <span class="hl2">3x²＋2x</span>`,
+           `各項を別々に微分：<br>
+            (3x²)' ＝ 6x　　(2x)' ＝ 2<br>
+            <span class="hl">f'(x) ＝ 6x ＋ 2</span>`] },
+  { label:"f(x)=sin x",   f:x=>Math.sin(x),  fp:x=>Math.cos(x),
+    steps:[`f(x) ＝ <span class="hl2">sin x</span>`,
+           `三角関数の微分：<br>
+            <span class="hl">f'(x) ＝ cos x</span>`] },
+];
+
+let tanFnIdx  = 0;
+let diffFnIdx = 0;
+
+// ══ パート1：接線 ══
+function drawTan(){
+  const fn  = TAN_FNS[tanFnIdx];
+  const raw = parseInt(document.getElementById('slA').value);
+  const a   = raw / 10;
+  document.getElementById('dispA').textContent = a.toFixed(1);
+  document.getElementById('infoX').textContent = a.toFixed(1);
+  document.getElementById('infoFx').textContent  = fn.f(a).toFixed(2);
+  const slope = fn.fp(a);
+  document.getElementById('infoFpx').textContent = slope.toFixed(2);
+
+  const svg = document.getElementById('figTan');
+  svg.innerHTML='';
+  const W=360,H=220,pL=36,pR=16,pT=14,pB=28;
+  const {a:xa, b:xb} = fn;
+  const vals = Array.from({length:101},(_,i)=>fn.f(xa+(xb-xa)*i/100));
+  const yMin = Math.min(...vals)*1.15, yMax = Math.max(...vals)*1.15 || 1;
+  const yRange = yMax-yMin || 1;
+  const tx = x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty = y=>H-pB-(y-yMin)/yRange*(H-pT-pB);
+
+  // グリッド
+  for(let xi=Math.ceil(xa);xi<=Math.floor(xb);xi++){
+    pe(svg,'line',{x1:tx(xi),y1:pT,x2:tx(xi),y2:H-pB,stroke:'rgba(79,195,247,0.1)','stroke-width':1});
+    pe(svg,'text',{x:tx(xi),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},xi);
+  }
+  // 軸
+  if(yMin<=0&&yMax>=0){
+    pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.2)','stroke-width':1});
+  }
+  pe(svg,'line',{x1:tx(xa),y1:pT,x2:tx(xa),y2:H-pB,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+
+  // 塗り（曲線下）
+  let fillD='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    fillD+=i===0?`M${tx(x)} ${ty(fn.f(x))}`:`L${tx(x)} ${ty(fn.f(x))}`;
+  }
+  const y0clamp=Math.max(yMin,Math.min(yMax,0));
+  fillD+=` L${tx(xb)} ${ty(y0clamp)} L${tx(xa)} ${ty(y0clamp)} Z`;
+  pe(svg,'path',{d:fillD,fill:'rgba(79,195,247,0.07)'});
+
+  // 曲線
+  let curve='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    curve+=i===0?`M${tx(x)} ${ty(fn.f(x))}`:`L${tx(x)} ${ty(fn.f(x))}`;
+  }
+  pe(svg,'path',{d:curve,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+
+  // 接線（接点を通る正しい接線。y範囲内に収まるx範囲を求める）
+  const fa = fn.f(a);
+  // y範囲から逆算してx範囲を絞る
+  let tanXa = Math.max(xa, a - 2.5);
+  let tanXb = Math.min(xb, a + 2.5);
+  // 接線のyがyMin〜yMaxを超える場合はxを縮める
+  if(Math.abs(slope) > 0.01){
+    const xAtYmin = a + (yMin - fa) / slope;
+    const xAtYmax = a + (yMax - fa) / slope;
+    const xLo = Math.min(xAtYmin, xAtYmax);
+    const xHi = Math.max(xAtYmin, xAtYmax);
+    tanXa = Math.max(tanXa, xLo);
+    tanXb = Math.min(tanXb, xHi);
+  }
+  if(tanXa < tanXb){
+    pe(svg,'line',{
+      x1:tx(tanXa), y1:ty(fa + slope*(tanXa-a)),
+      x2:tx(tanXb), y2:ty(fa + slope*(tanXb-a)),
+      stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'5,3'});
+  }
+
+  // 点
+  pe(svg,'circle',{cx:tx(a),cy:ty(fn.f(a)),r:5,fill:'#f5a623',stroke:'#fff','stroke-width':1.5});
+
+  // ラベル
+  pe(svg,'text',{x:pL+6,y:pT+12,'font-size':10,'font-weight':700,fill:'#4fc3f7'},fn.label);
+  pe(svg,'text',{x:tx(a)+8,y:ty(fn.f(a))-8,'font-size':10,'font-weight':700,fill:'#f5a623'},
+    `f'(${a.toFixed(1)})=${slope.toFixed(2)}`);
+
+  // メッセージ
+  const msg=document.getElementById('msgTan');
+  if(Math.abs(slope)<0.1){
+    msg.innerHTML=`傾き ≈ <b>0</b> → <span class="green">頂点または谷底付近</span>。<br>極大・極小の候補点です（f'(x)=0 の点）。`;
+  } else if(slope>0){
+    msg.innerHTML=`傾き <b>${slope.toFixed(2)} > 0</b> → <span class="blue">右上がりの増加区間</span>。`;
+  } else {
+    msg.innerHTML=`傾き <b>${slope.toFixed(2)} < 0</b> → <span class="red">右下がりの減少区間</span>。`;
+  }
+
+  soundSlide(Math.abs(raw)+30);
+}
+
+// ══ パート2：差分→極限 ══
+function drawLimit(){
+  const rawH = parseInt(document.getElementById('slH').value);
+  const h    = rawH / 10;
+  document.getElementById('dispH').textContent = h.toFixed(1);
+
+  const f  = x=>x*x;    // x² 固定
+  const fp = x=>2*x;
+  const a0 = 1;
+  const diff = (f(a0+h)-f(a0))/h;
+  const trueSlope = fp(a0);
+
+  document.getElementById('infoH').textContent    = h.toFixed(2);
+  document.getElementById('infoDiff').textContent = diff.toFixed(3);
+  document.getElementById('infoTrue').textContent = trueSlope.toFixed(2);
+
+  const svg=document.getElementById('figLimit');
+  svg.innerHTML='';
+  const W=360,H=220,pL=40,pR=20,pT=16,pB=28;
+  const xa=-0.2, xb=a0+h+0.5;
+  const yMax=f(xb)*1.2||1;
+  const tx=x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty=y=>H-pB-y/yMax*(H-pT-pB);
+
+  // グリッド軸
+  pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'line',{x1:tx(0),y1:pT,x2:tx(0),y2:H-pB,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'text',{x:tx(a0),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},'a');
+  pe(svg,'text',{x:tx(a0+h),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},'a+h');
+
+  // 曲線
+  let curve='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    if(f(x)<=yMax*1.05) curve+=curve===''?`M${tx(x)} ${ty(f(x))}`:`L${tx(x)} ${ty(f(x))}`;
+  }
+  pe(svg,'path',{d:curve,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+  pe(svg,'text',{x:pL+8,y:pT+14,'font-size':10,'font-weight':700,fill:'#4fc3f7'},'f(x)=x²');
+
+  // 差分の直線（青）
+  const ext=0.4;
+  pe(svg,'line',{
+    x1:tx(a0-ext),y1:ty(f(a0)+diff*(a0-ext-a0)),
+    x2:tx(a0+h+ext),y2:ty(f(a0)+diff*(a0+h+ext-a0)),
+    stroke:'#4fc3f7','stroke-width':1.5,'stroke-dasharray':'6,4'});
+
+  // 接線（金）
+  pe(svg,'line',{
+    x1:tx(a0-ext),y1:ty(f(a0)+trueSlope*(a0-ext-a0)),
+    x2:tx(a0+h+ext),y2:ty(f(a0)+trueSlope*(a0+h+ext-a0)),
+    stroke:'#f5a623','stroke-width':2.2});
+
+  // 2点
+  pe(svg,'circle',{cx:tx(a0),cy:ty(f(a0)),r:5,fill:'#f5a623',stroke:'#fff','stroke-width':1.5});
+  pe(svg,'circle',{cx:tx(a0+h),cy:ty(f(a0+h)),r:5,fill:'#4fc3f7',stroke:'#fff','stroke-width':1.5});
+
+  // hの幅ブレース
+  pe(svg,'line',{x1:tx(a0),y1:ty(-0.08*yMax),x2:tx(a0+h),y2:ty(-0.08*yMax),
+    stroke:'#ff5252','stroke-width':1.5});
+  pe(svg,'text',{x:(tx(a0)+tx(a0+h))/2,y:ty(-0.12*yMax),'text-anchor':'middle',
+    'font-size':10,'font-weight':700,fill:'#ff5252'},`h=${h.toFixed(1)}`);
+
+  // メッセージ
+  const err=Math.abs(diff-trueSlope);
+  const msg=document.getElementById('msgLimit');
+  if(h>3){
+    msg.innerHTML=`h＝<b>${h.toFixed(1)}</b>：2点が遠すぎて、<span class="blue">青の直線（差分）</span>は<span class="red">金の接線</span>と全然違います。`;
+  } else if(h>1){
+    msg.innerHTML=`h＝<b>${h.toFixed(1)}</b>：少し近づいてきました。誤差 <b>${err.toFixed(3)}</b>。`;
+  } else if(h>0.2){
+    msg.innerHTML=`h＝<b>${h.toFixed(1)}</b>：だいぶ近くなってきた！誤差 <b>${err.toFixed(3)}</b>。`;
+  } else {
+    msg.innerHTML=`h＝<b>${h.toFixed(1)}</b>：ほぼ重なった！<b>誤差 ${err.toFixed(4)} → 0</b><br>
+      <span class="green">h→0 の極限が微分係数 f'(1)＝${trueSlope.toFixed(2)} です！</span>`;
+    soundLimit();
+  }
+  soundSlide(rawH+10);
+}
+
+// ══ パート3：微分計算 ══
+function drawDiff(){
+  const fn=DIFF_FNS[diffFnIdx];
+  const svg=document.getElementById('figDiff');
+  svg.innerHTML='';
+  const W=360,H=200,pL=40,pR=16,pT=14,pB=28;
+  const xa=-2.5,xb=2.5;
+  const vals=Array.from({length:101},(_,i)=>fn.f(xa+(xb-xa)*i/100));
+  const dvals=Array.from({length:101},(_,i)=>fn.fp(xa+(xb-xa)*i/100));
+  const allV=[...vals,...dvals].filter(v=>isFinite(v));
+  const yMin=Math.min(...allV)*1.15, yMax=Math.max(...allV)*1.15||1;
+  const yRange=yMax-yMin||1;
+  const tx=x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty=y=>H-pB-(y-yMin)/yRange*(H-pT-pB);
+
+  // グリッド
+  for(let xi=-2;xi<=2;xi++){
+    pe(svg,'line',{x1:tx(xi),y1:pT,x2:tx(xi),y2:H-pB,stroke:'rgba(79,195,247,0.08)','stroke-width':1});
+    pe(svg,'text',{x:tx(xi),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},xi);
+  }
+  if(yMin<=0&&yMax>=0){
+    pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  }
+
+  // f(x)塗り
+  let fillD='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.f(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    fillD+=fillD===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  if(fillD) pe(svg,'path',{d:fillD+` L${tx(xb)} ${ty(Math.max(yMin,0))} L${tx(xa)} ${ty(Math.max(yMin,0))} Z`,
+    fill:'rgba(79,195,247,0.07)'});
+
+  // f(x)曲線
+  let c1='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.f(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    c1+=c1===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  pe(svg,'path',{d:c1,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+
+  // f'(x)曲線（金）
+  let c2='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.fp(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    c2+=c2===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  pe(svg,'path',{d:c2,fill:'none',stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'6,3'});
+
+  // 凡例
+  pe(svg,'line',{x1:pL+4,y1:pT+8,x2:pL+22,y2:pT+8,stroke:'#4fc3f7','stroke-width':2.5});
+  pe(svg,'text',{x:pL+26,y:pT+12,'font-size':9,'font-weight':700,fill:'#4fc3f7'},fn.label);
+  pe(svg,'line',{x1:pL+4,y1:pT+22,x2:pL+22,y2:pT+22,stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'5,3'});
+  pe(svg,'text',{x:pL+26,y:pT+26,'font-size':9,'font-weight':700,fill:'#f5a623',"font-style":"italic"},"f'(x)");
+
+  // ステップ
+  const html=fn.steps.map((s,i)=>
+    `<div class="calc-step"><span class="no">${i+1}</span>${s}</div>`
+  ).join('');
+  document.getElementById('diffSteps').innerHTML=html;
+}
+
+// ══ イベント ══
+window.setTanFn = function(i, btn){
+  tanFnIdx=i;
+  document.querySelectorAll('#tanFnTabs .fn-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  soundTab();
+  drawTan();
+};
+window.setDiffFn = function(i, btn){
+  diffFnIdx=i;
+  document.querySelectorAll('#diffFnTabs .fn-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  soundTab();
+  drawDiff();
+};
+
+document.getElementById('slA').addEventListener('input', drawTan);
+document.getElementById('slH').addEventListener('input', drawLimit);
+
+drawTan();
+drawLimit();
+drawDiff();
+
+})();
+</script>
+</body>
+</html>

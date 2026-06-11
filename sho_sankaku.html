@@ -1,0 +1,271 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三角形の面積</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f5f9f0;
+    color: #1a2a1a;
+    padding: 18px 12px 32px;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 540px; margin: 0 auto; }
+  h1 { font-size: 1.35rem; font-weight: 900;
+       border-bottom: 3px solid #1a2a1a; padding-bottom: 8px; margin-bottom: 4px; }
+  .lead { font-size: .88rem; color: #555; margin-bottom: 14px; }
+
+  .formula-panel {
+    background: #1a2a1a; color: #fff; border-radius: 14px;
+    padding: 14px 20px; margin-bottom: 14px; text-align: center;
+    font-size: 1.5rem; font-weight: 900;
+  }
+  .formula-panel .bc { color: #ffb366; }
+  .formula-panel .hc { color: #80d8ff; }
+  .formula-panel .ac { color: #b9f6ca; }
+
+  .fig-panel {
+    background: #fff; border: 1px solid #c8dcc8;
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  }
+  .fig-panel h2 { font-size: .95rem; font-weight: 900; margin-bottom: 6px;
+    border-left: 4px solid #2e7d32; padding-left: 8px; }
+
+  /* ステップナビ */
+  .step-nav {
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .snav {
+    flex: 1; padding: 8px 4px; border: 2px solid #ccc;
+    border-radius: 10px; background: #f5f5f5;
+    font-size: .78rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; color: #555; text-align: center;
+    transition: background .12s, border-color .12s;
+  }
+  .snav.on { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  .step-msg {
+    margin-top: 10px; padding: 12px 14px;
+    background: #f0f7f0; border-radius: 10px;
+    font-size: .92rem; line-height: 1.7; min-height: 56px;
+  }
+  .step-msg b { color: #2e7d32; }
+  .step-msg .rc { color: #bf360c; font-weight: 700; }
+  .step-msg .bc2 { color: #0d47a1; font-weight: 700; }
+
+  .apex-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px; font-size: .85rem;
+  }
+  .apex-row label { font-weight: 700; color: #555; min-width: 90px; }
+  .apex-row input { flex: 1; accent-color: #7b1fa2; }
+
+  .proof-panel {
+    background: #fff; border: 1px solid #c8dcc8;
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
+  }
+  .proof-panel h2 { font-size: .95rem; font-weight: 900; margin-bottom: 12px;
+    border-left: 4px solid #1565c0; padding-left: 8px; }
+  .pstep {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #f0f7f0; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 8px; font-size: .9rem; line-height: 1.7;
+  }
+  .pstep:last-child { margin-bottom: 0; }
+  .pno {
+    background: #1a2a1a; color: #fff; font-size: .72rem; font-weight: 700;
+    border-radius: 4px; padding: 2px 7px; white-space: nowrap; margin-top: 2px;
+  }
+
+  .answer-box {
+    background: #1a2a1a; color: #fff; border-radius: 14px;
+    padding: 14px 20px; text-align: center; font-size: 1.2rem; font-weight: 900;
+  }
+  .answer-box .big { font-size: 2rem; display: block; margin-top: 4px; color: #b9f6ca; }
+</style>
+
+<div class="wrap">
+  <h1>三角形の面積</h1>
+  <p class="lead">「底辺 × 高さ ÷ 2」がなぜ成り立つか、図で見てみよう！</p>
+
+  <div class="formula-panel">
+    面積 ＝
+    <span class="bc">底辺</span> ×
+    <span class="hc">高さ</span>
+    ÷ 2
+  </div>
+
+  <div class="fig-panel">
+    <h2>ステップで見てみよう</h2>
+    <div class="apex-row">
+      <label>頂点の位置 →</label>
+      <input type="range" id="sl-apex" min="10" max="90" value="38">
+    </div>
+    <div class="step-nav">
+      <button class="snav on" onclick="setStep(0)">① 三角形</button>
+      <button class="snav"    onclick="setStep(1)">② 長方形で囲む</button>
+      <button class="snav"    onclick="setStep(2)">③ 折り返す</button>
+      <button class="snav"    onclick="setStep(3)">④ ÷2 完成！</button>
+    </div>
+    <svg id="fig" viewBox="0 0 340 200"></svg>
+    <div class="step-msg" id="msg"></div>
+  </div>
+
+  <div class="proof-panel">
+    <h2>まとめ</h2>
+    <div class="pstep">
+      <span class="pno">①</span>
+      <div>三角形を <b>長方形でぴったり囲む</b> と、<br>
+      外側に <span style="color:#bf360c;font-weight:700">赤</span> と <span style="color:#0d47a1;font-weight:700">青</span> の三角形ができます。</div>
+    </div>
+    <div class="pstep">
+      <span class="pno">②</span>
+      <div>赤と青を <b>折り返す</b> と、<br>
+      緑の三角形に <b>ぴったり重なります。</b><br>
+      → 赤＋青 ＝ 緑（同じ大きさ！）</div>
+    </div>
+    <div class="pstep">
+      <span class="pno">③</span>
+      <div>長方形の中は 緑 と 赤＋青 の <b>ちょうど2つ分。</b><br>
+      だから 緑（三角形）＝ 長方形 ÷ 2<br>
+      <b>＝ 底辺 × 高さ ÷ 2 ！</b></div>
+    </div>
+  </div>
+
+  <div class="answer-box">
+    <span>どんな三角形でも</span>
+    <span class="big">底辺 × 高さ ÷ 2</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  let step = 0;
+
+  const msgs = [
+    "これが三角形です。頂点の位置を動かすといろいろな形になります。",
+    "三角形を <b>長方形でぴったり囲みます</b>。外側に <span class='rc'>赤</span>と<span class='bc2'>青</span>の直角三角形ができます。",
+    "外側の <span class='rc'>赤</span> と <span class='bc2'>青</span> を<b>折り返す</b>と…ちょうど三角形にぴったり重なります！",
+    "三角形＝外側 なので、<b>長方形のちょうど半分</b>。<br>だから <b>底辺 × 高さ ÷ 2</b> ！"
+  ];
+
+  function pe(svg, tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    if(txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  function draw(){
+    const pct = parseInt(document.getElementById("sl-apex").value) / 100;
+    const svg = document.getElementById("fig");
+    svg.innerHTML = "";
+
+    const W=340, H=200, pad=28, labH=22;
+    const rw = W - pad*2;
+    const rh = H - pad - labH - 16;
+    const rx = pad, ry = pad;
+
+    // 三각형 꼭짓점
+    const BL = {x: rx,      y: ry+rh};
+    const BR = {x: rx+rw,   y: ry+rh};
+    const AP = {x: rx+rw*pct, y: ry};
+    const TL = {x: rx,      y: ry};
+    const TR = {x: rx+rw,   y: ry};
+
+    // ── ステップ別描画 ──
+    if(step === 0){
+      // 三角形のみ
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // 底辺ラベル
+      pe(svg,"text",{x:(BL.x+BR.x)/2,y:BL.y+18,"text-anchor":"middle",
+        "font-size":13,"font-weight":700,fill:"#e65100"},"底辺");
+      // 高さ
+      pe(svg,"line",{x1:AP.x,y1:AP.y,x2:AP.x,y2:BL.y,
+        stroke:"#1565c0","stroke-width":1.5,"stroke-dasharray":"4,3"});
+      pe(svg,"text",{x:AP.x+8,y:(AP.y+BL.y)/2,"text-anchor":"start",
+        "font-size":12,"font-weight":700,fill:"#1565c0"},"高さ");
+
+    } else if(step === 1){
+      // 長方形（薄緑破線）
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#e8f5e9",stroke:"#81c784","stroke-width":2,"stroke-dasharray":"6,4"});
+      // 赤（左上三角）
+      pe(svg,"polygon",{points:`${TL.x},${TL.y} ${AP.x},${AP.y} ${BL.x},${BL.y}`,
+        fill:"#ff7043",opacity:.35,stroke:"#bf360c","stroke-width":1.5});
+      // 青（右上三角）
+      pe(svg,"polygon",{points:`${TR.x},${TR.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#1565c0",opacity:.35,stroke:"#0d47a1","stroke-width":1.5});
+      // 三角形
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // ラベル
+      pe(svg,"text",{x:(TL.x+AP.x+BL.x)/3,y:(TL.y+AP.y+BL.y)/3+4,
+        "text-anchor":"middle","font-size":13,"font-weight":700,fill:"#bf360c"},"赤");
+      pe(svg,"text",{x:(TR.x+BR.x+AP.x)/3,y:(TR.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":13,"font-weight":700,fill:"#0d47a1"},"青");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":12,"font-weight":700,fill:"#fff"},"三角形");
+
+    } else if(step === 2){
+      // 長方形枠
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#f9f9f9",stroke:"#81c784","stroke-width":2,"stroke-dasharray":"6,4"});
+
+      // 折り返した赤（左）: BL, AP, (AP.x, BL.y) の三角形
+      const redFlip = {x: AP.x, y: BL.y};
+      pe(svg,"polygon",{
+        points:`${BL.x},${BL.y} ${AP.x},${AP.y} ${redFlip.x},${redFlip.y}`,
+        fill:"#ff7043",opacity:.55,stroke:"#bf360c","stroke-width":2,"stroke-dasharray":"5,3"});
+
+      // 折り返した青（右）: BR, AP, (AP.x, BR.y) の三角形
+      const blueFlip = {x: AP.x, y: BR.y};
+      pe(svg,"polygon",{
+        points:`${BR.x},${BR.y} ${AP.x},${AP.y} ${blueFlip.x},${blueFlip.y}`,
+        fill:"#1565c0",opacity:.55,stroke:"#0d47a1","stroke-width":2,"stroke-dasharray":"5,3"});
+
+      // 三角形（緑・上に重ねる）
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",opacity:.7,stroke:"#2e7d32","stroke-width":2.5});
+
+      // ラベル
+      pe(svg,"text",{x:BL.x+16,y:(BL.y+AP.y)/2+4,"text-anchor":"start",
+        "font-size":11,"font-weight":700,fill:"#bf360c"},"赤↓");
+      pe(svg,"text",{x:BR.x-14,y:(BR.y+AP.y)/2+4,"text-anchor":"end",
+        "font-size":11,"font-weight":700,fill:"#0d47a1"},"↓青");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":11,"font-weight":700,fill:"#fff"},"ぴったり重なる！");
+
+    } else {
+      // ④ 完成：三角形＝長方形の半分
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#e8f5e9",stroke:"#81c784","stroke-width":2});
+      // 三角形（濃い緑）
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // ÷2 の視覚: 三角形の中に「半分！」
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3,
+        "text-anchor":"middle","font-size":15,"font-weight":900,fill:"#fff"},"これが");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+20,
+        "text-anchor":"middle","font-size":15,"font-weight":900,fill:"#fff"},"半分！");
+      // 長方形の外側（薄く）
+      pe(svg,"text",{x:W/2,y:ry+rh+16,"text-anchor":"middle",
+        "font-size":13,"font-weight":700,fill:"#2e7d32"},"底辺 × 高さ ÷ 2 ＝ 三角形の面積");
+    }
+  }
+
+  window.setStep = function(s){
+    step = s;
+    document.querySelectorAll(".snav").forEach((b,i)=>b.classList.toggle("on",i===s));
+    document.getElementById("msg").innerHTML = msgs[s];
+    draw();
+  };
+
+  document.getElementById("sl-apex").addEventListener("input", draw);
+  setStep(0);
+})();
+</script>

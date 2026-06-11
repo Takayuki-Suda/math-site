@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>円の面積 — なぜ π×r×r なの？</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root {
+    --orange: #ff7043;
+    --orange2: #ff8a65;
+    --yellow: #ffd54f;
+    --green: #66bb6a;
+    --blue: #42a5f5;
+    --purple: #ab47bc;
+    --bg: #fffdf8;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --muted: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 0 0 48px;
+    overflow-x: hidden;
+  }
+
+  /* ヒーロー */
+  .hero {
+    background: linear-gradient(135deg, #fff8f0 0%, #fff3e0 100%);
+    border-bottom: 3px solid #ffe0b2;
+    padding: 36px 24px 32px;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Kaisei Decol', serif;
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    color: #bf360c;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    font-size: 0.92rem;
+    color: #795548;
+    line-height: 1.8;
+  }
+
+  /* セクション共通 */
+  .section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 36px 20px 0;
+  }
+
+  .section-title {
+    font-family: 'Kaisei Decol', serif;
+    font-size: 1.35rem;
+    color: var(--orange);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .section p {
+    font-size: 0.93rem;
+    line-height: 1.85;
+    color: #444;
+    margin-bottom: 14px;
+  }
+
+  /* キャンバスカード */
+  .canvas-card {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  canvas { display: block; width: 100%; border-radius: 8px; }
+
+  /* スライダー */
+  .slider-wrap {
+    margin: 16px 0 8px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .slider-row label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    background: #ffe0b2;
+    border-radius: 6px;
+    outline: none;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--orange);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(255,112,67,0.4);
+  }
+  .slider-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #bf360c;
+    min-width: 48px;
+    text-align: right;
+  }
+
+  /* 数式表示 */
+  .formula-display {
+    background: linear-gradient(135deg, #fff8f0, #fff3e0);
+    border: 2px solid #ffcc80;
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-align: center;
+    margin: 16px 0;
+  }
+  .formula-big {
+    font-family: 'Kaisei Decol', serif;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    color: #bf360c;
+    margin-bottom: 6px;
+  }
+  .formula-sub {
+    font-size: 0.82rem;
+    color: #a1887f;
+  }
+
+  /* ステップボタン */
+  .step-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .step-btn {
+    padding: 8px 18px;
+    border-radius: 24px;
+    border: 2px solid #ffcc80;
+    background: #fff;
+    color: #bf360c;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.2s;
+  }
+  .step-btn.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(255,112,67,0.3);
+  }
+  .step-btn:hover:not(.active) {
+    background: #fff3e0;
+  }
+
+  /* まとめボックス */
+  .summary-box {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 2px solid #a5d6a7;
+    border-radius: 20px;
+    padding: 28px 28px;
+    margin: 24px 0;
+    text-align: center;
+  }
+  .summary-box .big {
+    font-family: 'Kaisei Decol', serif;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    color: #2e7d32;
+    margin-bottom: 12px;
+  }
+  .summary-box p {
+    font-size: 0.88rem;
+    color: #558b2f;
+    line-height: 1.75;
+    margin-bottom: 0;
+  }
+
+  /* 次のステップ */
+  .next-section {
+    max-width: 720px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+    border-top: 2px dashed #ffe0b2;
+    padding-top: 32px;
+  }
+  .next-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #bbb;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .next-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1.5px solid #4a9eff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .next-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(74,158,255,0.2);
+  }
+  .next-icon { font-size: 2rem; flex-shrink: 0; }
+  .next-body { flex: 1; }
+  .next-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(74,158,255,0.15);
+    color: #4a9eff;
+    border: 1px solid rgba(74,158,255,0.35);
+    margin-bottom: 7px;
+  }
+  .next-title { font-size: 1rem; font-weight: 700; color: #f0f0ff; margin-bottom: 4px; }
+  .next-desc { font-size: 0.8rem; color: #8080b0; line-height: 1.6; }
+  .next-arrow { font-size: 1.4rem; color: #4a9eff; flex-shrink: 0; }
+
+  .divider { border: none; border-top: 1px solid #f0e8e0; margin: 32px 0 0; }
+</style>
+</head>
+<body>
+
+<!-- ヒーロー -->
+<div class="hero">
+  <div class="hero-tag">小学6年〜</div>
+  <h1>円の面積<br>なぜ π × r × r なの？</h1>
+  <p>円を細かく切っていくと…<br>長方形に変身する！</p>
+</div>
+
+<!-- セクション1：円を切ってみよう -->
+<div class="section">
+  <div class="section-title">① 円をピザみたいに切ってみよう</div>
+  <p>円を同じ大きさのピースに切って、交互に並べると、どんな形になるかな？<br>スライダーで切る数を変えてみよう。</p>
+
+  <div class="canvas-card">
+    <canvas id="c1" height="300"></canvas>
+    <div class="slider-wrap">
+      <div class="slider-row">
+        <label>切る数：</label>
+        <input type="range" id="nSlider" min="2" max="32" step="2" value="12">
+        <span class="slider-val" id="nVal">12 ピース</span>
+      </div>
+      <div class="slider-row">
+        <label>半径 r：</label>
+        <input type="range" id="rSlider" min="1" max="6" step="0.5" value="3">
+        <span class="slider-val" id="rVal">3 cm</span>
+      </div>
+    </div>
+  </div>
+
+  <p>切る数を増やすと、ならべた形がどんどん<strong>長方形に近づいていく</strong>のがわかるかな？</p>
+</div>
+
+<!-- セクション2：長方形の面積から計算 -->
+<div class="section">
+  <div class="section-title">② 長方形の「たて」と「よこ」を調べよう</div>
+  <p>たくさん切って長方形に近づけたとき、<br>「たて」と「よこ」はいったい何 cm になるんだろう？</p>
+
+  <div class="canvas-card">
+    <canvas id="c2" height="260"></canvas>
+  </div>
+
+  <div class="formula-display">
+    <div class="formula-big" id="formulaText">
+      よこ ≈ π × r　　たて ≈ r
+    </div>
+    <div class="formula-sub">だから面積 = よこ × たて = π × r × r</div>
+  </div>
+
+  <p>円の周りの長さ（円周）は <strong>2 × π × r</strong>。<br>
+  それを半分に折ると <strong>π × r</strong>。これが長方形の「よこ」になります。<br>
+  「たて」は半径 <strong>r</strong> そのまま。</p>
+</div>
+
+<!-- セクション3：πって何？ -->
+<div class="section">
+  <div class="section-title">③ π（パイ）って何の数？</div>
+  <p>π は「円周 ÷ 直径」の答えです。どんな大きさの円でも、必ず同じ数になります。</p>
+
+  <div class="canvas-card">
+    <canvas id="c3" height="200"></canvas>
+    <div class="slider-wrap">
+      <div class="slider-row">
+        <label>円の大きさ：</label>
+        <input type="range" id="piSlider" min="30" max="80" step="5" value="50">
+        <span class="slider-val" id="piVal">大きさ 50</span>
+      </div>
+    </div>
+    <div id="piResult" style="text-align:center; margin-top:12px; font-size:1rem; font-weight:700; color:#bf360c;">
+      円周 ÷ 直径 ≈ 3.14159…
+    </div>
+  </div>
+
+  <p>π = 3.14159265358979…<br>
+  小数点以下が永遠に続く、不思議な数です。<br>
+  この数は紀元前から人類が研究してきた、数学の宝物のひとつです。</p>
+</div>
+
+<!-- セクション4：確かめよう -->
+<div class="section">
+  <div class="section-title">④ 面積を計算してみよう</div>
+  <p>スライダーで半径を変えて、面積がどう変わるか確かめよう。</p>
+
+  <div class="canvas-card">
+    <canvas id="c4" height="240"></canvas>
+    <div class="slider-wrap">
+      <div class="slider-row">
+        <label>半径 r =</label>
+        <input type="range" id="r2Slider" min="1" max="10" step="0.5" value="4">
+        <span class="slider-val" id="r2Val">4 cm</span>
+      </div>
+    </div>
+    <div class="formula-display" style="margin-top:16px;">
+      <div class="formula-big" id="calcResult">
+        π × 4² = π × 16 ≈ 50.27 cm²
+      </div>
+      <div class="formula-sub">面積 = π × r × r = π × r²</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="big">円の面積 ＝ π × r²</div>
+    <p>
+      円をたくさんのピースに切って並べると長方形になる。<br>
+      その長方形の面積が「π × r × r」。<br>
+      だからどんな円でも、<strong>π × r²</strong> で面積が求まる！
+    </p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- 次のステップ -->
+<div class="next-section">
+  <div class="next-label">次のステップ</div>
+  <a class="next-card" href="https://sites.google.com/view/suda-math-aizu/中学生">
+    <div class="next-icon">🏫</div>
+    <div class="next-body">
+      <span class="next-tag">中学数学へ進もう</span>
+      <div class="next-title">三平方の定理を体感する</div>
+      <div class="next-desc">a²＋b²＝c² がなぜ成り立つのか。図形の証明を動かしながら確かめよう。</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</div>
+
+<script>
+const PI = Math.PI;
+
+// ===== Canvas1: 円を切って並べる =====
+function drawC1() {
+  const canvas = document.getElementById('c1');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 320;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const n = parseInt(document.getElementById('nSlider').value);
+  ctx.clearRect(0, 0, W, H);
+
+  // エリア分割
+  const leftW  = W * 0.36;
+  const arrowW = W * 0.10;
+  const rightW = W * 0.54;
+  const rightStartX = leftW + arrowW;
+
+  // 左：扇形できれいな円を描く
+  const rs = Math.min(leftW * 0.42, H * 0.38);
+  const cx = leftW / 2, cy = H * 0.50;
+
+  for (let i = 0; i < n; i++) {
+    const a1 = (2 * PI * i / n) - PI / 2;
+    const a2 = (2 * PI * (i + 1) / n) - PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, rs, a1, a2);
+    ctx.closePath();
+    ctx.fillStyle = (i % 2 === 0) ? '#ff8a65' : '#64b5f6';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // 矢印
+  ctx.fillStyle = '#ff7043';
+  ctx.font = `bold ${Math.min(26, W * 0.055)}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('→', leftW + arrowW / 2, H * 0.52);
+
+  // 右：扇形を交互上下に並べる（参考図通り）
+  // 構造：上向き扇形の弧が上端ライン、下向き扇形の弧が下端ライン
+  // 弧の両端点が隣のピースの弧の両端点と一致する
+  const dAngle   = (2 * PI) / n;
+  const halfA    = dAngle / 2;
+
+  // 検証済み：扇形を交互に並べて隙間なく噛み合わせる
+  // 弦（底辺）= 2*rs*sin(halfA)、シフト量 = 弦の半分
+  const chord_raw  = 2 * rs * Math.sin(halfA);
+  const height_raw = rs * Math.cos(halfA);   // 頂点〜底辺中央の高さ
+  const halfChord_raw = chord_raw / 2;        // シフト量
+  // 全体幅 = halfChord*(n-1) + chord
+  const totalW_raw = halfChord_raw * (n - 1) + chord_raw;
+  const scaleR     = Math.min(1, (rightW * 0.86) / totalW_raw);
+  const rsR        = rs * scaleR;
+  const chord      = chord_raw * scaleR;
+  const height     = height_raw * scaleR;
+  const halfChord  = halfChord_raw * scaleR;
+
+  const midY   = H * 0.50;
+  const startX = rightStartX + (rightW - (halfChord * (n - 1) + chord)) / 2;
+  const steps  = Math.max(16, n * 3);
+
+  for (let i = 0; i < n; i++) {
+    const up    = (i % 2 === 0);
+    const color = up ? '#ff8a65' : '#64b5f6';
+
+    // 各ピースの底辺左端X、頂点X
+    const baseLeftX = startX + i * halfChord;
+    const apexX     = baseLeftX + chord / 2;
+    // 上向き：底辺(弧)が上、頂点が下／下向き：底辺が下、頂点が上
+    const apexY = up ? midY + height / 2 : midY - height / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(apexX, apexY);
+    for (let s = 0; s <= steps; s++) {
+      const a  = -halfA + dAngle * s / steps;
+      const bx = apexX + rsR * Math.sin(a);
+      const by = up
+        ? apexY - rsR * Math.cos(a)   // 上向き：弧が上
+        : apexY + rsR * Math.cos(a);  // 下向き：弧が下
+      ctx.lineTo(bx, by);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // 長方形に近づく枠線（16枚以上）
+  if (n >= 16) {
+    ctx.strokeStyle = 'rgba(46,125,50,0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    const frameW = halfChord * (n - 1) + chord;
+    ctx.strokeRect(startX, midY - height / 2, frameW, height);
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(46,125,50,0.9)';
+    ctx.font = `bold ${Math.min(11, W * 0.022)}px 'Noto Sans JP', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('長方形に近づいてきた！', startX + frameW / 2, midY - height / 2 - 6);
+  }
+
+  // ラベル
+  ctx.fillStyle = '#795548';
+  ctx.font = `${Math.min(12, W * 0.025)}px 'Noto Sans JP', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('元の円', cx, H * 0.94);
+  ctx.fillText('並べると…', rightStartX + rightW / 2, H * 0.94);
+
+  // ピース数ラベル
+  ctx.fillStyle = '#ff7043';
+  ctx.font = `bold ${Math.min(13, W * 0.025)}px 'Noto Sans JP', sans-serif`;
+  ctx.fillText(`${n} ピース`, cx, H * 0.07);
+}
+
+// ===== Canvas2: 長方形の説明 =====
+function drawC2() {
+  const canvas = document.getElementById('c2');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 260;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const r = parseFloat(document.getElementById('rSlider').value);
+  const n = parseInt(document.getElementById('nSlider').value);
+  const scale = Math.min(W * 0.08, H * 0.18);
+  const rs = r * scale;
+  const rectW = PI * rs;
+  const rectH = rs;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H / 2;
+  const x0 = cx - rectW / 2, y0 = cy - rectH / 2;
+
+  // 長方形（n本のピースで近似）
+  const pieW = rectW / n;
+  for (let i = 0; i < n; i++) {
+    const px = x0 + i * pieW;
+    const flip = (i % 2 === 0);
+    const hue = (i % 2 === 0) ? 25 : 200;
+    ctx.beginPath();
+    ctx.moveTo(px, flip ? cy : cy - rectH);
+    ctx.lineTo(px + pieW, flip ? cy : cy - rectH);
+    ctx.lineTo(px + pieW, flip ? cy - rectH : cy);
+    ctx.lineTo(px, flip ? cy - rectH : cy);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${hue}, 80%, 67%)`;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // 外枠
+  ctx.strokeStyle = '#ff7043';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(x0, y0, rectW, rectH);
+
+  // よこ矢印
+  ctx.fillStyle = '#bf360c';
+  ctx.strokeStyle = '#bf360c';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, cy + rectH / 2 + 16);
+  ctx.lineTo(x0 + rectW, cy + rectH / 2 + 16);
+  ctx.stroke();
+  ctx.font = `bold ${Math.min(12, W*0.024)}px 'Noto Sans JP', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`よこ ≈ π × ${r} = ${(PI * r).toFixed(2)} cm`, cx, cy + rectH / 2 + 34);
+
+  // たて矢印
+  ctx.beginPath();
+  ctx.moveTo(x0 - 16, y0);
+  ctx.lineTo(x0 - 16, y0 + rectH);
+  ctx.stroke();
+  ctx.save();
+  ctx.translate(x0 - 34, cy);
+  ctx.rotate(-PI / 2);
+  ctx.fillText(`たて = r = ${r} cm`, 0, 0);
+  ctx.restore();
+}
+
+// ===== Canvas3: π の説明 =====
+function drawC3() {
+  const canvas = document.getElementById('c3');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 200;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const r = parseInt(document.getElementById('piSlider').value) * 0.8;
+  const cx = W / 2, cy = H / 2;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 円
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * PI);
+  ctx.fillStyle = 'rgba(255,112,67,0.12)';
+  ctx.fill();
+  ctx.strokeStyle = '#ff7043';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // 直径
+  ctx.strokeStyle = '#1976d2';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx - r, cy);
+  ctx.lineTo(cx + r, cy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 直径ラベル
+  ctx.fillStyle = '#1976d2';
+  ctx.font = `bold ${Math.min(13, W*0.025)}px 'Noto Sans JP', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`直径 = ${(r * 2 / 40).toFixed(1)} cm`, cx, cy + 18);
+
+  // 円周ラベル
+  ctx.fillStyle = '#bf360c';
+  ctx.fillText(`円周 ≈ ${(2 * PI * r / 40).toFixed(2)} cm`, cx, cy - r - 10);
+
+  // π の計算
+  document.getElementById('piResult').textContent =
+    `円周 ÷ 直径 = ${(2 * PI * r / 40).toFixed(4)} ÷ ${(2 * r / 40).toFixed(4)} = ${PI.toFixed(5)}… = π`;
+}
+
+// ===== Canvas4: 面積計算 =====
+function drawC4() {
+  const canvas = document.getElementById('c4');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 240;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const r = parseFloat(document.getElementById('r2Slider').value);
+  const maxR = 10;
+  const scale = Math.min(W, H) * 0.38 / maxR;
+  const rs = r * scale;
+  const cx = W / 2, cy = H / 2;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 正方形（r²を表す）を薄く
+  ctx.fillStyle = 'rgba(255,193,7,0.15)';
+  ctx.fillRect(cx - rs, cy - rs, rs, rs);
+  ctx.strokeStyle = 'rgba(255,193,7,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.strokeRect(cx - rs, cy - rs, rs, rs);
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(255,193,7,0.6)';
+  ctx.font = `${Math.min(11, W*0.022)}px 'Noto Sans JP', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('r²', cx - rs / 2, cy - rs / 2);
+
+  // 円（扇形で塗る、グラデーション）
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rs);
+  grad.addColorStop(0, 'rgba(255,138,101,0.95)');
+  grad.addColorStop(1, 'rgba(255,112,67,0.75)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, rs, 0, 2 * PI);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#e64a19';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // 半径の線
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + rs, cy);
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${Math.min(13, W*0.025)}px 'Noto Sans JP', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`r = ${r}`, cx + rs / 2, cy - 8);
+
+  // 面積の計算式更新
+  const area = PI * r * r;
+  document.getElementById('calcResult').textContent =
+    `π × ${r}² = π × ${(r * r).toFixed(1)} ≈ ${area.toFixed(2)} cm²`;
+
+  ctx.textAlign = 'left';
+}
+
+// ===== イベントリスナー =====
+function drawAll() {
+  drawC1(); drawC2(); drawC3(); drawC4();
+}
+
+document.getElementById('nSlider').addEventListener('input', () => {
+  document.getElementById('nVal').textContent = document.getElementById('nSlider').value + ' ピース';
+  drawC1(); drawC2();
+});
+document.getElementById('rSlider').addEventListener('input', () => {
+  const v = document.getElementById('rSlider').value;
+  document.getElementById('rVal').textContent = v + ' cm';
+  drawC1(); drawC2();
+});
+document.getElementById('piSlider').addEventListener('input', () => {
+  document.getElementById('piVal').textContent = '大きさ ' + document.getElementById('piSlider').value;
+  drawC3();
+});
+document.getElementById('r2Slider').addEventListener('input', () => {
+  const v = document.getElementById('r2Slider').value;
+  document.getElementById('r2Val').textContent = v + ' cm';
+  drawC4();
+});
+
+window.addEventListener('load', drawAll);
+window.addEventListener('resize', drawAll);
+</script>
+</body>
+</html>

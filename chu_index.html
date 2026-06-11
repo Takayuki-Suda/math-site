@@ -1,0 +1,109 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: transparent;
+    padding: 24px 16px 32px;
+  }
+  .lead {
+    font-size: .95rem;
+    color: #444;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .card {
+    flex: 1 1 220px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.07);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  }
+  .card-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 700;
+    background: #e8f4f0;
+    color: #2e7d6b;
+    border-radius: 4px;
+    padding: 2px 8px;
+    width: fit-content;
+  }
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a2332;
+    line-height: 1.4;
+  }
+  .card-desc {
+    font-size: .82rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  .card-arrow {
+    margin-top: auto;
+    font-size: .82rem;
+    color: #3a5fa8;
+    font-weight: 700;
+  }
+  .coming {
+    opacity: .5;
+    pointer-events: none;
+    cursor: default;
+  }
+  .card-tag.soon {
+    background: #f0f0f0;
+    color: #999;
+  }
+</style>
+
+<p class="lead">スライダーを動かしたり、図を見たりしながら、数学を体感できる教材です。</p>
+
+<div class="grid">
+
+  <a class="card" href="https://sites.google.com/view/suda-math-aizu/中学生/三平方の定理">
+    <div class="card-icon">📐</div>
+    <span class="card-tag">中学2・3年〜</span>
+    <div class="card-title">三平方の定理</div>
+    <div class="card-desc">a²＋b²＝c² を面積で確かめる。スライダーで辺の長さを変えながら、なぜ成り立つか証明まで見られます。</div>
+    <div class="card-arrow">見てみる →</div>
+  </a>
+
+  <div class="card coming">
+    <div class="card-icon">📊</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">一次関数・グラフ</div>
+    <div class="card-desc">傾きと切片をスライダーで変えて、直線の動きを体感します。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+  <div class="card coming">
+    <div class="card-icon">🔢</div>
+    <span class="card-tag soon">近日公開</span>
+    <div class="card-title">二次関数・放物線</div>
+    <div class="card-desc">a・p・qを動かして放物線の形がどう変わるか確認できます。</div>
+    <div class="card-arrow">準備中</div>
+  </div>
+
+</div>

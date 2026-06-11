@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Yu Gothic", sans-serif;
+    background: #fffef5;
+    color: #333;
+    padding: 0 0 40px;
+    overflow-x: hidden;
+  }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #ffeb3b 0%, #ff9800 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(255,152,0,0.25);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* ── セクション共通 ── */
+  .section {
+    max-width: 680px;
+    margin: 32px auto 0;
+    padding: 0 20px;
+  }
+  .section-title {
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .num-badge {
+    background: #ff9800;
+    color: #fff;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* ── パート1：タップして増やす ── */
+  .tap-area {
+    background: #e3f2fd;
+    border-radius: 24px;
+    padding: 24px 20px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .15s;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+  }
+  .tap-area:active { background: #bbdefb; }
+
+  .tap-hint {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: #1976d2;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .tap-hint span { font-size: 1.2em; }
+
+  .items-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    min-height: 80px;
+    align-content: center;
+    padding: 8px;
+  }
+  .item-emoji {
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    display: inline-block;
+    animation: popIn .25s cubic-bezier(.34,1.56,.64,1) forwards;
+    transform: scale(0);
+    line-height: 1;
+  }
+  @keyframes popIn {
+    to { transform: scale(1); }
+  }
+
+  .count-display {
+    margin-top: 16px;
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    font-weight: 900;
+    color: #1565c0;
+    line-height: 1;
+    transition: transform .15s;
+  }
+  .count-display.bounce {
+    animation: countBounce .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes countBounce {
+    0%   { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+
+  .count-yomi {
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    color: #42a5f5;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: 0.15em;
+  }
+
+  .reset-btn {
+    margin-top: 16px;
+    padding: 10px 28px;
+    background: #fff;
+    border: 2px solid #90caf9;
+    color: #1976d2;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .reset-btn:hover { background: #e3f2fd; }
+
+  /* アイテム選択 */
+  .item-select {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .item-btn {
+    font-size: 1.6rem;
+    background: #fff;
+    border: 3px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s;
+    line-height: 1;
+  }
+  .item-btn.active {
+    border-color: #ff9800;
+    background: #fff8e1;
+    transform: scale(1.15);
+  }
+
+  /* ── パート2：数字と読み方 ── */
+  .number-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .num-card {
+    background: #fff;
+    border: 3px solid #e0e0e0;
+    border-radius: 18px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .num-card:hover, .num-card.lit {
+    border-color: #ff9800;
+    background: #fff8e1;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(255,152,0,0.2);
+  }
+  .num-card .big-num {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 900;
+    color: #e65100;
+    line-height: 1.1;
+  }
+  .num-card .yomi {
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+    color: #888;
+    margin-top: 2px;
+    font-weight: 700;
+  }
+  .num-card .dots {
+    margin-top: 6px;
+    min-height: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ff9800;
+    display: inline-block;
+  }
+
+  /* ── パート3：クイズ ── */
+  .quiz-box {
+    background: #f3e5f5;
+    border-radius: 24px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .quiz-question {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    color: #6a1b9a;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .quiz-emojis {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    word-break: break-all;
+  }
+  .quiz-choices {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .choice-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 3px solid #ce93d8;
+    background: #fff;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #6a1b9a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .choice-btn:hover { background: #f3e5f5; transform: scale(1.1); }
+  .choice-btn.correct {
+    background: #a5d6a7;
+    border-color: #388e3c;
+    color: #1b5e20;
+    animation: correctPop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .choice-btn.wrong {
+    background: #ffcdd2;
+    border-color: #c62828;
+    color: #b71c1c;
+    animation: shake .3s;
+  }
+  @keyframes correctPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1.1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .quiz-result {
+    margin-top: 16px;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    font-weight: 700;
+    min-height: 28px;
+    color: #388e3c;
+  }
+  .next-btn {
+    margin-top: 14px;
+    padding: 12px 32px;
+    background: #9c27b0;
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: none;
+    transition: background .15s;
+  }
+  .next-btn:hover { background: #7b1fa2; }
+
+  /* ── パート4：10までの並び ── */
+  .ten-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .ten-cell {
+    width: clamp(44px, 9vw, 58px);
+    height: clamp(44px, 9vw, 58px);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ff9800, #f44336);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 3px 8px rgba(244,67,54,0.25);
+  }
+  .ten-cell:hover, .ten-cell.glow {
+    transform: scale(1.2) translateY(-4px);
+    box-shadow: 0 8px 20px rgba(244,67,54,0.4);
+  }
+  .ten-cell.zero {
+    background: linear-gradient(135deg, #78909c, #546e7a);
+    box-shadow: 0 3px 8px rgba(84,110,122,0.25);
+  }
+  .ten-yomi {
+    text-align: center;
+    margin-top: 10px;
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    font-weight: 700;
+    color: #e65100;
+    min-height: 1.4em;
+    transition: opacity .2s;
+  }
+
+  /* ── 吹き出しエフェクト ── */
+  .speech-bubble {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #ff9800;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    animation: floatUp .8s ease-out forwards;
+  }
+  @keyframes floatUp {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  /* ── フッター ── */
+  .footer-note {
+    text-align: center;
+    margin-top: 40px;
+    padding: 0 20px;
+    font-size: 0.82rem;
+    color: #aaa;
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>🔢 かずを かぞえよう！</h1>
+  <p>１ねんせい ・ さんすう</p>
+</div>
+
+<!-- ── パート1：タップして増やす ── -->
+<div class="section">
+  <div class="section-title">
+    <div class="num-badge">1</div>
+    タップして かずを ふやそう
+  </div>
+
+  <!-- アイテム選択 -->
+  <div class="item-select" id="itemSelect">
+    <button class="item-btn active" data-emoji="🍎" onclick="selectItem(this)">🍎</button>
+    <button class="item-btn" data-emoji="⭐" onclick="selectItem(this)">⭐</button>
+    <button class="item-btn" data-emoji="🐸" onclick="selectItem(this)">🐸</button>
+    <button class="item-btn" data-emoji="🌸" onclick="selectItem(this)">🌸</button>
+    <button class="item-btn" data-emoji="🦆" onclick="selectItem(this)">🦆</button>
+  </div>
+
+  <div class="tap-area" id="tapArea" onclick="addItem(event)">
+    <div class="tap-hint"><span>👆</span> ここを タップしよう！</div>
+    <div class="items-display" id="itemsDisplay"></div>
+    <div class="count-display" id="countDisplay">0</div>
+    <div class="count-yomi" id="countYomi">れい</div>
+    <button class="reset-btn" onclick="resetItems(event)">🔄 リセット</button>
+  </div>
+</div>
+
+<!-- ── パート2：数字と読み方 ── -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">2</div>
+    すうじと よみかた
+  </div>
+  <div class="number-grid" id="numberGrid"></div>
+</div>
+
+<!-- ── パート3：クイズ ── -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">3</div>
+    クイズ！ いくつ あるかな？
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-question">したの えを かぞえて こたえよう！</div>
+    <div class="quiz-emojis" id="quizEmojis"></div>
+    <div class="quiz-choices" id="quizChoices"></div>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuiz()">つぎの もんだい →</button>
+  </div>
+</div>
+
+<!-- ── パート4：0〜10 の並び ── -->
+<div class="section" style="margin-top:36px">
+  <div class="section-title">
+    <div class="num-badge">4</div>
+    0から10まで ならべよう
+  </div>
+  <div class="ten-row" id="tenRow"></div>
+  <div class="ten-yomi" id="tenYomi">すうじを タップしてみよう</div>
+</div>
+
+<div class="footer-note">
+  須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松
+</div>
+
+<script>
+// ── データ ──
+const YOMI = ['れい','いち','に','さん','し','ご','ろく','なな','はち','きゅう','じゅう'];
+const YOMI_KANJI = ['零','一','二','三','四','五','六','七','八','九','十'];
+
+let currentEmoji = '🍎';
+let itemCount = 0;
+const MAX_ITEMS = 10;
+
+// ── パート1：タップ ──
+function selectItem(btn) {
+  document.querySelectorAll('.item-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentEmoji = btn.dataset.emoji;
+  resetItems();
+}
+
+function addItem(e) {
+  if (e.target.classList.contains('reset-btn')) return;
+  if (itemCount >= MAX_ITEMS) {
+    showSpeech('もう 10こ！', e.clientX, e.clientY);
+    return;
+  }
+  itemCount++;
+  const span = document.createElement('span');
+  span.className = 'item-emoji';
+  span.textContent = currentEmoji;
+  document.getElementById('itemsDisplay').appendChild(span);
+
+  const cd = document.getElementById('countDisplay');
+  cd.textContent = itemCount;
+  cd.classList.remove('bounce');
+  void cd.offsetWidth;
+  cd.classList.add('bounce');
+  document.getElementById('countYomi').textContent = YOMI[itemCount];
+
+  soundTap(itemCount);
+  showSpeech(itemCount, e.clientX, e.clientY);
+}
+
+function resetItems(e) {
+  if (e) e.stopPropagation();
+  itemCount = 0;
+  document.getElementById('itemsDisplay').innerHTML = '';
+  document.getElementById('countDisplay').textContent = '0';
+  document.getElementById('countYomi').textContent = 'れい';
+}
+
+// 浮き上がる数字エフェクト
+function showSpeech(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'speech-bubble';
+  el.textContent = text;
+  el.style.left = (x - 16) + 'px';
+  el.style.top  = (y - 16) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 850);
+}
+
+// ── パート2：数字カード ──
+const grid = document.getElementById('numberGrid');
+for (let i = 1; i <= 10; i++) {
+  const card = document.createElement('div');
+  card.className = 'num-card';
+  card.innerHTML = `
+    <div class="big-num">${i}</div>
+    <div class="yomi">${YOMI[i]}</div>
+    <div class="dots">${'<span class="dot"></span>'.repeat(i)}</div>
+  `;
+  card.addEventListener('click', () => {
+    card.classList.add('lit');
+    setTimeout(() => card.classList.remove('lit'), 600);
+    soundCard(i);
+    speakNumber(i);
+  });
+  grid.appendChild(card);
+}
+
+// 読み上げ（Web Speech API）
+function speakNumber(n) {
+  if (!window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(String(n));
+  u.lang = 'ja-JP';
+  u.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// ── 効果音エンジン（Web Audio API）──
+let _ac = null;
+function getAC() {
+  if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  return _ac;
+}
+function playTone(freq, type, st, dur, gain, ac) {
+  const osc = ac.createOscillator();
+  const g   = ac.createGain();
+  osc.connect(g); g.connect(ac.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, st);
+  g.gain.setValueAtTime(gain, st);
+  g.gain.exponentialRampToValueAtTime(0.001, st + dur);
+  osc.start(st); osc.stop(st + dur + 0.05);
+}
+function soundTap(n) {
+  try { const ac=getAC(),now=ac.currentTime; playTone(261+n*35,'sine',now,0.15,0.28,ac); } catch(e){}
+}
+function soundCorrect() {
+  try {
+    const ac=getAC(),now=ac.currentTime;
+    [523,659,784,1047].forEach((f,i)=>playTone(f,'sine',now+i*0.1,0.25,0.3,ac));
+  } catch(e){}
+}
+function soundWrong() {
+  try {
+    const ac=getAC(),now=ac.currentTime;
+    playTone(220,'sawtooth',now,0.15,0.2,ac);
+    playTone(180,'sawtooth',now+0.15,0.2,0.2,ac);
+  } catch(e){}
+}
+function soundCard(n) {
+  try { const ac=getAC(),now=ac.currentTime; playTone(300+n*40,'triangle',now,0.18,0.25,ac); } catch(e){}
+}
+
+// ── パート3：クイズ ──
+const QUIZ_EMOJIS = ['🍎','🌟','🐸','🌸','🍪','🐶','🌈','🍓','🐠','🌻'];
+let quizAnswer = 0;
+let quizAnswered = false;
+
+function generateQuiz() {
+  quizAnswered = false;
+  document.getElementById('quizResult').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const count  = Math.floor(Math.random() * 9) + 1; // 1〜9
+  const emoji  = QUIZ_EMOJIS[Math.floor(Math.random() * QUIZ_EMOJIS.length)];
+  quizAnswer   = count;
+
+  document.getElementById('quizEmojis').textContent = emoji.repeat(count);
+
+  // 選択肢：正解 + 2つのデコイ
+  const choices = new Set([count]);
+  while (choices.size < 3) {
+    const d = Math.floor(Math.random() * 9) + 1;
+    choices.add(d);
+  }
+  const arr = [...choices].sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('quizChoices');
+  container.innerHTML = '';
+  arr.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = n;
+    btn.onclick = () => checkAnswer(n, btn);
+    container.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const result = document.getElementById('quizResult');
+  if (selected === quizAnswer) {
+    btn.classList.add('correct');
+    result.textContent = '🎉 せいかい！ すごい！';
+    result.style.color = '#388e3c';
+    soundCorrect();
+    speakNumber(quizAnswer);
+  } else {
+    btn.classList.add('wrong');
+    result.textContent = `😢 ざんねん… こたえは ${quizAnswer} だよ！`;
+    result.style.color = '#c62828';
+    soundWrong();
+    // 正解ボタンをハイライト
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      if (Number(b.textContent) === quizAnswer) b.classList.add('correct');
+    });
+  }
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuiz() { generateQuiz(); }
+generateQuiz();
+
+// ── パート4：0〜10 の並び ──
+const tenRow  = document.getElementById('tenRow');
+const tenYomi = document.getElementById('tenYomi');
+
+for (let i = 0; i <= 10; i++) {
+  const cell = document.createElement('div');
+  cell.className = 'ten-cell' + (i === 0 ? ' zero' : '');
+  cell.textContent = i;
+  cell.addEventListener('click', () => {
+    tenYomi.textContent = `${i}  →  ${YOMI[i]}（${YOMI_KANJI[i]}）`;
+    cell.classList.add('glow');
+    setTimeout(() => cell.classList.remove('glow'), 400);
+    speakNumber(i);
+    soundCard(i);
+  });
+  tenRow.appendChild(cell);
+}
+
+// ══════════════════════════════════════════════════════
+// 🎵 オリジナル冒険BGM「星降る学びの旅」
+// 完全オリジナル楽曲。著作権フリー。
+// 作曲スタイル参考：短調ベース・完全4/5度跳躍・転調展開
+// Aマイナー基調 → Cメジャー転調 → Aマイナー回帰
+// ══════════════════════════════════════════════════════
+const BGM = (() => {
+  // ── 音名→周波数 ──
+  const F = {
+    'R':0,
+    'C2':65.41,'G2':98.00,
+    'A2':110.00,'C3':130.81,'D3':146.83,'E3':164.81,'F3':174.61,'G3':196.00,'A3':220.00,'B3':246.94,
+    'C4':261.63,'D4':293.66,'E4':329.63,'F4':349.23,'G4':392.00,'A4':440.00,'Bb4':466.16,'B4':493.88,
+    'C5':523.25,'D5':587.33,'E5':659.25,'F5':698.46,'G5':783.99,'A5':880.00,'Bb5':932.33,'B5':987.77,
+    'C6':1046.50,'D6':1174.66,'E6':1318.51,'F6':1396.91,'G6':1567.98,
+    'F#4':369.99,'G#4':415.30,'C#5':554.37,'F#5':739.99,'G#5':830.61,
+    'Eb4':311.13,'Eb5':622.25,'Ab4':415.30,
+  };
+  const n = k => F[k]||0;
+  const BPM=108, U=60/BPM/4; // 16分音符 ※少しゆったり壮大に
+
+  // ══ オリジナル楽曲「星降る学びの旅」(Aマイナー) ══
+  // 【設計】
+  // イントロ：ティンパニ風の重い刻み
+  // Aパート：Amマイナー。完全4度・5度跳躍のメロディ
+  // Bパート：Cメジャーへ転調。明るく希望感
+  // Cパート（クライマックス）：Amに戻り、高音域で盛り上がり
+  // アウトロ：静かに締める
+
+  // ── メロディ（バイオリン主体） ──
+  const MELODY = [
+    // ─ イントロ（4小節）─
+    ['R',8],['A4',2],['R',2],['C5',2],['R',2],
+    ['E5',2],['R',2],['A4',4],['R',4],
+    // ─ Aパート（8小節）Aマイナー ─
+    // フレーズ1：Am上昇
+    ['A4',1],['C5',1],['E5',2],['A5',2],['R',2],
+    ['G5',2],['E5',2],['C5',2],['R',2],
+    // フレーズ2：転回・応答
+    ['F5',2],['E5',1],['D5',1],['C5',2],['D5',2],
+    ['E5',4],['R',4],
+    // フレーズ3：4度跳躍
+    ['A4',2],['D5',2],['C5',2],['B4',2],
+    ['A4',2],['G4',2],['A4',4],
+    // フレーズ4：クレッシェンド
+    ['C5',2],['E5',2],['G5',2],['A5',2],
+    ['G5',2],['F5',2],['E5',4],
+    // ─ Bパート（8小節）Cメジャー転調・明るく ─
+    ['E5',2],['G5',2],['C6',4],['B5',2],['A5',2],
+    ['G5',2],['A5',2],['B5',2],['C6',2],
+    ['D6',2],['C6',2],['B5',2],['A5',2],
+    ['G5',4],['R',4],
+    // フレーズ：展開
+    ['G5',2],['E5',2],['F5',2],['D5',2],
+    ['E5',2],['C5',2],['D5',4],
+    ['F5',2],['A5',2],['G5',2],['E5',2],
+    ['C5',4],['R',4],
+    // ─ Cパート（クライマックス・Amに回帰） ─
+    ['A5',2],['R',1],['A5',1],['G5',2],['F5',2],
+    ['E5',2],['D5',2],['C5',2],['B4',2],
+    ['A4',1],['B4',1],['C5',1],['D5',1],['E5',2],['F5',2],
+    ['G5',2],['A5',2],['E5',4],
+    // 最高潮
+    ['A5',2],['C6',2],['E6',2],['A5',2],
+    ['G5',2],['E5',2],['D5',2],['C5',2],
+    ['E5',4],['A4',4],
+    // ─ アウトロ ─
+    ['A4',2],['C5',2],['E5',2],['A5',4],['R',6],
+  ];
+
+  // ── 和音声部（ホルン・チェロ刻み） ──
+  // コード進行：Am-F-C-G (Aマイナー王道) → C-G-Am-E (Bパート)
+  const HARMONY = [
+    // イントロ
+    ['A3',4],['A3',4],['C4',4],['E4',4],
+    // Aパート Am-F-C-G × 2
+    ['A3',4],['A3',4],['F3',4],['F3',4],
+    ['C4',4],['C4',4],['G3',4],['G3',4],
+    ['A3',4],['A3',4],['F3',4],['F3',4],
+    ['C4',4],['C4',4],['E3',4],['E3',4],
+    // Bパート C-G-Am-F
+    ['C4',4],['C4',4],['G3',4],['G3',4],
+    ['A3',4],['A3',4],['F3',4],['F3',4],
+    ['C4',4],['G3',4],['A3',4],['F3',4],
+    ['G3',4],['G3',4],['C4',4],['C4',4],
+    // Cパート Am-F-C-E（導音でAmへ）
+    ['A3',4],['F3',4],['C4',4],['G3',4],
+    ['A3',4],['F3',4],['C4',4],['E3',4],
+    ['A3',4],['A3',4],['A3',8],
+  ];
+
+  // ── ベース声部（チェロ・コントラバス） ──
+  const BASS = [
+    // イントロ
+    ['A2',4],['R',4],['A2',4],['R',4],
+    // Aパート
+    ['A2',2],['R',2],['A2',2],['R',2],['F2',2],['R',2],['F2',2],['R',2],
+    ['C3',2],['R',2],['C3',2],['R',2],['G2',2],['R',2],['G2',2],['R',2],
+    ['A2',2],['R',2],['A2',2],['R',2],['F2',2],['R',2],['F2',2],['R',2],
+    ['C3',2],['R',2],['C3',2],['R',2],['E2',2],['R',2],['E2',2],['R',2],
+    // Bパート
+    ['C3',2],['R',2],['C3',2],['R',2],['G2',2],['R',2],['G2',2],['R',2],
+    ['A2',2],['R',2],['A2',2],['R',2],['F2',2],['R',2],['F2',2],['R',2],
+    ['C3',2],['R',2],['G2',2],['R',2],['A2',2],['R',2],['F2',2],['R',2],
+    ['G2',2],['R',2],['G2',2],['R',2],['C3',4],['C3',4],
+    // Cパート
+    ['A2',2],['R',2],['F2',2],['R',2],['C3',2],['R',2],['G2',2],['R',2],
+    ['A2',2],['R',2],['F2',2],['R',2],['C3',2],['R',2],['E2',2],['R',2],
+    ['A2',4],['R',4],['A2',8],
+  ];
+
+  // ── ティンパニ風パーカッション ──
+  const PERC = [
+    ['A2',1],['R',3],['A2',1],['R',3],['A2',1],['R',1],['A2',1],['R',1],
+    ['A2',2],['R',6],
+    // Aパート（強拍のみ打つ）
+    ['A2',1],['R',7],['A2',1],['R',7],
+    ['A2',1],['R',7],['A2',1],['R',7],
+    ['A2',1],['R',7],['A2',1],['R',7],
+    ['A2',1],['R',7],['A2',1],['R',7],
+    // Bパート
+    ['C3',1],['R',7],['G2',1],['R',7],
+    ['A2',1],['R',7],['F2',1],['R',7],
+    ['C3',1],['R',3],['G2',1],['R',3],['A2',1],['R',3],['E2',1],['R',3],
+    ['G2',1],['R',3],['G2',1],['R',3],['C3',2],['R',6],
+    // Cパート：ドラマチックに
+    ['A2',1],['R',3],['A2',1],['R',3],['A2',1],['R',1],['A2',1],['R',1],
+    ['A2',1],['R',1],['A2',1],['R',1],['A2',1],['R',1],['A2',1],['R',1],
+    ['A2',2],['R',2],['A2',1],['R',1],['R',4],
+    ['A2',4],['R',12],
+  ];
+
+  let ac=null, masterGain=null;
+  let playing=false, pumpTimer=null, nextTime=0;
+  const idx={m:0,h:0,b:0,p:0};
+  const scheduled=[];
+
+  function getCtx(){
+    if(!ac){
+      ac=new(window.AudioContext||window.webkitAudioContext)();
+      masterGain=ac.createGain();
+      masterGain.gain.value=0.20;
+      masterGain.connect(ac.destination);
+    }
+    return ac;
+  }
+
+  // ── 楽器ごとの倍音合成 ──
+  function makeNote(freq, instr, t, dur, vol){
+    if(freq===0) return;
+    const c=ac;
+
+    // 楽器定義：[倍率, 相対音量]の配列
+    const partials = {
+      // バイオリン：高い倍音豊か
+      violin:  [[1,1.0],[2,0.7],[3,0.5],[4,0.3],[5,0.15],[6,0.08]],
+      // ホルン：奇数倍音中心、丸い音
+      horn:    [[1,1.0],[2,0.3],[3,0.5],[4,0.1],[5,0.2]],
+      // チェロ：低め、豊かな倍音
+      cello:   [[1,1.0],[2,0.6],[3,0.4],[4,0.2],[5,0.1]],
+      // ティンパニ：基音+ノイズ感
+      timpani: [[1,1.0],[1.5,0.3],[2,0.2]],
+    };
+
+    const atk = Math.min(0.06, dur*0.12);
+    const rel = Math.min(0.12, dur*0.25);
+    const sus = dur - atk - rel;
+
+    (partials[instr]||partials.violin).forEach(([ratio,amp])=>{
+      const osc=c.createOscillator();
+      const g=c.createGain();
+      osc.connect(g); g.connect(masterGain);
+      osc.type = (instr==='timpani') ? 'triangle' : 'sine';
+      osc.frequency.value = freq * ratio;
+
+      // ビブラート（バイオリン・ホルンのみ）
+      if((instr==='violin'||instr==='horn') && ratio===1){
+        const vib=c.createOscillator();
+        const vibGain=c.createGain();
+        vib.frequency.value=5.5;
+        vibGain.gain.value=freq*0.004;
+        vib.connect(vibGain); vibGain.connect(osc.frequency);
+        vib.start(t+atk); vib.stop(t+dur);
+        scheduled.push(vib);
+      }
+
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol*amp, t+atk);
+      if(sus>0) g.gain.setValueAtTime(vol*amp*0.85, t+atk+sus);
+      g.gain.linearRampToValueAtTime(0, t+dur);
+      osc.start(t); osc.stop(t+dur+0.05);
+      scheduled.push(osc);
+    });
+  }
+
+  function schedVoice(notes, key, instr, vol, start){
+    let t=start;
+    while(t<start+6.0){
+      const [nm,len]=notes[idx[key]%notes.length];
+      const dur=len*U;
+      makeNote(n(nm), instr, t, Math.max(dur*0.88,0.05), vol);
+      t+=dur; idx[key]++;
+    }
+    return t;
+  }
+
+  function pump(){
+    if(!playing) return;
+    const c=getCtx(), now=c.currentTime;
+    if(nextTime<now+0.8){
+      const e1=schedVoice(MELODY,  'm','violin', 0.22, Math.max(now,nextTime));
+      const e2=schedVoice(HARMONY, 'h','horn',   0.14, Math.max(now,nextTime));
+      const e3=schedVoice(BASS,    'b','cello',  0.18, Math.max(now,nextTime));
+      const e4=schedVoice(PERC,    'p','timpani',0.15, Math.max(now,nextTime));
+      nextTime=Math.max(e1,e2,e3,e4);
+    }
+    pumpTimer=setTimeout(pump,500);
+  }
+
+  function stopAll(){
+    const now=ac?ac.currentTime:0;
+    scheduled.forEach(o=>{ try{ o.stop(now+0.01); }catch(e){} });
+    scheduled.length=0;
+    if(masterGain){
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(masterGain.gain.value,now);
+      masterGain.gain.linearRampToValueAtTime(0,now+0.5);
+    }
+  }
+
+  return {
+    start(){
+      if(playing) return;
+      playing=true;
+      const c=getCtx();
+      if(c.state==='suspended') c.resume();
+      if(masterGain){
+        const now=c.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.linearRampToValueAtTime(0.20,now+0.5);
+      }
+      nextTime=c.currentTime+0.1;
+      idx.m=0;idx.h=0;idx.b=0;idx.p=0;
+      pump();
+    },
+    stop(){
+      playing=false;
+      clearTimeout(pumpTimer);
+      stopAll();
+    },
+    toggle(){
+      playing?this.stop():this.start();
+      return playing;
+    },
+    setVolume(v){
+      if(masterGain){
+        const now=(ac||{currentTime:0}).currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(v,now);
+      }
+    },
+    isPlaying(){ return playing; }
+  };
+})();
+
+// ── BGMコントロールパネル ──
+(function(){
+  const panel=document.createElement('div');
+  panel.style.cssText=`
+    position:fixed; bottom:16px; right:16px; z-index:999;
+    background:rgba(15,15,30,0.96); border-radius:20px;
+    padding:14px 18px; display:flex; flex-direction:column;
+    gap:10px; align-items:stretch;
+    box-shadow:0 6px 24px rgba(0,0,0,0.5);
+    min-width:170px; border:1px solid rgba(255,152,0,0.3);
+  `;
+
+  const title=document.createElement('div');
+  title.style.cssText='font-size:0.72rem;color:#ff9800;font-weight:900;letter-spacing:0.1em;text-align:center;';
+  title.textContent='🎼 星降る学びの旅';
+
+  const btn=document.createElement('button');
+  btn.textContent='▶ 音楽をならす';
+  btn.style.cssText=`
+    padding:10px; border-radius:100px;
+    background:linear-gradient(135deg,#ff9800,#e65100);
+    color:#fff; font-weight:900; font-size:0.85rem;
+    border:none; cursor:pointer; font-family:inherit;
+    letter-spacing:0.05em; transition:opacity .15s;
+  `;
+
+  const volWrap=document.createElement('div');
+  volWrap.style.cssText='display:flex;align-items:center;gap:8px;';
+
+  const volIcon=document.createElement('span');
+  volIcon.style.cssText='font-size:0.8rem;color:#aaa;';
+  volIcon.textContent='🔊';
+
+  const slider=document.createElement('input');
+  slider.type='range'; slider.min=0; slider.max=100; slider.value=45;
+  slider.style.cssText='flex:1;accent-color:#ff9800;height:4px;';
+
+  volWrap.appendChild(volIcon);
+  volWrap.appendChild(slider);
+
+  panel.appendChild(title);
+  panel.appendChild(btn);
+  panel.appendChild(volWrap);
+  document.body.appendChild(panel);
+
+  btn.addEventListener('click',()=>{
+    const on=BGM.toggle();
+    btn.textContent=on?'⏹ とめる':'▶ 音楽をならす';
+    btn.style.background=on
+      ?'linear-gradient(135deg,#455a64,#37474f)'
+      :'linear-gradient(135deg,#ff9800,#e65100)';
+  });
+
+  slider.addEventListener('input',()=>{
+    BGM.setVolume(parseInt(slider.value)/100*0.45);
+  });
+  BGM.setVolume(parseInt(slider.value)/100*0.45);
+})();
+</script>
+</body>
+</html>
