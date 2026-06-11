@@ -176,6 +176,7 @@
   .qm-badge-lbl{font-size:1rem;font-weight:700;}
 </style>
 
+<script src="rpg.js"></script>
 <script>
 (function(){
   var id='kuku';
@@ -232,6 +233,7 @@
           <a href="/math-site/sho/bunsu.html">分数の足し算</a>
           <a href="/math-site/sho/sankaku.html">三角形の面積</a>
           <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
         </div>
       </li>
       <li class="site-nav__item">
@@ -440,6 +442,7 @@
       _qShowStars();
       _qFlash();
       highlight(_qA,_qB);
+      if(window.RPG)RPG.quizCorrect();
       if(_qOk>=10&&!localStorage.getItem('badge_kuku')){
         localStorage.setItem('badge_kuku','1');
         setTimeout(()=>{ document.getElementById('qmBadge').className='qm-badge-box show'; },500);
@@ -448,6 +451,7 @@
       fb.innerHTML=`おしい！ もういちど！<br><small style="color:#888">こたえは ${ans} だよ。下の表をみてみよう 🔍</small>`;
       fb.style.color='#c8401e';
       highlight(_qA,_qB);
+      if(window.RPG)RPG.quizWrong();
     }
     document.getElementById('qmNext').style.display='block';
   }

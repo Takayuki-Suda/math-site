@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パズルの塔 | 小学生の算数 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Yusei+Magic&display=swap');
+:root{
+  --bg:#0a0e1a;--bg2:#111827;
+  --gold:#c8a84b;--gold-lt:#e8c96b;
+  --purple:#7c5cbf;--purple-dk:#311b92;
+  --blue:#3a6fd8;
+  --white:#f0f4ff;--gray:#8899aa;
+  --line:rgba(200,168,75,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+  background:var(--bg);color:var(--white);line-height:1.8;overflow-x:hidden;}
+
+.page-header{
+  background:linear-gradient(135deg,#1a1040 0%,#311b92 55%,#16336e 100%);
+  padding:40px 24px 36px;text-align:center;
+  border-bottom:2px solid var(--gold);position:relative;overflow:hidden;}
+.page-header::before{content:'🧩';position:absolute;font-size:150px;
+  opacity:.07;right:-20px;top:-20px;pointer-events:none;line-height:1;transform:rotate(15deg);}
+.page-label{font-size:.68rem;font-weight:700;letter-spacing:.2em;
+  color:var(--gold-lt);text-transform:uppercase;margin-bottom:10px;}
+.page-title{font-size:clamp(1.4rem,5vw,2rem);font-weight:900;margin-bottom:8px;
+  text-shadow:0 0 18px rgba(200,168,75,.5);}
+.page-desc{font-size:.88rem;color:#b8c4e8;}
+
+.container{max-width:720px;margin:0 auto;padding:32px 20px 60px;}
+
+/* ── ミニ冒険者ステータス ── */
+.mini-hero{display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,#1a1040,#241a52 50%,#0f1f4a);
+  border:2px solid var(--gold);border-radius:14px;padding:12px 16px;margin-bottom:28px;}
+.mini-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 35% 30%,#3a2d7a,#171036);
+  border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.mini-info{flex:1;min-width:0;}
+.mini-lv{font-size:.85rem;font-weight:900;color:var(--gold-lt);}
+.mini-lv span{color:#cfd8ff;font-weight:700;font-size:.78rem;margin-left:6px;}
+.mini-bar{height:10px;border-radius:999px;background:rgba(0,0,0,.45);
+  border:1px solid rgba(200,168,75,.45);overflow:hidden;margin-top:4px;}
+.mini-fill{height:100%;border-radius:999px;width:0;
+  background:linear-gradient(90deg,var(--purple),var(--blue) 45%,var(--gold-lt));
+  box-shadow:0 0 8px rgba(200,168,75,.6);transition:width .8s cubic-bezier(.22,1,.36,1);}
+.mini-xp{font-size:.68rem;color:var(--gray);white-space:nowrap;text-align:right;}
+.mini-xp em{color:var(--gold);font-style:normal;font-weight:900;}
+
+/* ── クエストパネル共通 ── */
+.quest{background:linear-gradient(160deg,#161232 0%,#1a2244 100%);
+  border:2px solid rgba(124,92,191,.6);border-radius:18px;
+  padding:22px 18px 20px;margin-bottom:28px;position:relative;overflow:hidden;}
+.quest::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--purple),var(--blue));}
+.quest-tag{display:inline-block;font-size:.65rem;font-weight:900;letter-spacing:.18em;
+  color:#0a0e1a;background:linear-gradient(90deg,var(--gold),var(--gold-lt));
+  border-radius:999px;padding:3px 14px;margin-bottom:10px;text-transform:uppercase;}
+.quest-title{font-size:1.25rem;font-weight:900;margin-bottom:4px;}
+.quest-desc{font-size:.82rem;color:#a8b4d8;margin-bottom:16px;}
+.quest-reward{font-size:.75rem;color:var(--gold-lt);font-weight:700;margin-bottom:14px;}
+
+/* ── 数字の迷路 ── */
+.maze-status{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:rgba(0,0,0,.35);border:1px solid rgba(200,168,75,.4);
+  border-radius:12px;padding:10px 16px;margin-bottom:14px;flex-wrap:wrap;}
+.maze-now{font-size:1rem;font-weight:700;color:#cfd8ff;}
+.maze-now em{font-style:normal;font-size:1.6rem;font-weight:900;color:var(--gold-lt);margin-left:4px;}
+.maze-goal{font-size:.85rem;font-weight:700;color:#9fd0ff;}
+.maze-goal em{font-style:normal;font-size:1.3rem;font-weight:900;color:#6db8ff;margin-left:4px;}
+.maze-floor{margin-bottom:12px;}
+.maze-floor-label{font-size:.7rem;font-weight:700;color:var(--gray);margin-bottom:6px;letter-spacing:.1em;}
+.maze-doors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.maze-door{padding:16px 4px 12px;border-radius:12px;cursor:pointer;font-family:inherit;
+  background:linear-gradient(180deg,#3a2d7a,#241a52);border:2px solid var(--purple);
+  color:#fff;font-size:1.3rem;font-weight:900;transition:transform .12s,box-shadow .12s,border-color .12s;
+  display:flex;flex-direction:column;align-items:center;gap:2px;}
+.maze-door::before{content:'🚪';font-size:1.4rem;}
+.maze-door:hover:not(:disabled){transform:translateY(-3px);border-color:var(--gold);
+  box-shadow:0 6px 18px rgba(124,92,191,.5);}
+.maze-door:disabled{opacity:.32;cursor:default;}
+.maze-door.picked{opacity:1;border-color:var(--gold);background:linear-gradient(180deg,#6a4fb8,#3a2d7a);
+  box-shadow:0 0 16px rgba(200,168,75,.55);}
+.maze-result{min-height:54px;text-align:center;font-size:1.05rem;font-weight:900;padding:8px 0 0;}
+.maze-result.win{color:#7effa0;}
+.maze-result.lose{color:#ff8a8a;}
+
+/* ── 穴埋め・数列 共通 ── */
+.pz-q{background:rgba(0,0,0,.4);border:1px solid rgba(124,92,191,.5);border-radius:14px;
+  padding:20px 12px;text-align:center;font-size:clamp(1.6rem,7vw,2.3rem);font-weight:900;
+  letter-spacing:.1em;margin-bottom:14px;color:#fff;}
+.pz-q .blank{display:inline-block;min-width:1.6em;color:var(--gold-lt);
+  border-bottom:4px solid var(--gold);line-height:1.2;}
+.pz-choices{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.pz-btn{padding:16px 4px;border-radius:12px;cursor:pointer;font-family:inherit;
+  background:linear-gradient(180deg,#1d3a78,#152a58);border:2px solid var(--blue);
+  color:#fff;font-size:1.4rem;font-weight:900;transition:transform .12s,box-shadow .12s,border-color .12s;}
+.pz-btn:hover:not(:disabled){transform:translateY(-3px);border-color:var(--gold);
+  box-shadow:0 6px 18px rgba(58,111,216,.5);}
+.pz-btn:disabled{cursor:default;}
+.pz-btn.ok{background:linear-gradient(180deg,#2a7a4a,#1d5a36);border-color:#7effa0;
+  box-shadow:0 0 14px rgba(126,255,160,.4);}
+.pz-btn.ng{background:linear-gradient(180deg,#7a2a2a,#5a1d1d);border-color:#ff8a8a;opacity:.85;}
+.pz-fb{min-height:40px;text-align:center;font-size:1rem;font-weight:900;}
+.pz-fb.good{color:#7effa0;}
+.pz-fb.bad{color:#ff8a8a;}
+.pz-progress{display:flex;justify-content:center;gap:6px;font-size:1.3rem;margin-bottom:10px;}
+.pz-progress .star{filter:grayscale(1) opacity(.3);transition:filter .3s,transform .3s;}
+.pz-progress .star.on{filter:none;transform:scale(1.15);text-shadow:0 0 10px rgba(255,220,100,.8);}
+.pz-next{display:none;width:100%;padding:14px;margin-top:6px;
+  background:linear-gradient(90deg,var(--purple-dk),var(--blue));color:#fff;border:1px solid var(--purple);
+  border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;font-family:inherit;letter-spacing:.06em;}
+.pz-next:hover{filter:brightness(1.2);}
+
+.clear-count{text-align:center;font-size:.75rem;color:var(--gray);margin-top:10px;}
+.clear-count em{color:var(--gold);font-style:normal;font-weight:900;}
+
+/* ── 先生メモ ── */
+.sensei-note{background:linear-gradient(135deg,#fdf3d7,#f6e3b0);border:2px solid var(--gold);
+  border-radius:14px;padding:14px 18px;margin-bottom:28px;
+  font-family:'Yusei Magic','Noto Sans JP',cursive;font-size:.9rem;line-height:2;color:#5a4314;}
+
+.footer-note{text-align:center;padding:24px;font-size:.75rem;color:var(--gray);
+  border-top:1px solid var(--line);}
+
+@keyframes pzStarFall{to{transform:translateY(110vh) rotate(360deg);opacity:.9;}}
+@media(max-width:480px){
+  .pz-choices{grid-template-columns:repeat(2,1fr);}
+  .maze-door{font-size:1.1rem;}
+}
+</style>
+</head>
+<body>
+<script src="rpg.js"></script>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho/">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu/">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko/">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai/">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-label">Puzzle Tower</div>
+  <h1 class="page-title">🧩 パズルの塔</h1>
+  <p class="page-desc">3つのパズルクエストに挑戦！クリアするたびに +50XP の経験値がもらえるよ。</p>
+</div>
+
+<div class="container">
+
+  <div class="mini-hero">
+    <div class="mini-avatar" id="mhAvatar">🧒</div>
+    <div class="mini-info">
+      <div class="mini-lv" id="mhLv">Lv1<span>見習い冒険者</span></div>
+      <div class="mini-bar"><div class="mini-fill" id="mhFill"></div></div>
+    </div>
+    <div class="mini-xp"><em id="mhXp">0</em> XP<br><span id="mhNext"></span></div>
+  </div>
+
+  <div class="sensei-note">パズルは「考える力」のトレーニング。とけなくても だいじょうぶ。何度でも挑戦してみよう。わからないときは、いつでも須田先生にきいてね（会津若松・むりょうで教えています）。</div>
+
+  <!-- ── クエスト1：数字の迷路 ── -->
+  <div class="quest">
+    <span class="quest-tag">Quest 1</span>
+    <div class="quest-title">🗺️ 数字の迷路</div>
+    <div class="quest-desc">スタートの数からドアをえらんで、たしたり ひいたりしながら、ぴったりゴールの数にしよう！各階でドアを1つえらんでね。</div>
+    <div class="quest-reward">⭐ クリアほうしゅう：+50XP</div>
+    <div class="maze-status">
+      <div class="maze-now">いまの数<em id="mazeNow">0</em></div>
+      <div class="maze-goal">ゴール<em id="mazeGoal">0</em></div>
+    </div>
+    <div id="mazeFloors"></div>
+    <div class="maze-result" id="mazeResult"></div>
+    <button class="pz-next" id="mazeNext" style="display:none;"></button>
+    <div class="clear-count">クリアした回数：<em id="mazeClears">0</em> 回</div>
+  </div>
+
+  <!-- ── クエスト2：穴埋めパズル ── -->
+  <div class="quest">
+    <span class="quest-tag">Quest 2</span>
+    <div class="quest-title">🔍 穴埋めパズル</div>
+    <div class="quest-desc">□に入る数はなに？ 5問せいかいで クエストクリア！</div>
+    <div class="quest-reward">⭐ クリアほうしゅう：+50XP</div>
+    <div class="pz-progress" id="anaProg"></div>
+    <div class="pz-q" id="anaQ"></div>
+    <div class="pz-choices" id="anaChoices"></div>
+    <div class="pz-fb" id="anaFb"></div>
+    <button class="pz-next" id="anaNext">つぎの もんだい →</button>
+    <div class="clear-count">クリアした回数：<em id="anaClears">0</em> 回</div>
+  </div>
+
+  <!-- ── クエスト3：数列パズル ── -->
+  <div class="quest">
+    <span class="quest-tag">Quest 3</span>
+    <div class="quest-title">🔢 数列パズル</div>
+    <div class="quest-desc">数のならびには ひみつのきまりがある！□に入る数をみつけよう。5問せいかいで クエストクリア！</div>
+    <div class="quest-reward">⭐ クリアほうしゅう：+50XP</div>
+    <div class="pz-progress" id="seqProg"></div>
+    <div class="pz-q" id="seqQ"></div>
+    <div class="pz-choices" id="seqChoices"></div>
+    <div class="pz-fb" id="seqFb"></div>
+    <button class="pz-next" id="seqNext">つぎの もんだい →</button>
+    <div class="clear-count">クリアした回数：<em id="seqClears">0</em> 回</div>
+  </div>
+
+</div>
+
+<div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ════ 共通ユーティリティ ════ */
+function ri(min,max){ return min+Math.floor(Math.random()*(max-min+1)); }
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t; }
+  return a;
+}
+function starShower(){
+  for(var i=0;i<20;i++)(function(i){
+    setTimeout(function(){
+      var s=document.createElement('div');
+      s.style.cssText='position:fixed;top:-30px;left:'+Math.random()*100+'%;font-size:'+(1.2+Math.random()*.9)+'rem;pointer-events:none;z-index:9998;animation:pzStarFall '+(0.9+Math.random()*.8)+'s ease-in forwards;';
+      s.textContent=['⭐','✨','🌟','🧩'][Math.random()*4|0];
+      document.body.appendChild(s);
+      setTimeout(function(){s.remove();},2200);
+    },i*60);
+  })(i);
+}
+function getClears(key){ return parseInt(localStorage.getItem(key)||'0',10)||0; }
+function addClear(key,el){
+  var n=getClears(key)+1;
+  localStorage.setItem(key,String(n));
+  document.getElementById(el).textContent=n;
+}
+function questClear(clearKey,clearEl){
+  starShower();
+  addClear(clearKey,clearEl);
+  if(window.RPG) RPG.addXP(50,'パズルクリア！');
+}
+
+/* ════ ミニ冒険者ステータス ════ */
+function renderMini(){
+  if(!window.RPG) return;
+  var xp=RPG.getXP(), lv=RPG.levelFor(xp), next=RPG.nextLevel(xp);
+  document.getElementById('mhAvatar').textContent=lv.emoji;
+  document.getElementById('mhLv').innerHTML='Lv'+lv.lv+'<span>'+lv.title+'</span>';
+  document.getElementById('mhXp').textContent=xp;
+  var fill=document.getElementById('mhFill');
+  var nx=document.getElementById('mhNext');
+  if(next){
+    fill.style.width=Math.min(100,Math.round((xp-lv.xp)/(next.xp-lv.xp)*100))+'%';
+    nx.textContent='あと'+(next.xp-xp);
+  }else{
+    fill.style.width='100%'; nx.textContent='MAX👑';
+  }
+}
+renderMini();
+document.addEventListener('rpg:xp',renderMini);
+
+/* ════ クエスト1：数字の迷路 ════ */
+var mazeStart,mazeTarget,mazeFloorsData,mazeCur,mazeFloorIdx;
+document.getElementById('mazeClears').textContent=getClears('rpg_pz_maze');
+
+function mazeGen(){
+  /* スタート10〜14、各階のドアは −3〜+6。どのルートでも途中がマイナスにならない */
+  mazeStart=ri(10,14);
+  mazeFloorsData=[];
+  var v=mazeStart;
+  for(var f=0;f<3;f++){
+    var correct=0;
+    while(correct===0) correct=ri(-3,6);
+    var doors=[correct];
+    while(doors.length<3){
+      var d=0;
+      while(d===0) d=ri(-3,6);
+      if(doors.indexOf(d)===-1) doors.push(d);
+    }
+    shuffle(doors);
+    mazeFloorsData.push({doors:doors,correct:correct});
+    v+=correct;
+  }
+  mazeTarget=v;
+  mazeReset();
+}
+function mazeReset(){
+  mazeCur=mazeStart; mazeFloorIdx=0;
+  document.getElementById('mazeNow').textContent=mazeCur;
+  document.getElementById('mazeGoal').textContent=mazeTarget;
+  var res=document.getElementById('mazeResult');
+  res.textContent=''; res.className='maze-result';
+  document.getElementById('mazeNext').style.display='none';
+  var wrap=document.getElementById('mazeFloors');
+  wrap.innerHTML='';
+  mazeFloorsData.forEach(function(fl,fi){
+    var div=document.createElement('div');
+    div.className='maze-floor';
+    div.innerHTML='<div class="maze-floor-label">'+(fi+1)+'かい め</div>';
+    var dz=document.createElement('div');
+    dz.className='maze-doors';
+    fl.doors.forEach(function(d){
+      var b=document.createElement('button');
+      b.className='maze-door';
+      b.disabled=fi!==0;
+      b.innerHTML='<span>'+(d>0?'＋'+d:'－'+(-d))+'</span>';
+      b.addEventListener('click',function(){ mazePick(fi,d,b,dz); });
+      dz.appendChild(b);
+    });
+    div.appendChild(dz);
+    wrap.appendChild(div);
+  });
+}
+function mazePick(fi,d,btn,dz){
+  if(fi!==mazeFloorIdx) return;
+  mazeCur+=d;
+  document.getElementById('mazeNow').textContent=mazeCur;
+  btn.classList.add('picked');
+  Array.prototype.forEach.call(dz.children,function(b){ b.disabled=true; });
+  mazeFloorIdx++;
+  if(mazeFloorIdx<3){
+    var nextDz=document.querySelectorAll('.maze-doors')[mazeFloorIdx];
+    Array.prototype.forEach.call(nextDz.children,function(b){ b.disabled=false; });
+    return;
+  }
+  /* ゴール判定 */
+  var res=document.getElementById('mazeResult');
+  var nextBtn=document.getElementById('mazeNext');
+  nextBtn.style.display='block';
+  if(mazeCur===mazeTarget){
+    res.textContent='🎉 クエストクリア！ ぴったり '+mazeTarget+' になった！';
+    res.className='maze-result win';
+    nextBtn.textContent='つぎの迷路へ →';
+    nextBtn.onclick=function(){ mazeGen(); };
+    questClear('rpg_pz_maze','mazeClears');
+  }else{
+    res.textContent='😢 ざんねん… '+mazeCur+' になっちゃった。もういちど！';
+    res.className='maze-result lose';
+    nextBtn.textContent='もういちど挑戦 ↻';
+    nextBtn.onclick=function(){ mazeReset(); };
+  }
+}
+mazeGen();
+
+/* ════ 5問クリア型パズル（穴埋め・数列）の共通枠 ════ */
+function makeRound(opts){
+  /* opts: {gen()→{html,answer,choices[]}, qEl, chEl, fbEl, nextEl, progEl, clearKey, clearEl} */
+  var okCount=0, answered=false, cur=null;
+  var prog=document.getElementById(opts.progEl);
+  document.getElementById(opts.clearEl).textContent=getClears(opts.clearKey);
+
+  function renderProg(){
+    prog.innerHTML='';
+    for(var i=0;i<5;i++){
+      var s=document.createElement('span');
+      s.className='star'+(i<okCount?' on':'');
+      s.textContent='⭐';
+      prog.appendChild(s);
+    }
+  }
+  function next(){
+    answered=false;
+    cur=opts.gen();
+    document.getElementById(opts.qEl).innerHTML=cur.html;
+    var fb=document.getElementById(opts.fbEl);
+    fb.textContent=''; fb.className='pz-fb';
+    document.getElementById(opts.nextEl).style.display='none';
+    var ch=document.getElementById(opts.chEl);
+    ch.innerHTML='';
+    cur.choices.forEach(function(c){
+      var b=document.createElement('button');
+      b.className='pz-btn';
+      b.textContent=c;
+      b.addEventListener('click',function(){ check(c,b,ch); });
+      ch.appendChild(b);
+    });
+  }
+  function check(val,btn,ch){
+    if(answered) return;
+    answered=true;
+    Array.prototype.forEach.call(ch.children,function(b){ b.disabled=true; });
+    var fb=document.getElementById(opts.fbEl);
+    if(val===cur.answer){
+      btn.classList.add('ok');
+      okCount++;
+      renderProg();
+      if(okCount>=5){
+        fb.textContent='🎉 5もんせいかい！ クエストクリア！';
+        fb.className='pz-fb good';
+        okCount=0;
+        questClear(opts.clearKey,opts.clearEl);
+        setTimeout(renderProg,1800);
+      }else{
+        var prs=['すごい！','やるね！','天才！','かんぺき！','さすが！'];
+        fb.textContent=prs[Math.random()*prs.length|0]+' ⭕ せいかい！';
+        fb.className='pz-fb good';
+      }
+    }else{
+      btn.classList.add('ng');
+      Array.prototype.forEach.call(ch.children,function(b){
+        if(Number(b.textContent)===cur.answer) b.classList.add('ok');
+      });
+      fb.textContent='😢 ざんねん… こたえは '+cur.answer+' だよ！';
+      fb.className='pz-fb bad';
+    }
+    document.getElementById(opts.nextEl).style.display='block';
+  }
+  document.getElementById(opts.nextEl).addEventListener('click',next);
+  renderProg();
+  next();
+}
+
+function makeChoices(answer,min,max){
+  var set=[answer];
+  var guard=0;
+  while(set.length<4&&guard++<200){
+    var c=Math.max(min,answer+ri(-4,4));
+    if(c>max) c=max;
+    if(set.indexOf(c)===-1) set.push(c);
+  }
+  while(set.length<4){ /* 保険 */
+    var c2=ri(min,max);
+    if(set.indexOf(c2)===-1) set.push(c2);
+  }
+  return shuffle(set);
+}
+
+/* ════ クエスト2：穴埋めパズル ════ */
+makeRound({
+  gen:function(){
+    var type=ri(0,3), a,b,c,ans,html;
+    if(type===0){ /* □+b=c */
+      b=ri(1,9); ans=ri(1,9); c=ans+b;
+      html='<span class="blank">□</span> ＋ '+b+' ＝ '+c;
+    }else if(type===1){ /* a+□=c */
+      a=ri(1,9); ans=ri(1,9); c=a+ans;
+      html=a+' ＋ <span class="blank">□</span> ＝ '+c;
+    }else if(type===2){ /* □−b=c */
+      b=ri(1,9); c=ri(1,9); ans=b+c;
+      html='<span class="blank">□</span> － '+b+' ＝ '+c;
+    }else{ /* a−□=c */
+      ans=ri(1,9); c=ri(0,9); a=ans+c;
+      html=a+' － <span class="blank">□</span> ＝ '+c;
+    }
+    return {html:html,answer:ans,choices:makeChoices(ans,0,20)};
+  },
+  qEl:'anaQ',chEl:'anaChoices',fbEl:'anaFb',nextEl:'anaNext',progEl:'anaProg',
+  clearKey:'rpg_pz_ana',clearEl:'anaClears'
+});
+
+/* ════ クエスト3：数列パズル ════ */
+makeRound({
+  gen:function(){
+    var seq=[],i;
+    var kind=ri(0,5);
+    if(kind===5){ /* 2倍ずつ：1,2,4,8,16 など */
+      var s0=ri(1,3);
+      for(i=0;i<5;i++){ seq.push(s0); s0*=2; }
+    }else if(kind===4){ /* へっていく */
+      var step=ri(1,4), start=ri(step*4+1,step*4+10);
+      for(i=0;i<5;i++) seq.push(start-step*i);
+    }else{ /* ふえていく（step 1〜5） */
+      var st=ri(1,5), s=ri(1,9);
+      for(i=0;i<5;i++) seq.push(s+st*i);
+    }
+    var hole=ri(1,3); /* まんなかへんを隠す */
+    var ans=seq[hole];
+    var parts=seq.map(function(n,idx){
+      return idx===hole?'<span class="blank">□</span>':String(n);
+    });
+    return {html:parts.join('，'),answer:ans,choices:makeChoices(ans,0,99)};
+  },
+  qEl:'seqQ',chEl:'seqChoices',fbEl:'seqFb',nextEl:'seqNext',progEl:'seqProg',
+  clearKey:'rpg_pz_seq',clearEl:'seqClears'
+});
+
+})();
+</script>
+</body>
+</html>

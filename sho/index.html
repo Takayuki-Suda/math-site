@@ -79,9 +79,48 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 .badge-slot.got .badge-name2{color:var(--gold);}
 .badge-slot.not .badge-name2{color:#444;}
 @keyframes bglow{from{box-shadow:0 0 8px rgba(200,168,75,.35);}to{box-shadow:0 0 24px rgba(200,168,75,.85),0 0 8px rgba(255,220,100,.3);}}
+
+/* ── 冒険者エリア（RPG） ── */
+.hero-section{margin-bottom:32px;}
+.hero-card{
+  background:linear-gradient(135deg,#1a1040 0%,#241a52 45%,#0f1f4a 100%);
+  border:2px solid var(--gold);border-radius:18px;padding:22px 18px 20px;
+  position:relative;overflow:hidden;}
+.hero-card::before{content:'⚔️';position:absolute;font-size:120px;right:-14px;bottom:-30px;
+  opacity:.07;pointer-events:none;transform:rotate(-12deg);}
+.hero-top{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.hero-avatar{width:72px;height:72px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 35% 30%,#3a2d7a,#171036);
+  border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;box-shadow:0 0 18px rgba(200,168,75,.4);}
+.hero-info{flex:1;min-width:200px;}
+.hero-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.hero-name-input{background:rgba(0,0,0,.35);border:1px solid rgba(200,168,75,.5);
+  border-radius:8px;color:var(--white);font-family:inherit;font-weight:700;
+  font-size:1rem;padding:6px 12px;width:160px;outline:none;transition:border-color .2s;}
+.hero-name-input:focus{border-color:var(--gold-lt);box-shadow:0 0 10px rgba(200,168,75,.3);}
+.hero-name-input::placeholder{color:#667;font-weight:400;}
+.hero-title-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.hero-lv{font-size:1.15rem;font-weight:900;color:var(--gold-lt);}
+.hero-title{font-size:.95rem;font-weight:700;color:#cfd8ff;}
+.hero-xpbar-wrap{margin-top:12px;}
+.hero-xpbar{height:16px;border-radius:999px;background:rgba(0,0,0,.45);
+  border:1px solid rgba(200,168,75,.45);overflow:hidden;position:relative;}
+.hero-xpbar-fill{height:100%;border-radius:999px;width:0;
+  background:linear-gradient(90deg,#7c5cbf,#3a6fd8 45%,#e8c96b);
+  box-shadow:0 0 12px rgba(200,168,75,.6);transition:width .8s cubic-bezier(.22,1,.36,1);}
+.hero-xptext{display:flex;justify-content:space-between;font-size:.72rem;color:var(--gray);margin-top:5px;}
+.hero-xptext em{color:var(--gold);font-style:normal;font-weight:900;}
+.hero-note{margin-top:14px;background:linear-gradient(135deg,#fdf3d7,#f6e3b0);
+  border:1px solid #c8a84b;border-radius:12px;padding:10px 14px;
+  font-family:'Yusei Magic','Noto Sans JP',cursive;font-size:.85rem;line-height:1.9;color:#5a4314;}
+@media(max-width:480px){
+  .hero-avatar{width:60px;height:60px;font-size:2rem;}
+}
 </style>
 </head>
 <body>
+<script src="rpg.js"></script>
 <style>
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
 .site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
@@ -118,6 +157,7 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
           <a href="/math-site/sho/bunsu.html">分数の足し算</a>
           <a href="/math-site/sho/sankaku.html">三角形の面積</a>
           <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
         </div>
       </li>
       <li class="site-nav__item">
@@ -163,6 +203,33 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </div>
 
 <div class="container">
+  <div class="hero-section">
+    <div class="stamp-s-label">あなたの冒険者</div>
+    <div class="hero-card">
+      <div class="hero-top">
+        <div class="hero-avatar" id="heroAvatar">🧒</div>
+        <div class="hero-info">
+          <div class="hero-name-row">
+            <input class="hero-name-input" id="heroName" type="text" maxlength="10" placeholder="なまえをいれてね">
+            <span style="font-size:.78rem;color:var(--gray);">の ぼうけん</span>
+          </div>
+          <div class="hero-title-row">
+            <span class="hero-lv" id="heroLv">Lv1</span>
+            <span class="hero-title" id="heroTitle">見習い冒険者🧒</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-xpbar-wrap">
+        <div class="hero-xpbar"><div class="hero-xpbar-fill" id="heroXpFill"></div></div>
+        <div class="hero-xptext">
+          <span>けいけんち <em id="heroXp">0</em> XP</span>
+          <span id="heroNext"></span>
+        </div>
+      </div>
+      <div class="hero-note">わからないことがあったら、いつでも須田先生にきいてね。むりょうで教えています（会津若松）。</div>
+    </div>
+  </div>
+
   <div class="badge-section">
     <div class="stamp-s-label">マスターバッジ</div>
     <div class="badge-card">
@@ -229,6 +296,13 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
       <div class="card-arrow">見てみる →</div>
     </a>
 
+    <a class="card" href="puzzle.html" style="border-color:rgba(124,92,191,.55);">
+      <div class="card-grade" style="color:#a98fe0;">全学年</div>
+      <div class="card-title">パズルの塔 🧩</div>
+      <div class="card-desc">数字の迷路・穴埋めパズル・数列パズルに挑戦！クリアするたびに経験値がもらえる冒険モード。</div>
+      <div class="card-arrow" style="color:#a98fe0;">挑戦する →</div>
+    </a>
+
   </div>
 </div>
 
@@ -274,6 +348,10 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
   });
   cntEl.textContent=cnt;
   if(cnt===7){
+    if(window.RPG&&!localStorage.getItem('rpg_allstamps_xp')){
+      localStorage.setItem('rpg_allstamps_xp','1');
+      setTimeout(function(){ RPG.addXP(200,'ぜんスタンプたっせい！'); },1500);
+    }
     if(!localStorage.getItem('stamp_fireworks_shown')){
       localStorage.setItem('stamp_fireworks_shown','true');
       fw();
@@ -332,6 +410,36 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     setTimeout(close,5000);
     ov.addEventListener('click',close);
   }
+
+  // ── 冒険者ステータス ──
+  var nameInput=document.getElementById('heroName');
+  nameInput.value=localStorage.getItem('rpg_name')||'';
+  nameInput.addEventListener('input',function(){
+    localStorage.setItem('rpg_name',nameInput.value.trim());
+  });
+
+  function renderHero(){
+    if(!window.RPG) return;
+    var xp=RPG.getXP();
+    var lv=RPG.levelFor(xp);
+    var next=RPG.nextLevel(xp);
+    document.getElementById('heroAvatar').textContent=lv.emoji;
+    document.getElementById('heroLv').textContent='Lv'+lv.lv;
+    document.getElementById('heroTitle').textContent=lv.title+lv.emoji;
+    document.getElementById('heroXp').textContent=xp;
+    var fill=document.getElementById('heroXpFill');
+    var nextEl=document.getElementById('heroNext');
+    if(next){
+      var span=next.xp-lv.xp;
+      fill.style.width=Math.min(100,Math.round((xp-lv.xp)/span*100))+'%';
+      nextEl.innerHTML='つぎのレベルまで あと <em>'+(next.xp-xp)+'</em> XP';
+    }else{
+      fill.style.width='100%';
+      nextEl.textContent='さいこうレベル！👑';
+    }
+  }
+  renderHero();
+  document.addEventListener('rpg:xp',renderHero);
 })();
 </script>
 </body>

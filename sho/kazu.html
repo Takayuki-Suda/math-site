@@ -368,6 +368,7 @@
 </style>
 </head>
 <body>
+<script src="rpg.js"></script>
 <script>
 (function(){
   var id='kazu';
@@ -424,6 +425,7 @@
           <a href="/math-site/sho/bunsu.html">分数の足し算</a>
           <a href="/math-site/sho/sankaku.html">三角形の面積</a>
           <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
         </div>
       </li>
       <li class="site-nav__item">
@@ -701,11 +703,13 @@ function checkAnswer(selected, btn) {
     result.style.color = '#388e3c';
     soundCorrect();
     speakNumber(quizAnswer);
+    if(window.RPG)RPG.quizCorrect();
   } else {
     btn.classList.add('wrong');
     result.textContent = `😢 ざんねん… こたえは ${quizAnswer} だよ！`;
     result.style.color = '#c62828';
     soundWrong();
+    if(window.RPG)RPG.quizWrong();
     // 正解ボタンをハイライト
     document.querySelectorAll('.choice-btn').forEach(b => {
       if (Number(b.textContent) === quizAnswer) b.classList.add('correct');

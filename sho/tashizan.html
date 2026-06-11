@@ -431,6 +431,7 @@
 </style>
 </head>
 <body>
+<script src="rpg.js"></script>
 <script>
 (function(){
   var id='tashizan';
@@ -487,6 +488,7 @@
           <a href="/math-site/sho/bunsu.html">分数の足し算</a>
           <a href="/math-site/sho/sankaku.html">三角形の面積</a>
           <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
         </div>
       </li>
       <li class="site-nav__item">
@@ -802,6 +804,7 @@ function checkQuiz(selected, btn) {
     speak(sum);
     showStars();
     flashScreen();
+    if(window.RPG)RPG.quizCorrect();
     if(scoreOk>=10&&!localStorage.getItem('badge_tashizan')){
       localStorage.setItem('badge_tashizan','1');
       setTimeout(()=>{ document.getElementById('tashizanBadge').className='master-badge show'; },500);
@@ -811,6 +814,7 @@ function checkQuiz(selected, btn) {
     fb.textContent = `😢 ざんねん… こたえは ${sum} だよ！`;
     fb.style.color = '#c62828';
     soundWrong();
+    if(window.RPG)RPG.quizWrong();
     // 正解を光らせる
     document.querySelectorAll('.pad-btn').forEach(b => {
       if (Number(b.textContent) === sum) b.classList.add('correct-ans');

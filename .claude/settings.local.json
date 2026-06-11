@@ -7,7 +7,20 @@
       "Bash(git push *)",
       "Bash(Select-Object -ExpandProperty Name)",
       "Bash(Sort-Object)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(sed -n '195,205p' C:/Users/s_t24/math-site/sho/kuku.html)",
+      "Bash(sed -n '179,185p' C:/Users/s_t24/math-site/sho/bunsu.html)",
+      "Bash(sed -n '107,115p' C:/Users/s_t24/math-site/sho/sankaku.html)",
+      "Bash(sed -n '215,225p' C:/Users/s_t24/math-site/sho/kuku.html)",
+      "Bash(sed -n '199,210p' C:/Users/s_t24/math-site/sho/bunsu.html)",
+      "Bash(sed -n '128,137p' C:/Users/s_t24/math-site/sho/sankaku.html)",
+      "Bash(sed -n '368,380p' C:/Users/s_t24/math-site/sho/kazu.html)",
+      "Bash(sed -n '421,430p' C:/Users/s_t24/math-site/sho/tashizan.html)",
+      "Bash(sed -n '305,315p' C:/Users/s_t24/math-site/sho/hikizan.html)",
+      "Bash(sed -n '271,280p' C:/Users/s_t24/math-site/sho/en.html)",
+      "Bash(sed -n '177,186p' C:/Users/s_t24/math-site/sho/bunsu.html)",
+      "Bash(sed -n '105,115p' C:/Users/s_t24/math-site/sho/sankaku.html)",
+      "Bash(node *)"
     ]
   }
 }
