@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中学生の数学 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;
+  --gold:#c8a84b;--gold-lt:#e8c96b;
+  --white:#f0f4ff;--gray:#8899aa;
+  --line:rgba(200,168,75,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+  background:var(--bg);color:var(--white);line-height:1.8;overflow-x:hidden;}
+
+.page-header{
+  background:linear-gradient(135deg,#0a0e1a 0%,#1a1a30 100%);
+  padding:40px 24px 36px;text-align:center;
+  border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+.page-header::before{content:'x';position:absolute;font-size:180px;font-weight:900;
+  color:rgba(200,168,75,0.04);right:-10px;top:-20px;pointer-events:none;line-height:1;
+  font-family:Georgia,serif;font-style:italic;}
+.page-label{font-size:.68rem;font-weight:700;letter-spacing:.2em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.page-title{font-size:clamp(1.4rem,5vw,2rem);font-weight:900;margin-bottom:8px;}
+.page-desc{font-size:.88rem;color:var(--gray);}
+
+.container{max-width:720px;margin:0 auto;padding:32px 20px 60px;}
+.section-label{font-size:.68rem;font-weight:700;letter-spacing:.2em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+
+.card{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:22px 20px;text-decoration:none;color:var(--white);
+  display:flex;flex-direction:column;gap:8px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .2s;}
+.card:hover{border-color:var(--gold);transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(200,168,75,0.12);}
+.card:hover::before{opacity:1;}
+.card-grade{font-size:.68rem;font-weight:700;letter-spacing:.12em;
+  color:var(--gold);margin-bottom:2px;}
+.card-title{font-size:1rem;font-weight:700;color:var(--white);line-height:1.4;}
+.card-desc{font-size:.8rem;color:var(--gray);line-height:1.7;flex:1;}
+.card-arrow{font-size:.82rem;font-weight:700;color:var(--gold);margin-top:4px;}
+
+.footer-note{text-align:center;padding:24px;font-size:.75rem;color:var(--gray);
+  border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/sho/">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/chu/">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/ko/">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" href="/math-site/dai/">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-label">Junior High School</div>
+  <h1 class="page-title">中学生の数学</h1>
+  <p class="page-desc">スライダーを動かしたり、図を見たりしながら、数学を体感できる教材です。</p>
+</div>
+
+<div class="container">
+  <div class="section-label">教材一覧</div>
+  <div class="grid">
+
+    <a class="card" href="moji.html">
+      <div class="card-grade">中学1年〜</div>
+      <div class="card-title">文字式ってなに？</div>
+      <div class="card-desc">x や a を使った式の意味と計算ルールを図で確かめます。</div>
+      <div class="card-arrow">見てみる →</div>
+    </a>
+
+    <a class="card" href="houteishiki.html">
+      <div class="card-grade">中学1年〜</div>
+      <div class="card-title">方程式ってなに？</div>
+      <div class="card-desc">「等式を保ったまま x を求める」天秤のイメージで理解します。</div>
+      <div class="card-arrow">見てみる →</div>
+    </a>
+
+    <a class="card" href="ikiji.html">
+      <div class="card-grade">中学2年〜</div>
+      <div class="card-title">一次関数・グラフ</div>
+      <div class="card-desc">傾きと切片をスライダーで変えて、直線の動きを体感します。</div>
+      <div class="card-arrow">見てみる →</div>
+    </a>
+
+    <a class="card" href="niji.html">
+      <div class="card-grade">中学3年〜</div>
+      <div class="card-title">二次関数・放物線</div>
+      <div class="card-desc">a・p・q を動かして放物線の形がどう変わるか確認できます。</div>
+      <div class="card-arrow">見てみる →</div>
+    </a>
+
+    <a class="card" href="sanpei.html">
+      <div class="card-grade">中学2〜3年〜</div>
+      <div class="card-title">三平方の定理</div>
+      <div class="card-desc">a²＋b²＝c² を面積で確かめる。スライダーで辺の長さを変えながら証明まで見られます。</div>
+      <div class="card-arrow">見てみる →</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
+</body>
+</html>
