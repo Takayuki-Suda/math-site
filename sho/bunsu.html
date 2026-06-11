@@ -16,10 +16,32 @@
     font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
     background: var(--bg);
     color: var(--ink);
-    padding: 18px 12px 32px;
+    padding: 0 0 32px;
     line-height: 1.6;
   }
-  .wrap { max-width: 560px; margin: 0 auto; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 24px 12px 0; }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #ff6f00 0%, #e91e63 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(233,30,99,0.3);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
   h1 {
     font-size: 1.4rem;
     font-weight: 900;
@@ -233,9 +255,12 @@
   </div>
 </nav>
 
+<div class="header">
+  <h1>🍕 分数の足し算</h1>
+  <p>小学４〜６年 ・ さんすう</p>
+</div>
+
 <div class="wrap">
-  <h1>分数の足し算</h1>
-  <p class="lead">ピザを切って、分母がちがう分数の足し算を見てみよう！</p>
 
   <!-- 式パネル -->
   <div style="background:var(--ink);color:#fff;border-radius:14px;padding:16px 20px;

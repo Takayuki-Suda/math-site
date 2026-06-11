@@ -7,10 +7,32 @@
     font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
     background: #f5f9f0;
     color: #1a2a1a;
-    padding: 18px 12px 32px;
+    padding: 0 0 32px;
     line-height: 1.65;
   }
-  .wrap { max-width: 540px; margin: 0 auto; }
+  .wrap { max-width: 540px; margin: 0 auto; padding: 24px 12px 0; }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #2e7d32 0%, #00695c 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(0,105,92,0.3);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
   h1 { font-size: 1.35rem; font-weight: 900;
        border-bottom: 3px solid #1a2a1a; padding-bottom: 8px; margin-bottom: 4px; }
   .lead { font-size: .88rem; color: #555; margin-bottom: 14px; }
@@ -161,9 +183,12 @@
   </div>
 </nav>
 
+<div class="header">
+  <h1>📐 三角形の面積</h1>
+  <p>小学５年〜 ・ さんすう</p>
+</div>
+
 <div class="wrap">
-  <h1>三角形の面積</h1>
-  <p class="lead">「底辺 × 高さ ÷ 2」がなぜ成り立つか、図で見てみよう！</p>
 
   <div class="formula-panel">
     面積 ＝
