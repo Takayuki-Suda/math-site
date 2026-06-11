@@ -20,7 +20,9 @@
       "Bash(sed -n '271,280p' C:/Users/s_t24/math-site/sho/en.html)",
       "Bash(sed -n '177,186p' C:/Users/s_t24/math-site/sho/bunsu.html)",
       "Bash(sed -n '105,115p' C:/Users/s_t24/math-site/sho/sankaku.html)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(sed -i '742,1064d' sho/kazu.html)",
+      "Bash(sed -n '738,746p' sho/kazu.html)"
     ]
   }
 }

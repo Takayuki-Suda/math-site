@@ -445,6 +445,7 @@
       var t=document.createElement('div');
       t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
       t.textContent='スタンプ GET！⭐';
+      if(window.SND)SND.stamp();
       document.body.appendChild(t);
       setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
     });
@@ -807,7 +808,11 @@ function checkQuiz(selected, btn) {
     if(window.RPG)RPG.quizCorrect();
     if(scoreOk>=10&&!localStorage.getItem('badge_tashizan')){
       localStorage.setItem('badge_tashizan','1');
-      setTimeout(()=>{ document.getElementById('tashizanBadge').className='master-badge show'; },500);
+      setTimeout(()=>{
+        document.getElementById('tashizanBadge').className='master-badge show';
+        if(window.SND)SND.badge();
+        if(window.RPG)RPG.addXP(100,'マスターバッジ！');
+      },500);
     }
   } else {
     btn.classList.add('wrong-ans');
@@ -890,6 +895,7 @@ function speak(n) {
 // ── 効果音エンジン（Web Audio API）──
 let _ac = null;
 function getAC() {
+  if (window.SND) return SND.ctx(); // 共通サウンドエンジンに委譲（音量設定が効く）
   if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
   return _ac;
 }
@@ -899,7 +905,7 @@ function playTone(freq, type, startTime, duration, gainVal, ac) {
   const osc = ac.createOscillator();
   const g   = ac.createGain();
   osc.connect(g);
-  g.connect(ac.destination);
+  g.connect((window.SND && SND.bus()) || ac.destination);
   osc.type = type;
   osc.frequency.setValueAtTime(freq, startTime);
   g.gain.setValueAtTime(gainVal, startTime);

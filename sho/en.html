@@ -285,6 +285,7 @@
       var t=document.createElement('div');
       t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
       t.textContent='スタンプ GET！⭐';
+      if(window.SND)SND.stamp();
       document.body.appendChild(t);
       setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
     });

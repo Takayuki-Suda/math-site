@@ -114,6 +114,25 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 .hero-note{margin-top:14px;background:linear-gradient(135deg,#fdf3d7,#f6e3b0);
   border:1px solid #c8a84b;border-radius:12px;padding:10px 14px;
   font-family:'Yusei Magic','Noto Sans JP',cursive;font-size:.85rem;line-height:1.9;color:#5a4314;}
+.hero-questrow{margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.hero-questtext{font-size:.72rem;color:var(--gray);white-space:nowrap;}
+.hero-questtext em{color:var(--gold);font-style:normal;font-weight:900;}
+.hero-questbar{flex:1;min-width:120px;height:12px;background:rgba(0,0,0,.45);
+  border:1px solid rgba(200,168,75,.45);border-radius:999px;overflow:hidden;}
+.hero-questfill{height:100%;border-radius:999px;width:0;
+  background:linear-gradient(90deg,#2ecc71,#e8c96b);transition:width .8s cubic-bezier(.22,1,.36,1);}
+.next-quest-btn{display:inline-block;margin-top:14px;text-decoration:none;font-weight:900;font-size:.85rem;
+  color:#1a1040;background:linear-gradient(90deg,#c8a84b,#e8c96b);padding:10px 20px;border-radius:999px;
+  animation:nqPulse 1.6s ease-in-out infinite alternate;}
+@keyframes nqPulse{from{box-shadow:0 0 8px rgba(200,168,75,.35);}to{box-shadow:0 0 22px rgba(200,168,75,.8);}}
+.card-status{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;}
+.card-chip{font-size:.62rem;font-weight:700;border-radius:999px;padding:2px 10px;
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);color:#667;}
+.card-chip.got{color:#e8c96b;border-color:rgba(200,168,75,.5);}
+.card.next-target{border-color:var(--gold);box-shadow:0 0 18px rgba(200,168,75,.25);}
+.card-next-tag{position:absolute;top:10px;right:12px;font-size:.6rem;font-weight:900;color:#1a1040;
+  background:linear-gradient(90deg,#c8a84b,#e8c96b);border-radius:999px;padding:2px 10px;
+  animation:nqPulse 1.4s ease-in-out infinite alternate;}
 @media(max-width:480px){
   .hero-avatar{width:60px;height:60px;font-size:2rem;}
 }
@@ -226,6 +245,12 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
           <span id="heroNext"></span>
         </div>
       </div>
+      <div class="hero-questrow">
+        <span class="hero-questtext">ぼうけん たっせいど</span>
+        <div class="hero-questbar"><div class="hero-questfill" id="questFill"></div></div>
+        <span class="hero-questtext"><em id="questGot">0</em> / 13</span>
+      </div>
+      <a class="next-quest-btn" id="nextQuestBtn" href="#" style="display:none;"></a>
       <div class="hero-note">わからないことがあったら、いつでも須田先生にきいてね。むりょうで教えています（会津若松）。</div>
     </div>
   </div>
@@ -314,11 +339,16 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
   var badges=[
     {id:'kuku',   icon:'🏅', name:'九九<br>マスター'},
     {id:'tashizan',icon:'🏅', name:'たしざん<br>マスター'},
-    {id:'hikizan', icon:'🏅', name:'ひきざん<br>マスター'}
+    {id:'hikizan', icon:'🏅', name:'ひきざん<br>マスター'},
+    {id:'maze',   icon:'🗺️', name:'迷路<br>マスター'},
+    {id:'ana',    icon:'🔍', name:'穴埋め<br>マスター'},
+    {id:'seq',    icon:'🔢', name:'数列<br>マスター'}
   ];
   var brow=document.getElementById('badgeRow');
+  var bcnt=0;
   badges.forEach(function(b){
     var got=!!localStorage.getItem('badge_'+b.id);
+    if(got) bcnt++;
     var d=document.createElement('div');
     d.className='badge-slot '+(got?'got':'not');
     d.innerHTML='<div class="badge-icon-w">'+(got?b.icon:'？')+'</div><div class="badge-name2">'+b.name+'</div>';
@@ -347,6 +377,7 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     row.appendChild(d);
   });
   cntEl.textContent=cnt;
+  var fwJustShown=false;
   if(cnt===7){
     if(window.RPG&&!localStorage.getItem('rpg_allstamps_xp')){
       localStorage.setItem('rpg_allstamps_xp','1');
@@ -354,13 +385,15 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     }
     if(!localStorage.getItem('stamp_fireworks_shown')){
       localStorage.setItem('stamp_fireworks_shown','true');
-      fw();
+      fwJustShown=true;
+      fw('🏆','算数マスター！','すべての教材を制覇した！');
     }
   } else {
     localStorage.removeItem('stamp_fireworks_shown');
   }
 
-  function fw(){
+  function fw(icon,title,sub){
+    if(window.SND) SND.fanfare();
     var ov=document.createElement('div');
     ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;';
     var cv=document.createElement('canvas');
@@ -369,9 +402,9 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     ov.appendChild(cv);
     var info=document.createElement('div');
     info.style.cssText='position:relative;z-index:1;text-align:center;user-select:none;';
-    info.innerHTML='<div style="font-size:4rem;margin-bottom:8px">🏆</div>'
-      +'<div style="font-size:clamp(1.5rem,5vw,2.2rem);font-weight:900;color:#c8a84b;text-shadow:0 0 24px rgba(200,168,75,.8);font-family:\'Noto Sans JP\',sans-serif;">算数マスター！</div>'
-      +'<div style="font-size:.95rem;color:#f0f4ff;margin-top:12px;font-family:\'Noto Sans JP\',sans-serif;">すべての教材を制覇した！</div>';
+    info.innerHTML='<div style="font-size:4rem;margin-bottom:8px">'+icon+'</div>'
+      +'<div style="font-size:clamp(1.5rem,5vw,2.2rem);font-weight:900;color:#c8a84b;text-shadow:0 0 24px rgba(200,168,75,.8);font-family:\'Noto Sans JP\',sans-serif;">'+title+'</div>'
+      +'<div style="font-size:.95rem;color:#f0f4ff;margin-top:12px;font-family:\'Noto Sans JP\',sans-serif;">'+sub+'</div>';
     ov.appendChild(info);
     document.body.appendChild(ov);
     var ctx=cv.getContext('2d');
@@ -409,6 +442,79 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     }
     setTimeout(close,5000);
     ov.addEventListener('click',close);
+  }
+
+  // ── ぼうけん達成度・つぎのぼうけん・カード状態 ──
+  var totalGot=cnt+bcnt;
+  document.getElementById('questGot').textContent=totalGot;
+  document.getElementById('questFill').style.width=Math.round(totalGot/13*100)+'%';
+
+  var QMETA=[
+    {href:'kazu.html',    label:'🔢 かずのかぞえかた', stamp:'kazu'},
+    {href:'tashizan.html',label:'➕ たしざん',         stamp:'tashizan', badge:'tashizan'},
+    {href:'hikizan.html', label:'➖ ひきざん',         stamp:'hikizan',  badge:'hikizan'},
+    {href:'kuku.html',    label:'✖️ 九九の表',         stamp:'kuku',     badge:'kuku'},
+    {href:'bunsu.html',   label:'🍕 分数の足し算',     stamp:'bunsu'},
+    {href:'sankaku.html', label:'📐 三角形の面積',     stamp:'sankaku'},
+    {href:'en.html',      label:'⭕ 円の面積',         stamp:'en'},
+    {href:'puzzle.html',  label:'🧩 パズルの塔',       pzBadges:['maze','ana','seq']}
+  ];
+  function metaDone(mt){
+    if(mt.pzBadges){
+      return mt.pzBadges.every(function(b){ return !!localStorage.getItem('badge_'+b); });
+    }
+    if(mt.stamp&&!localStorage.getItem('stamp_'+mt.stamp)) return false;
+    if(mt.badge&&!localStorage.getItem('badge_'+mt.badge)) return false;
+    return true;
+  }
+  var nextMeta=null;
+  QMETA.forEach(function(mt){ if(!nextMeta&&!metaDone(mt)) nextMeta=mt; });
+
+  var nq=document.getElementById('nextQuestBtn');
+  nq.style.display='inline-block';
+  if(nextMeta){
+    nq.href=nextMeta.href;
+    nq.textContent='⚔️ つぎのぼうけん：'+nextMeta.label+' →';
+  }else{
+    nq.removeAttribute('href');
+    nq.textContent='👑 ぜんぶせいは！きみは でんせつの冒険者だ！';
+    nq.style.animation='none';
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.grid .card'),function(card){
+    var href=card.getAttribute('href');
+    var mt=null;
+    QMETA.forEach(function(q){ if(q.href===href) mt=q; });
+    if(!mt) return;
+    var box=document.createElement('div');
+    box.className='card-status';
+    if(mt.stamp){
+      var sg=!!localStorage.getItem('stamp_'+mt.stamp);
+      box.innerHTML+='<span class="card-chip'+(sg?' got':'')+'">'+(sg?'⭐ スタンプずみ':'⬜ スタンプまだ')+'</span>';
+    }
+    if(mt.badge){
+      var bg=!!localStorage.getItem('badge_'+mt.badge);
+      box.innerHTML+='<span class="card-chip'+(bg?' got':'')+'">'+(bg?'🏅 マスター':'クイズ10問で 🏅')+'</span>';
+    }
+    if(mt.pzBadges){
+      var pn=0;
+      mt.pzBadges.forEach(function(b){ if(localStorage.getItem('badge_'+b)) pn++; });
+      box.innerHTML+='<span class="card-chip'+(pn===3?' got':'')+'">🏅 マスターバッジ '+pn+'/3</span>';
+    }
+    card.appendChild(box);
+    if(nextMeta&&nextMeta.href===href){
+      card.classList.add('next-target');
+      var tag=document.createElement('span');
+      tag.className='card-next-tag';
+      tag.textContent='つぎはここ！';
+      card.appendChild(tag);
+    }
+  });
+
+  // ── ぜんぶ達成 → でんせつの冒険者 ──
+  if(totalGot===13&&!localStorage.getItem('rpg_legend_shown')){
+    localStorage.setItem('rpg_legend_shown','1');
+    setTimeout(function(){ fw('👑','でんせつの冒険者！','スタンプも バッジも すべて あつめた！'); },fwJustShown?6500:1200);
   }
 
   // ── 冒険者ステータス ──
