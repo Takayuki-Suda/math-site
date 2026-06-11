@@ -238,7 +238,14 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     row.appendChild(d);
   });
   cntEl.textContent=cnt;
-  if(cnt===7) fw();
+  if(cnt===7){
+    if(!localStorage.getItem('stamp_fireworks_shown')){
+      localStorage.setItem('stamp_fireworks_shown','true');
+      fw();
+    }
+  } else {
+    localStorage.removeItem('stamp_fireworks_shown');
+  }
 
   function fw(){
     var ov=document.createElement('div');
