@@ -343,6 +343,7 @@
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
+<script src="/math-site/rpg.js"></script>
 <script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
@@ -756,11 +757,13 @@ function checkQuiz(selected, btn) {
     fb.style.color = '#2a7a3a';
     scoreOk++;
     soundCorrect();
+    if (window.RPG) RPG.quizCorrect();
   } else {
     btn.classList.add('wrong');
     fb.textContent = `😢 ざんねん… こたえは ${qAns} だよ！`;
     fb.style.color = '#c62828';
     soundWrong();
+    if (window.RPG) RPG.quizWrong();
     document.querySelectorAll('.choice-btn').forEach(b => {
       if (Number(b.textContent) === qAns) b.classList.add('correct');
     });

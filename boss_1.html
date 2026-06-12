@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1 文字式の壁 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+BossBattle({
+  no:1,
+  name:'文字式の壁',
+  sub:'小学と中学の さかいめ',
+  kids:true,
+  intro:[
+    '数字だけの世界が終わる。',
+    'xとyが現れた。',
+    '…でも、こわくない。文字は「なんでも入る箱」だ。'
+  ],
+  theme:{main:'#e8884b',glow:'rgba(232,136,75,.45)',dark:'#2a1408',icon:'🗿'},
+  fleeHref:'/math-site/sho/',
+  enterFlag:'chu',
+  questions:[
+    {q:'x ＋ x ＝ ？', c:['2x','x²','2','x'], a:0,
+     exp:'おなじ x が 2つ あるから「2x」。x² は x×x のことだよ。'},
+    {q:'a × 3 を 文字式のルールで かくと？', c:['3a','a3','a＋3','3×a'], a:0,
+     exp:'かけ算の「×」は はぶいて、数字を まえに かくルールだよ。'},
+    {q:'x ＝ 5 のとき、x ＋ 3 は？', c:['8','15','53','2'], a:0,
+     exp:'x の箱に 5 を いれると、5 ＋ 3 ＝ 8。'},
+    {q:'a × a ＝ ？', c:['a²','2a','a＋a','aa'], a:0,
+     exp:'おなじ文字の かけ算は「a²（aの2じょう）」と かくよ。2a は a＋a のこと。'},
+    {q:'2x ＋ 3x ＝ ？', c:['5x','6x','5x²','23x'], a:0,
+     exp:'x が 2こ ＋ 3こ ＝ 5こ。だから 5x。りんご2こ＋りんご3こ と おなじだね。'},
+    {q:'x ＝ 4 のとき、2x は？', c:['8','6','24','42'], a:0,
+     exp:'2x は「2 × x」のこと。2 × 4 ＝ 8 だよ。'},
+    {q:'x ＝ 7 のとき、10 − x は？', c:['3','7','17','107'], a:0,
+     exp:'x の箱に 7 を いれると、10 − 7 ＝ 3。'},
+    {q:'y ÷ 2 を 文字式のルールで かくと？', c:['y/2','2/y','y−2','2y'], a:0,
+     exp:'わり算は 分数のかたちで かくよ。y/2 は「yの半分」のこと。'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+14;
+    var bob=Math.sin(t*1.3)*5;
+    var dmg=1-S.hpRatio;
+    ctx.save();
+    ctx.translate(cx,cy+bob);
+
+    /* 影 */
+    ctx.fillStyle='rgba(0,0,0,.5)';
+    ctx.beginPath(); ctx.ellipse(0,118,150,16,0,0,Math.PI*2); ctx.fill();
+
+    /* 石の壁本体 */
+    ctx.fillStyle='#4a4038';
+    roundRect(ctx,-152,-108,304,216,14); ctx.fill();
+    ctx.strokeStyle='#2c2620'; ctx.lineWidth=4;
+    roundRect(ctx,-152,-108,304,216,14); ctx.stroke();
+    /* 石のブロック目地 */
+    ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.lineWidth=3;
+    for(var r=1;r<4;r++){
+      ctx.beginPath(); ctx.moveTo(-152,-108+r*54); ctx.lineTo(152,-108+r*54); ctx.stroke();
+    }
+    for(var rr=0;rr<4;rr++){
+      var off=(rr%2)*50;
+      for(var c=0;c<3;c++){
+        var bx=-152+off+(c+1)*76;
+        if(bx>-150&&bx<150){
+          ctx.beginPath(); ctx.moveTo(bx,-108+rr*54); ctx.lineTo(bx,-108+(rr+1)*54); ctx.stroke();
+        }
+      }
+    }
+    /* ハイライト */
+    ctx.fillStyle='rgba(255,255,255,.05)';
+    roundRect(ctx,-152,-108,304,40,14); ctx.fill();
+
+    /* ダメージのひび */
+    if(dmg>0){
+      ctx.strokeStyle='rgba(255,'+(S.hurt>0?90:170)+',70,'+(0.3+dmg*0.55)+')';
+      ctx.lineWidth=2.5;
+      ctx.beginPath();
+      ctx.moveTo(-60,-108); ctx.lineTo(-44,-60); ctx.lineTo(-70,-20);
+      if(dmg>0.3){ ctx.lineTo(-50,30); ctx.lineTo(-80,80); }
+      ctx.stroke();
+      if(dmg>0.5){
+        ctx.beginPath();
+        ctx.moveTo(70,-108); ctx.lineTo(55,-50); ctx.lineTo(85,0); ctx.lineTo(60,60); ctx.lineTo(78,108);
+        ctx.stroke();
+      }
+      if(dmg>0.7){
+        ctx.beginPath();
+        ctx.moveTo(-152,-30); ctx.lineTo(-100,-10); ctx.lineTo(-130,40);
+        ctx.stroke();
+      }
+    }
+
+    /* 目（おこった石の目） */
+    var blink=(Math.sin(t*0.9)>0.96)?0.15:1;
+    var eyeC=S.hurt>0.3?'#fff':'#ffce54';
+    ctx.save();
+    ctx.shadowColor='#ffae34'; ctx.shadowBlur=18;
+    ctx.fillStyle=eyeC;
+    ctx.beginPath(); ctx.ellipse(-52,-72,15,11*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(52,-72,15,11*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    /* まゆ（怒り） */
+    ctx.strokeStyle='#221c16'; ctx.lineWidth=7; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-74,-92); ctx.lineTo(-34,-82); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(74,-92); ctx.lineTo(34,-82); ctx.stroke();
+
+    /* 刻まれた文字（光るルーン） */
+    var runes=[
+      {ch:'x', x:-90, y:-8,  s:46},
+      {ch:'y', x:0,   y:-18, s:52},
+      {ch:'a', x:92,  y:-8,  s:44},
+      {ch:'+', x:-48, y:62,  s:38},
+      {ch:'=', x:52,  y:62,  s:38}
+    ];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    runes.forEach(function(rn,i){
+      var pulse=0.55+0.45*Math.sin(t*2.2+i*1.4);
+      ctx.save();
+      ctx.shadowColor='rgba(255,160,80,'+pulse+')'; ctx.shadowBlur=16+8*pulse;
+      ctx.fillStyle='rgba(255,'+(150+Math.floor(70*pulse))+',90,'+(0.75+0.25*pulse)+')';
+      ctx.font='900 '+rn.s+'px Georgia,serif';
+      ctx.fillText(rn.ch,rn.x,rn.y+Math.sin(t*1.8+i)*3);
+      ctx.restore();
+    });
+
+    /* 腕（左右の岩のこぶし） */
+    var punch=Math.sin(t*1.6)*6;
+    ctx.fillStyle='#443a32';
+    ctx.beginPath(); ctx.arc(-185,10+punch,30,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(185,10-punch,30,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#2c2620'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(-185,10+punch,30,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(185,10-punch,30,0,Math.PI*2); ctx.stroke();
+
+    ctx.restore();
+  },
+  victory:{
+    xp:200,
+    msg:'中学数学への扉が開いた。<br>もし一緒に進みたければ、いつでも来てください。<br>会津若松・完全無料です。— 須田先生',
+    cta:{
+      label:'⛩ 会津稽古堂・無料指導はこちら',
+      href:'https://www.city.aizuwakamatsu.fukushima.jp/docs/2007080702723/',
+      note:'「須田貴之」を指名して申し込めます。話を聞くだけでも大丈夫。'
+    },
+    doorHref:'/math-site/chu/',
+    doorName:'中学ゾーン',
+    note:'封印が解けた──中学ゾーンへの扉が開く…'
+  }
+});
+})();
+</script>
+</body>
+</html>

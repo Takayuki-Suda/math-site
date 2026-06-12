@@ -22,7 +22,25 @@
       "Bash(sed -n '105,115p' C:/Users/s_t24/math-site/sho/sankaku.html)",
       "Bash(node *)",
       "Bash(sed -i '742,1064d' sho/kazu.html)",
-      "Bash(sed -n '738,746p' sho/kazu.html)"
+      "Bash(sed -n '738,746p' sho/kazu.html)",
+      "Bash(grep -o \"^[^:]*:[0-9]*:.\\\\{0,80\\\\}\")",
+      "Bash(git rm *)",
+      "Bash(python -)",
+      "Skill(run)",
+      "Read(//c/Program Files \\(x86\\)/Microsoft/Edge/Application/**)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Bash(python *)",
+      "Bash(npx playwright *)",
+      "Bash(mkdir -p /c/Users/s_t24/AppData/Local/Temp/pwtest)",
+      "Read(//c/Users/s_t24/AppData/Local/Temp/**)",
+      "Bash(npm init *)",
+      "Bash(npm i *)",
+      "Bash(NODE_PATH=/c/Users/s_t24/AppData/Local/Temp/pwtest/node_modules node _smoke.mjs)",
+      "Bash(awk '{print $7}')",
+      "Bash(sed -n '755,768p' chu/moji.html)",
+      "Bash(sed -n '863,876p' ko/sankakuhi.html)",
+      "Bash(kill %1)"
     ]
   }
 }

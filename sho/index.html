@@ -139,7 +139,7 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </style>
 </head>
 <body>
-<script src="rpg.js"></script>
+<script src="/math-site/rpg.js"></script>
 <style>
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
 .site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
@@ -330,6 +330,8 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     </a>
 
   </div>
+
+  <div id="rpgBossDoor"></div>
 </div>
 
 <div class="footer-note">須田 貴之 ・ 無料 算数・数学 指導 ／ 会津若松</div>
@@ -476,10 +478,12 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
   if(nextMeta){
     nq.href=nextMeta.href;
     nq.textContent='⚔️ つぎのぼうけん：'+nextMeta.label+' →';
+  }else if(!localStorage.getItem('rpg_boss1')){
+    nq.href='/math-site/boss_1.html';
+    nq.textContent='🗿 さいごのたたかい：ボス「文字式の壁」にいどむ！ →';
   }else{
-    nq.removeAttribute('href');
-    nq.textContent='👑 ぜんぶせいは！きみは でんせつの冒険者だ！';
-    nq.style.animation='none';
+    nq.href='/math-site/chu/';
+    nq.textContent='👑 ぜんぶせいは！ぼうけんは 中学ゾーンへつづく →';
   }
 
   Array.prototype.forEach.call(document.querySelectorAll('.grid .card'),function(card){

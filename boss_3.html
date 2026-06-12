@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 3 εδの壁 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+
+BossBattle({
+  no:3,
+  name:'εδの壁',
+  sub:'高校と大学の境界',
+  kids:false,
+  intro:[
+    '直感が通用しなくなる。',
+    '厳密さが要求される。',
+    '──「限りなく近づく」とは、何を意味するのか。番人の眼が問うてくる。'
+  ],
+  theme:{main:'#9b59b6',glow:'rgba(155,89,182,.45)',dark:'#1c0f2a',icon:'👁️'},
+  fleeHref:'/math-site/ko/',
+  enterFlag:'dai',
+  questions:[
+    {q:'lim<sub>x→2</sub> x² ＝ ？', c:['4','2','0','∞'], a:0,
+     exp:'x² は x ＝ 2 で連続なので、そのまま代入して 4。'},
+    {q:'lim<sub>n→∞</sub> 1/n ＝ ？', c:['0','1','∞','存在しない'], a:0,
+     exp:'n が大きくなるほど 1/n はいくらでも 0 に近づく。極限は 0。'},
+    {q:'数列 0.9, 0.99, 0.999, … の極限は？', c:['1','0.999…より小さい','存在しない','∞'], a:0,
+     exp:'どんな小さな誤差 ε を決めても、いつかは 1 との差が ε 未満になる。極限は 1。'},
+    {q:'lim<sub>x→0</sub> sin x / x ＝ ？', c:['1','0','∞','−1'], a:0,
+     exp:'微分積分の土台になる超重要な極限。x が小さいとき sin x ≈ x だから比は 1 に近づく。'},
+    {q:'ε-δ論法で、ε が表しているものは？', c:['許される誤差の大きさ','xの増加量','関数の傾き','整数'], a:0,
+     exp:'ε は「f(x) と極限値のずれを、どこまで小さくしたいか」という目標の誤差。'},
+    {q:'「∀ε &gt; 0」の ∀ の意味は？', c:['どんな〜に対しても','ある〜が存在する','ならば','等しい'], a:0,
+     exp:'∀ は「すべての・どんな〜でも」。∃ が「存在する」。この2つの順番が命だ。'},
+    {q:'ε-δ論法で、先に与えられるのはどちら？', c:['ε（敵が誤差を指定する）','δ（自分が先に決める）','同時に決める','どちらでもよい'], a:0,
+     exp:'相手がどんな ε を出してきても、それに応じた δ を見つけて返す。この攻防が定義そのものだ。'},
+    {q:'lim<sub>x→∞</sub> (1 + 1/x)<sup>x</sup> ＝ ？', c:['e','1','∞','0'], a:0,
+     exp:'自然対数の底 e ＝ 2.718… の定義。1 に近い数の無限乗は、意外にも有限の値に収束する。'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+8;
+    var dmg=1-S.hpRatio;
+    var hurtC=S.hurt>0.3;
+
+    /* 同心円（近傍）パルス */
+    ctx.save();
+    for(var i=0;i<4;i++){
+      var ph=(t*0.5+i*0.25)%1;
+      var rr=40+ph*150;
+      ctx.strokeStyle='rgba(155,89,182,'+(0.35*(1-ph))+')';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke();
+    }
+    ctx.restore();
+
+    /* 中央の巨大な眼 */
+    var look=Math.sin(t*0.7)*10;
+    var blink=(Math.sin(t*0.62)>0.95)?0.12:1;
+    ctx.save();
+    ctx.shadowColor=hurtC?'rgba(255,120,120,.9)':'rgba(155,89,182,.8)'; ctx.shadowBlur=30;
+    /* 白目 */
+    ctx.fillStyle=hurtC?'#ffd9d4':'#e8defc';
+    ctx.beginPath(); ctx.ellipse(cx,cy,86,52*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    /* 縁 */
+    ctx.strokeStyle=hurtC?'#ff8a75':'#7a3fa0'; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.ellipse(cx,cy,86,52*blink,0,0,Math.PI*2); ctx.stroke();
+    if(blink>0.5){
+      /* 虹彩 */
+      var ig=ctx.createRadialGradient(cx+look,cy,4,cx+look,cy,30);
+      ig.addColorStop(0,'#2a0f3a'); ig.addColorStop(0.55,hurtC?'#c0392b':'#8e44ad'); ig.addColorStop(1,'#3a1452');
+      ctx.fillStyle=ig;
+      ctx.beginPath(); ctx.arc(cx+look,cy,30,0,Math.PI*2); ctx.fill();
+      /* 瞳孔：縦に細い */
+      ctx.fillStyle='#0d0418';
+      ctx.beginPath(); ctx.ellipse(cx+look,cy,8,22,0,0,Math.PI*2); ctx.fill();
+      /* ハイライト */
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.beginPath(); ctx.arc(cx+look-9,cy-12,5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* 周回する ε と δ */
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var orbs=[
+      {ch:'ε', phase:0,        rx:185, ry:95,  size:74, col:'#d59bf0'},
+      {ch:'δ', phase:Math.PI,  rx:185, ry:95,  size:74, col:'#9bd0f0'}
+    ];
+    orbs.forEach(function(o){
+      var ang=t*0.9+o.phase;
+      var ox=cx+Math.cos(ang)*o.rx;
+      var oy=cy+Math.sin(ang)*o.ry;
+      var front=Math.sin(ang)>0;
+      var sc=front?1:0.78;
+      ctx.save();
+      ctx.globalAlpha=front?1:0.55;
+      ctx.shadowColor=o.col; ctx.shadowBlur=24;
+      ctx.fillStyle=hurtC?'#ffb3a8':o.col;
+      ctx.font='900 '+(o.size*sc)+'px Georgia,serif';
+      ctx.fillText(o.ch,ox,oy);
+      ctx.restore();
+    });
+
+    /* ダメージで眼の周囲に亀裂のような数式の乱れ */
+    if(dmg>0.4){
+      ctx.save();
+      ctx.strokeStyle='rgba(255,150,170,'+(dmg*0.5)+')';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx-86,cy-20); ctx.lineTo(cx-130,cy-50); ctx.lineTo(cx-120,cy-90); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+86,cy+10); ctx.lineTo(cx+135,cy+40); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* 下部に漂う定義の文 */
+    var defAlpha=0.35+0.25*Math.sin(t*1.4);
+    ctx.save();
+    ctx.fillStyle='rgba(213,155,240,'+defAlpha+')';
+    ctx.font='italic 700 19px Georgia,serif';
+    ctx.fillText('∀ε>0, ∃δ>0 : 0<|x−a|<δ ⇒ |f(x)−L|<ε', cx, H-26);
+    ctx.restore();
+  },
+  victory:{
+    xp:400,
+    msg:'この壁を越えようとしているなら本物だ。<br>大学数学は面白い。— 須田先生',
+    cta:null,
+    doorHref:'/math-site/dai/',
+    doorName:'大学ゾーン',
+    note:'番人が道を譲った──大学ゾーンへの扉が開く…'
+  }
+});
+})();
+</script>
+</body>
+</html>

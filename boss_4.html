@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 4 抽象の壁 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* 正八面体の頂点（回転投影用） */
+var VERTS=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+var EDGES=[[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[4,3],[3,5],[5,2]];
+
+BossBattle({
+  no:4,
+  name:'抽象の壁',
+  sub:'大学と大学院の境界',
+  kids:false,
+  intro:[
+    '数字が消える。',
+    '構造だけが残る。',
+    '──足し算も掛け算も、もはや「演算」という名の影にすぎない。'
+  ],
+  theme:{main:'#2ee6c8',glow:'rgba(46,230,200,.4)',dark:'#04201c',icon:'💠'},
+  fleeHref:'/math-site/dai/',
+  enterFlag:null,
+  questions:[
+    {q:'群 (G, ·) の定義（公理）に<strong>含まれない</strong>ものは？',
+     c:['交換法則（可換性）','結合法則','単位元の存在','逆元の存在'], a:0,
+     exp:'群の公理は「結合法則・単位元・逆元」の3つ（＋演算が閉じていること）。交換法則まで成り立つ群は特別に「アーベル群」と呼ぶ。'},
+    {q:'(ℤ, ＋) の単位元は？', c:['0','1','−1','存在しない'], a:0,
+     exp:'a ＋ 0 ＝ a がすべての整数で成り立つ。加法の単位元は 0。'},
+    {q:'(ℤ, ×) が群に<strong>ならない</strong>理由は？',
+     c:['逆元が存在しないから','結合法則が成り立たないから','単位元がないから','演算が閉じていないから'], a:0,
+     exp:'例えば 2 の逆元は 1/2 だが、これは整数ではない。逆元の公理が崩れる。'},
+    {q:'次のうち体（field）であるものは？', c:['ℚ（有理数全体）','ℤ（整数全体）','ℕ（自然数全体）','偶数全体'], a:0,
+     exp:'体は四則がすべて自由にできる世界。ℚ では 0 以外のどんな数でも割れる。ℤ は割り算で破綻する。'},
+    {q:'ℤ/pℤ が体になるのは、p がどんな数のとき？', c:['素数','偶数','平方数','どんな数でも'], a:0,
+     exp:'p が素数のとき、0 以外のすべての元に乗法逆元が存在する。これが有限体 𝔽p だ。'},
+    {q:'群 G の元 a の逆元 a⁻¹ が満たす式は？',
+     c:['a · a⁻¹ ＝ e','a · a⁻¹ ＝ a','a ＋ a⁻¹ ＝ a','a · a⁻¹ ＝ 0'], a:0,
+     exp:'逆元とは、演算して単位元 e に戻る相手のこと。「打ち消し合う」の抽象化だ。'},
+    {q:'環（ring）にあって、体（field）には必ずあるとは限らない…は逆。<br>環に<strong>足りないかもしれない</strong>ものは？',
+     c:['乗法の逆元','加法の単位元','加法の逆元','分配法則'], a:0,
+     exp:'環は加法群＋乗法（分配法則つき）。乗法逆元までは要求しない。それを要求すると体になる。'},
+    {q:'正三角形の対称変換のなす群 D₃ の位数（元の個数）は？',
+     c:['6','3','4','12'], a:0,
+     exp:'回転が3つ（0°, 120°, 240°）、鏡映が3つ。合計6個の元からなる群だ。'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+6;
+    var dmg=1-S.hpRatio;
+    var hurtC=S.hurt>0.3;
+    var R=92+6*Math.sin(t*1.2);
+
+    /* 回転する八面体ワイヤーフレーム */
+    var ax=t*0.7, ay=t*0.45;
+    var proj=VERTS.map(function(v){
+      var x=v[0],y=v[1],z=v[2];
+      /* y軸回転 */
+      var x1=x*Math.cos(ay)+z*Math.sin(ay);
+      var z1=-x*Math.sin(ay)+z*Math.cos(ay);
+      /* x軸回転 */
+      var y2=y*Math.cos(ax)-z1*Math.sin(ax);
+      var z2=y*Math.sin(ax)+z1*Math.cos(ax);
+      var s=1/(1.9-z2*0.55);
+      return {x:cx+x1*R*1.6*s, y:cy+y2*R*1.6*s, z:z2};
+    });
+    ctx.save();
+    EDGES.forEach(function(e){
+      var p1=proj[e[0]],p2=proj[e[1]];
+      var depth=(p1.z+p2.z)/2;
+      var al=0.35+0.4*(depth+1)/2;
+      ctx.strokeStyle=hurtC?'rgba(255,140,120,'+al+')':'rgba(46,230,200,'+al+')';
+      ctx.lineWidth=1.5+1.6*(depth+1)/2;
+      ctx.shadowColor=hurtC?'rgba(255,120,100,.8)':'rgba(46,230,200,.7)';
+      ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+    });
+    /* 頂点 */
+    proj.forEach(function(p){
+      var al=0.5+0.5*(p.z+1)/2;
+      ctx.fillStyle=hurtC?'rgba(255,200,190,'+al+')':'rgba(200,255,245,'+al+')';
+      ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.arc(p.x,p.y,3+2*(p.z+1)/2,0,Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+
+    /* 中心の特異点（コア） */
+    var pulse=0.6+0.4*Math.sin(t*3);
+    ctx.save();
+    var cg=ctx.createRadialGradient(cx,cy,2,cx,cy,26+10*pulse);
+    cg.addColorStop(0,hurtC?'#fff':'#eafffb');
+    cg.addColorStop(0.4,hurtC?'#ff9a8a':'#2ee6c8');
+    cg.addColorStop(1,'rgba(46,230,200,0)');
+    ctx.fillStyle=cg;
+    ctx.beginPath(); ctx.arc(cx,cy,26+10*pulse,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    /* 軌道を巡る記号たち */
+    var syms=['G','e','a⁻¹','⊕','≅','∀','∃','φ'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){
+      var ang=t*(0.4+0.06*i)+i*Math.PI*2/syms.length;
+      var rx=205-((i%3)*28), ry=105-((i%3)*16);
+      var ox=cx+Math.cos(ang)*rx;
+      var oy=cy+Math.sin(ang)*ry;
+      var front=Math.sin(ang)>0;
+      ctx.save();
+      ctx.globalAlpha=(front?0.95:0.4);
+      ctx.shadowColor='rgba(46,230,200,.85)'; ctx.shadowBlur=14;
+      ctx.fillStyle=hurtC?'#ffc4b8':'#bdfff2';
+      ctx.font=(front?'900 30px':'700 22px')+' Georgia,serif';
+      ctx.fillText(s,ox,oy);
+      ctx.restore();
+    });
+
+    /* ダメージ：空間のグリッチ（水平の乱れ線） */
+    if(dmg>0.2){
+      ctx.save();
+      for(var g2=0;g2<Math.floor(dmg*5);g2++){
+        var gy2=(Math.sin(t*9+g2*37)*0.5+0.5)*H;
+        ctx.strokeStyle='rgba(255,255,255,'+(0.1+0.2*Math.random()*dmg)+')';
+        ctx.lineWidth=1+Math.random()*2;
+        ctx.beginPath(); ctx.moveTo(0,gy2); ctx.lineTo(W,gy2); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* 下部の公理 */
+    ctx.save();
+    ctx.fillStyle='rgba(189,255,242,'+(0.3+0.2*Math.sin(t*1.3))+')';
+    ctx.font='italic 700 17px Georgia,serif';
+    ctx.fillText('(a·b)·c = a·(b·c)　　a·e = a　　a·a⁻¹ = e', cx, H-24);
+    ctx.restore();
+  },
+  victory:{
+    xp:500,
+    msg:'抽象の海へようこそ。<br>ここからは孤独な戦いだ。— 須田先生',
+    cta:null,
+    doorHref:'/math-site/boss_5.html',
+    doorName:'最後の壁「研究の壁」',
+    note:'構造の彼方に、最後の壁が見える──'
+  }
+});
+})();
+</script>
+</body>
+</html>
