@@ -809,12 +809,277 @@
     }
   }
 
-  /* ════ 教材ページ：ステージエンジン ════ */
-  function runStage(pg){
-    css();
+  /* ════ チェックポイントの問い（ページ別・3問ずつ） ════
+     ページを読み進めると敵（幻影・碑文）が問いを仕掛けてくる。
+     正解＝大ダメージ／解読前進、不正解＝被弾（解説を読んで立ち上がる）。 */
+  var QS={
+    'sho/kazu.html':[
+      {q:'10の まとまりが 3つ、ばらが 4つ。ぜんぶで いくつ？',c:['7','34','304'],a:1,exp:'10が 3つで 30。30と 4で 34！'},
+      {q:'28は 10の まとまりが いくつと、ばらが いくつ？',c:['10が2つと ばら8つ','10が8つと ばら2つ','10が2つと ばら2つ'],a:0,exp:'28は 20と 8。10の まとまりは 2つだね。'},
+      {q:'2とびで かぞえると 2, 4, 6, 8…。つぎは？',c:['9','12','10'],a:2,exp:'2ずつ ふえるから、8の つぎは 10！'}
+    ],
+    'sho/tashizan.html':[
+      {q:'8＋5は いくつ？',c:['12','13','14'],a:1,exp:'8に 2を たして 10。のこりの 3を たして 13！'},
+      {q:'9＋7。まず 9に いくつ たすと 10に なる？',c:['1','2','3'],a:0,exp:'9＋1で 10。10と のこりの 6で 16！'},
+      {q:'30＋40は いくつ？',c:['70','34','60'],a:0,exp:'10の まとまりが 3つと 4つで 7つ。70！'}
+    ],
+    'sho/hikizan.html':[
+      {q:'13－5は いくつ？',c:['7','9','8'],a:2,exp:'13を 10と 3に わける。10－5＝5、5と 3で 8！'},
+      {q:'15－9は いくつ？',c:['6','7','5'],a:0,exp:'10－9＝1、1と 5で 6！'},
+      {q:'70－20は いくつ？',c:['90','50','5'],a:1,exp:'10の まとまりで 7－2＝5。だから 50！'}
+    ],
+    'sho/kuku.html':[
+      {q:'7×6は いくつ？',c:['42','48','36'],a:0,exp:'7×5＝35に 7を たして 42！'},
+      {q:'4×8と おなじ こたえに なるのは？',c:['4＋8','8×4','6×6'],a:1,exp:'かけざんは じゅんばんを かえても おなじ こたえ！'},
+      {q:'9×9は いくつ？',c:['72','99','81'],a:2,exp:'9のだんの さいご。81だね！'}
+    ],
+    'sho/bunsu.html':[
+      {q:'1/2 ＋ 1/4 は いくつ？',c:['2/6','3/4','2/4'],a:1,exp:'1/2は 2/4と おなじ。2/4＋1/4＝3/4！'},
+      {q:'1/3 と 2/6、おおきいのは どっち？',c:['1/3','2/6','おなじ'],a:2,exp:'2/6を やくぶんすると 1/3。おなじ おおきさ！'},
+      {q:'1/2 ＋ 1/3 は いくつ？',c:['5/6','2/5','1/6'],a:0,exp:'分母を 6に そろえて 3/6＋2/6＝5/6！'}
+    ],
+    'sho/sankaku.html':[
+      {q:'底辺6cm・高さ4cmの 三角形の面積は？',c:['24cm²','10cm²','12cm²'],a:2,exp:'6×4÷2＝12。さいごの ÷2を わすれずに！'},
+      {q:'三角形の面積で「÷2」するのは なぜ？',c:['長方形の はんぶんだから','たかさが 2つ あるから','そういう きまりだから'],a:0,exp:'おなじ三角形を 2つ あわせると 長方形（平行四辺形）に なるから！'},
+      {q:'底辺を 2ばいに すると、面積は？',c:['かわらない','2ばいに なる','4ばいに なる'],a:1,exp:'底辺×高さ÷2 だから、底辺が 2ばいなら 面積も 2ばい！'}
+    ],
+    'sho/en.html':[
+      {q:'円を こまかく切って ならべると、なにに ちかづく？',c:['三角形','星のかたち','長方形'],a:2,exp:'たて＝半径、よこ＝円周の半分の 長方形に なる！'},
+      {q:'半径10cmの 円の面積は？（円周率3.14）',c:['314cm²','31.4cm²','100cm²'],a:0,exp:'10×10×3.14＝314！'},
+      {q:'ならべて できた長方形の「たて」の ながさは？',c:['直径','半径','円周'],a:1,exp:'ピザのように 切った ひとつぶんの ながさ＝半径！'}
+    ],
+    'sho/puzzle.html':[
+      {q:'1, 2, 4, 8…と ふえていく。つぎは？',c:['16','10','12'],a:0,exp:'2ばいずつ ふえている！8の 2ばいで 16。'},
+      {q:'◯＋◯＝10。◯に はいる おなじ かずは？',c:['2','10','5'],a:2,exp:'5＋5＝10！'},
+      {q:'3, 6, 9, 12…の なかまで ないのは？',c:['15','20','18'],a:1,exp:'みんな 3のだんの かず。20は 3で わりきれない！'}
+    ],
+    'chu/moji.html':[
+      {q:'a×3 を文字式のルールで書くと？',c:['3a','a3','3×a'],a:0,exp:'数字を前に置き、×記号は省略する。'},
+      {q:'x＋x＋x を簡単にすると？',c:['x³','3x','3＋x'],a:1,exp:'xが3個ぶんで 3x。x³は x×x×x なので別物。'},
+      {q:'1個150円のりんごを n個買う。代金は？',c:['150＋n 円','n÷150 円','150n 円'],a:2,exp:'150×n。文字との掛け算は ×を省略して 150n。'}
+    ],
+    'chu/houteishiki.html':[
+      {q:'x＋7＝15 のとき、xは？',c:['8','7','22'],a:0,exp:'両辺から7を引いて x＝8。天秤の両側から同じだけ取る。'},
+      {q:'3x＝12 のとき、xは？',c:['36','4','9'],a:1,exp:'両辺を3で割って x＝4。'},
+      {q:'2x－3＝7。最初の一手は？',c:['両辺を2で割る','両辺から7を引く','両辺に3を足す'],a:2,exp:'まず＋3で 2x＝10。それから2で割って x＝5。'}
+    ],
+    'chu/ikiji.html':[
+      {q:'y＝2x＋3 の「傾き」は？',c:['3','2','x'],a:1,exp:'xが1増えるとyが2増える。それが傾き。'},
+      {q:'y＝2x＋3 がy軸と交わる点は？',c:['(0, 3)','(3, 0)','(0, 2)'],a:0,exp:'x＝0のとき y＝3。切片はy軸との交点。'},
+      {q:'傾きがマイナスの直線は？',c:['右上がり','水平','右下がり'],a:2,exp:'xが増えるとyが減る＝右下がり。'}
+    ],
+    'chu/niji.html':[
+      {q:'y＝(x－2)²＋1 の頂点は？',c:['(2, 1)','(－2, 1)','(2, －1)'],a:0,exp:'頂点は (p, q)。y＝a(x－p)²＋q の形から読み取る。'},
+      {q:'y＝ax² で aを大きくすると、放物線は？',c:['開きが広がる','細く急になる','変わらない'],a:1,exp:'同じxでもyが大きく跳ね上がるので、細く急になる。'},
+      {q:'y＝－x² のグラフは？',c:['上に凸（山型）','下に凸（谷型）','直線になる'],a:0,exp:'aが負なら上に凸＝山型。'}
+    ],
+    'chu/sanpei.html':[
+      {q:'直角をはさむ2辺が 3と4。斜辺は？',c:['6','5','7'],a:1,exp:'3²＋4²＝9＋16＝25＝5²。'},
+      {q:'三平方の定理 a²＋b²＝c² が成り立つのは？',c:['直角三角形','すべての三角形','二等辺三角形だけ'],a:0,exp:'直角三角形だけ。逆に成り立てば直角三角形だと分かる。'},
+      {q:'斜辺13、一辺5の直角三角形。残りの辺は？',c:['8','18','12'],a:2,exp:'13²－5²＝169－25＝144＝12²。'}
+    ],
+    'ko/sankakuhi.html':[
+      {q:'sin 30° の値は？',c:['1/2','√3/2','1'],a:0,exp:'30°・60°・90°の三角形。斜辺2に対して、30°の向かいの辺は1。'},
+      {q:'sin²θ＋cos²θ の値は？',c:['θによって変わる','常に1','常に0'],a:1,exp:'単位円上の点(cosθ, sinθ)。原点からの距離は常に1──三平方の定理そのもの。'},
+      {q:'tanθ が図形的に表すものは？',c:['原点を通る直線の傾き','扇形の面積','円の周期'],a:0,exp:'tanθ＝sinθ/cosθ＝縦/横＝傾き。'}
+    ],
+    'ko/bibun.html':[
+      {q:'f(x)＝x² の導関数は？',c:['x','x³/3','2x'],a:2,exp:'定義 lim {f(x＋h)－f(x)}/h から (x²)′＝2x。'},
+      {q:'微分係数 f′(a) の図形的な意味は？',c:['x＝aでの接線の傾き','x＝aまでの面積','y切片の値'],a:0,exp:'限りなく近い2点を結ぶ直線の極限＝接線の傾き。'},
+      {q:'f′(a)＝0 となる点で起こりうるのは？',c:['必ず最大になる','極大・極小の候補になる','グラフが切れる'],a:1,exp:'接線が水平になる点。ただし y＝x³ の原点のような例外もある。'}
+    ],
+    'ko/sekibun.html':[
+      {q:'∫₀¹ x dx の値は？',c:['1','1/2','0'],a:1,exp:'y＝x の下にできる三角形。1×1÷2＝1/2。'},
+      {q:'定積分の正体は、何の極限？',c:['接線の傾きの平均','細い長方形の面積の和','数列の差'],a:1,exp:'幅を限りなく細くした長方形たちの和──リーマン和の極限。'},
+      {q:'F′(x)＝f(x) のとき、∫ₐᵇ f(x)dx は？',c:['F(b)－F(a)','F(a)－F(b)','F(b)×F(a)'],a:0,exp:'微積分学の基本定理。微分の逆演算が面積を与える。'}
+    ],
+    'ko/daigaku.html':[
+      {q:'「すべてのxでP(x)が成り立つ」の否定は？',c:['すべてのxでP(x)が成り立たない','あるxでP(x)が成り立たない','P(x)は常に真'],a:1,exp:'全否定ではなく「反例が1つ存在する」。論理の基本にして最重要。'},
+      {q:'高校の「限りなく近づく」が大学で問題になる理由は？',c:['曖昧で証明の道具にならないから','計算が遅くなるから','答えが変わってしまうから'],a:0,exp:'「近づく」を数式で定義しない限り、厳密な証明は書けない。だからε-δが生まれた。'},
+      {q:'なぜ厳密な定義が必要になる？',c:['伝統を守るため','試験に出るため','直感が裏切られる例が実在するから'],a:2,exp:'至るところ微分不可能な連続関数など、直感を超える存在が実際にある。'}
+    ],
+    'ko/kyokugen.html':[
+      {q:'lim x→a f(x)＝L のε-δによる定式化は？',c:['任意のε>0に対し、あるδ>0が存在して…','あるε>0に対し、任意のδ>0で…','ε＝δとなるように選ぶ'],a:0,exp:'どんなに小さな許容誤差εを突きつけられても、応じるδを返せる──それが「近づく」の正体。'},
+      {q:'sin x/x の面積による証明に潜む「循環」とは？',c:['xが0で割れないこと','扇形の面積の正当化に、この極限自身が関わること','図の縮尺が不正確なこと'],a:1,exp:'弧度法と扇形の面積を厳密に正当化しようとすると、sinの微分──つまりこの極限──に行き着く。'},
+      {q:'はさみうちの原理が使える条件は？',c:['両側の極限が同じ値に収束する','片側だけ収束すればよい','中央の関数が単調増加'],a:0,exp:'g≦f≦h で lim g＝lim h＝L なら lim f＝L。両側が一致してこそ。'}
+    ],
+    'dai/senkei.html':[
+      {q:'線形写像 f: R⁵→R³ で rank f＝3。dim Ker f は？',c:['3','2','5'],a:1,exp:'次元定理：dim Ker f＋rank f＝5。よって 5－3＝2。'},
+      {q:'線形写像の定義に含まれる条件は？',c:['f(x＋y)＝f(x)＋f(y) かつ f(cx)＝cf(x)','f(xy)＝f(x)f(y)','f(x)≧0'],a:0,exp:'和とスカラー倍を保つ──線形性こそがすべての出発点。'},
+      {q:'rank f が表すものは？',c:['核 Ker f の次元','行列の成分の個数','像 Im f の次元'],a:2,exp:'写像がつぶさずに残せた次元の数。'}
+    ],
+    'dai/gun.html':[
+      {q:'群の公理に含まれないものは？',c:['結合法則','可換性（ab＝ba）','逆元の存在'],a:1,exp:'可換性は不要。可換な群は特別に「アーベル群」と呼ぶ。'},
+      {q:'整数の群 (Z, ＋) の単位元は？',c:['0','1','－1'],a:0,exp:'a＋0＝a。加法の単位元は0。乗法なら1。'},
+      {q:'3次対称群 S₃ の位数（元の個数）は？',c:['3','9','6'],a:2,exp:'3つの物の並べ替えは 3!＝6通り。最小の非可換群でもある。'}
+    ],
+    'dai/fukuso.html':[
+      {q:'e^iπ の値は？',c:['－1','1','i'],a:0,exp:'オイラーの公式 e^iθ＝cosθ＋i sinθ に θ＝π を代入。'},
+      {q:'正則関数が満たす方程式は？',c:['波動方程式','コーシー・リーマンの方程式','熱方程式'],a:1,exp:'u_x＝v_y, u_y＝－v_x。複素微分可能性を実部・虚部へ翻訳したもの。'},
+      {q:'単位円周を反時計回りに一周する ∮ dz/z は？',c:['0','π','2πi'],a:2,exp:'z＝e^iθ と置けば ∮i dθ＝2πi。原点の特異点が残す痕跡──留数。'}
+    ],
+    'dai/fourier.html':[
+      {q:'フーリエ級数は、関数を何の和に分解する？',c:['sinとcos（純粋な波）','多項式','階段関数'],a:0,exp:'どんな周期関数も、周波数の異なる純音の重ね合わせで書ける。'},
+      {q:'スペクトル（フーリエ係数の大きさ）が表すのは？',c:['関数の最大値','各周波数成分の強さ','微分可能な回数'],a:1,exp:'「どの高さの純音が、どれだけ含まれているか」の一覧表。'},
+      {q:'矩形波のフーリエ係数は、高周波になるほど？',c:['一定のまま','増大する','1/n のオーダーで減衰'],a:2,exp:'角（不連続）があると減衰が遅い。滑らかさと係数の減衰速度は表裏一体。'}
+    ],
+    'dai/seisuron.html':[
+      {q:'フェルマーの小定理：pが素数、aがpと互いに素のとき？',c:['a^(p－1) ≡ 1 (mod p)','a^p ≡ 0 (mod p)','a ≡ p (mod a)'],a:0,exp:'mod p の世界では p－1乗で必ず1に戻る。RSA暗号の理論的支柱。'},
+      {q:'17 mod 5 は？',c:['3','2','1'],a:1,exp:'17＝5×3＋2。余りは2。'},
+      {q:'RSA暗号の安全性が依拠するのは？',c:['円周率の無理性','行列の可逆性','巨大な数の素因数分解の困難さ'],a:2,exp:'掛けるのは一瞬、分解して戻すのは天文学的時間──その非対称性。'}
+    ],
+    'dai/tahensuu.html':[
+      {q:'grad f（勾配）が指す方向は？',c:['fが最も急に増える方向','等高線に沿う方向','常にx軸方向'],a:0,exp:'等高線に直交し、最大増加率の方向を向くベクトル。'},
+      {q:'ストークスの定理が結びつけるのは？',c:['微分と極限','領域内部の積分と境界の積分','行列と行列式'],a:1,exp:'∫_M dω＝∫_∂M ω。境界の情報が内部のすべてを語る。'},
+      {q:'div F（発散）が表すのは？',c:['流れの回転の強さ','ベクトルの傾き','その点での湧き出しの強さ'],a:2,exp:'湧き出しが正、吸い込みが負。ガウスの定理で体積積分と結ばれる。'}
+    ]
+  };
+  var ROMAN=['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ','Ⅶ','Ⅷ'];
+  var isExp=(Z.mode==='explore');
+  var TRIAL=!!Z.trial;
+
+  /* ── 追加スタイル（遭遇演出・問いモーダル） ── */
+  function css2(){
+    if(document.getElementById('stg2Css')) return;
+    var st=document.createElement('style');
+    st.id='stg2Css';
+    st.textContent=
+      '@keyframes stg2In{from{opacity:0;}to{opacity:1;}}'+
+      '@keyframes stg2Pop{0%{transform:scale(.4);opacity:0;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}'+
+      '@keyframes stg2Line{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}'+
+      '@keyframes stg2Float{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}'+
+      '@keyframes stg2Shake{0%,100%{transform:translate(0,0);}20%{transform:translate(-7px,3px);}40%{transform:translate(6px,-4px);}60%{transform:translate(-5px,-3px);}80%{transform:translate(4px,3px);}}'+
+      '@keyframes stg2Red{0%{opacity:.55;}100%{opacity:0;}}'+
+      '@keyframes stg2Warn{0%{transform:translate(-50%,-50%) scale(.6);opacity:0;}22%{transform:translate(-50%,-50%) scale(1.06);opacity:1;}78%{opacity:1;}100%{transform:translate(-50%,-50%) scale(1);opacity:0;}}'+
+      '@keyframes stg2Pulse{from{box-shadow:0 0 12px rgba(200,168,75,.35);}to{box-shadow:0 0 28px rgba(200,168,75,.85);}}'+
+      '.stg2-ov{position:fixed;inset:0;z-index:99985;display:flex;align-items:center;justify-content:center;flex-direction:column;'+
+        'padding:24px;text-align:center;font-family:"Noto Sans JP",sans-serif;overflow-y:auto;animation:stg2In .4s ease;}'+
+      '.stg2-ov.battle{background:radial-gradient(circle at 50% 30%,#251022 0%,#0a0810 75%);}'+
+      '.stg2-ov.trial{background:radial-gradient(circle at 50% 30%,#141022 0%,#07060e 75%);}'+
+      '.stg2-ov.exp{background:radial-gradient(circle at 50% 30%,#06251f 0%,#050d12 75%);}'+
+      '.stg2-inner{max-width:540px;width:100%;animation:stg2Pop .55s cubic-bezier(.34,1.56,.64,1);}'+
+      '.stg2-label{font-size:.72rem;font-weight:700;letter-spacing:.35em;margin-bottom:10px;color:#c8a84b;}'+
+      '.stg2-ov.trial .stg2-label{color:#8a7ec8;}'+
+      '.stg2-ov.exp .stg2-label{color:#2ee6c8;}'+
+      '.stg2-emoji{font-size:4.4rem;margin:8px 0 6px;animation:stg2Float 2.6s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(255,120,80,.55));}'+
+      '.stg2-ov.trial .stg2-emoji{filter:drop-shadow(0 0 18px rgba(138,126,200,.6));}'+
+      '.stg2-ov.exp .stg2-emoji{animation:none;filter:drop-shadow(0 0 18px rgba(46,230,200,.55));}'+
+      '.stg2-name{font-size:clamp(1.7rem,7vw,2.5rem);font-weight:900;color:#ffd9c8;letter-spacing:.12em;'+
+        'text-shadow:0 0 24px rgba(255,90,60,.5);margin-bottom:10px;}'+
+      '.stg2-ov.trial .stg2-name{color:#e8e4ff;text-shadow:0 0 24px rgba(138,126,200,.55);}'+
+      '.stg2-ov.exp .stg2-name{color:#d9fff6;text-shadow:0 0 24px rgba(46,230,200,.5);}'+
+      '.stg2-line{font-size:.98rem;color:#ddccc4;line-height:2.1;opacity:0;animation:stg2Line .7s ease forwards;}'+
+      '.stg2-ov.trial .stg2-line{color:#c8c4dd;}'+
+      '.stg2-ov.exp .stg2-line{color:#bdd8d2;}'+
+      '.stg2-mis{margin:18px auto 0;display:inline-block;text-align:left;background:rgba(0,0,0,.35);'+
+        'border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 22px;font-size:.85rem;color:#cfd8ff;line-height:2.1;'+
+        'opacity:0;animation:stg2Line .7s ease .9s forwards;}'+
+      '.stg2-btn{display:inline-block;margin-top:24px;font-family:inherit;font-weight:900;font-size:1.05rem;color:#fff;'+
+        'background:linear-gradient(135deg,#8a2020,#c0392b);border:1px solid #ffb09a;border-radius:999px;'+
+        'padding:14px 42px;cursor:pointer;animation:stg2Pulse 1.3s ease-in-out infinite alternate;}'+
+      '.stg2-ov.trial .stg2-btn{background:linear-gradient(135deg,#3a2d7a,#5a4ba8);border-color:#bdb2f0;}'+
+      '.stg2-ov.exp .stg2-btn{background:linear-gradient(135deg,#0a6e5c,#13a08a);border-color:#9ef0e0;}'+
+      '.stg2-btn:hover{filter:brightness(1.15);}'+
+      '.stg2-skip{display:block;margin:18px auto 0;font-size:.76rem;color:#667;text-decoration:underline;cursor:pointer;'+
+        'background:none;border:none;font-family:inherit;}'+
+      '.stg2-skip:hover{color:#99a;}'+
+      '.stg2-warn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99987;'+
+        'font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:clamp(1.15rem,5vw,1.8rem);color:#ffd9c8;'+
+        'text-shadow:0 0 22px rgba(255,80,50,.8);letter-spacing:.1em;animation:stg2Warn 1s ease forwards;'+
+        'pointer-events:none;white-space:nowrap;max-width:94vw;overflow:hidden;}'+
+      '.stg2-dim{position:fixed;inset:0;z-index:99986;background:rgba(5,4,14,.84);animation:stg2In .3s ease;'+
+        'display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto;}'+
+      '.stg2-q{max-width:480px;width:100%;background:#10142a;border:2px solid #8a2020;border-radius:18px;'+
+        'padding:22px 20px;font-family:"Noto Sans JP",sans-serif;color:#f0f4ff;'+
+        'animation:stg2Pop .45s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 34px rgba(192,57,43,.35);margin:auto;}'+
+      '.stg2-q.trial{border-color:#5a4ba8;box-shadow:0 0 34px rgba(90,75,168,.4);}'+
+      '.stg2-q.exp{border-color:#13a08a;box-shadow:0 0 34px rgba(19,160,138,.35);}'+
+      '.stg2-q.shake{animation:stg2Shake .45s ease;}'+
+      '.stg2-qno{font-size:.68rem;font-weight:700;letter-spacing:.25em;color:#e8884b;margin-bottom:8px;}'+
+      '.stg2-q.trial .stg2-qno{color:#8a7ec8;}'+
+      '.stg2-q.exp .stg2-qno{color:#2ee6c8;}'+
+      '.stg2-qt{font-size:1.05rem;font-weight:900;line-height:1.9;margin-bottom:14px;}'+
+      '.stg2-cs{display:grid;gap:9px;}'+
+      '.stg2-c{font-family:inherit;font-size:.95rem;font-weight:700;color:#f0f4ff;background:#1a2235;'+
+        'border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .15s;text-align:left;}'+
+      '.stg2-c:hover{border-color:#c8a84b;background:#222c45;}'+
+      '.stg2-c.ok{background:#1d4a2a;border-color:#2ecc71;}'+
+      '.stg2-c.ng{background:#4a1d1d;border-color:#c0392b;}'+
+      '.stg2-c:disabled{cursor:default;}'+
+      '.stg2-fb{margin-top:12px;font-size:.92rem;font-weight:900;line-height:1.8;}'+
+      '.stg2-exp{margin-top:10px;background:rgba(0,0,0,.3);border-left:3px solid #c8a84b;border-radius:8px;'+
+        'padding:9px 13px;font-size:.84rem;color:#cfd8ff;line-height:1.9;font-weight:400;}'+
+      '.stg2-go{margin-top:14px;font-family:inherit;font-weight:900;font-size:.92rem;color:#1a1040;'+
+        'background:linear-gradient(90deg,#c8a84b,#e8c96b);border:none;border-radius:999px;padding:11px 26px;cursor:pointer;}'+
+      '.stg2-go:hover{filter:brightness(1.1);}'+
+      '.stg2-red{position:fixed;inset:0;z-index:99999;pointer-events:none;'+
+        'background:radial-gradient(circle,rgba(255,40,40,.5),rgba(120,0,0,.75));opacity:0;}'+
+      '.stg2-red.on{animation:stg2Red .6s ease forwards;}'+
+      '.stg-qdots{display:flex;gap:4px;margin-top:4px;}'+
+      '.stg-qdot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);}'+
+      '.stg-qdot.ok{background:linear-gradient(135deg,#c8a84b,#e8c96b);border-color:#fff3c4;box-shadow:0 0 6px rgba(232,201,107,.8);}'+
+      '.stg-qdot.ng{background:#555;border-color:#777;}';
+    document.head.appendChild(st);
+  }
+
+  /* ── 遭遇演出（ボス戦と同格のオープニング） ── */
+  function showIntro(pg,idx,onStart){
+    var mode=isExp?'exp':(TRIAL?'trial':'battle');
+    var ov=document.createElement('div');
+    ov.className='stg2-ov '+mode;
+    var R=ROMAN[idx]||String(idx+1);
+    var h='<div class="stg2-inner">';
+    if(isExp){
+      h+='<div class="stg2-label">EXPEDITION '+R+' ── 遺跡探索</div>'+
+        '<div class="stg2-emoji">'+pg.me+'</div>'+
+        '<div class="stg2-name">'+pg.st+'</div>'+
+        '<div class="stg2-line" style="animation-delay:.3s">この遺跡には、スキル『'+pg.dn+'』が封印されている。</div>'+
+        '<div class="stg2-line" style="animation-delay:1s">'+pg.fl+'</div>'+
+        '<div class="stg2-line" style="animation-delay:1.7s">碑文を読み解き、解読率100%でスキルを会得せよ。</div>'+
+        '<div><button class="stg2-btn" type="button">🔦 探索を開始する</button></div>';
+    }else if(TRIAL){
+      h+='<div class="stg2-label">試練 '+R+'</div>'+
+        '<div class="stg2-emoji">'+pg.me+'</div>'+
+        '<div class="stg2-name">'+pg.st+'</div>'+
+        '<div class="stg2-line" style="animation-delay:.3s">'+pg.mn+'が、静かにお前を見ている。</div>'+
+        '<div class="stg2-line" style="animation-delay:1.1s">──「理解した」と、言い切れるか。</div>'+
+        '<div class="stg2-line" style="animation-delay:1.9s">3つの問いが、それを試す。</div>'+
+        '<div><button class="stg2-btn" type="button">試練に踏み込む</button></div>';
+    }else{
+      h+='<div class="stg2-label">STAGE '+(idx+1)+'</div>'+
+        '<div class="stg2-emoji">'+pg.me+'</div>'+
+        '<div class="stg2-name">'+pg.st+'</div>'+
+        '<div class="stg2-line" style="animation-delay:.3s">'+pg.mn+(KIDS?'が あらわれた！':'が現れた！')+'</div>'+
+        '<div class="stg2-mis">'+(KIDS
+          ?'📖 よむ ＝ こうげき<br>🖐 さわる ＝ こうげき<br>⚔️ 3つの もんだいに かつ ＝ ひっさつわざ'
+          :'📖 読む ＝ 攻撃<br>🖐 操作する ＝ 攻撃<br>⚔️ 3つの問いを制する ＝ 必殺技')+'</div>'+
+        '<div><button class="stg2-btn" type="button">⚔️ '+(KIDS?'たたかう！':'戦闘開始')+'</button></div>';
+    }
+    h+='<button class="stg2-skip" type="button">'+(KIDS?'えんしゅつを とばして よむ':'演出を飛ばして読む')+'</button></div>';
+    ov.innerHTML=h;
+    document.documentElement.style.overflow='hidden';
+    document.body.appendChild(ov);
+    if(window.SND) SND.stamp();
+    var doneIntro=false;
+    function go(){
+      if(doneIntro) return;
+      doneIntro=true;
+      document.documentElement.style.overflow='';
+      ov.style.transition='opacity .45s'; ov.style.opacity='0';
+      setTimeout(function(){ ov.remove(); },460);
+      onStart();
+    }
+    ov.querySelector('.stg2-btn').addEventListener('click',function(){ if(window.SND) SND.click(); go(); });
+    ov.querySelector('.stg2-skip').addEventListener('click',go);
+  }
+
+  /* ════ 教材ページ：ステージエンジン v2 ════
+     遭遇演出 → ミッション（読む・さわる・問い）→ チェックポイント戦闘 → 勝利
+     ボス戦と同じ緊張の弧を、通常ステージにも。 */
+  function runStage(pg,idx){
+    css(); css2();
     var doneToday=(localStorage.getItem(dayKey(pg.f))===today);
     var firstClear=!isCleared(pg.f);
-    var isExp=(Z.mode==='explore');
 
     /* 既に今日クリア済み → 小さなバッジだけ */
     if(doneToday){
@@ -828,17 +1093,15 @@
       return;
     }
 
-    /* 入場リボン */
-    var rb=document.createElement('div');
-    rb.className='stg-ribbon'+(isExp?' exp':'');
-    rb.textContent=isExp
-      ?'📜 探索開始 ── '+pg.st
-      :'⚔️ '+pg.st+' ── '+pg.mn+(KIDS?'が あらわれた！':'が現れた！');
-    document.body.appendChild(rb);
-    setTimeout(function(){ rb.remove(); },3300);
+    var qsArr=QS[ZONE+'/'+pg.f]||[];
+    var MAX=isExp?110:130;
+    var hp=MAX;
+    var perfect=0;
+    var questDone=[];           /* 'ok' | 'ng' */
+    var started=false, busy=false, done=false;
+    var startT=Date.now();
 
-    /* ウィジェット */
-    var hp=100;
+    /* ── ウィジェット ── */
     var w=document.createElement('div');
     if(isExp){
       w.className='stg-w exp';
@@ -847,6 +1110,7 @@
         '<div class="stg-info">'+
           '<div class="stg-name">'+pg.st+'</div>'+
           '<div class="stg-sub" id="stgSub">解読率 0%</div>'+
+          '<div class="stg-qdots" id="stgDots"></div>'+
         '</div>';
     }else{
       w.className='stg-w';
@@ -855,25 +1119,35 @@
         '<div class="stg-info">'+
           '<div class="stg-name">'+pg.mn+'</div>'+
           '<div class="stg-hpbar"><div class="stg-hpfill" id="stgHp"></div></div>'+
-          '<div class="stg-sub" id="stgSub">'+(KIDS?'よんで・さわって こうげき！':'読む・操作する・解く＝攻撃')+'</div>'+
+          '<div class="stg-sub" id="stgSub">'+(KIDS?'よんで・さわって こうげき！':(TRIAL?'読む・操作する・問いに答えよ':'読む・操作する・解く＝攻撃'))+'</div>'+
+          '<div class="stg-qdots" id="stgDots"></div>'+
         '</div>';
     }
     document.body.appendChild(w);
     var face=document.getElementById('stgFace');
-    var done=false;
 
     function paint(){
       if(isExp){
-        var pct=100-Math.max(0,hp);
+        var pct=Math.round((MAX-Math.max(0,hp))/MAX*100);
         var ring=document.getElementById('stgRing');
         ring.style.background='conic-gradient(#2ee6c8 '+(pct*3.6)+'deg, rgba(46,230,200,.16) 0deg)';
         document.getElementById('stgSub').textContent='解読率 '+pct+'%';
       }else{
-        document.getElementById('stgHp').style.width=Math.max(0,hp)+'%';
+        document.getElementById('stgHp').style.width=Math.max(0,hp)/MAX*100+'%';
         var sub=document.getElementById('stgSub');
-        if(hp<=30) sub.textContent=KIDS?'あとすこし！':'あと一撃か…！';
-        else if(hp<=60) sub.textContent=KIDS?'よわってきた！':'ひるんでいる！';
+        if(hp<=MAX*0.3) sub.textContent=KIDS?'あとすこし！':'あと一撃か…！';
+        else if(hp<=MAX*0.6) sub.textContent=KIDS?'よわってきた！':'ひるんでいる！';
       }
+    }
+    function paintDots(){
+      var d=document.getElementById('stgDots');
+      if(!d) return;
+      if(!qsArr.length){ d.style.display='none'; return; }
+      var h='';
+      for(var i=0;i<qsArr.length;i++){
+        h+='<span class="stg-qdot'+(questDone[i]==='ok'?' ok':(questDone[i]==='ng'?' ng':''))+'"></span>';
+      }
+      d.innerHTML=h;
     }
 
     function floatDmg(n){
@@ -885,6 +1159,7 @@
       setTimeout(function(){ d.remove(); },820);
     }
     function explodeAt(el,emojis){
+      if(!el) return;
       var r=el.getBoundingClientRect();
       var ex=r.left+r.width/2, ey=r.top+r.height/2;
       for(var i=0;i<10;i++){
@@ -915,7 +1190,8 @@
       paint();
       floatDmg(n);
       if(isExp){
-        if(logIdx<EXPLORE_LOGS.length&&(100-hp)>=25*(logIdx+1)){
+        var pct=(MAX-hp)/MAX*100;
+        if(logIdx<EXPLORE_LOGS.length&&pct>=25*(logIdx+1)){
           log(EXPLORE_LOGS[logIdx]); logIdx++;
         }
       }else{
@@ -925,57 +1201,151 @@
       if(hp<=0){ done=true; finish(); }
     }
 
-    /* ── 進行ソース ── */
-    /* ① スクロール到達度 */
-    var marks=[0.15,0.35,0.55,0.75,0.92], mi=0;
+    /* ── チェックポイント戦闘（敵の問い） ── */
+    function ambush(qi){
+      busy=true;
+      var Q=qsArr[qi];
+      if(window.SND){ if(isExp){SND.badge();}else{SND.wrong();} }
+      var wv=document.createElement('div');
+      wv.className='stg2-warn';
+      wv.textContent=isExp?'📜 碑文が浮かび上がった…'
+        :(TRIAL?'──幻影が、問いを放つ'
+        :'⚠️ '+pg.mn+(KIDS?'の こうげき！':'の攻撃！'));
+      document.body.appendChild(wv);
+      setTimeout(function(){ wv.remove(); openQ(); },1000);
+
+      function openQ(){
+        var dim=document.createElement('div'); dim.className='stg2-dim';
+        var card=document.createElement('div');
+        card.className='stg2-q'+(TRIAL?' trial':(isExp?' exp':''));
+        var qlabel=isExp?'碑文の解読 ':(TRIAL?'幻影の問い ':(KIDS?'もんだい ':'敵の問い '));
+        var h='<div class="stg2-qno">'+qlabel+(qi+1)+' / '+qsArr.length+'</div>'+
+          '<div class="stg2-qt">'+Q.q+'</div><div class="stg2-cs">';
+        for(var i=0;i<Q.c.length;i++){
+          h+='<button class="stg2-c" type="button" data-i="'+i+'">'+Q.c[i]+'</button>';
+        }
+        h+='</div><div class="stg2-tail"></div>';
+        card.innerHTML=h;
+        dim.appendChild(card);
+        document.body.appendChild(dim);
+        var answered=false;
+        var btns=card.querySelectorAll('.stg2-c');
+        Array.prototype.forEach.call(btns,function(btn){
+          btn.addEventListener('click',function(){
+            if(answered) return;
+            answered=true;
+            var i=parseInt(btn.getAttribute('data-i'),10);
+            var ok=(i===Q.a);
+            Array.prototype.forEach.call(btns,function(bb){ bb.disabled=true; });
+            var tail=card.querySelector('.stg2-tail');
+            if(ok){
+              btn.classList.add('ok');
+              if(window.SND) SND.correct();
+              tail.innerHTML='<div class="stg2-fb" style="color:#7bd88a;">'+
+                (isExp?'✦ 解読成功。封印が緩む。':(TRIAL?'──正答。幻影が一歩、退いた。':(KIDS?'⚡ かいしんの いちげき！':'⚡ 会心の一撃！')))+'</div>'+
+                (Q.exp?'<div class="stg2-exp">'+Q.exp+'</div>':'')+
+                '<button class="stg2-go" type="button">'+
+                (isExp?'解読を続ける':(TRIAL?'先へ進む':(KIDS?'⚔️ はんげき！':'⚔️ 反撃する')))+'</button>';
+            }else{
+              btn.classList.add('ng');
+              if(btns[Q.a]) btns[Q.a].classList.add('ok');
+              if(window.SND) SND.wrong();
+              card.classList.add('shake');
+              var red=document.createElement('div'); red.className='stg2-red on';
+              document.body.appendChild(red);
+              setTimeout(function(){ red.remove(); },650);
+              if(!isExp){ hp=Math.min(MAX,hp+8); paint(); }
+              tail.innerHTML='<div class="stg2-fb" style="color:#ff9d8a;">'+
+                (isExp?'──解読を誤った。だが、断片は手に入れた。'
+                :(TRIAL?'──幻影に呑まれた。正しい答えを目に焼き付けろ。'
+                :(KIDS?'💥 こうげきを うけた！ '+pg.mn+'は かいふくした…':'💥 被弾！ '+pg.mn+'は回復している…')))+'</div>'+
+                (Q.exp?'<div class="stg2-exp">'+Q.exp+'</div>':'')+
+                '<button class="stg2-go" type="button">'+
+                (isExp?'探索に戻る':(KIDS?'たちあがる':'立ち上がる'))+'</button>';
+            }
+            tail.querySelector('.stg2-go').addEventListener('click',function(){
+              dim.remove();
+              busy=false;
+              questDone[qi]=ok?'ok':'ng';
+              paintDots();
+              if(ok){
+                perfect++;
+                if(!isExp) explodeAt(face,['💥','✨','⭐']);
+                hit(22);
+              }else{
+                hit(isExp?6:10);
+              }
+            });
+          });
+        });
+      }
+    }
+
+    /* 問いのスケジューラ：スクロール到達 or 経過時間で発動 */
+    var THRESH=[0.25,0.5,0.78];
+    var nextQ=0;
     function depth(){
       var h=document.documentElement;
       var total=h.scrollHeight-window.innerHeight;
       if(total<200) return 1;
       return (window.scrollY||h.scrollTop)/total;
     }
+    var qIv=setInterval(function(){
+      if(done||nextQ>=qsArr.length){ clearInterval(qIv); return; }
+      if(!started||busy) return;
+      if(document.visibilityState!=='visible') return;
+      var due=depth()>=(THRESH[nextQ]||0.9)||(Date.now()-startT)>(nextQ+1)*50000;
+      if(due){ var qi=nextQ; nextQ++; ambush(qi); }
+    },1500);
+
+    /* ── 進行ソース ── */
+    /* ① スクロール到達度 */
+    var marks=[0.15,0.35,0.55,0.75,0.92], mi=0;
     var scTm=null;
     window.addEventListener('scroll',function(){
-      if(scTm) return;
+      if(scTm||!started||busy) return;
       scTm=setTimeout(function(){
         scTm=null;
+        if(!started||busy||done) return;
         var d=depth();
-        while(mi<marks.length&&d>=marks[mi]){ hit(12); mi++; }
+        while(mi<marks.length&&d>=marks[mi]){ hit(10); mi++; }
       },350);
     },{passive:true});
     /* 短いページ救済：スクロール不可なら時間で消化 */
     if(document.documentElement.scrollHeight-window.innerHeight<200){
       var shortIv=setInterval(function(){
         if(mi>=marks.length||done){ clearInterval(shortIv); return; }
-        if(document.visibilityState==='visible'){ hit(12); mi++; }
+        if(!started||busy) return;
+        if(document.visibilityState==='visible'){ hit(10); mi++; }
       },8000);
     }
     /* ② 滞在（じっくり読む） */
     var ticks=0;
     var tickIv=setInterval(function(){
       if(done){ clearInterval(tickIv); return; }
+      if(!started||busy) return;
       if(document.visibilityState!=='visible') return;
       if(ticks>=5){ clearInterval(tickIv); return; }
-      ticks++; hit(6);
+      ticks++; hit(4);
     },15000);
     /* ③ 操作（さわって学ぶ） */
     var inter=0, lastInter=0;
     document.addEventListener('pointerdown',function(e){
-      if(done||inter>=5) return;
+      if(done||busy||!started||inter>=5) return;
       var t=e.target;
       if(!t||w.contains(t)) return;
-      if(t.closest&&t.closest('.rpg-snd,.rpg-adv,.stg-w,.site-nav,.stg-clear-ov')) return;
+      if(t.closest&&t.closest('.rpg-snd,.rpg-adv,.stg-w,.site-nav,.stg-clear-ov,.stg2-ov,.stg2-dim')) return;
       if(!(t.closest&&t.closest('button,input,select,canvas,[type=range],.choice-btn'))) return;
       var now=Date.now();
       if(now-lastInter<2000) return;
       lastInter=now; inter++;
-      hit(8);
+      hit(6);
     },true);
-    /* ④ クイズ・パズル正解＝大ダメージ */
+    /* ④ ページ内クイズ・パズル正解＝大ダメージ */
     document.addEventListener('rpg:xp',function(e){
       if(done) return;
       var lb=(e.detail&&e.detail.label)||'';
-      if(lb.indexOf('クイズ')>=0||lb.indexOf('パズル')>=0) hit(15);
+      if(lb.indexOf('クイズ')>=0||lb.indexOf('パズル')>=0) hit(12);
     });
     /* ⑤ モンスターを直接たたく（battleのみ・上限あり） */
     if(!isExp){
@@ -985,7 +1355,7 @@
         var now=Date.now();
         if(now-lastTap<500) return;
         lastTap=now; taps++;
-        hit(2);
+        hit(1);
       });
     }
 
@@ -993,6 +1363,7 @@
     function finish(){
       localStorage.setItem(dayKey(pg.f),today);
       if(firstClear) localStorage.setItem(clearKey(pg.f),'1');
+      var isPerfect=(qsArr.length>0&&perfect===qsArr.length);
       if(isExp){
         var ring=document.getElementById('stgRing');
         ring.classList.add('done');
@@ -1010,13 +1381,16 @@
       if(firstClear) xLabel=isExp?'スキル会得！':(KIDS?'ステージクリア！':'ステージ攻略！');
       else xLabel=KIDS?'ふくしゅうクリア！':'復習クリア！';
       setTimeout(function(){ if(window.RPG) RPG.addXP(xp,xLabel); },1100);
+      if(isPerfect){
+        setTimeout(function(){ if(window.RPG) RPG.addXP(25,KIDS?'パーフェクト！':'完全勝利！'); },2000);
+      }
 
       if(firstClear){
-        setTimeout(function(){ clearPop(); },1600);
+        setTimeout(function(){ clearPop(isPerfect); },1600);
       }
     }
 
-    function clearPop(){
+    function clearPop(isPerfect){
       var allNow=(clearedCount()===Z.pages.length);
       var bossDone=window.RPG&&RPG.bossCleared(Z.boss);
       var bossPage='/math-site/boss_'+Z.boss+'.html';
@@ -1033,6 +1407,11 @@
           '<div class="stg-cl-line">'+pg.mn+'を '+(KIDS?'たおした！':'打ち破った！')+'</div>'+
           '<div class="stg-cl-item">'+pg.di+'</div>'+
           '<div class="stg-cl-iname">'+pg.dn+' を '+(KIDS?'てにいれた！':'手に入れた！')+'</div>';
+      }
+      if(isPerfect){
+        h+='<div class="stg-cl-line" style="color:#ffe9a8;">⚡ '+(KIDS
+          ?'パーフェクト！すべての もんだいに いちげきで せいかい！'
+          :'完全勝利 ── すべての問いに一発で正解。')+'</div>';
       }
       if(allNow&&!bossDone){
         h+='<div class="stg-cl-line" style="margin-top:10px;color:#ffd9c8;">'+(KIDS
@@ -1056,6 +1435,28 @@
     }
 
     paint();
+    paintDots();
+
+    /* ── 開始：遭遇演出（1セッション1回）or 入場リボン ── */
+    function startStage(){
+      started=true;
+      startT=Date.now();
+    }
+    var introKey='stg2_intro_'+ZONE+'_'+pg.f;
+    var noIntro=(pg.f==='kyokugen.html'); /* kyokugen は独自の冒頭演出を完全保護 */
+    if(!noIntro&&!sessionStorage.getItem(introKey)){
+      sessionStorage.setItem(introKey,'1');
+      showIntro(pg,idx,startStage);
+    }else{
+      var rb=document.createElement('div');
+      rb.className='stg-ribbon'+(isExp?' exp':'');
+      rb.textContent=isExp
+        ?'📜 探索開始 ── '+pg.st
+        :'⚔️ '+pg.st+' ── '+pg.mn+(KIDS?'が あらわれた！':'が現れた！');
+      document.body.appendChild(rb);
+      setTimeout(function(){ rb.remove(); },3300);
+      startStage();
+    }
   }
 
   /* ── 起動 ── */
@@ -1063,9 +1464,9 @@
     if(/\/(index\.html)?$/.test(path)){ renderPrep(); return; }
     var m=path.match(/([a-z]+\.html)$/);
     if(!m) return;
-    var pg=null;
-    Z.pages.forEach(function(p){ if(p.f===m[1]) pg=p; });
-    if(pg) runStage(pg);
+    var pg=null, idx=0;
+    Z.pages.forEach(function(p,i){ if(p.f===m[1]){ pg=p; idx=i; } });
+    if(pg) runStage(pg,idx);
   }
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',init);
