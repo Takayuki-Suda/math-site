@@ -40,7 +40,10 @@
       "Bash(awk '{print $7}')",
       "Bash(sed -n '755,768p' chu/moji.html)",
       "Bash(sed -n '863,876p' ko/sankakuhi.html)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8763/math-site/rpg.js)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 14716 //F)"
     ]
   }
 }

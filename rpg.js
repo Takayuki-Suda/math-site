@@ -187,7 +187,7 @@
     if(window.SND) SND.xp();
     var after=levelFor(xp);
     if(after.lv>before.lv){ setTimeout(function(){ levelUpShow(after); },500); }
-    document.dispatchEvent(new CustomEvent('rpg:xp',{detail:{xp:xp,level:after}}));
+    document.dispatchEvent(new CustomEvent('rpg:xp',{detail:{xp:xp,level:after,amount:n,label:label||''}}));
   }
 
   /* ── クイズ連携（連続正解ボーナス付き） ── */
@@ -605,6 +605,468 @@
   }
 
   function init(){ buildStatus(); buildDoors(); buildGate(); enterFlash(); }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+  }else{
+    init();
+  }
+})();
+
+/* ════════════════════════════════════════════════════════
+   ステージ体験システム（通常教材ページ）
+   小・中学生 … ページモンスターとの戦闘（読む・さわる・解く＝攻撃）
+   高校生     … 試練（幻影との戦い＋知識の結晶）
+   大学生     … 遺跡探索（解読率→スキル解放）
+   ゾーンindex … ボス扉の上に「準備状況」パネル
+   localStorage:
+     stage_clear_<zone>_<file> … 初回クリア（装備・スキル獲得）
+     stage_day_<zone>_<file>   … その日のクリア日付
+   ════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  var ZONE=window.RPG.ZONE;
+  if(ZONE==='root') return;
+
+  var STAGES={
+    sho:{mode:'battle',kids:true,boss:1,bossName:'文字式の壁',
+      prepLabel:'ぼうけんのじゅんび ─ そうび',
+      pages:[
+        {f:'kazu.html',    st:'かずの森',         mn:'かぞえムシ',         me:'🐛', di:'🗡️', dn:'はじまりの剣'},
+        {f:'tashizan.html',st:'たしざんの草原',   mn:'プラスライム',       me:'🟢', di:'🛡️', dn:'たしざんの盾'},
+        {f:'hikizan.html', st:'ひきざんの洞窟',   mn:'マイナスコウモリ',   me:'🦇', di:'🪖', dn:'ひきざんのかぶと'},
+        {f:'kuku.html',    st:'九九の火山',       mn:'九九ドラゴン',       me:'🐲', di:'🔥', dn:'九九のほのおの剣'},
+        {f:'bunsu.html',   st:'ぶんすうの湖',     mn:'はんぶんゴースト',   me:'👻', di:'🥾', dn:'ぶんすうのブーツ'},
+        {f:'sankaku.html', st:'さんかくの塔',     mn:'さんかくガーゴイル', me:'🗿', di:'🧤', dn:'さんかくのこて'},
+        {f:'en.html',      st:'まんまる神殿',     mn:'まるまるスピリット', me:'🟡', di:'🪄', dn:'えんのつえ'},
+        {f:'puzzle.html',  st:'パズルの塔',       mn:'パズルキーパー',     me:'🧩', di:'💍', dn:'ちえのゆびわ'}
+      ]},
+    chu:{mode:'battle',kids:false,boss:2,bossName:'関数の壁',
+      prepLabel:'装備 ─ ステージクリアで入手',
+      pages:[
+        {f:'moji.html',       st:'文字式の平原', mn:'シャドウX',             me:'👤', di:'⚔️', dn:'文字の剣'},
+        {f:'houteishiki.html',st:'天秤の谷',     mn:'バランスキメラ',        me:'⚖️', di:'🛡️', dn:'等式の盾'},
+        {f:'ikiji.html',      st:'直線の荒野',   mn:'グラフウルフ',          me:'🐺', di:'🥾', dn:'傾きのブーツ'},
+        {f:'niji.html',       st:'放物線の渓谷', mn:'パラボラファルコン',    me:'🦅', di:'🪶', dn:'放物線の翼'},
+        {f:'sanpei.html',     st:'直角の遺跡',   mn:'ピタゴラスコーピオン',  me:'🦂', di:'💎', dn:'三平方の宝玉'}
+      ]},
+    ko:{mode:'battle',kids:false,trial:true,boss:3,bossName:'εδの壁',
+      prepLabel:'知識の結晶 ─ 試練を越えて集めよ',
+      pages:[
+        {f:'sankakuhi.html',st:'波の試練',   mn:'シヌソイドの幻影', me:'🌊', di:'🔷', dn:'三角関数の結晶'},
+        {f:'bibun.html',    st:'瞬間の試練', mn:'タンジェントの影', me:'⚡', di:'💠', dn:'微分の結晶'},
+        {f:'sekibun.html',  st:'面積の試練', mn:'リーマンの壁兵',   me:'🧱', di:'🧊', dn:'積分の結晶'},
+        {f:'daigaku.html',  st:'亀裂の試練', mn:'大学の門番',       me:'🚪', di:'🔮', dn:'厳密の結晶'},
+        {f:'kyokugen.html', st:'無限の試練', mn:'イプシロンの霧',   me:'🌫️', di:'🌀', dn:'極限の結晶'}
+      ]},
+    dai:{mode:'explore',kids:false,boss:4,bossName:'抽象の壁',
+      prepLabel:'解放スキル ─ 探索で会得せよ',
+      pages:[
+        {f:'senkei.html',  st:'線形空間の遺跡',   me:'🧮', di:'🧮', dn:'次元定理',         fl:'rank + nullity = n ── 空間の骨格を見抜く力'},
+        {f:'gun.html',     st:'対称性の聖域',     me:'🔁', di:'🔁', dn:'群の公理',         fl:'結合・単位元・逆元 ── 構造を見る第三の眼'},
+        {f:'fukuso.html',  st:'複素平面の海域',   me:'🌀', di:'🌀', dn:'留数定理',         fl:'実軸では見えない流れを、虚軸が教える'},
+        {f:'fourier.html', st:'周波数の図書館',   me:'🎵', di:'🎵', dn:'フーリエ展開',     fl:'どんな波も、純音の和に分解できる'},
+        {f:'seisuron.html',st:'素数の鉱脈',       me:'🔢', di:'🔢', dn:'合同式',           fl:'数の世界を mod p で切り出す技'},
+        {f:'tahensuu.html',st:'多様体の高原',     me:'🌐', di:'🌐', dn:'ストークスの定理', fl:'境界の情報が、内部のすべてを語る'}
+      ]}
+  };
+  var Z=STAGES[ZONE];
+  if(!Z) return;
+  var KIDS=!!Z.kids;
+  var path=location.pathname;
+  var today=new Date().toISOString().slice(0,10);
+
+  function clearKey(f){ return 'stage_clear_'+ZONE+'_'+f; }
+  function dayKey(f){ return 'stage_day_'+ZONE+'_'+f; }
+  function isCleared(f){ return localStorage.getItem(clearKey(f))==='1'; }
+  function clearedCount(){
+    var n=0; Z.pages.forEach(function(p){ if(isCleared(p.f)) n++; });
+    return n;
+  }
+
+  /* ── スタイル ── */
+  function css(){
+    if(document.getElementById('stgCss')) return;
+    var st=document.createElement('style');
+    st.id='stgCss';
+    st.textContent=
+      '@keyframes stgShake{0%,100%{transform:translate(0,0) rotate(0);}25%{transform:translate(-3px,1px) rotate(-6deg);}'+
+        '50%{transform:translate(3px,-2px) rotate(5deg);}75%{transform:translate(-2px,2px) rotate(-3deg);}}'+
+      '@keyframes stgDmg{0%{transform:translateY(0);opacity:1;}100%{transform:translateY(-34px);opacity:0;}}'+
+      '@keyframes stgDie{0%{transform:scale(1) rotate(0);opacity:1;}40%{transform:scale(1.25) rotate(8deg);}100%{transform:scale(.1) rotate(180deg);opacity:0;}}'+
+      '@keyframes stgPop{0%{transform:scale(.4);opacity:0;}60%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}'+
+      '@keyframes stgRibbon{0%{transform:translate(-50%,-130%);opacity:0;}12%{transform:translate(-50%,0);opacity:1;}'+
+        '85%{transform:translate(-50%,0);opacity:1;}100%{transform:translate(-50%,-130%);opacity:0;}}'+
+      '@keyframes stgPart{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0;}}'+
+      '@keyframes stgLogIn{0%{opacity:0;transform:translateY(8px);}15%{opacity:1;transform:translateY(0);}'+
+        '80%{opacity:1;}100%{opacity:0;transform:translateY(-6px);}}'+
+      '@keyframes stgGlowP{from{box-shadow:0 0 10px rgba(200,168,75,.4);}to{box-shadow:0 0 26px rgba(200,168,75,.9);}}'+
+      '@keyframes stgRingDone{0%{filter:brightness(1);}50%{filter:brightness(2.2);}100%{filter:brightness(1);}}'+
+      '.stg-w{position:fixed;left:14px;bottom:14px;z-index:99960;display:flex;align-items:center;gap:9px;'+
+        'background:rgba(10,8,26,.92);border:2px solid #c8a84b;border-radius:999px;padding:7px 14px 7px 8px;'+
+        'font-family:"Noto Sans JP",sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.55);max-width:235px;}'+
+      '.stg-w.gone{transition:opacity .6s,transform .6s;opacity:0;transform:translateY(20px);pointer-events:none;}'+
+      '.stg-face{width:46px;height:46px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;'+
+        'font-size:1.65rem;background:radial-gradient(circle at 35% 30%,#3a2d5a,#14102a);border:2px solid rgba(200,168,75,.6);'+
+        'cursor:pointer;user-select:none;-webkit-user-select:none;}'+
+      '.stg-face.hit{animation:stgShake .4s ease;}'+
+      '.stg-face.die{animation:stgDie .9s ease forwards;}'+
+      '.stg-info{min-width:96px;}'+
+      '.stg-name{font-size:.66rem;font-weight:900;color:#ffd9c8;white-space:nowrap;letter-spacing:.04em;}'+
+      '.stg-hpbar{height:7px;border-radius:999px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);overflow:hidden;margin:3px 0 2px;}'+
+      '.stg-hpfill{height:100%;border-radius:999px;width:100%;background:linear-gradient(90deg,#c0392b,#e8884b);transition:width .45s cubic-bezier(.22,1,.36,1);}'+
+      '.stg-sub{font-size:.6rem;color:#8899aa;white-space:nowrap;}'+
+      '.stg-dmg{position:absolute;top:-6px;left:30px;font-weight:900;font-size:.95rem;color:#ffe9a8;'+
+        'text-shadow:0 0 8px rgba(255,180,80,.9);animation:stgDmg .8s ease forwards;pointer-events:none;}'+
+      '.stg-part{position:fixed;font-size:1rem;z-index:99961;pointer-events:none;animation:stgPart .8s ease forwards;}'+
+      '.stg-w.exp{border-color:#2ee6c8;border-radius:16px;}'+
+      '.stg-ring{width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;}'+
+      '.stg-ring-in{width:38px;height:38px;border-radius:50%;background:#0a1420;display:flex;align-items:center;justify-content:center;font-size:1.25rem;}'+
+      '.stg-ring.done{animation:stgRingDone 1.2s ease;}'+
+      '.stg-w.exp .stg-name{color:#bdfff2;}'+
+      '.stg-log{position:fixed;left:18px;bottom:84px;z-index:99959;font-family:"Noto Sans JP",sans-serif;'+
+        'font-size:.72rem;font-weight:700;color:#9fe8da;text-shadow:0 0 8px rgba(46,230,200,.6);'+
+        'animation:stgLogIn 2.8s ease forwards;pointer-events:none;}'+
+      '.stg-ribbon{position:fixed;top:64px;left:50%;transform:translate(-50%,-130%);z-index:99950;'+
+        'background:linear-gradient(135deg,#311b92,#1a2a6c);border:2px solid #c8a84b;color:#ffe9a8;'+
+        'font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:.85rem;padding:9px 22px;border-radius:999px;'+
+        'box-shadow:0 6px 22px rgba(0,0,0,.55);animation:stgRibbon 3.2s ease forwards;pointer-events:none;'+
+        'max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
+      '.stg-ribbon.exp{background:linear-gradient(135deg,#04302a,#0a1420);border-color:#2ee6c8;color:#bdfff2;}'+
+      '.stg-clear-ov{position:fixed;inset:0;z-index:99992;display:flex;align-items:center;justify-content:center;'+
+        'background:rgba(5,4,14,.78);padding:24px;cursor:pointer;}'+
+      '.stg-clear-card{max-width:430px;width:100%;text-align:center;background:linear-gradient(135deg,#1a1040,#241a52 55%,#0f1f4a);'+
+        'border:2px solid #c8a84b;border-radius:20px;padding:28px 22px;font-family:"Noto Sans JP",sans-serif;'+
+        'box-shadow:0 0 40px rgba(200,168,75,.35);animation:stgPop .5s cubic-bezier(.34,1.56,.64,1);}'+
+      '.stg-clear-card.exp{background:linear-gradient(135deg,#04302a,#062430 55%,#0a1420);border-color:#2ee6c8;'+
+        'box-shadow:0 0 40px rgba(46,230,200,.3);}'+
+      '.stg-cl-title{font-size:1.35rem;font-weight:900;color:#ffe9a8;letter-spacing:.12em;'+
+        'text-shadow:0 0 18px rgba(255,217,94,.8);margin-bottom:8px;}'+
+      '.stg-clear-card.exp .stg-cl-title{color:#bdfff2;text-shadow:0 0 18px rgba(46,230,200,.8);}'+
+      '.stg-cl-line{font-size:.85rem;color:#cfd8ff;margin-bottom:14px;line-height:1.9;}'+
+      '.stg-cl-item{font-size:2.6rem;margin:6px 0 2px;filter:drop-shadow(0 0 14px rgba(232,201,107,.7));}'+
+      '.stg-cl-iname{font-size:1rem;font-weight:900;color:#e8c96b;margin-bottom:4px;}'+
+      '.stg-clear-card.exp .stg-cl-iname{color:#2ee6c8;}'+
+      '.stg-cl-fl{font-size:.78rem;color:#8899aa;line-height:1.9;margin-bottom:6px;}'+
+      '.stg-cl-boss{display:inline-block;margin-top:12px;text-decoration:none;font-weight:900;font-size:.92rem;color:#fff;'+
+        'background:linear-gradient(135deg,#8a2020,#c0392b);border:1px solid #ffb09a;border-radius:999px;padding:12px 28px;'+
+        'animation:stgGlowP 1.4s ease-in-out infinite alternate;}'+
+      '.stg-cl-close{font-size:.68rem;color:#667;margin-top:12px;}'+
+      '.stg-prep{background:#10142a;border:1px solid rgba(200,168,75,.4);border-radius:14px;'+
+        'padding:16px 16px 13px;margin-bottom:16px;font-family:"Noto Sans JP",sans-serif;}'+
+      '.stg-prep.exp{border-color:rgba(46,230,200,.45);}'+
+      '.stg-prep-label{font-size:.66rem;font-weight:700;letter-spacing:.18em;color:#c8a84b;margin-bottom:10px;}'+
+      '.stg-prep.exp .stg-prep-label{color:#2ee6c8;}'+
+      '.stg-prep-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}'+
+      '.stg-slot{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;'+
+        'font-size:1.35rem;background:#0a0e1a;border:1.5px solid rgba(255,255,255,.14);}'+
+      '.stg-slot.got{border-color:rgba(200,168,75,.7);box-shadow:0 0 10px rgba(200,168,75,.35);}'+
+      '.stg-prep.exp .stg-slot.got{border-color:rgba(46,230,200,.7);box-shadow:0 0 10px rgba(46,230,200,.35);}'+
+      '.stg-slot.no{filter:grayscale(1) opacity(.35);}'+
+      '.stg-prep-txt{font-size:.76rem;color:#8899aa;line-height:1.8;}'+
+      '.stg-prep-txt em{color:#e8c96b;font-style:normal;font-weight:900;}'+
+      '.stg-prep-txt.full{color:#ffd9c8;font-weight:700;}'+
+      '@media(max-width:480px){.stg-w{max-width:200px;padding:6px 10px 6px 6px;}.stg-info{min-width:80px;}}';
+    document.head.appendChild(st);
+  }
+
+  /* ════ index：準備状況パネル ════ */
+  function renderPrep(){
+    var host=document.getElementById('rpgBossDoor');
+    if(!host) return;
+    css();
+    var wrap=host.querySelector('.rpg-bossdoor');
+    var n=clearedCount(), total=Z.pages.length;
+    var isExp=(Z.mode==='explore');
+    var box=document.createElement('div');
+    box.className='stg-prep'+(isExp?' exp':'');
+    var h='<div class="stg-prep-label">'+Z.prepLabel+'</div><div class="stg-prep-row">';
+    Z.pages.forEach(function(p){
+      var got=isCleared(p.f);
+      h+='<a class="stg-slot '+(got?'got':'no')+'" href="'+p.f+'" title="'+
+        (got?p.dn+'（'+p.st+'）':'？？？（'+p.st+'でクリア）')+'" style="text-decoration:none;">'+
+        (got?p.di:'❓')+'</a>';
+    });
+    h+='</div>';
+    var word=isExp?'スキル':(ZONE==='ko'?'結晶':'そうび');
+    if(n===total){
+      h+='<div class="stg-prep-txt full">🔥 '+(KIDS
+        ?word+'が ぜんぶ そろった！ボス「'+Z.bossName+'」を たおせるはずだ！'
+        :(isExp?'全スキル解放──「'+Z.bossName+'」に挑む準備は整った。'
+               :word+'がすべて揃った。「'+Z.bossName+'」に挑む準備は整った。'))+'</div>';
+    }else if(n>0){
+      h+='<div class="stg-prep-txt">'+word+' <em>'+n+'</em> / '+total+
+        (KIDS?' ── ステージをクリアして あつめよう':' ── 各ステージのクリアで入手できる')+'</div>';
+    }else{
+      h+='<div class="stg-prep-txt">'+(KIDS
+        ?'ステージを クリアすると '+word+'が もらえるよ'
+        :(isExp?'各教材を探索しきるとスキルを会得できる':'各ステージをクリアすると'+word+'を入手できる'))+'</div>';
+    }
+    box.innerHTML=h;
+    if(wrap&&wrap.firstChild){
+      wrap.insertBefore(box,wrap.children[1]||null);
+    }else{
+      host.appendChild(box);
+    }
+  }
+
+  /* ════ 教材ページ：ステージエンジン ════ */
+  function runStage(pg){
+    css();
+    var doneToday=(localStorage.getItem(dayKey(pg.f))===today);
+    var firstClear=!isCleared(pg.f);
+    var isExp=(Z.mode==='explore');
+
+    /* 既に今日クリア済み → 小さなバッジだけ */
+    if(doneToday){
+      var b=document.createElement('div');
+      b.className='stg-w'+(isExp?' exp':'');
+      b.style.opacity='.82';
+      b.innerHTML='<div class="stg-face" style="cursor:default;">'+(isExp?pg.di:'👑')+'</div>'+
+        '<div class="stg-info"><div class="stg-name">'+(isExp?'【'+pg.dn+'】会得済み':pg.st+(KIDS?' クリアずみ':' 攻略済み'))+'</div>'+
+        '<div class="stg-sub">'+(KIDS?'また あした あそぼう！':(isExp?'今日の探索は完了':'本日の攻略済み'))+'</div></div>';
+      document.body.appendChild(b);
+      return;
+    }
+
+    /* 入場リボン */
+    var rb=document.createElement('div');
+    rb.className='stg-ribbon'+(isExp?' exp':'');
+    rb.textContent=isExp
+      ?'📜 探索開始 ── '+pg.st
+      :'⚔️ '+pg.st+' ── '+pg.mn+(KIDS?'が あらわれた！':'が現れた！');
+    document.body.appendChild(rb);
+    setTimeout(function(){ rb.remove(); },3300);
+
+    /* ウィジェット */
+    var hp=100;
+    var w=document.createElement('div');
+    if(isExp){
+      w.className='stg-w exp';
+      w.innerHTML=
+        '<div class="stg-ring" id="stgRing"><div class="stg-ring-in" id="stgFace">'+pg.me+'</div></div>'+
+        '<div class="stg-info">'+
+          '<div class="stg-name">'+pg.st+'</div>'+
+          '<div class="stg-sub" id="stgSub">解読率 0%</div>'+
+        '</div>';
+    }else{
+      w.className='stg-w';
+      w.innerHTML=
+        '<div class="stg-face" id="stgFace" title="'+(KIDS?'たたかう！':'攻撃する')+'">'+pg.me+'</div>'+
+        '<div class="stg-info">'+
+          '<div class="stg-name">'+pg.mn+'</div>'+
+          '<div class="stg-hpbar"><div class="stg-hpfill" id="stgHp"></div></div>'+
+          '<div class="stg-sub" id="stgSub">'+(KIDS?'よんで・さわって こうげき！':'読む・操作する・解く＝攻撃')+'</div>'+
+        '</div>';
+    }
+    document.body.appendChild(w);
+    var face=document.getElementById('stgFace');
+    var done=false;
+
+    function paint(){
+      if(isExp){
+        var pct=100-Math.max(0,hp);
+        var ring=document.getElementById('stgRing');
+        ring.style.background='conic-gradient(#2ee6c8 '+(pct*3.6)+'deg, rgba(46,230,200,.16) 0deg)';
+        document.getElementById('stgSub').textContent='解読率 '+pct+'%';
+      }else{
+        document.getElementById('stgHp').style.width=Math.max(0,hp)+'%';
+        var sub=document.getElementById('stgSub');
+        if(hp<=30) sub.textContent=KIDS?'あとすこし！':'あと一撃か…！';
+        else if(hp<=60) sub.textContent=KIDS?'よわってきた！':'ひるんでいる！';
+      }
+    }
+
+    function floatDmg(n){
+      var d=document.createElement('span');
+      d.className='stg-dmg';
+      d.textContent=isExp?'+'+n+'%':'-'+n;
+      if(isExp) d.style.color='#9fe8da';
+      w.appendChild(d);
+      setTimeout(function(){ d.remove(); },820);
+    }
+    function explodeAt(el,emojis){
+      var r=el.getBoundingClientRect();
+      var ex=r.left+r.width/2, ey=r.top+r.height/2;
+      for(var i=0;i<10;i++){
+        var p=document.createElement('span');
+        p.className='stg-part';
+        p.textContent=emojis[i%emojis.length];
+        var a=Math.PI*2*i/10;
+        p.style.left=ex+'px'; p.style.top=ey+'px';
+        p.style.setProperty('--dx',(Math.cos(a)*(40+Math.random()*40))+'px');
+        p.style.setProperty('--dy',(Math.sin(a)*(40+Math.random()*40)-20)+'px');
+        document.body.appendChild(p);
+        (function(pp){ setTimeout(function(){ pp.remove(); },850); })(p);
+      }
+    }
+    function log(text){
+      var l=document.createElement('div');
+      l.className='stg-log';
+      l.textContent=text;
+      document.body.appendChild(l);
+      setTimeout(function(){ l.remove(); },2900);
+    }
+
+    var EXPLORE_LOGS=['✦ 断章を解読した','✦ 構造の輪郭が見えてきた','✦ 古い証明の跡を見つけた','✦ 核心に近づいている'];
+    var logIdx=0;
+    function hit(n){
+      if(done) return;
+      hp-=n;
+      paint();
+      floatDmg(n);
+      if(isExp){
+        if(logIdx<EXPLORE_LOGS.length&&(100-hp)>=25*(logIdx+1)){
+          log(EXPLORE_LOGS[logIdx]); logIdx++;
+        }
+      }else{
+        face.classList.remove('hit'); void face.offsetWidth; face.classList.add('hit');
+        if(window.SND) SND.click();
+      }
+      if(hp<=0){ done=true; finish(); }
+    }
+
+    /* ── 進行ソース ── */
+    /* ① スクロール到達度 */
+    var marks=[0.15,0.35,0.55,0.75,0.92], mi=0;
+    function depth(){
+      var h=document.documentElement;
+      var total=h.scrollHeight-window.innerHeight;
+      if(total<200) return 1;
+      return (window.scrollY||h.scrollTop)/total;
+    }
+    var scTm=null;
+    window.addEventListener('scroll',function(){
+      if(scTm) return;
+      scTm=setTimeout(function(){
+        scTm=null;
+        var d=depth();
+        while(mi<marks.length&&d>=marks[mi]){ hit(12); mi++; }
+      },350);
+    },{passive:true});
+    /* 短いページ救済：スクロール不可なら時間で消化 */
+    if(document.documentElement.scrollHeight-window.innerHeight<200){
+      var shortIv=setInterval(function(){
+        if(mi>=marks.length||done){ clearInterval(shortIv); return; }
+        if(document.visibilityState==='visible'){ hit(12); mi++; }
+      },8000);
+    }
+    /* ② 滞在（じっくり読む） */
+    var ticks=0;
+    var tickIv=setInterval(function(){
+      if(done){ clearInterval(tickIv); return; }
+      if(document.visibilityState!=='visible') return;
+      if(ticks>=5){ clearInterval(tickIv); return; }
+      ticks++; hit(6);
+    },15000);
+    /* ③ 操作（さわって学ぶ） */
+    var inter=0, lastInter=0;
+    document.addEventListener('pointerdown',function(e){
+      if(done||inter>=5) return;
+      var t=e.target;
+      if(!t||w.contains(t)) return;
+      if(t.closest&&t.closest('.rpg-snd,.rpg-adv,.stg-w,.site-nav,.stg-clear-ov')) return;
+      if(!(t.closest&&t.closest('button,input,select,canvas,[type=range],.choice-btn'))) return;
+      var now=Date.now();
+      if(now-lastInter<2000) return;
+      lastInter=now; inter++;
+      hit(8);
+    },true);
+    /* ④ クイズ・パズル正解＝大ダメージ */
+    document.addEventListener('rpg:xp',function(e){
+      if(done) return;
+      var lb=(e.detail&&e.detail.label)||'';
+      if(lb.indexOf('クイズ')>=0||lb.indexOf('パズル')>=0) hit(15);
+    });
+    /* ⑤ モンスターを直接たたく（battleのみ・上限あり） */
+    if(!isExp){
+      var taps=0, lastTap=0;
+      face.addEventListener('pointerdown',function(){
+        if(done||taps>=10) return;
+        var now=Date.now();
+        if(now-lastTap<500) return;
+        lastTap=now; taps++;
+        hit(2);
+      });
+    }
+
+    /* ── クリア ── */
+    function finish(){
+      localStorage.setItem(dayKey(pg.f),today);
+      if(firstClear) localStorage.setItem(clearKey(pg.f),'1');
+      if(isExp){
+        var ring=document.getElementById('stgRing');
+        ring.classList.add('done');
+        if(window.SND) SND.badge();
+        explodeAt(ring,['✦','✧','💠']);
+      }else{
+        if(window.SND) SND.clear();
+        face.classList.add('die');
+        explodeAt(face,['💥','✨','⭐']);
+      }
+      setTimeout(function(){ w.classList.add('gone'); setTimeout(function(){ w.remove(); },650); },900);
+
+      var xp=firstClear?(isExp?60:40):10;
+      var xLabel;
+      if(firstClear) xLabel=isExp?'スキル会得！':(KIDS?'ステージクリア！':'ステージ攻略！');
+      else xLabel=KIDS?'ふくしゅうクリア！':'復習クリア！';
+      setTimeout(function(){ if(window.RPG) RPG.addXP(xp,xLabel); },1100);
+
+      if(firstClear){
+        setTimeout(function(){ clearPop(); },1600);
+      }
+    }
+
+    function clearPop(){
+      var allNow=(clearedCount()===Z.pages.length);
+      var bossDone=window.RPG&&RPG.bossCleared(Z.boss);
+      var bossPage='/math-site/boss_'+Z.boss+'.html';
+      var ov=document.createElement('div');
+      ov.className='stg-clear-ov';
+      var h='<div class="stg-clear-card'+(isExp?' exp':'')+'">';
+      if(isExp){
+        h+='<div class="stg-cl-title">スキル解放</div>'+
+          '<div class="stg-cl-item">'+pg.di+'</div>'+
+          '<div class="stg-cl-iname">【'+pg.dn+'】</div>'+
+          '<div class="stg-cl-fl">'+pg.fl+'</div>';
+      }else{
+        h+='<div class="stg-cl-title">⭐ '+(KIDS?'ステージクリア！':'ステージ攻略！')+'</div>'+
+          '<div class="stg-cl-line">'+pg.mn+'を '+(KIDS?'たおした！':'打ち破った！')+'</div>'+
+          '<div class="stg-cl-item">'+pg.di+'</div>'+
+          '<div class="stg-cl-iname">'+pg.dn+' を '+(KIDS?'てにいれた！':'手に入れた！')+'</div>';
+      }
+      if(allNow&&!bossDone){
+        h+='<div class="stg-cl-line" style="margin-top:10px;color:#ffd9c8;">'+(KIDS
+          ?'🔥 そうびが ぜんぶ そろった！<br>ボスを たおせるのは いまだ！'
+          :(isExp?'全スキルを解放した。<br>「'+Z.bossName+'」に挑む準備は整った。'
+            :'すべて揃った。<br>「'+Z.bossName+'」に挑む準備は整った。'))+'</div>'+
+          '<a class="stg-cl-boss" href="'+bossPage+'">⚔️ ボス「'+Z.bossName+'」に挑む</a>';
+      }else if(!bossDone){
+        var remain=Z.pages.length-clearedCount();
+        h+='<div class="stg-cl-fl" style="margin-top:8px;">'+(KIDS
+          ?'ボス「'+Z.bossName+'」までに あと '+remain+'ステージ！'
+          :'ボス「'+Z.bossName+'」戦まで、残り'+remain+'ステージ。')+'</div>';
+      }
+      h+='<div class="stg-cl-close">'+(KIDS?'タップでとじる':'クリックで閉じる')+'</div></div>';
+      ov.innerHTML=h;
+      document.body.appendChild(ov);
+      if(window.SND&&!isExp) SND.stamp();
+      function close(){ ov.style.transition='opacity .4s'; ov.style.opacity='0'; setTimeout(function(){ ov.remove(); },420); }
+      ov.addEventListener('click',function(e){ if(!(e.target.closest&&e.target.closest('a'))) close(); });
+      setTimeout(close,9000);
+    }
+
+    paint();
+  }
+
+  /* ── 起動 ── */
+  function init(){
+    if(/\/(index\.html)?$/.test(path)){ renderPrep(); return; }
+    var m=path.match(/([a-z]+\.html)$/);
+    if(!m) return;
+    var pg=null;
+    Z.pages.forEach(function(p){ if(p.f===m[1]) pg=p; });
+    if(pg) runStage(pg);
+  }
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',init);
   }else{
