@@ -1018,7 +1018,40 @@
       '.stg-qdots{display:flex;gap:4px;margin-top:4px;}'+
       '.stg-qdot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);}'+
       '.stg-qdot.ok{background:linear-gradient(135deg,#c8a84b,#e8c96b);border-color:#fff3c4;box-shadow:0 0 6px rgba(232,201,107,.8);}'+
-      '.stg-qdot.ng{background:#555;border-color:#777;}';
+      '.stg-qdot.ng{background:#555;border-color:#777;}'+
+      /* 雰囲気レイヤー：ページ全体を「ステージの中」に */
+      '.stg3-atmo{position:fixed;inset:0;pointer-events:none;z-index:99940;}'+
+      '.stg3-atmo.battle{background:radial-gradient(ellipse at 50% 38%,transparent 52%,rgba(120,20,40,.42) 130%);}'+
+      '.stg3-atmo.trial{background:radial-gradient(ellipse at 50% 38%,transparent 52%,rgba(58,45,122,.45) 130%);}'+
+      '.stg3-atmo.exp{background:radial-gradient(ellipse at 50% 38%,transparent 52%,rgba(10,90,80,.4) 130%);}'+
+      /* 戦闘バー：画面下に常駐するステージHUD */
+      '.stg3-bar{position:fixed;left:0;right:0;bottom:0;z-index:99960;'+
+        'background:linear-gradient(180deg,rgba(12,9,28,.94),rgba(8,6,20,.99));'+
+        'border-top:2px solid #8a2020;box-shadow:0 -6px 24px rgba(0,0,0,.55);'+
+        'font-family:"Noto Sans JP",sans-serif;padding:8px 14px;}'+
+      '.stg3-bar.trial{border-top-color:#5a4ba8;}'+
+      '.stg3-bar.exp{border-top-color:#13a08a;}'+
+      '.stg3-bar.clearbar{border-top-color:#c8a84b;box-shadow:0 -6px 24px rgba(200,168,75,.25);}'+
+      '.stg3-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;position:relative;}'+
+      '.stg3-face{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;'+
+        'font-size:1.55rem;background:radial-gradient(circle at 35% 30%,#3a2d5a,#14102a);'+
+        'border:2px solid rgba(200,168,75,.6);cursor:pointer;user-select:none;-webkit-user-select:none;}'+
+      '.stg3-face.hit{animation:stgShake .4s ease;}'+
+      '.stg3-face.die{animation:stgDie .9s ease forwards;}'+
+      '.stg3-mid{flex:1;min-width:0;}'+
+      '.stg3-top{display:flex;align-items:baseline;gap:8px;white-space:nowrap;overflow:hidden;}'+
+      '.stg3-stage{font-size:.6rem;font-weight:700;letter-spacing:.12em;color:#c8a84b;flex-shrink:0;}'+
+      '.stg3-bar.trial .stg3-stage{color:#a99ee0;}'+
+      '.stg3-bar.exp .stg3-stage{color:#2ee6c8;}'+
+      '.stg3-name{font-size:.8rem;font-weight:900;color:#ffd9c8;overflow:hidden;text-overflow:ellipsis;}'+
+      '.stg3-hpbar{height:8px;border-radius:999px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);overflow:hidden;margin-top:4px;}'+
+      '.stg3-hpfill{height:100%;border-radius:999px;width:100%;background:linear-gradient(90deg,#c0392b,#e8884b);'+
+        'transition:width .45s cubic-bezier(.22,1,.36,1);}'+
+      '.stg3-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}'+
+      '.stg3-sub{font-size:.62rem;color:#8899aa;white-space:nowrap;}'+
+      '.stg3-bar .stg-dmg{top:-22px;left:54px;}'+
+      '@media(max-width:480px){.stg3-stage{display:none;}.stg3-face{width:38px;height:38px;font-size:1.3rem;}'+
+        '.stg3-sub{max-width:120px;overflow:hidden;text-overflow:ellipsis;}}';
     document.head.appendChild(st);
   }
 
@@ -1080,16 +1113,31 @@
     css(); css2();
     var doneToday=(localStorage.getItem(dayKey(pg.f))===today);
     var firstClear=!isCleared(pg.f);
+    var noIntro=(pg.f==='kyokugen.html'); /* kyokugen は独自の冒頭演出を完全保護 */
+    var mode=isExp?'exp':(TRIAL?'trial':'battle');
 
-    /* 既に今日クリア済み → 小さなバッジだけ */
+    /* 雰囲気レイヤー：ページ全体を薄くゾーン色で包む */
+    if(!noIntro){
+      var atmo=document.createElement('div');
+      atmo.className='stg3-atmo '+mode;
+      document.body.appendChild(atmo);
+    }
+    document.body.style.paddingBottom='84px';
+
+    /* 既に今日クリア済み → 金色の制圧済みバーを常駐 */
     if(doneToday){
-      var b=document.createElement('div');
-      b.className='stg-w'+(isExp?' exp':'');
-      b.style.opacity='.82';
-      b.innerHTML='<div class="stg-face" style="cursor:default;">'+(isExp?pg.di:'👑')+'</div>'+
-        '<div class="stg-info"><div class="stg-name">'+(isExp?'【'+pg.dn+'】会得済み':pg.st+(KIDS?' クリアずみ':' 攻略済み'))+'</div>'+
-        '<div class="stg-sub">'+(KIDS?'また あした あそぼう！':(isExp?'今日の探索は完了':'本日の攻略済み'))+'</div></div>';
-      document.body.appendChild(b);
+      var cb=document.createElement('div');
+      cb.className='stg3-bar clearbar';
+      cb.innerHTML='<div class="stg3-inner">'+
+        '<div class="stg3-face" style="cursor:default;border-color:#e8c96b;">'+(isExp?pg.di:'👑')+'</div>'+
+        '<div class="stg3-mid">'+
+          '<div class="stg3-top"><span class="stg3-stage">'+pg.st+'</span>'+
+          '<span class="stg3-name" style="color:#ffe9a8;">'+(isExp?'【'+pg.dn+'】会得済み':(KIDS?'クリアずみ！':'攻略済み'))+'</span></div>'+
+          '<div class="stg3-hpbar"><div class="stg3-hpfill" style="background:linear-gradient(90deg,#c8a84b,#e8c96b);"></div></div>'+
+        '</div>'+
+        '<div class="stg3-right"><span class="stg3-sub">'+(KIDS?'また あした あそぼう！':(isExp?'今日の探索は完了':'本日の攻略済み'))+'</span></div>'+
+      '</div>';
+      document.body.appendChild(cb);
       return;
     }
 
@@ -1101,27 +1149,29 @@
     var started=false, busy=false, done=false;
     var startT=Date.now();
 
-    /* ── ウィジェット ── */
+    /* ── 戦闘バー（画面下に常駐するステージHUD） ── */
     var w=document.createElement('div');
+    w.className='stg3-bar'+(mode==='battle'?'':' '+mode);
     if(isExp){
-      w.className='stg-w exp';
-      w.innerHTML=
-        '<div class="stg-ring" id="stgRing"><div class="stg-ring-in" id="stgFace">'+pg.me+'</div></div>'+
-        '<div class="stg-info">'+
-          '<div class="stg-name">'+pg.st+'</div>'+
-          '<div class="stg-sub" id="stgSub">解読率 0%</div>'+
-          '<div class="stg-qdots" id="stgDots"></div>'+
-        '</div>';
+      w.innerHTML='<div class="stg3-inner">'+
+        '<div class="stg3-face" id="stgFace" style="cursor:default;border-color:rgba(46,230,200,.6);">'+pg.me+'</div>'+
+        '<div class="stg3-mid">'+
+          '<div class="stg3-top"><span class="stg3-stage">遺跡探索 '+(ROMAN[idx]||'')+'・'+pg.st+'</span>'+
+          '<span class="stg3-name" style="color:#bdfff2;">『'+pg.dn+'』封印中</span></div>'+
+          '<div class="stg3-hpbar"><div class="stg3-hpfill" id="stgHp" style="width:0%;background:linear-gradient(90deg,#0a6e5c,#2ee6c8);"></div></div>'+
+        '</div>'+
+        '<div class="stg3-right"><span class="stg3-sub" id="stgSub">解読率 0%</span><div class="stg-qdots" id="stgDots"></div></div>'+
+      '</div>';
     }else{
-      w.className='stg-w';
-      w.innerHTML=
-        '<div class="stg-face" id="stgFace" title="'+(KIDS?'たたかう！':'攻撃する')+'">'+pg.me+'</div>'+
-        '<div class="stg-info">'+
-          '<div class="stg-name">'+pg.mn+'</div>'+
-          '<div class="stg-hpbar"><div class="stg-hpfill" id="stgHp"></div></div>'+
-          '<div class="stg-sub" id="stgSub">'+(KIDS?'よんで・さわって こうげき！':(TRIAL?'読む・操作する・問いに答えよ':'読む・操作する・解く＝攻撃'))+'</div>'+
-          '<div class="stg-qdots" id="stgDots"></div>'+
-        '</div>';
+      w.innerHTML='<div class="stg3-inner">'+
+        '<div class="stg3-face" id="stgFace" title="'+(KIDS?'たたかう！':'攻撃する')+'">'+pg.me+'</div>'+
+        '<div class="stg3-mid">'+
+          '<div class="stg3-top"><span class="stg3-stage">'+(TRIAL?'試練 '+(ROMAN[idx]||''):(KIDS?'ステージ':'STAGE')+' '+(idx+1))+'・'+pg.st+'</span>'+
+          '<span class="stg3-name">'+pg.mn+'</span></div>'+
+          '<div class="stg3-hpbar"><div class="stg3-hpfill" id="stgHp"></div></div>'+
+        '</div>'+
+        '<div class="stg3-right"><span class="stg3-sub" id="stgSub">'+(KIDS?'よんで・さわって こうげき！':(TRIAL?'読み・操作し・問いに答えよ':'読む・操作する・解く＝攻撃'))+'</span><div class="stg-qdots" id="stgDots"></div></div>'+
+      '</div>';
     }
     document.body.appendChild(w);
     var face=document.getElementById('stgFace');
@@ -1129,8 +1179,7 @@
     function paint(){
       if(isExp){
         var pct=Math.round((MAX-Math.max(0,hp))/MAX*100);
-        var ring=document.getElementById('stgRing');
-        ring.style.background='conic-gradient(#2ee6c8 '+(pct*3.6)+'deg, rgba(46,230,200,.16) 0deg)';
+        document.getElementById('stgHp').style.width=pct+'%';
         document.getElementById('stgSub').textContent='解読率 '+pct+'%';
       }else{
         document.getElementById('stgHp').style.width=Math.max(0,hp)/MAX*100+'%';
@@ -1334,7 +1383,7 @@
       if(done||busy||!started||inter>=5) return;
       var t=e.target;
       if(!t||w.contains(t)) return;
-      if(t.closest&&t.closest('.rpg-snd,.rpg-adv,.stg-w,.site-nav,.stg-clear-ov,.stg2-ov,.stg2-dim')) return;
+      if(t.closest&&t.closest('.rpg-adv,.stg3-bar,.site-nav,.stg-clear-ov,.stg2-ov,.stg2-dim')) return;
       if(!(t.closest&&t.closest('button,input,select,canvas,[type=range],.choice-btn'))) return;
       var now=Date.now();
       if(now-lastInter<2000) return;
@@ -1365,16 +1414,25 @@
       if(firstClear) localStorage.setItem(clearKey(pg.f),'1');
       var isPerfect=(qsArr.length>0&&perfect===qsArr.length);
       if(isExp){
-        var ring=document.getElementById('stgRing');
-        ring.classList.add('done');
         if(window.SND) SND.badge();
-        explodeAt(ring,['✦','✧','💠']);
+        explodeAt(face,['✦','✧','💠']);
       }else{
         if(window.SND) SND.clear();
         face.classList.add('die');
         explodeAt(face,['💥','✨','⭐']);
       }
-      setTimeout(function(){ w.classList.add('gone'); setTimeout(function(){ w.remove(); },650); },900);
+      /* バーは消さず「制圧済み」の金色状態へ ── ステージ感を最後まで維持 */
+      setTimeout(function(){
+        w.classList.add('clearbar');
+        w.querySelector('.stg3-inner').innerHTML=
+          '<div class="stg3-face" style="cursor:default;border-color:#e8c96b;">'+(isExp?pg.di:'👑')+'</div>'+
+          '<div class="stg3-mid">'+
+            '<div class="stg3-top"><span class="stg3-stage">'+pg.st+'</span>'+
+            '<span class="stg3-name" style="color:#ffe9a8;">'+(isExp?'『'+pg.dn+'』会得！':(KIDS?'ステージクリア！':'ステージ攻略！'))+'</span></div>'+
+            '<div class="stg3-hpbar"><div class="stg3-hpfill" style="background:linear-gradient(90deg,#c8a84b,#e8c96b);"></div></div>'+
+          '</div>'+
+          '<div class="stg3-right"><span class="stg3-sub" style="color:#e8c96b;">'+(KIDS?'よく がんばった！':'勝利')+'</span></div>';
+      },1000);
 
       var xp=firstClear?(isExp?60:40):10;
       var xLabel;
@@ -1443,18 +1501,10 @@
       startT=Date.now();
     }
     var introKey='stg2_intro_'+ZONE+'_'+pg.f;
-    var noIntro=(pg.f==='kyokugen.html'); /* kyokugen は独自の冒頭演出を完全保護 */
     if(!noIntro&&!sessionStorage.getItem(introKey)){
       sessionStorage.setItem(introKey,'1');
       showIntro(pg,idx,startStage);
     }else{
-      var rb=document.createElement('div');
-      rb.className='stg-ribbon'+(isExp?' exp':'');
-      rb.textContent=isExp
-        ?'📜 探索開始 ── '+pg.st
-        :'⚔️ '+pg.st+' ── '+pg.mn+(KIDS?'が あらわれた！':'が現れた！');
-      document.body.appendChild(rb);
-      setTimeout(function(){ rb.remove(); },3300);
       startStage();
     }
   }
