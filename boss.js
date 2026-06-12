@@ -120,6 +120,14 @@ function BossBattle(cfg){
       'color:#1a1040;background:linear-gradient(90deg,#c8a84b,#e8c96b);padding:14px 36px;border-radius:999px;'+
       'animation:bbPulse 1.3s ease-in-out infinite alternate;}'+
     '.bb-door-go:hover{filter:brightness(1.12);}'+
+    /* 形態バッジ・形態変化演出 */
+    '.bb-form{display:inline-block;font-size:.64rem;font-weight:900;letter-spacing:.16em;border-radius:999px;'+
+      'padding:2px 12px;margin-left:8px;vertical-align:middle;background:rgba(0,0,0,.6);border:1px solid currentColor;}'+
+    '.bb-phase-title{display:inline-block;font-size:clamp(1.4rem,6.5vw,2.3rem);font-weight:900;letter-spacing:.12em;color:#fff;'+
+      'background:rgba(3,2,10,.92);border:2px solid #e8c96b;border-radius:16px;padding:10px 28px;margin-bottom:14px;'+
+      'text-shadow:0 2px 6px rgba(0,0,0,.85);}'+
+    '.bb-rematch{margin-top:26px;padding:18px;border:1px dashed rgba(255,255,255,.28);border-radius:14px;}'+
+    '.bb-rematch-msg{color:#ff9d8a;font-weight:900;font-size:.98rem;letter-spacing:.06em;line-height:2;margin-bottom:12px;}'+
     '@media(max-width:480px){.bb-qtext{font-size:1.02rem;}}';
   document.head.appendChild(st);
 
@@ -160,21 +168,73 @@ function BossBattle(cfg){
     [800,650,500,380].forEach(function(f,i){ tone(c,b,f,'square',t+i*0.09,0.2,0.07); });
   });};
 
+  /* ── 形態（フェーズ）── */
+  var FORM_DEFS=[
+    {label:'', hpBonus:0, filter:'none', aura:null, auraC:th.main,
+     pool:function(){ return cfg.questions.slice(); }},
+    {label:kids?'だいに けいたい':'第二形態', hpBonus:2,
+     filter:'hue-rotate(130deg) saturate(1.45) brightness(1.06)',
+     aura:'rgba(176,106,255,', auraC:'#b06aff',
+     pool:function(){ return (cfg.questions2||cfg.questions).slice(); }},
+    {label:kids?'さいしゅう けいたい':'最終形態', hpBonus:3,
+     filter:'hue-rotate(250deg) saturate(1.7) contrast(1.12) brightness(1.08)',
+     aura:'rgba(255,80,120,', auraC:'#ff5078',
+     pool:function(){
+       /* 最終形態：最難問プール＋第二形態プールを混ぜ、毎回ランダムに出題 */
+       var p=(cfg.questions3||cfg.questions2||cfg.questions).slice();
+       if(cfg.questions3&&cfg.questions2) p=p.concat(cfg.questions2.slice());
+       return p;
+     }}
+  ];
+  var form=1;
+  var rematch=parseInt(localStorage.getItem('rpg_bossrematch_'+cfg.no)||'0',10)||0;
+  function formHP(f){
+    var h=HP+FORM_DEFS[f-1].hpBonus;
+    if(f===3) h+=Math.min(3,rematch); /* 再挑戦のたびに強くなる（上限+3） */
+    return h;
+  }
+  var HPcur=formHP(1);
+
   /* ── 状態 ── */
-  var S={hp:HP,hearts:HEARTS,phase:'intro',hurtT:0,deadT:-1,t0:performance.now()};
+  var S={hp:HPcur,hearts:HEARTS,phase:'intro',hurtT:0,deadT:-1,t0:performance.now()};
   var particles=[];
-  var pool=cfg.questions.slice();
-  var queue=[],qIdx=0,current=null;
+  var pool=[],queue=[],qIdx=0,current=null;
 
   function shuffle(a){
     for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),tmp=a[i];a[i]=a[j];a[j]=tmp; }
     return a;
   }
-  function resetBattle(){
-    S.hp=HP; S.hearts=HEARTS; S.deadT=-1; S.hurtT=0;
-    pool=shuffle(cfg.questions.slice());
-    queue=pool.splice(0,HP);
+  function resetBattle(f){
+    form=f||1;
+    HPcur=formHP(form);
+    S.hp=HPcur; S.hearts=HEARTS; S.deadT=-1; S.hurtT=0;
+    pool=shuffle(FORM_DEFS[form-1].pool());
+    queue=pool.splice(0,HPcur);
     qIdx=0;
+    applyForm();
+  }
+  /* 形態のビジュアル適用：色相シフト・オーラ・名前バッジ・HPバー色 */
+  function applyForm(){
+    var fd=FORM_DEFS[form-1];
+    if(cv){
+      cv.style.transition='filter .9s ease';
+      cv.style.filter=fd.filter;
+    }
+    var nameEl=document.querySelector('.bb-boss-name');
+    if(nameEl){
+      nameEl.innerHTML=cfg.theme.icon+' '+cfg.name+
+        (fd.label?'<span class="bb-form" style="color:'+fd.auraC+';">'+fd.label+'</span>':'');
+    }
+    var hpf=document.getElementById('bbHp');
+    if(hpf){
+      if(form===2) hpf.style.background='linear-gradient(90deg,#7a2bd8,#b06aff)';
+      else if(form===3) hpf.style.background='linear-gradient(90deg,#c01050,#ff5078)';
+      else hpf.style.background='';
+    }
+    if(arena){
+      arena.style.borderColor=(form===1)?th.main:fd.auraC;
+      arena.style.boxShadow=(form===1)?('0 0 34px '+th.glow):('0 0 46px '+fd.aura+'.55)');
+    }
   }
 
   /* ── DOM ── */
@@ -206,12 +266,12 @@ function BossBattle(cfg){
   ctx2.scale(DPR,DPR);
 
   function renderHud(){
-    document.getElementById('bbHp').style.width=(S.hp/HP*100)+'%';
+    document.getElementById('bbHp').style.width=(S.hp/HPcur*100)+'%';
     var hs='';
     for(var i=0;i<HEARTS;i++) hs+='<span class="'+(i<S.hearts?'':'dead')+'">'+(i<S.hearts?'❤️':'🖤')+'</span>';
     document.getElementById('bbHearts').innerHTML=hs;
     var ds='';
-    for(var j=0;j<HP;j++) ds+='<span class="bb-dot'+(j<HP-S.hp?' hit':'')+'"></span>';
+    for(var j=0;j<HPcur;j++) ds+='<span class="bb-dot'+(j<HPcur-S.hp?' hit':'')+'"></span>';
     document.getElementById('bbDots').innerHTML=ds;
   }
 
@@ -245,6 +305,28 @@ function BossBattle(cfg){
     if(S.hurtT>0) S.hurtT=Math.max(0,S.hurtT-1/60);
     if(S.deadT>=0&&S.deadT<1) S.deadT=Math.min(1,S.deadT+1/100);
 
+    /* 形態オーラ（第二形態以降・ボスの背後で脈動） */
+    if(form>1&&S.deadT<0){
+      var fd=FORM_DEFS[form-1];
+      var pr=0.55+0.35*Math.sin(t*(form===3?3.4:2.4));
+      var ag=ctx2.createRadialGradient(W/2,H*0.5,30,W/2,H*0.5,210);
+      ag.addColorStop(0,fd.aura+(0.26*pr)+')');
+      ag.addColorStop(0.6,fd.aura+(0.11*pr)+')');
+      ag.addColorStop(1,fd.aura+'0)');
+      ctx2.fillStyle=ag;
+      ctx2.fillRect(0,0,W,H);
+      /* 立ちのぼるオーラの炎 */
+      ctx2.save();
+      for(var fi=0;fi<8;fi++){
+        var fx=W/2+Math.sin(fi*2.4+t*1.3)*150;
+        var fy=H*0.78-((fi*47+t*60)%(H*0.6));
+        ctx2.globalAlpha=0.10+0.08*Math.sin(t*3+fi);
+        ctx2.fillStyle=fd.auraC;
+        ctx2.beginPath(); ctx2.ellipse(fx,fy,4,12,0,0,Math.PI*2); ctx2.fill();
+      }
+      ctx2.restore();
+    }
+
     /* ボス本体 */
     ctx2.save();
     if(S.hurtT>0){
@@ -254,7 +336,7 @@ function BossBattle(cfg){
       ctx2.globalAlpha=Math.max(0,1-S.deadT*1.15);
       ctx2.translate(0,S.deadT*26);
     }
-    cfg.draw(ctx2,W,H,t,{hpRatio:S.hp/HP,hurt:S.hurtT,dead:Math.max(0,S.deadT)});
+    cfg.draw(ctx2,W,H,t,{hpRatio:S.hp/HPcur,hurt:S.hurtT,dead:Math.max(0,S.deadT),form:form});
     ctx2.restore();
 
     /* 被弾フラッシュ（ボス側・白） */
@@ -291,7 +373,8 @@ function BossBattle(cfg){
     current=queue[qIdx];
     var choices=current.c.map(function(c,i){ return {c:c,i:i}; });
     shuffle(choices);
-    var h='<div class="bb-qno">'+(kids?'もんだい ':'QUESTION ')+(HP-S.hp+1)+' / '+HP+'</div>'+
+    var h='<div class="bb-qno">'+(kids?'もんだい ':'QUESTION ')+(HPcur-S.hp+1)+' / '+HPcur+
+      (form>1?'<span style="color:'+FORM_DEFS[form-1].auraC+';margin-left:10px;">'+FORM_DEFS[form-1].label+'</span>':'')+'</div>'+
       '<div class="bb-qtext">'+current.q+'</div>'+
       '<div class="bb-choices">';
     choices.forEach(function(ch){
@@ -317,8 +400,13 @@ function BossBattle(cfg){
       renderHud();
       if(window.RPG) RPG.quizCorrect();
       if(S.hp<=0){
-        fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ かいしんのいちげき！！':'⚔️ 会心の一撃！！')+'</span>';
-        setTimeout(win,900);
+        if(form<3){
+          fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ たおした…… のか？':'⚔️ 倒した……のか？')+'</span>';
+          setTimeout(function(){ formTransition(form+1); },900);
+        }else{
+          fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ かいしんのいちげき！！':'⚔️ 会心の一撃！！')+'</span>';
+          setTimeout(win,900);
+        }
       }else{
         fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ こうげきがヒット！ボスがひるんでいる！':'⚔️ 攻撃がヒット！ボスがひるんでいる！')+'</span>';
         qIdx++;
@@ -351,7 +439,47 @@ function BossBattle(cfg){
     }
   }
 
-  /* ── 勝利 ── */
+  /* ── 形態変化：撃破したかに見えて、より強く蘇る ── */
+  function formTransition(nf){
+    S.deadT=0; /* 一度倒れたように見せる */
+    SfxDeath();
+    burst(90,5.5,[th.main,'#fff']);
+    panel.innerHTML='<div style="color:#8899aa;font-size:.9rem;">…</div>';
+    setTimeout(function(){
+      var fd=FORM_DEFS[nf-1];
+      var ov=document.createElement('div');
+      ov.className='bb-ov';
+      var lines=(nf===2)
+        ?(kids?['……まだだ。','まだ おわってないぞ……','<strong style="color:'+fd.auraC+';">だいに けいたい だ！！</strong>']
+              :['……まだだ。','この程度で終わると思ったか。','<strong style="color:'+fd.auraC+';">──第二形態。</strong>'])
+        :(kids?['……やるな。','でも つぎで さいごだ。','<strong style="color:'+fd.auraC+';">さいしゅうけいたい…… かくごしろ！！</strong>']
+              :['……ほう。やるじゃないか。','だが、ここからが本当の地獄だ。','<strong style="color:'+fd.auraC+';">──最終形態。覚悟しろ。</strong>']);
+      var h='<div class="bb-ov-inner">'+
+        '<div class="bb-intro-no" style="color:'+fd.auraC+';">'+(nf===2?'PHASE 2':'FINAL PHASE')+'</div>'+
+        '<div class="bb-phase-title" style="border-color:'+fd.auraC+';box-shadow:0 0 30px '+fd.aura+'.5);">'+
+          cfg.theme.icon+' '+cfg.name+'・'+fd.label+'</div>';
+      lines.forEach(function(l,i){
+        h+='<div class="bb-intro-line" style="animation-delay:'+(0.4+i*0.75)+'s;">'+l+'</div>';
+      });
+      h+='<div><button class="bb-fight" id="bbPhaseGo" style="background:linear-gradient(135deg,#2a0a30,'+fd.auraC+');border-color:'+fd.auraC+';">'+
+        '⚔️ '+(kids?'うけて たつ！':'受けて立つ')+'</button></div></div>';
+      ov.innerHTML=h;
+      document.body.appendChild(ov);
+      SfxRoar(); setTimeout(SfxRoar,650);
+      document.getElementById('bbPhaseGo').addEventListener('click',function(){
+        if(window.SND) SND.click();
+        ov.style.transition='opacity .5s'; ov.style.opacity='0';
+        setTimeout(function(){ ov.remove(); },500);
+        resetBattle(nf);          /* HP増加＋難問プール＋ビジュアル変化 */
+        burst(70,5,[FORM_DEFS[nf-1].auraC,'#fff']);
+        SfxRoar();
+        renderHud();
+        showQuestion();
+      });
+    },1300);
+  }
+
+  /* ── 勝利（最終形態撃破）── */
   function win(){
     S.deadT=0;
     SfxDeath();
@@ -364,7 +492,12 @@ function BossBattle(cfg){
     if(first&&!localStorage.getItem('rpg_bossxp_'+cfg.no)){
       localStorage.setItem('rpg_bossxp_'+cfg.no,'1');
       setTimeout(function(){ RPG.addXP(cfg.victory.xp,kids?'ボスげきは！！':'ボス撃破！！'); },1200);
+    }else if(!first){
+      setTimeout(function(){ RPG.addXP(30,kids?'さいせん しょうり！':'再戦勝利！'); },1200);
     }
+    /* 来るたびに強くなる：再挑戦カウンタを進める */
+    rematch++;
+    try{ localStorage.setItem('rpg_bossrematch_'+cfg.no,String(rematch)); }catch(e){}
     setTimeout(function(){ victoryOverlay(); },2000);
   }
   function victoryOverlay(){
@@ -387,9 +520,28 @@ function BossBattle(cfg){
           '<div class="bb-door-frame"></div>'+
         '</div>'+
         '<a class="bb-door-go" href="'+v.doorHref+'">⛩ '+v.doorName+'へ →</a>'+
+      '</div>'+
+      /* 最終形態は何度でも蘇る */
+      '<div class="bb-rematch">'+
+        '<div class="bb-rematch-msg">'+cfg.theme.icon+'「'+(kids
+          ?'またこい。おまえが くるたびに、おれは つよくなるぞ。'
+          :'また来い。お前が来るたびに、俺は強くなる。')+'」</div>'+
+        '<button class="bb-fight" id="bbRematch" style="font-size:.95rem;padding:12px 32px;">'+
+          '🔥 '+(kids?'さいしゅうけいたいに もういちど いどむ':'最終形態に再挑戦する')+
+          (rematch>1?'（'+rematch+'回目・強化済み）':'')+'</button>'+
+        '<div class="bb-cta-note">'+(kids?'もんだいは まいかい かわるよ':'問題は毎回ランダムに変わる')+'</div>'+
       '</div></div>';
     ov.innerHTML=h;
     document.body.appendChild(ov);
+    document.getElementById('bbRematch').addEventListener('click',function(){
+      if(window.SND) SND.click();
+      ov.style.transition='opacity .5s'; ov.style.opacity='0';
+      setTimeout(function(){ ov.remove(); },500);
+      resetBattle(3);
+      SfxRoar();
+      renderHud();
+      showQuestion();
+    });
   }
 
   /* ── 敗北 ── */
@@ -429,8 +581,13 @@ function BossBattle(cfg){
     });
     if(cleared){
       h+='<div style="margin-top:24px;color:#e8c96b;font-weight:900;">👑 '+(kids?'このボスは すでにたおした！':'このボスは既に撃破済みだ。')+'</div>'+
+        '<div style="margin-top:10px;color:#ff9d8a;font-weight:700;font-size:.95rem;line-height:2;">「'+(kids
+          ?'またきたか。おれは まえより つよくなったぞ……'
+          :'また来たか。言ったはずだ──俺は前より強くなっている。')+'」</div>'+
         '<a class="bb-door-go" style="margin-top:18px;" href="'+cfg.victory.doorHref+'">⛩ '+cfg.victory.doorName+'へ →</a>'+
-        '<span class="bb-sub-link" id="bbStart">⚔️ '+(kids?'もういちど たたかう（XPはもらえないよ）':'再戦する（XPは入らない）')+'</span>';
+        '<span class="bb-sub-link" id="bbStart">⚔️ '+(kids
+          ?'さいしゅうけいたいに いどむ（もんだいは まいかい かわる）'
+          :'最終形態に挑む（問題は毎回ランダム・勝てば+30XP）')+'</span>';
     }else{
       h+='<button class="bb-fight" id="bbStart">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
         '<a class="bb-sub-link" href="'+cfg.fleeHref+'">'+(kids?'まだ こころのじゅんびが…（もどる）':'まだ心の準備が…（戻る）')+'</a>';
@@ -442,13 +599,15 @@ function BossBattle(cfg){
       if(window.SND) SND.click();
       ov.style.transition='opacity .5s'; ov.style.opacity='0';
       setTimeout(function(){ ov.remove(); },500);
-      resetBattle();
+      /* 撃破済みなら、復活した最終形態との再戦から始まる */
+      resetBattle(cleared?3:1);
+      if(cleared) SfxRoar();
       renderHud();
       showQuestion();
     });
   }
 
-  resetBattle();
+  resetBattle(1);
   renderHud();
   panel.innerHTML='<div style="color:#8899aa;font-size:.9rem;">…</div>';
   intro();
