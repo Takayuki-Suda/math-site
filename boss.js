@@ -561,7 +561,7 @@ function BossBattle(cfg){
     document.body.appendChild(ov);
     document.getElementById('bbRetry').addEventListener('click',function(){
       ov.remove();
-      resetBattle();
+      resetBattle(form); /* 倒された形態から再開（第一形態には戻さない） */
       renderHud();
       showQuestion();
     });
@@ -584,27 +584,40 @@ function BossBattle(cfg){
         '<div style="margin-top:10px;color:#ff9d8a;font-weight:700;font-size:.95rem;line-height:2;">「'+(kids
           ?'またきたか。おれは まえより つよくなったぞ……'
           :'また来たか。言ったはずだ──俺は前より強くなっている。')+'」</div>'+
-        '<a class="bb-door-go" style="margin-top:18px;" href="'+cfg.victory.doorHref+'">⛩ '+cfg.victory.doorName+'へ →</a>'+
-        '<span class="bb-sub-link" id="bbStart">⚔️ '+(kids
-          ?'さいしゅうけいたいに いどむ（もんだいは まいかい かわる）'
-          :'最終形態に挑む（問題は毎回ランダム・勝てば+30XP）')+'</span>';
+        '<div><button class="bb-fight" id="bbStart" type="button" '+
+          'style="background:linear-gradient(135deg,#2a0a30,#ff5078);border-color:#ff5078;">⚔️ '+(kids
+          ?'さいしゅうけいたいに さいちょうせん！'
+          :'最終形態に再挑戦する')+'</button></div>'+
+        '<div class="bb-cta-note">'+(kids
+          ?'もんだいは まいかい かわるよ（かてば +30XP）'
+          :'問題は毎回ランダムに変わる・勝てば +30XP')+'</div>'+
+        '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.victory.doorHref+'">⛩ '+cfg.victory.doorName+'へ →</a>';
     }else{
-      h+='<button class="bb-fight" id="bbStart">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
+      h+='<button class="bb-fight" id="bbStart" type="button">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
         '<a class="bb-sub-link" href="'+cfg.fleeHref+'">'+(kids?'まだ こころのじゅんびが…（もどる）':'まだ心の準備が…（戻る）')+'</a>';
     }
     h+='</div>';
     ov.innerHTML=h;
     document.body.appendChild(ov);
-    document.getElementById('bbStart').addEventListener('click',function(){
-      if(window.SND) SND.click();
-      ov.style.transition='opacity .5s'; ov.style.opacity='0';
-      setTimeout(function(){ ov.remove(); },500);
-      /* 撃破済みなら、復活した最終形態との再戦から始まる */
-      resetBattle(cleared?3:1);
-      if(cleared) SfxRoar();
-      renderHud();
-      showQuestion();
-    });
+    /* overlay 内から確実に取得（重複IDや他要素の影響を受けない） */
+    var startBtn=ov.querySelector('#bbStart');
+    if(startBtn){
+      startBtn.addEventListener('click',function(){
+        if(window.SND){ try{ SND.click(); }catch(e){} }
+        ov.style.transition='opacity .5s'; ov.style.opacity='0';
+        setTimeout(function(){ ov.remove(); },500);
+        try{
+          /* 撃破済みなら、復活した最終形態との再戦から始まる */
+          resetBattle(cleared?3:1);
+          if(cleared) SfxRoar();
+        }catch(e){
+          /* 万一最終形態の初期化に失敗しても、第一形態から確実に始める */
+          resetBattle(1);
+        }
+        renderHud();
+        showQuestion();
+      });
+    }
   }
 
   resetBattle(1);

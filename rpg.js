@@ -544,7 +544,11 @@
         h+='<span class="rpg-bd-lock">🔒 封印されている</span>';
       }else if(cleared){
         h+='<div><span class="rpg-bd-done">👑 '+(KIDS?'げきはずみ！':'撃破済み')+'</span></div>'+
-           '<a class="rpg-bd-btn gold" href="'+b.nextZone+'">⛩ '+b.nextName+'へ進む →</a>';
+           '<div style="font-size:.82rem;color:#ff9d8a;font-weight:700;line-height:2;margin-bottom:12px;position:relative;z-index:1;">「'+(KIDS
+             ?'またこい。おまえが くるたびに、おれは つよくなるぞ。'
+             :'また来い。お前が来るたびに、俺は強くなる。')+'」</div>'+
+           '<a class="rpg-bd-btn" href="'+b.page+'" style="margin:4px;">⚔️ '+(KIDS?'さいしゅうけいたいに さいちょうせん！':'最終形態に再挑戦')+'</a>'+
+           '<a class="rpg-bd-btn gold" href="'+b.nextZone+'" style="margin:4px;">⛩ '+b.nextName+'へ進む →</a>';
       }else{
         h+='<a class="rpg-bd-btn" href="'+b.page+'">⚔️ '+(KIDS?'ボスにいどむ':'ボスに挑む')+'</a>';
       }
