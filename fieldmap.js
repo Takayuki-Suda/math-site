@@ -481,6 +481,145 @@ function allCards(){
 }
 
 /* ════════════════════════════════════════════════════════
+   戦闘クイズ・プール（ゾーン別）
+   ・各ゾーンのプール ＝ 既存の敵クイズ ＋ 新規問題（数値ランダム生成を多数）
+   ・要素は {q,c,a,exp} の静的オブジェクト、または それを返す関数（ジェネレータ）
+   ・毎回プールからランダム選択／直前と同じ問題は出さない／数値問題は毎回再生成
+   ════════════════════════════════════════════════════════ */
+function qrand(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+function qnz(){ return qrand(2,9)*(Math.random()<0.5?1:-1); }
+function qshuf(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function dec1(n){ return (Math.round(n*10)/10).toFixed(1); }
+function qsg(n){ return n<0?'(−'+(-n)+')':'(＋'+n+')'; }
+function qdt(co,pw){ return co+(pw===0?'':(pw===1?'x':'x^'+pw)); }
+/* 選択肢を組み立てる：正解＋ダミー（重複除去・シャッフル）。数値正解は3択に満たなければ自動補充 */
+function Qn(text,correct,distractors,exp){
+  var opts=[correct];
+  (distractors||[]).forEach(function(d){ if(opts.indexOf(d)<0) opts.push(d); });
+  if(typeof correct==='number'){
+    var g=1;
+    while(opts.length<3 && g<80){ var e=correct+(g%2?g:-g); if(e!==correct && opts.indexOf(e)<0) opts.push(e); g++; }
+  }
+  qshuf(opts);
+  return { q:text, c:opts.map(String), a:opts.indexOf(correct), exp:exp };
+}
+
+var QUIZGEN={
+  /* ── 小学生：たし・ひき・かけ・わり・分数・小数・時計・面積・単位換算 ── */
+  sho:[
+    function(){ var a=qrand(6,9),b=qrand(5,9),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-1,s+2],'一の位を たしてから 十の位。10を つくると はやい。'); },
+    function(){ var a=qrand(13,49),b=qrand(13,49),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-10,s+1],'十の位どうし・一の位どうしを たそう。'); },
+    function(){ var m=qrand(11,18),n=qrand(3,9),s=m-n; return Qn(m+' − '+n+' ＝ ？',s,[s+1,s-2],'10から ひいて、のこりを たす。'); },
+    function(){ var a=qrand(40,99),b=qrand(11,39),s=a-b; return Qn(a+' − '+b+' ＝ ？',s,[s+10,s-1],'位ごとに ひこう。'); },
+    function(){ var a=qrand(2,9),b=qrand(2,9),s=a*b; return Qn(a+' × '+b+' ＝ ？',s,[s+a,s-b],'九九を おもいだそう。'); },
+    function(){ var a=qrand(11,19),b=qrand(2,9),s=a*b; return Qn(a+' × '+b+' ＝ ？',s,[s+b,s-a],'(10＋□)×'+b+' に分けて計算。'); },
+    function(){ var b=qrand(2,9),ans=qrand(2,9),a=b*ans; return Qn(a+' ÷ '+b+' ＝ ？',ans,[ans+1,ans-1],b+'×?＝'+a+' を考えよう。'); },
+    function(){ var b=qrand(3,9),ans=qrand(2,8),r=qrand(1,b-1),a=b*ans+r; return Qn(a+' ÷ '+b+' の あまりは？',r,[r+1,(r+2)%b],a+'＝'+b+'×'+ans+'＋'+r+'。'); },
+    function(){ var d=qrand(4,8),p=qrand(1,d-2),q=qrand(1,d-p-1); return Qn(p+'/'+d+' ＋ '+q+'/'+d+' は？',(p+q)+'/'+d,[(p+q)+'/'+(2*d),(p+q+1)+'/'+d],'分母はそのまま、分子だけ たす。'); },
+    function(){ return Qn('2/4 を やくぶんすると？','1/2',['1/4','2/2'],'上も下も 2でわる。'); },
+    function(){ var a=qrand(1,8),b=qrand(1,8),s=a+b; return Qn(dec1(a/10)+' ＋ '+dec1(b/10)+' は？',dec1(s/10),[dec1((s+1)/10),dec1((s-1)/10)],'0.1が ('+a+'＋'+b+') こで '+dec1(s/10)+'。'); },
+    function(){ var a=qrand(3,9),b=qrand(1,a-1),s=a-b; return Qn(dec1(a/10)+' − '+dec1(b/10)+' は？',dec1(s/10),[dec1((s+1)/10),dec1((s+2)/10)],'0.1が ('+a+'−'+b+') こで '+dec1(s/10)+'。'); },
+    function(){ var k=qrand(1,11),m=k*5; return Qn('とけいの 長いはりが '+k+' を さしています。何分？',m,[m+5,k],'長いはりは 1で5分。'+k+'×5＝'+m+'分。'); },
+    function(){ var h=qrand(1,11),ms=[15,30,45],m=ms[qrand(0,2)]; return Qn(h+'時ちょうどから '+m+'分 たつと？',h+'時'+m+'分',[(h===12?1:h+1)+'時'+m+'分',(h===1?12:h-1)+'時'+m+'分'],'時はかわらず、分だけ '+m+'分 すすむ。'); },
+    function(){ var w=qrand(3,12),h=qrand(2,9),A=w*h; return Qn('たて '+h+'cm、よこ '+w+'cm の 長方形の 面積は？（cm²）',A,[2*(w+h),A+h],'たて×よこ＝'+h+'×'+w+'＝'+A+'。まわりの長さと まちがえないでね。'); },
+    function(){ var s=qrand(2,12),A=s*s; return Qn('1辺 '+s+'cm の 正方形の 面積は？（cm²）',A,[4*s,2*s],'1辺×1辺＝'+s+'×'+s+'＝'+A+'。'); },
+    function(){ var b=qrand(2,12),h=qrand(1,5)*2,A=b*h/2; return Qn('底辺 '+b+'cm、高さ '+h+'cm の 三角形の 面積は？（cm²）',A,[b*h,A+b],'底辺×高さ÷2＝'+b+'×'+h+'÷2＝'+A+'。÷2を わすれずに。'); },
+    function(){ var x=qrand(2,20); return Qn(x+' cm は 何 mm？',x*10,[x*100,x+10],'1cm＝10mm。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' m は 何 cm？',x*100,[x*10,x*1000],'1m＝100cm。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' kg は 何 g？',x*1000,[x*100,x*10],'1kg＝1000g。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' L は 何 mL？',x*1000,[x*100,x*500],'1L＝1000mL。'); },
+    function(){ var x=qrand(2,6); return Qn(x+' 時間は 何分？',x*60,[x*100,x*6],'1時間＝60分。'); }
+  ],
+  /* ── 中学生：正負の数・文字式・一次方程式・比例反比例・平行と合同・確率 ── */
+  chu:[
+    function(){ var a=qrand(-9,9),b=qrand(-9,9),s=a+b; return Qn(qsg(a)+' ＋ '+qsg(b)+' ＝ ？',s,[a-b,-(a+b)],'符号に注意して数直線で考える。'); },
+    function(){ var a=qrand(-9,9),b=qrand(-9,9),s=a-b; return Qn(qsg(a)+' − '+qsg(b)+' ＝ ？',s,[a+b,-(a-b)],'ひく数の符号を変えて たす。'); },
+    function(){ var a=qnz(),b=qnz(),p=a*b; return Qn(qsg(a)+' × '+qsg(b)+' ＝ ？',p,[-p,a+b],'同符号は＋、異符号は−。'); },
+    function(){ var m=qrand(2,6),n=qrand(2,6); if(m===2&&n===2)n=3; return Qn(m+'x ＋ '+n+'x ＝ ？',(m+n)+'x',[(m*n)+'x',(m+n)+'x²'],'同類項は係数をたす。x²にはならない。'); },
+    function(){ var m=qrand(5,9),n=qrand(1,m-1); return Qn(m+'x − '+n+'x ＝ ？',(m-n)+'x',[(m+n)+'x',m+'x'],'係数を ひく：'+m+'−'+n+'。'); },
+    function(){ var c1=qrand(2,5),c0=qrand(1,9),x=qrand(2,6),v=c1*x+c0; return Qn('x＝'+x+' のとき '+c1+'x ＋ '+c0+' の値は？',v,[c1*x,c1+x+c0],c1+'×'+x+'＋'+c0+'＝'+v+'。'); },
+    function(){ var a=qrand(1,9),x=qrand(1,12),b=x+a; return Qn('x ＋ '+a+' ＝ '+b+'。x は？',x,[b+a,a-b],'両辺から '+a+' をひく。'); },
+    function(){ var a=qrand(2,9),x=qrand(2,9),b=a*x; return Qn(a+'x ＝ '+b+'。x は？',x,[b-a,b+a],'両辺を '+a+' でわる。'); },
+    function(){ var a=qrand(2,5),x=qrand(2,8),b=qrand(1,9),c=a*x+b; return Qn(a+'x ＋ '+b+' ＝ '+c+'。x は？',x,[c-b,x+1],'まず '+b+' を移項：'+a+'x＝'+(c-b)+'。'); },
+    function(){ var k=qrand(2,5),x1=qrand(2,4),y1=k*x1,x2=qrand(5,8),y2=k*x2; return Qn('y は x に比例し、x＝'+x1+' のとき y＝'+y1+'。x＝'+x2+' のとき y は？',y2,[y1+x2,k+x2],'比例定数 k＝'+k+'、y＝'+k+'x。'); },
+    function(){ var ks=[12,24,36,48],k=ks[qrand(0,3)],ds=[],i; for(i=2;i<=12;i++) if(k%i===0) ds.push(i); qshuf(ds); var x1=ds[0],x2=ds[1]; return Qn('y は x に反比例し、x＝'+x1+' のとき y＝'+(k/x1)+'。x＝'+x2+' のとき y は？',k/x2,[k-x2,k/x1],'反比例は xy＝一定。k＝'+k+'、y＝'+k+'/x。'); },
+    function(){ var t=qrand(1,6); return Qn('1個のサイコロで '+t+' の目が出る確率は？','1/6',['1/3','1/2'],'6通り中 1通り。'); },
+    function(){ return Qn('1個のサイコロで 偶数の目が出る確率は？','1/2',['1/3','2/3'],'2・4・6 の3通り＝3/6＝1/2。'); },
+    function(){ return Qn('コインを2枚投げて 両方とも表になる確率は？','1/4',['1/2','1/3'],'表表・表裏・裏表・裏裏の4通り中 1通り。'); },
+    function(){ var n=qrand(4,8),w=qrand(1,n-2); return Qn(n+'本のくじに 当たりが '+w+'本。1本引いて 当たる確率は？',w+'/'+n,[n+'/'+w,w+'/'+(n-w)],'当たり'+w+' ÷ 全部'+n+'。'); },
+    function(){ return Qn('三角形の 3つの内角の和は？','180°',['360°','90°'],'どんな三角形でも 180°。'); },
+    function(){ return Qn('四角形の 4つの内角の和は？','360°',['180°','720°'],'対角線で三角形2つに分けると 180°×2。'); },
+    function(){ return Qn('交わる2直線の 対頂角どうしは？','等しい',['たすと90°','たすと180°'],'向かい合う角は つねに等しい。'); },
+    function(){ return Qn('平行線に1本の直線が交わるとき、錯角は？','等しい',['たすと180°','たすと90°'],'平行なら 錯角・同位角は等しい。'); },
+    function(){ return Qn('三角形の 合同条件でないものは？','3つの角がそれぞれ等しい',['3辺がそれぞれ等しい','2辺とその間の角が等しい'],'角だけ等しいのは「相似」。大きさは決まらない。'); }
+  ],
+  /* ── 高校生：二次方程式・三角比・指数対数・数列・ベクトル・微分 ── */
+  ko:[
+    function(){ var r1=qrand(1,5),r2=qrand(r1,6),s=r1+r2,p=r1*r2; return Qn('x² − '+s+'x ＋ '+p+' ＝ 0 の解は？','x＝'+r1+', '+r2,['x＝−'+r1+', −'+r2,'x＝'+s+', '+p],'(x−'+r1+')(x−'+r2+')＝0。'); },
+    function(){ var x=qrand(2,9); return Qn('x² ＝ '+(x*x)+' の 正の解は？',x,[x*x,x*2],'2乗して '+(x*x)+' になる正の数。'); },
+    function(){ return Qn('sin30° の値は？','1/2',['√3/2','1'],'30°-60°-90° の辺の比 1:√3:2。'); },
+    function(){ return Qn('cos60° の値は？','1/2',['√3/2','1/√2'],'60°の となり/斜辺＝1/2。'); },
+    function(){ return Qn('tan45° の値は？','1',['√3','1/√3'],'直角二等辺三角形、たて＝よこ。'); },
+    function(){ return Qn('sin²θ ＋ cos²θ ＝ ？','1',['0','2'],'単位円・三平方の定理そのもの。'); },
+    function(){ var a=qrand(2,5),b=qrand(2,4); return Qn(a+'^'+b+' ＝ ？',Math.pow(a,b),[a*b,Math.pow(a,b)+a],a+' を '+b+'回 かける。'); },
+    function(){ var a=qrand(2,4),m=qrand(2,4),n=qrand(2,3); return Qn(a+'^'+m+' × '+a+'^'+n+' ＝ '+a+'^? の ? は？',m+n,[m*n,m-n],'指数は たし算：'+m+'＋'+n+'。'); },
+    function(){ var b=qrand(2,3),e=qrand(2,4),arg=Math.pow(b,e); return Qn('log_'+b+' '+arg+' ＝ ？',e,[arg,e+1],b+' を 何乗すると '+arg+'？ → '+e+'乗。'); },
+    function(){ var e=qrand(2,4); return Qn('log₁₀ '+Math.pow(10,e)+' ＝ ？',e,[Math.pow(10,e)/10,e*10],'10 を '+e+'乗。'); },
+    function(){ var a1=qrand(1,5),d=qrand(2,5),n=qrand(4,8),an=a1+(n-1)*d; return Qn('初項'+a1+'、公差'+d+' の等差数列の 第'+n+'項は？',an,[a1+n*d,a1*n],'a_n＝a1＋(n−1)d＝'+a1+'＋'+(n-1)+'×'+d+'。'); },
+    function(){ var a1=qrand(1,5),d=qrand(1,4),n=qrand(3,6),sum=n*(2*a1+(n-1)*d)/2; return Qn('初項'+a1+'、公差'+d+' の 初項から第'+n+'項までの和は？',sum,[sum+n,a1*n],'S＝n(2a1＋(n−1)d)/2。'); },
+    function(){ var a1=qrand(1,3),r=qrand(2,3),n=qrand(3,5),an=a1*Math.pow(r,n-1); return Qn('初項'+a1+'、公比'+r+' の等比数列の 第'+n+'項は？',an,[a1*r*n,a1+r*(n-1)],'a_n＝a1·r^(n−1)。'); },
+    function(){ var a1=qrand(1,6),a2=qrand(1,6),b1=qrand(1,6),b2=qrand(1,6); if(a1===2&&b1===2&&a2===2&&b2===2)b2=3; return Qn('('+a1+', '+a2+') ＋ ('+b1+', '+b2+') ＝ ？','('+(a1+b1)+', '+(a2+b2)+')',['('+(a1*b1)+', '+(a2*b2)+')','('+(a1-b1)+', '+(a2-b2)+')'],'成分ごとに たす。'); },
+    function(){ var P=[[3,4,5],[6,8,10],[5,12,13],[8,15,17]][qrand(0,3)]; return Qn('ベクトル ('+P[0]+', '+P[1]+') の大きさは？',P[2],[P[0]+P[1],P[2]+1],'√('+P[0]+'²＋'+P[1]+'²)＝√'+(P[0]*P[0]+P[1]*P[1])+'＝'+P[2]+'。'); },
+    function(){ var a1=qrand(1,5),a2=qrand(1,5),b1=qrand(1,5),b2=qrand(1,5),dot=a1*b1+a2*b2; return Qn('('+a1+', '+a2+')・('+b1+', '+b2+') ＝ ？',dot,[a1*b1,(a1+a2)*(b1+b2)],'内積＝'+a1+'×'+b1+'＋'+a2+'×'+b2+'＝'+dot+'。'); },
+    function(){ var n=qrand(2,5); return Qn('(x^'+n+')′ ＝ ？',qdt(n,n-1),[qdt(n-1,n),qdt(n,n)],'x^n の微分は n·x^(n−1)。'); },
+    function(){ var a=qrand(2,4),b=qrand(2,5); return Qn('('+a+'x² ＋ '+b+'x)′ ＝ ？',(2*a)+'x ＋ '+b,[a+'x ＋ '+b,(2*a)+'x'],'各項を微分：'+a+'x²→'+(2*a)+'x、'+b+'x→'+b+'。'); },
+    function(){ var a=qrand(1,3),x0=qrand(1,4); return Qn('f(x)＝'+(a===1?'':a)+'x²。x＝'+x0+' での接線の傾きは？',2*a*x0,[a*x0,a*x0*x0],'f′(x)＝'+(2*a)+'x。x＝'+x0+' を代入。'); }
+  ],
+  /* ── 大学生：群・環・体・線形代数・位相（○×／選択） ── */
+  dai:[
+    function(){ return Qn('群の公理に 含まれないものは？','可換性 (ab＝ba)',['結合法則','単位元の存在'],'可換性は不要。可換な群＝アーベル群。'); },
+    function(){ return Qn('群の単位元の 個数は？','ただ1つ',['少なくとも2つ','存在しないこともある'],'単位元は一意に定まる。'); },
+    function(){ return Qn('アーベル群とは？','可換な群',['有限群のこと','逆元をもたない群'],'ab＝ba が成り立つ群。'); },
+    function(){ return Qn('一般の環で 必ずしも成り立たないものは？','乗法の可換性',['加法の結合法則','分配法則'],'非可換環が存在する。'); },
+    function(){ return Qn('体（field）の特徴は？','0以外のすべてが乗法逆元をもつ',['零因子をもつ','可換でなくてよい'],'体＝0以外で割り算できる可換環。'); },
+    function(){ return Qn('整数全体 Z は体か？（○×）','×（体でない）',['○（体である）','どちらともいえない'],'2 の逆元 1/2 が Z にない。'); },
+    function(){ return Qn('有理数 Q は体か？（○×）','○（体である）',['×（体でない）','環ですらない'],'0以外で割り算できる。'); },
+    function(){ return Qn('3次対称群 S₃ の位数は？',6,[3,9],'3!＝6。最小の非可換群。'); },
+    function(){ var a=qrand(1,5),b=qrand(1,5),c=qrand(1,5),d=qrand(1,5),det=a*d-b*c; return Qn('行列 [['+a+','+b+'],['+c+','+d+']] の 行列式は？',det,[a*d+b*c,a*b-c*d],'ad − bc＝'+a+'×'+d+'−'+b+'×'+c+'＝'+det+'。'); },
+    function(){ return Qn('n次 単位行列の 固有値は？','1（重複度 n）',['0','n'],'Ix＝x なので固有値は1。'); },
+    function(){ return Qn('線形写像 f で rank f ＋ dim Ker f ＝ ？','定義域の次元 n',['像の次元 m','m＋n'],'次元定理（rank-nullity）。'); },
+    function(){ return Qn('正方行列が正則（逆行列をもつ）⇔ ？','行列式 ≠ 0',['行列式 ＝ 0','対称行列である'],'det≠0 と 可逆は同値。'); },
+    function(){ return Qn('n次元空間で 一次独立なベクトルは 最大何本？','n 本',['n＋1 本','無限本'],'基底の本数＝次元。'); },
+    function(){ return Qn('位相空間で 開集合の（任意個の）和集合は？','開集合',['閉集合','一般には不明'],'位相の公理：和はつねに開。'); },
+    function(){ return Qn('開集合の 有限個の共通部分は？','開集合',['閉集合','空集合のみ'],'有限交叉は開（無限個では崩れうる）。'); },
+    function(){ return Qn('コンパクトの定義に 近いのは？','任意の開被覆が 有限部分被覆をもつ',['有界なだけ','連結である'],'有限部分被覆の存在。'); },
+    function(){ return Qn('コーヒーカップとドーナツが 同相な理由は？','穴の数が同じ（1つ）',['体積が同じ','色が同じ'],'トポロジーは 穴の数（種数）で分類。'); },
+    function(){ return Qn('ハウスドルフ空間とは？','異なる2点を 互いに素な開集合で分離できる',['コンパクトな空間','離散空間のこと'],'T₂ 分離公理。'); },
+    function(){ return Qn('連続写像の 特徴づけは？','開集合の逆像が つねに開',['必ず全単射','距離を保つ'],'逆像で開集合が開 ⇔ 連続。'); }
+  ]
+};
+
+/* ゾーンの問題プール（既存の敵クイズ ＋ 新規ジェネレータ） */
+function quizPool(zone){
+  var base=[];
+  ((LAYERS[zone]&&LAYERS[zone].enemies)||[]).forEach(function(e){ (e.q||[]).forEach(function(qq){ base.push(qq); }); });
+  return base.concat(QUIZGEN[zone]||[]);
+}
+/* ランダム出題器：直前と同じ問題は出さない・数値問題は毎回再生成 */
+function quizPicker(zone){
+  var pool=quizPool(zone);
+  if(!pool.length) pool=quizPool('sho');
+  var last=-1;
+  return function(){
+    var i=Math.floor(Math.random()*pool.length);
+    if(pool.length>1){ var g=0; while(i===last&&g<8){ i=Math.floor(Math.random()*pool.length); g++; } }
+    last=i;
+    var it=pool[i];
+    return (typeof it==='function')?it():it;
+  };
+}
+
+/* ════════════════════════════════════════════════════════
    エンジン本体
    ════════════════════════════════════════════════════════ */
 window.FieldMap=function(zoneId){
@@ -553,6 +692,7 @@ window.FieldMap=function(zoneId){
   var player={px:(spawn.x+0.5)*TILE, py:(spawn.y+0.5)*TILE, dir:0};
   var cam={x:0,y:0};
   var lastSpecial=null; /* "tx,ty" 直近に発動した特殊タイル */
+  var battlePick=quizPicker(zoneId); /* このゾーンの出題器（直前と同じ問題は出さない） */
 
   /* ── 衝突判定 ── */
   function solidAt(wx,wy){
@@ -929,7 +1069,7 @@ window.FieldMap=function(zoneId){
   function startBattle(en){
     mode='battle'; keys.u=keys.d=keys.l=keys.r=false;
     if(window.SND) SND.click();
-    var hp=en.def.q.length, qi=0;
+    var NEED=3, hp=NEED; /* 倒すのに必要な正解数。問題は毎回プールからランダム抽選 */
     var ov=el('div','fm-ov fm-battle');
     ov.innerHTML=
       '<div class="fm-bt-stage">⚔️ '+(KIDS?'たたかい':'BATTLE')+'</div>'+
@@ -941,13 +1081,13 @@ window.FieldMap=function(zoneId){
       '<div class="fm-bt-area" id="fmArea"></div>';
     document.body.appendChild(ov);
     var area=ov.querySelector('#fmArea'), hpfill=ov.querySelector('#fmHp');
-    function paintHp(){ hpfill.style.width=Math.max(0,hp)/en.def.q.length*100+'%'; }
+    function paintHp(){ hpfill.style.width=Math.max(0,hp)/NEED*100+'%'; }
     paintHp();
 
     function showQ(){
-      var Q=en.def.q[qi];
+      var Q=battlePick();
       var h='<div class="fm-q">'+
-        '<div class="fm-qno">'+(KIDS?'もんだい ':'問 ')+(qi+1)+' / '+en.def.q.length+'</div>'+
+        '<div class="fm-qno">'+(KIDS?'もんだい ':'問 ')+(NEED-hp+1)+' / '+NEED+'</div>'+
         '<div class="fm-qt">'+Q.q+'</div><div class="fm-cs">';
       for(var i=0;i<Q.c.length;i++) h+='<button class="fm-c" data-i="'+i+'">'+Q.c[i]+'</button>';
       h+='</div><div class="fm-tail"></div>';
@@ -968,7 +1108,7 @@ window.FieldMap=function(zoneId){
               (Q.exp?'<div class="fm-exp">'+Q.exp+'</div>':'')+
               '<button class="fm-go" id="fmNext">'+(hp<=0?(KIDS?'とどめ！':'とどめを刺す'):(KIDS?'つぎへ':'攻撃を続ける'))+'</button>';
             tail.querySelector('#fmNext').addEventListener('click',function(){
-              if(hp<=0){ victory(); } else { qi++; showQ(); }
+              if(hp<=0){ victory(); } else { showQ(); }
             });
           } else {
             b.classList.add('ng'); if(btns[Q.a]) btns[Q.a].classList.add('ok');
