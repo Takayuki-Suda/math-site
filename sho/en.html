@@ -271,27 +271,6 @@
 </style>
 </head>
 <body>
-<script src="/math-site/rpg.js"></script>
-<script>
-(function(){
-  var id='en';
-  var isNew=!localStorage.getItem('stamp_'+id);
-  localStorage.setItem('stamp_'+id,'1');
-  if(isNew){
-    document.addEventListener('DOMContentLoaded',function(){
-      var s=document.createElement('style');
-      s.textContent='@keyframes stIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(s);
-      var t=document.createElement('div');
-      t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
-      t.textContent='スタンプ GET！⭐';
-      if(window.SND)SND.stamp();
-      document.body.appendChild(t);
-      setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
-    });
-  }
-})();
-</script>
 <style>
 /* ── SITE NAV ── */
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
@@ -314,7 +293,6 @@
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
-<script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
@@ -365,6 +343,7 @@
         </div>
       </li>
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
     </ul>
   </div>
 </nav>
@@ -373,8 +352,8 @@
 <!-- ヒーロー -->
 <div class="hero">
   <div class="hero-tag">小学6年〜</div>
-  <h1>🟡 まんまる神殿<br>円の面積は なぜ π × r × r なの？</h1>
-  <p>ステージ7 ── まるまるスピリットの なぞ。<br>円を細かく切ってならべると…長方形に変身する！</p>
+  <h1>⭕ 円の面積は なぜ π × r × r なの？</h1>
+  <p>円を細かく切ってならべると…長方形に変身する！その しくみを 見てみよう。</p>
 </div>
 
 <!-- セクション1：円を切ってみよう -->

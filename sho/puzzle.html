@@ -134,7 +134,6 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
 </style>
 </head>
 <body>
-<script src="/math-site/rpg.js"></script>
 <style>
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
 .site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
@@ -156,7 +155,6 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
-<script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
@@ -207,26 +205,18 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
         </div>
       </li>
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
     </ul>
   </div>
 </nav>
 
 <div class="page-header">
-  <div class="page-label">Final Stage ── Puzzle Tower</div>
+  <div class="page-label">パズルに ちょうせん</div>
   <h1 class="page-title">🧩 パズルの塔</h1>
-  <p class="page-desc">さいごのステージ ── パズルキーパーが 塔のとびらを まもっている。3つのパズルを といて うちやぶれ！クリアごとに +50XP。</p>
+  <p class="page-desc">3つのパズルに ちょうせんしよう。たし算・ひき算や 数のならびのきまりを つかって、頭を やわらかく つかう れんしゅうだよ。</p>
 </div>
 
 <div class="container">
-
-  <div class="mini-hero">
-    <div class="mini-avatar" id="mhAvatar">🧒</div>
-    <div class="mini-info">
-      <div class="mini-lv" id="mhLv">Lv1<span>見習い冒険者</span></div>
-      <div class="mini-bar"><div class="mini-fill" id="mhFill"></div></div>
-    </div>
-    <div class="mini-xp"><em id="mhXp">0</em> XP<br><span id="mhNext"></span></div>
-  </div>
 
   <div class="sensei-note">パズルは「考える力」のトレーニング。とけなくても だいじょうぶ。何度でも挑戦してみよう。わからないときは、いつでも須田先生にきいてね（会津若松・むりょうで教えています）。</div>
 
@@ -235,7 +225,6 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     <span class="quest-tag">Quest 1</span>
     <div class="quest-title">🗺️ 数字の迷路</div>
     <div class="quest-desc">スタートの数からドアをえらんで、たしたり ひいたりしながら、ぴったりゴールの数にしよう！各階でドアを1つえらんでね。</div>
-    <div class="quest-reward">⭐ クリアほうしゅう：+50XP ／ 3回クリアで 🏅マスターバッジ（+100XP）</div>
     <div class="maze-status">
       <div class="maze-now">いまの数<em id="mazeNow">0</em></div>
       <div class="maze-goal">ゴール<em id="mazeGoal">0</em></div>
@@ -243,7 +232,6 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     <div id="mazeFloors"></div>
     <div class="maze-result" id="mazeResult"></div>
     <button class="pz-next" id="mazeNext" style="display:none;"></button>
-    <div class="clear-count">クリアした回数：<em id="mazeClears">0</em> 回 ・ <span id="mazeBdgHint"></span></div>
   </div>
 
   <!-- ── クエスト2：穴埋めパズル ── -->
@@ -251,13 +239,11 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     <span class="quest-tag">Quest 2</span>
     <div class="quest-title">🔍 穴埋めパズル</div>
     <div class="quest-desc">□に入る数はなに？ 5問せいかいで クエストクリア！</div>
-    <div class="quest-reward">⭐ クリアほうしゅう：+50XP ／ 3回クリアで 🏅マスターバッジ（+100XP）</div>
     <div class="pz-progress" id="anaProg"></div>
     <div class="pz-q" id="anaQ"></div>
     <div class="pz-choices" id="anaChoices"></div>
     <div class="pz-fb" id="anaFb"></div>
     <button class="pz-next" id="anaNext">つぎの もんだい →</button>
-    <div class="clear-count">クリアした回数：<em id="anaClears">0</em> 回 ・ <span id="anaBdgHint"></span></div>
   </div>
 
   <!-- ── クエスト3：数列パズル ── -->
@@ -265,13 +251,11 @@ body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
     <span class="quest-tag">Quest 3</span>
     <div class="quest-title">🔢 数列パズル</div>
     <div class="quest-desc">数のならびには ひみつのきまりがある！□に入る数をみつけよう。5問せいかいで クエストクリア！</div>
-    <div class="quest-reward">⭐ クリアほうしゅう：+50XP ／ 3回クリアで 🏅マスターバッジ（+100XP）</div>
     <div class="pz-progress" id="seqProg"></div>
     <div class="pz-q" id="seqQ"></div>
     <div class="pz-choices" id="seqChoices"></div>
     <div class="pz-fb" id="seqFb"></div>
     <button class="pz-next" id="seqNext">つぎの もんだい →</button>
-    <div class="clear-count">クリアした回数：<em id="seqClears">0</em> 回 ・ <span id="seqBdgHint"></span></div>
   </div>
 
 </div>
@@ -299,81 +283,12 @@ function starShower(){
     },i*60);
   })(i);
 }
-function getClears(key){ return parseInt(localStorage.getItem(key)||'0',10)||0; }
-function addClear(key,el){
-  var n=getClears(key)+1;
-  localStorage.setItem(key,String(n));
-  document.getElementById(el).textContent=n;
-}
-/* ── マスターバッジ（3回クリアで獲得・indexのバッジ欄と連動） ── */
-var BADGES={
-  rpg_pz_maze:{id:'maze',label:'迷路マスター',icon:'🗺️',hint:'mazeBdgHint'},
-  rpg_pz_ana :{id:'ana', label:'穴埋めマスター',icon:'🔍',hint:'anaBdgHint'},
-  rpg_pz_seq :{id:'seq', label:'数列マスター',icon:'🔢',hint:'seqBdgHint'}
-};
-function updateHint(clearKey){
-  var b=BADGES[clearKey]; if(!b) return;
-  var el=document.getElementById(b.hint); if(!el) return;
-  if(localStorage.getItem('badge_'+b.id)){
-    el.textContent='🏅 マスターバッジ かくとくずみ！';
-    el.style.color='#e8c96b';
-  }else{
-    el.textContent='あと'+Math.max(1,3-getClears(clearKey))+'回クリアで 🏅マスターバッジ';
-  }
-}
-function badgeShow(b){
-  if(window.SND) SND.badge();
-  var ov=document.createElement('div');
-  ov.style.cssText='position:fixed;inset:0;z-index:99994;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(8,8,24,.86);cursor:pointer;padding:24px;';
-  ov.innerHTML='<div style="text-align:center;animation:rpgLvPop .6s cubic-bezier(.34,1.56,.64,1);">'
-    +'<div style="font-size:4rem;">'+b.icon+'</div>'
-    +'<div style="font-size:clamp(1.4rem,6vw,2rem);font-weight:900;color:#e8c96b;text-shadow:0 0 24px rgba(200,168,75,.8);">マスターバッジ かくとく！</div>'
-    +'<div style="font-size:1.1rem;font-weight:700;color:#fff;margin-top:8px;">🏅 '+b.label+'</div>'
-    +'<div style="margin-top:16px;font-size:.78rem;color:#8899aa;">ぼうけんマップの バッジらんに かざられたよ！（タップでとじる）</div></div>';
-  document.body.appendChild(ov);
-  function close(){ ov.style.transition='opacity .5s'; ov.style.opacity='0'; setTimeout(function(){ov.remove();},520); }
-  ov.addEventListener('click',close);
-  setTimeout(close,6000);
-}
-function questClear(clearKey,clearEl){
+function questClear(){
   starShower();
-  addClear(clearKey,clearEl);
-  if(window.SND) SND.clear();
-  if(window.RPG) RPG.addXP(50,'パズルクリア！');
-  var b=BADGES[clearKey];
-  if(b&&getClears(clearKey)>=3&&!localStorage.getItem('badge_'+b.id)){
-    localStorage.setItem('badge_'+b.id,'1');
-    setTimeout(function(){
-      badgeShow(b);
-      if(window.RPG) RPG.addXP(100,'マスターバッジ！');
-    },1400);
-  }
-  updateHint(clearKey);
 }
-Object.keys(BADGES).forEach(updateHint);
-
-/* ════ ミニ冒険者ステータス ════ */
-function renderMini(){
-  if(!window.RPG) return;
-  var xp=RPG.getXP(), lv=RPG.levelFor(xp), next=RPG.nextLevel(xp);
-  document.getElementById('mhAvatar').textContent=lv.emoji;
-  document.getElementById('mhLv').innerHTML='Lv'+lv.lv+'<span>'+lv.title+'</span>';
-  document.getElementById('mhXp').textContent=xp;
-  var fill=document.getElementById('mhFill');
-  var nx=document.getElementById('mhNext');
-  if(next){
-    fill.style.width=Math.min(100,Math.round((xp-lv.xp)/(next.xp-lv.xp)*100))+'%';
-    nx.textContent='あと'+(next.xp-xp);
-  }else{
-    fill.style.width='100%'; nx.textContent='MAX👑';
-  }
-}
-renderMini();
-document.addEventListener('rpg:xp',renderMini);
 
 /* ════ クエスト1：数字の迷路 ════ */
 var mazeStart,mazeTarget,mazeFloorsData,mazeCur,mazeFloorIdx;
-document.getElementById('mazeClears').textContent=getClears('rpg_pz_maze');
 
 function mazeGen(){
   /* スタート10〜14、各階のドアは −3〜+6。どのルートでも途中がマイナスにならない */
@@ -425,7 +340,6 @@ function mazeReset(){
 }
 function mazePick(fi,d,btn,dz){
   if(fi!==mazeFloorIdx) return;
-  if(window.SND) SND.click();
   mazeCur+=d;
   document.getElementById('mazeNow').textContent=mazeCur;
   btn.classList.add('picked');
@@ -447,7 +361,6 @@ function mazePick(fi,d,btn,dz){
     nextBtn.onclick=function(){ mazeGen(); };
     questClear('rpg_pz_maze','mazeClears');
   }else{
-    if(window.SND) SND.wrong();
     res.textContent='😢 ざんねん… '+mazeCur+' になっちゃった。もういちど！';
     res.className='maze-result lose';
     nextBtn.textContent='もういちど挑戦 ↻';
@@ -461,7 +374,6 @@ function makeRound(opts){
   /* opts: {gen()→{html,answer,choices[]}, qEl, chEl, fbEl, nextEl, progEl, clearKey, clearEl} */
   var okCount=0, answered=false, cur=null;
   var prog=document.getElementById(opts.progEl);
-  document.getElementById(opts.clearEl).textContent=getClears(opts.clearKey);
 
   function renderProg(){
     prog.innerHTML='';
@@ -505,13 +417,11 @@ function makeRound(opts){
         questClear(opts.clearKey,opts.clearEl);
         setTimeout(renderProg,1800);
       }else{
-        if(window.SND) SND.correct();
         var prs=['すごい！','やるね！','天才！','かんぺき！','さすが！'];
         fb.textContent=prs[Math.random()*prs.length|0]+' ⭕ せいかい！';
         fb.className='pz-fb good';
       }
     }else{
-      if(window.SND) SND.wrong();
       btn.classList.add('ng');
       Array.prototype.forEach.call(ch.children,function(b){
         if(Number(b.textContent)===cur.answer) b.classList.add('ok');

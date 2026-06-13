@@ -315,27 +315,6 @@
 </style>
 </head>
 <body>
-<script src="/math-site/rpg.js"></script>
-<script>
-(function(){
-  var id='hikizan';
-  var isNew=!localStorage.getItem('stamp_'+id);
-  localStorage.setItem('stamp_'+id,'1');
-  if(isNew){
-    document.addEventListener('DOMContentLoaded',function(){
-      var s=document.createElement('style');
-      s.textContent='@keyframes stIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(s);
-      var t=document.createElement('div');
-      t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
-      t.textContent='スタンプ GET！⭐';
-      if(window.SND)SND.stamp();
-      document.body.appendChild(t);
-      setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
-    });
-  }
-})();
-</script>
 <style>
 /* ── SITE NAV ── */
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
@@ -358,7 +337,6 @@
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
-<script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
@@ -409,6 +387,7 @@
         </div>
       </li>
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
     </ul>
   </div>
 </nav>
@@ -416,8 +395,8 @@
 
 <!-- ヘッダー -->
 <div class="header">
-  <h1>🦇 ひきざんの洞窟 ― ひきざんを まなぼう！</h1>
-  <p>ステージ3 ── くらい どうくつに マイナスコウモリが ひそんでいる。くりさがりで ひるませろ！</p>
+  <h1>➖ ひきざんを まなぼう！</h1>
+  <p>くりさがりの しくみを、おさらと えもじで みにつけよう。</p>
 </div>
 
 <!-- ══ パート1：お皿からとりのぞく ══ -->
@@ -470,32 +449,10 @@
   </div>
 </div>
 
-<!-- ══ パート3：クイズ ══ -->
+<!-- ══ パート3：たし算との関係 ══ -->
 <div class="section" style="margin-top:36px">
   <div class="section-title">
     <div class="num-badge">3</div>
-    クイズ！ こたえを えらぼう
-  </div>
-  <div class="quiz-box">
-    <div class="quiz-q" id="quizQ">8 － 3 ＝ ？</div>
-    <div class="quiz-visual" id="quizVisual"></div>
-    <div class="num-pad" id="numPad"></div>
-    <div class="quiz-feedback" id="quizFeedback"></div>
-    <button class="next-btn" id="nextBtn" onclick="nextQuiz()">つぎの もんだい →</button>
-    <div class="score-wrap">
-      せいかい <span id="scoreOk">0</span> ／ <span id="scoreTotal">0</span> もん
-    </div>
-    <div class="master-badge" id="hikizanBadge">
-      <span class="mb-icon">🏅</span>
-      <div class="mb-lbl">ひきざんマスター バッジ かくとく！</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ パート4：たし算との関係 ══ -->
-<div class="section" style="margin-top:36px">
-  <div class="section-title">
-    <div class="num-badge">4</div>
     たしざんと ひきざんの なかよし
   </div>
   <div class="relation-box">
@@ -599,82 +556,7 @@ function crossOne(span) {
 }
 newCrossQuestion();
 
-// ── パート3：クイズ ──
-let quizA = 0, quizB = 0, quizAnswered = false;
-let scoreOk = 0, scoreTotal = 0;
-const QUIZ_EM = ['🍎','🌟','🐸','🌸','🍪','🐶','🍓','🐠','🌻','🎈'];
-
-function generateQuiz() {
-  quizAnswered = false;
-  quizA = Math.floor(Math.random() * 7) + 3; // 3〜9
-  quizB = Math.floor(Math.random() * (quizA - 1)) + 1;
-  const diff = quizA - quizB;
-  const emoji = QUIZ_EM[Math.floor(Math.random() * QUIZ_EM.length)];
-
-  document.getElementById('quizQ').textContent = `${quizA} － ${quizB} ＝ ？`;
-  // 全部表示して後ろをうすく
-  let vis = '';
-  for (let i = 0; i < quizA; i++) {
-    vis += i < diff ? emoji : '💨';
-  }
-  document.getElementById('quizVisual').textContent = vis;
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('nextBtn').style.display = 'none';
-
-  const pad = document.getElementById('numPad');
-  pad.innerHTML = '';
-  for (let n = 0; n <= 9; n++) {
-    const btn = document.createElement('button');
-    btn.className = 'pad-btn';
-    btn.textContent = n;
-    btn.onclick = () => checkQuiz(n, btn);
-    pad.appendChild(btn);
-  }
-}
-
-function checkQuiz(selected, btn) {
-  if (quizAnswered) return;
-  quizAnswered = true;
-  scoreTotal++;
-  const diff = quizA - quizB;
-  const fb = document.getElementById('quizFeedback');
-  if (selected === diff) {
-    btn.classList.add('correct-ans');
-    scoreOk++;
-    const _prs=['すごい！','天才！','やるね！','かんぺき！','さすが！'];
-    fb.innerHTML='<span class="quiz-praise">'+_prs[Math.random()*_prs.length|0]+'</span>🎉 せいかい！ すごい！';
-    fb.style.color = '#388e3c';
-    soundCorrect();
-    speak(diff);
-    showStars();
-    flashScreen();
-    if(window.RPG)RPG.quizCorrect();
-    if(scoreOk>=10&&!localStorage.getItem('badge_hikizan')){
-      localStorage.setItem('badge_hikizan','1');
-      setTimeout(()=>{
-        document.getElementById('hikizanBadge').className='master-badge show';
-        if(window.SND)SND.badge();
-        if(window.RPG)RPG.addXP(100,'マスターバッジ！');
-      },500);
-    }
-  } else {
-    btn.classList.add('wrong-ans');
-    fb.textContent = `😢 ざんねん… こたえは ${diff} だよ！`;
-    fb.style.color = '#c62828';
-    soundWrong();
-    if(window.RPG)RPG.quizWrong();
-    document.querySelectorAll('.pad-btn').forEach(b => {
-      if (Number(b.textContent) === diff) b.classList.add('correct-ans');
-    });
-  }
-  document.getElementById('scoreOk').textContent    = scoreOk;
-  document.getElementById('scoreTotal').textContent = scoreTotal;
-  document.getElementById('nextBtn').style.display  = 'inline-block';
-}
-function nextQuiz() { generateQuiz(); }
-generateQuiz();
-
-// ── パート4：たし算との関係 ──
+// ── パート3：たし算との関係 ──
 let relA = 3, relB = 4;
 
 const TRI_MSG = {
@@ -726,14 +608,13 @@ function speak(n) {
 // ── 効果音エンジン（Web Audio API）──
 let _ac = null;
 function getAC() {
-  if (window.SND) return SND.ctx(); // 共通サウンドエンジンに委譲（音量設定が効く）
   if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
   return _ac;
 }
 function playTone(freq, type, startTime, duration, gainVal, ac) {
   const osc = ac.createOscillator();
   const g   = ac.createGain();
-  osc.connect(g); g.connect((window.SND && SND.bus()) || ac.destination);
+  osc.connect(g); g.connect(ac.destination);
   osc.type = type;
   osc.frequency.setValueAtTime(freq, startTime);
   g.gain.setValueAtTime(gainVal, startTime);

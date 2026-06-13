@@ -176,27 +176,6 @@
   .qm-badge-lbl{font-size:1rem;font-weight:700;}
 </style>
 
-<script src="/math-site/rpg.js"></script>
-<script>
-(function(){
-  var id='kuku';
-  var isNew=!localStorage.getItem('stamp_'+id);
-  localStorage.setItem('stamp_'+id,'1');
-  if(isNew){
-    document.addEventListener('DOMContentLoaded',function(){
-      var s=document.createElement('style');
-      s.textContent='@keyframes stIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(s);
-      var t=document.createElement('div');
-      t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
-      t.textContent='スタンプ GET！⭐';
-      if(window.SND)SND.stamp();
-      document.body.appendChild(t);
-      setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
-    });
-  }
-})();
-</script>
 <style>
 /* ── SITE NAV ── */
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
@@ -219,7 +198,6 @@
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
-<script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
@@ -270,13 +248,14 @@
         </div>
       </li>
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
     </ul>
   </div>
 </nav>
 
 <div class="header">
-  <h1>🐲 九九の火山 ― 九九の表</h1>
-  <p>ステージ4 ── 九九ドラゴンが ほのおを はく！9×9＝81まで となえて たちむかえ。</p>
+  <h1>✖️ 九九の表</h1>
+  <p>九九は「マス目の面積」。表をさわって、9×9＝81までの しくみを つかもう。</p>
 </div>
 
 <div class="wrap">
@@ -308,24 +287,6 @@
     たとえば 3×4 は「たて3、よこ4」の長方形の面積。タイルの数を数えると 12 個！掛け算はマス目の面積と同じ考え方です。
   </div>
 
-  <!-- クイズモード -->
-  <button class="quiz-launch" onclick="openKukuQuiz()">🎯 クイズに挑戦！</button>
-
-  <div class="qmode" id="qmode">
-    <div class="qm-prog-wrap">
-      <div class="qm-bar"><div class="qm-bar-fill" id="qmBarFill" style="width:0%"></div></div>
-      <div class="qm-score"><span id="qmOk">0</span> / 10 せいかい</div>
-    </div>
-    <div class="qm-question" id="qmQ"></div>
-    <div class="qm-display" id="qmDisp"></div>
-    <div class="qm-numpad" id="qmPad"></div>
-    <div class="qm-feedback" id="qmFb"></div>
-    <button class="qm-next" id="qmNext" onclick="qmNextQ()">つぎの もんだい →</button>
-    <div class="qm-badge-box" id="qmBadge">
-      <span class="qm-badge-icon">🏅</span>
-      <div class="qm-badge-lbl">九九マスター バッジ かくとく！</div>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -389,117 +350,5 @@
     });
   }
 
-  // ── 九九クイズモード ──
-  let _qA=0, _qB=0, _qInput='', _qAnswered=false, _qOk=0;
-
-  function _qBuildPad(){
-    const pad=document.getElementById('qmPad');
-    pad.innerHTML='';
-    [7,8,9,4,5,6,1,2,3].forEach(n=>{
-      const b=document.createElement('button');
-      b.className='qpad'; b.textContent=n;
-      b.addEventListener('click',()=>{ if(!_qAnswered&&_qInput.length<2){_qInput+=n;_qUpdDisp();} });
-      pad.appendChild(b);
-    });
-    const b0=document.createElement('button'); b0.className='qpad'; b0.textContent='0';
-    b0.addEventListener('click',()=>{ if(!_qAnswered&&_qInput.length>0&&_qInput.length<2){_qInput+='0';_qUpdDisp();} });
-    const bc=document.createElement('button'); bc.className='qpad clr'; bc.textContent='C';
-    bc.addEventListener('click',()=>{ if(!_qAnswered){_qInput='';_qUpdDisp();} });
-    const be=document.createElement('button'); be.className='qpad ok'; be.textContent='けってい';
-    be.addEventListener('click',_qCheck);
-    pad.appendChild(b0); pad.appendChild(bc); pad.appendChild(be);
-  }
-
-  function _qUpdDisp(){
-    const d=document.getElementById('qmDisp');
-    if(!_qInput){
-      d.style.color='#888'; d.style.fontSize='1rem'; d.textContent='こたえを にゅうりょく';
-    } else {
-      d.style.color='#f9c74f'; d.style.fontSize='2.2rem'; d.textContent=_qInput;
-    }
-  }
-
-  function _qNewQ(){
-    _qA=1+(Math.random()*9|0); _qB=1+(Math.random()*9|0);
-    _qInput=''; _qAnswered=false;
-    document.getElementById('qmQ').textContent=`${_qA} × ${_qB} ＝ ？`;
-    _qUpdDisp();
-    const fb=document.getElementById('qmFb'); fb.innerHTML=''; fb.style.color='';
-    document.getElementById('qmNext').style.display='none';
-    _qBuildPad();
-    clearHighlight();
-  }
-
-  function _qCheck(){
-    if(_qAnswered||!_qInput) return;
-    _qAnswered=true;
-    const ans=_qA*_qB, given=parseInt(_qInput);
-    const fb=document.getElementById('qmFb');
-    if(given===ans){
-      _qOk++;
-      const prs=['すごい！','天才！','やるね！','かんぺき！','さすが！','やるじゃん！'];
-      fb.innerHTML=`<span class="qm-praise">${prs[Math.random()*prs.length|0]}</span>⭕ せいかい！ ${_qA}×${_qB}＝${ans}`;
-      fb.style.color='#2a6e2a';
-      _qUpdProg();
-      _qShowStars();
-      _qFlash();
-      highlight(_qA,_qB);
-      if(window.SND)SND.correct();
-      if(window.RPG)RPG.quizCorrect();
-      if(_qOk>=10&&!localStorage.getItem('badge_kuku')){
-        localStorage.setItem('badge_kuku','1');
-        setTimeout(()=>{
-          document.getElementById('qmBadge').className='qm-badge-box show';
-          if(window.SND)SND.badge();
-          if(window.RPG)RPG.addXP(100,'マスターバッジ！');
-        },500);
-      }
-    } else {
-      fb.innerHTML=`おしい！ もういちど！<br><small style="color:#888">こたえは ${ans} だよ。下の表をみてみよう 🔍</small>`;
-      fb.style.color='#c8401e';
-      highlight(_qA,_qB);
-      if(window.SND)SND.wrong();
-      if(window.RPG)RPG.quizWrong();
-    }
-    document.getElementById('qmNext').style.display='block';
-  }
-
-  function _qUpdProg(){
-    const n=Math.min(_qOk,10);
-    document.getElementById('qmBarFill').style.width=(n*10)+'%';
-    document.getElementById('qmOk').textContent=n;
-  }
-
-  function _qShowStars(){
-    for(let i=0;i<18;i++) setTimeout(()=>{
-      const s=document.createElement('div');
-      s.style.cssText='position:fixed;top:-30px;left:'+Math.random()*100+'%;font-size:'+(1.2+Math.random()*.8)+'rem;pointer-events:none;z-index:9998;animation:starFall '+(0.8+Math.random()*.7)+'s ease-in forwards;';
-      s.textContent=['⭐','✨','🌟'][Math.random()*3|0];
-      document.body.appendChild(s);
-      setTimeout(()=>s.remove(),2000);
-    },i*65);
-  }
-
-  function _qFlash(){
-    const f=document.createElement('div');
-    f.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9997;background:rgba(249,199,79,0);animation:flashGold .7s ease;';
-    document.body.appendChild(f); setTimeout(()=>f.remove(),700);
-  }
-
-  function openKukuQuiz(){
-    const q=document.getElementById('qmode');
-    q.className='qmode open';
-    q.scrollIntoView({behavior:'smooth',block:'nearest'});
-    if(localStorage.getItem('badge_kuku')){
-      document.getElementById('qmBadge').className='qm-badge-box show';
-      document.getElementById('qmOk').textContent='10';
-      document.getElementById('qmBarFill').style.width='100%';
-      _qOk=10;
-    }
-    _qNewQ();
-  }
-
-  window.openKukuQuiz=openKukuQuiz;
-  window.qmNextQ=function(){ _qNewQ(); };
 })();
 </script>

@@ -368,27 +368,6 @@
 </style>
 </head>
 <body>
-<script src="/math-site/rpg.js"></script>
-<script>
-(function(){
-  var id='kazu';
-  var isNew=!localStorage.getItem('stamp_'+id);
-  localStorage.setItem('stamp_'+id,'1');
-  if(isNew){
-    document.addEventListener('DOMContentLoaded',function(){
-      var s=document.createElement('style');
-      s.textContent='@keyframes stIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(s);
-      var t=document.createElement('div');
-      t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#0a0e1a;color:#c8a84b;border:2px solid #c8a84b;border-radius:14px;padding:12px 22px;font-family:"Noto Sans JP",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(0,0,0,.7);animation:stIn .4s ease;pointer-events:none;';
-      t.textContent='スタンプ GET！⭐';
-      if(window.SND)SND.stamp();
-      document.body.appendChild(t);
-      setTimeout(function(){t.style.transition='opacity .5s';t.style.opacity='0';setTimeout(function(){t.remove();},500);},2000);
-    });
-  }
-})();
-</script>
 <style>
 /* ── SITE NAV ── */
 .site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
@@ -411,7 +390,6 @@
   .site-nav__logo{font-size:.82rem;padding:12px 6px;}
 }
 </style>
-<script src="/math-site/sound.js"></script>
 <nav class="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
@@ -462,6 +440,7 @@
         </div>
       </li>
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
     </ul>
   </div>
 </nav>
@@ -469,8 +448,8 @@
 
 <!-- ヘッダー -->
 <div class="header">
-  <h1>🐛 かずの森 ― かずを かぞえよう！</h1>
-  <p>ステージ1 ── かぞえムシが まちかまえている！10の まとまりを つかいこなして たおそう。</p>
+  <h1>🔢 かずを かぞえよう！</h1>
+  <p>10の まとまりを つかって、かずの かぞえかたを みにつけよう。</p>
 </div>
 
 <!-- ── パート1：タップして増やす ── -->
@@ -507,25 +486,10 @@
   <div class="number-grid" id="numberGrid"></div>
 </div>
 
-<!-- ── パート3：クイズ ── -->
+<!-- ── パート3：0〜10 の並び ── -->
 <div class="section" style="margin-top:36px">
   <div class="section-title">
     <div class="num-badge">3</div>
-    クイズ！ いくつ あるかな？
-  </div>
-  <div class="quiz-box">
-    <div class="quiz-question">したの えを かぞえて こたえよう！</div>
-    <div class="quiz-emojis" id="quizEmojis"></div>
-    <div class="quiz-choices" id="quizChoices"></div>
-    <div class="quiz-result" id="quizResult"></div>
-    <button class="next-btn" id="nextBtn" onclick="nextQuiz()">つぎの もんだい →</button>
-  </div>
-</div>
-
-<!-- ── パート4：0〜10 の並び ── -->
-<div class="section" style="margin-top:36px">
-  <div class="section-title">
-    <div class="num-badge">4</div>
     0から10まで ならべよう
   </div>
   <div class="ten-row" id="tenRow"></div>
@@ -627,14 +591,13 @@ function speakNumber(n) {
 // ── 効果音エンジン（Web Audio API）──
 let _ac = null;
 function getAC() {
-  if (window.SND) return SND.ctx(); // 共通サウンドエンジンに委譲（音量設定が効く）
   if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
   return _ac;
 }
 function playTone(freq, type, st, dur, gain, ac) {
   const osc = ac.createOscillator();
   const g   = ac.createGain();
-  osc.connect(g); g.connect((window.SND && SND.bus()) || ac.destination);
+  osc.connect(g); g.connect(ac.destination);
   osc.type = type;
   osc.frequency.setValueAtTime(freq, st);
   g.gain.setValueAtTime(gain, st);
@@ -661,70 +624,7 @@ function soundCard(n) {
   try { const ac=getAC(),now=ac.currentTime; playTone(300+n*40,'triangle',now,0.18,0.25,ac); } catch(e){}
 }
 
-// ── パート3：クイズ ──
-const QUIZ_EMOJIS = ['🍎','🌟','🐸','🌸','🍪','🐶','🌈','🍓','🐠','🌻'];
-let quizAnswer = 0;
-let quizAnswered = false;
-
-function generateQuiz() {
-  quizAnswered = false;
-  document.getElementById('quizResult').textContent = '';
-  document.getElementById('nextBtn').style.display = 'none';
-
-  const count  = Math.floor(Math.random() * 9) + 1; // 1〜9
-  const emoji  = QUIZ_EMOJIS[Math.floor(Math.random() * QUIZ_EMOJIS.length)];
-  quizAnswer   = count;
-
-  document.getElementById('quizEmojis').textContent = emoji.repeat(count);
-
-  // 選択肢：正解 + 2つのデコイ
-  const choices = new Set([count]);
-  while (choices.size < 3) {
-    const d = Math.floor(Math.random() * 9) + 1;
-    choices.add(d);
-  }
-  const arr = [...choices].sort(() => Math.random() - 0.5);
-
-  const container = document.getElementById('quizChoices');
-  container.innerHTML = '';
-  arr.forEach(n => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-btn';
-    btn.textContent = n;
-    btn.onclick = () => checkAnswer(n, btn);
-    container.appendChild(btn);
-  });
-}
-
-function checkAnswer(selected, btn) {
-  if (quizAnswered) return;
-  quizAnswered = true;
-  const result = document.getElementById('quizResult');
-  if (selected === quizAnswer) {
-    btn.classList.add('correct');
-    result.textContent = '🎉 せいかい！ すごい！';
-    result.style.color = '#388e3c';
-    soundCorrect();
-    speakNumber(quizAnswer);
-    if(window.RPG)RPG.quizCorrect();
-  } else {
-    btn.classList.add('wrong');
-    result.textContent = `😢 ざんねん… こたえは ${quizAnswer} だよ！`;
-    result.style.color = '#c62828';
-    soundWrong();
-    if(window.RPG)RPG.quizWrong();
-    // 正解ボタンをハイライト
-    document.querySelectorAll('.choice-btn').forEach(b => {
-      if (Number(b.textContent) === quizAnswer) b.classList.add('correct');
-    });
-  }
-  document.getElementById('nextBtn').style.display = 'inline-block';
-}
-
-function nextQuiz() { generateQuiz(); }
-generateQuiz();
-
-// ── パート4：0〜10 の並び ──
+// ── パート3：0〜10 の並び ──
 const tenRow  = document.getElementById('tenRow');
 const tenYomi = document.getElementById('tenYomi');
 
