@@ -376,7 +376,7 @@
 .site-nav__logo:hover{color:#e8c96b;}
 .site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
 .site-nav__item{position:relative;}
-.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
 .site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
 .site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
 .site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
@@ -396,7 +396,7 @@
     <ul class="site-nav__list">
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/sho/">小学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
           <a href="/math-site/sho/tashizan.html">たしざん</a>
@@ -409,7 +409,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/chu/">中学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/chu/moji.html">文字式ってなに？</a>
           <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
@@ -419,7 +419,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/ko/">高校生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/ko/sankakuhi.html">三角関数</a>
           <a href="/math-site/ko/bibun.html">微分・接線</a>
@@ -429,7 +429,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/dai/">大学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
           <a href="/math-site/dai/gun.html">群論</a>

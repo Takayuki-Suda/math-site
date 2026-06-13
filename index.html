@@ -632,7 +632,7 @@
 .site-nav__logo:hover{color:#e8c96b;}
 .site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
 .site-nav__item{position:relative;}
-.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
 .site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
 .site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
 .site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
@@ -647,13 +647,13 @@
 }
 </style>
 <script src="/math-site/sound.js"></script>
-<nav class="site-nav" aria-label="サイトナビゲーション">
+<nav class="site-nav" id="site-nav" aria-label="サイトナビゲーション">
   <div class="site-nav__inner">
     <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
     <ul class="site-nav__list">
       <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/sho/">小学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
           <a href="/math-site/sho/tashizan.html">たしざん</a>
@@ -666,7 +666,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/chu/">中学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/chu/moji.html">文字式ってなに？</a>
           <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
@@ -676,7 +676,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/ko/">高校生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/ko/sankakuhi.html">三角関数</a>
           <a href="/math-site/ko/bibun.html">微分・接線</a>
@@ -686,7 +686,7 @@
         </div>
       </li>
       <li class="site-nav__item">
-        <a class="site-nav__link" href="/math-site/dai/">大学生 <span class="site-nav__arrow">▼</span></a>
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
         <div class="site-nav__dropdown">
           <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
           <a href="/math-site/dai/gun.html">群論</a>
@@ -737,6 +737,80 @@
   <p style="font-size:0.76rem;color:#8899aa;margin-top:8px;letter-spacing:0.04em;">
     話を聞くだけでも、1回だけでも大丈夫です。
   </p>
+</section>
+
+<hr class="divider">
+
+<!-- ══ 2つの学び方 ══ -->
+<style>
+  .routes-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:8px;
+  }
+  .route-card{
+    background:var(--bg2);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:34px 26px 30px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+  }
+  .route-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--gold);
+    box-shadow:0 14px 32px rgba(0,0,0,.5);
+  }
+  .route-icon{font-size:2.9rem;line-height:1;margin-bottom:16px;}
+  .route-name{font-size:1.12rem;font-weight:700;color:var(--white);margin-bottom:10px;}
+  .route-text{font-size:.9rem;color:#c8d4e0;line-height:1.9;margin-bottom:24px;flex:1;}
+  .route-btn{
+    display:inline-block;
+    text-decoration:none;
+    font-weight:900;
+    font-size:.92rem;
+    letter-spacing:.04em;
+    border-radius:999px;
+    padding:13px 30px;
+    transition:transform .15s ease,box-shadow .15s ease,background .2s ease,color .2s ease;
+  }
+  .route-btn-gold{
+    background:linear-gradient(135deg,var(--gold),var(--gold-lt));
+    color:#1a1040;
+    box-shadow:0 4px 16px rgba(200,168,75,.35);
+  }
+  .route-btn-gold:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(200,168,75,.55);}
+  .route-btn-ghost{
+    background:transparent;
+    color:var(--gold-lt);
+    border:1.5px solid var(--gold);
+  }
+  .route-btn-ghost:hover{background:rgba(200,168,75,.12);transform:translateY(-2px);}
+  @media(max-width:600px){
+    .routes-grid{grid-template-columns:1fr;}
+  }
+</style>
+<section class="section reveal">
+  <div class="section-label">2つのルート</div>
+  <h2 class="section-title">2つの学び方</h2>
+  <div class="routes-grid">
+    <div class="route-card">
+      <div class="route-icon">🗺️</div>
+      <h3 class="route-name">ゲームで冒険しながら学ぶ</h3>
+      <p class="route-text">マップを探索して敵を倒し、知識カードを集めよう。</p>
+      <a class="route-btn route-btn-gold" href="/math-site/sho/map.html">冒険をはじめる</a>
+    </div>
+    <div class="route-card">
+      <div class="route-icon">📖</div>
+      <h3 class="route-name">教材で調べて学ぶ</h3>
+      <p class="route-text">わからないところを直接調べられる。大人の学び直しにも。</p>
+      <a class="route-btn route-btn-ghost" href="#site-nav">教材を見る</a>
+    </div>
+  </div>
 </section>
 
 <hr class="divider">
@@ -2233,4 +2307,4 @@ const BGM = (() => {
 
 </script>
 </body>
-</html>
+</html>\r
