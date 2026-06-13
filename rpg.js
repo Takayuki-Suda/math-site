@@ -218,6 +218,26 @@
     visitBonus();
   }
 
+  /* ── 冒険のリセット：全RPG関連データを削除 ──
+     レベル/XP・スタンプ・バッジ・ボス撃破/再戦記録・名前・花火フラグ・
+     ステージ攻略・訪問記録（rpg_ / stamp_ / badge_ / stage_ プレフィックス）*/
+  function resetAll(){
+    var del=[],i,k;
+    for(i=0;i<localStorage.length;i++){
+      k=localStorage.key(i);
+      if(/^(rpg_|stamp_|badge_|stage_)/.test(k)) del.push(k);
+    }
+    del.forEach(function(key){ localStorage.removeItem(key); });
+    try{
+      var sdel=[],j,sk;
+      for(j=0;j<sessionStorage.length;j++){
+        sk=sessionStorage.key(j);
+        if(/^(rpg_|stg2_)/.test(sk)) sdel.push(sk);
+      }
+      sdel.forEach(function(key){ sessionStorage.removeItem(key); });
+    }catch(e){}
+  }
+
   window.RPG={
     LEVELS:LEVELS,
     BOSSES:BOSSES,
@@ -229,7 +249,8 @@
     quizCorrect:quizCorrect,
     quizWrong:quizWrong,
     bossCleared:bossCleared,
-    clearBoss:clearBoss
+    clearBoss:clearBoss,
+    resetAll:resetAll
   };
 })();
 

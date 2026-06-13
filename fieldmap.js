@@ -1,0 +1,1241 @@
+/* ════════════════════════════════════════════════════════
+   フィールド探索型RPGマップ・エンジン（サイト共通）
+   地下に降りていく5層構造：
+     地上   = 小学生   (sho)  boss1
+     1階層下 = 中学生   (chu)  boss2
+     2階層下 = 高校生   (ko)   boss3
+     3階層下 = 大学生   (dai)  boss4
+     4階層下 = 大学院   (in)   boss5
+   各 <zone>/map.html は  FieldMap('<zone>')  を呼ぶだけ。
+
+   既存システムとの互換：
+     - XP/レベル/ボス撃破は window.RPG（rpg.js）をそのまま使用
+     - 効果音は window.SND（sound.js）
+     - 知識カードの収集状況は localStorage 'rpg_cards'（追加キー・後方互換）
+   ════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+/* ── 知識カード収集（図鑑） ── */
+function getCards(){
+  try{ return JSON.parse(localStorage.getItem('rpg_cards')||'[]')||[]; }catch(e){ return []; }
+}
+function hasCard(id){ return getCards().indexOf(id)>=0; }
+function addCardId(id){
+  var a=getCards();
+  if(a.indexOf(id)<0){ a.push(id); localStorage.setItem('rpg_cards',JSON.stringify(a)); }
+}
+
+/* ── クイズ定義のショートハンド ── */
+function E(emoji,name,xp,color,q){ return {emoji:emoji,name:name,xp:xp,color:color,q:q}; }
+
+/* ════════════════════════════════════════════════════════
+   全層データ（マップ・敵・カード）
+   マップ凡例：
+     P=主人公 . =床  S=下り階段(ボス撃破で解錠)  U=上り階段
+     B=ボスの扉  C=宝箱（知識カード）  E=敵
+     # T R ~ 空白 =通行不可（壁・木・岩・水）
+   ════════════════════════════════════════════════════════ */
+var LAYERS={
+
+/* ───────────────────────── 地上：小学生（森・草原） ───────────────────────── */
+sho:{
+  zone:'sho', kids:true, border:'T', decor:'forest',
+  title:'はじまりの森', depth:'地上 ─ 小学生フィールド',
+  theme:{bg:'#16361f', floorA:'#2f7d3f', floorB:'#2b7339', accent:'#ffe08a', wall:'#5a3a22'},
+  boss:1, bossName:'文字式の壁', bossEmoji:'🗿', bossPage:'/math-site/boss_1.html',
+  requireBoss:null, requireBossPage:null, requireBossName:null,
+  up:{href:'/math-site/', name:'入口にもどる'},
+  next:{href:'/math-site/chu/map.html', name:'中学フィールド（洞窟）'},
+  map:[
+    'TTTTTTTTTTTTTTTTTTT',
+    'TP...C....T....E..T',
+    'T...TT.......TT..CT',
+    'T.E.....C.......T.T',
+    'T....TT.....E....T.T',
+    'T.C.......TT.....ET',
+    'T....E.......C..T.T',
+    'T.TT......E.....T.T',
+    'T...C....T....TT.CT',
+    'T.U....TT.....E...T',
+    'TB...E......C....ST',
+    'T....TT.......T...T',
+    'TTTTTTTTTTTTTTTTTTT'
+  ],
+  enemies:[
+    E('🐛','かぞえムシ',30,'#9ccc65',[
+      {q:'10の まとまりが 3つ、ばらが 4つ。ぜんぶで いくつ？',c:['7','34','304'],a:1,exp:'10が 3つで 30。30と 4で 34！'},
+      {q:'28は 10の まとまりが いくつと、ばらが いくつ？',c:['10が2つと ばら8つ','10が8つと ばら2つ','10が2つと ばら2つ'],a:0,exp:'28は 20と 8。10の まとまりは 2つだね。'},
+      {q:'2とびで かぞえると 2, 4, 6, 8…。つぎは？',c:['9','12','10'],a:2,exp:'2ずつ ふえるから、8の つぎは 10！'}
+    ]),
+    E('🟢','プラスライム',30,'#4fc3f7',[
+      {q:'8＋5は いくつ？',c:['12','13','14'],a:1,exp:'8に 2を たして 10。のこりの 3を たして 13！'},
+      {q:'9＋7。まず 9に いくつ たすと 10に なる？',c:['1','2','3'],a:0,exp:'9＋1で 10。10と のこりの 6で 16！'},
+      {q:'30＋40は いくつ？',c:['70','34','60'],a:0,exp:'10の まとまりが 3つと 4つで 7つ。70！'}
+    ]),
+    E('🦇','マイナスコウモリ',32,'#9575cd',[
+      {q:'13－5は いくつ？',c:['7','9','8'],a:2,exp:'13を 10と 3に わける。10－5＝5、5と 3で 8！'},
+      {q:'15－9は いくつ？',c:['6','7','5'],a:0,exp:'10－9＝1、1と 5で 6！'},
+      {q:'70－20は いくつ？',c:['90','50','5'],a:1,exp:'10の まとまりで 7－2＝5。だから 50！'}
+    ]),
+    E('🐲','九九ドラゴン',40,'#e57373',[
+      {q:'7×6は いくつ？',c:['42','48','36'],a:0,exp:'7×5＝35に 7を たして 42！'},
+      {q:'4×8と おなじ こたえに なるのは？',c:['4＋8','8×4','6×6'],a:1,exp:'かけざんは じゅんばんを かえても おなじ こたえ！'},
+      {q:'9×9は いくつ？',c:['72','99','81'],a:2,exp:'9のだんの さいご。81だね！'}
+    ]),
+    E('👻','はんぶんゴースト',34,'#b0bec5',[
+      {q:'1/2 ＋ 1/4 は いくつ？',c:['2/6','3/4','2/4'],a:1,exp:'1/2は 2/4と おなじ。2/4＋1/4＝3/4！'},
+      {q:'1/3 と 2/6、おおきいのは どっち？',c:['1/3','2/6','おなじ'],a:2,exp:'2/6を やくぶんすると 1/3。おなじ おおきさ！'},
+      {q:'1/2 ＋ 1/3 は いくつ？',c:['5/6','2/5','1/6'],a:0,exp:'分母を 6に そろえて 3/6＋2/6＝5/6！'}
+    ]),
+    E('🗿','さんかくガーゴイル',36,'#a1887f',[
+      {q:'底辺6cm・高さ4cmの 三角形の面積は？',c:['24cm²','10cm²','12cm²'],a:2,exp:'6×4÷2＝12。さいごの ÷2を わすれずに！'},
+      {q:'三角形の面積で「÷2」するのは なぜ？',c:['長方形の はんぶんだから','たかさが 2つ あるから','きまりだから'],a:0,exp:'おなじ三角形を 2つ あわせると 長方形に なるから！'},
+      {q:'底辺を 2ばいに すると、面積は？',c:['かわらない','2ばいに なる','4ばいに なる'],a:1,exp:'底辺×高さ÷2 だから、底辺が 2ばいなら 面積も 2ばい！'}
+    ]),
+    E('🟡','まるまるスピリット',34,'#ffd54f',[
+      {q:'円を こまかく切って ならべると、なにに ちかづく？',c:['三角形','星のかたち','長方形'],a:2,exp:'たて＝半径、よこ＝円周の半分の 長方形に なる！'},
+      {q:'半径10cmの 円の面積は？（円周率3.14）',c:['314cm²','31.4cm²','100cm²'],a:0,exp:'10×10×3.14＝314！'},
+      {q:'ならべて できた長方形の「たて」の ながさは？',c:['直径','半径','円周'],a:1,exp:'切った ひとつぶんの ながさ＝半径！'}
+    ]),
+    E('🧩','パズルキーパー',38,'#4db6ac',[
+      {q:'1, 2, 4, 8…と ふえていく。つぎは？',c:['16','10','12'],a:0,exp:'2ばいずつ ふえている！8の 2ばいで 16。'},
+      {q:'◯＋◯＝10。◯に はいる おなじ かずは？',c:['2','10','5'],a:2,exp:'5＋5＝10！'},
+      {q:'3, 6, 9, 12…の なかまで ないのは？',c:['15','20','18'],a:1,exp:'みんな 3のだんの かず。20は 3で わりきれない！'}
+    ])
+  ],
+  cards:[
+    {id:'sho-ten',e:'🔟',t:'10のまとまり',b:'10こ あつまると くらいが ひとつ あがる。28は 10が2つと ばらが8つ。これが 数の せかいの きほんだよ。',link:'/math-site/sho/kazu.html'},
+    {id:'sho-tashi',e:'➕',t:'たしざんのコツ',b:'8＋5は、8に2を たして10、のこり3で13。「10を つくってから たす」と はやい！',link:'/math-site/sho/tashizan.html'},
+    {id:'sho-hiki',e:'➖',t:'ひきざんのコツ',b:'13－5は、13を10と3に わけて、10－5＝5、それと3で8。「10から ひく」が ポイント。',link:'/math-site/sho/hikizan.html'},
+    {id:'sho-kuku',e:'✖️',t:'九九のひみつ',b:'7×6は 7×5＝35に 7を たして42。九九は たしざんの くりかえし。じゅんばんを かえても こたえは おなじ！',link:'/math-site/sho/kuku.html'},
+    {id:'sho-bunsu',e:'🍕',t:'分数って何',b:'1/2は ピザを2つに わった1きれ。たすときは 分母（下の数）を そろえてから 上を たすよ。',link:'/math-site/sho/bunsu.html'},
+    {id:'sho-sankaku',e:'📐',t:'三角形の面積',b:'三角形は 長方形の はんぶん。だから「底辺×高さ÷2」。÷2を わすれないでね。',link:'/math-site/sho/sankaku.html'},
+    {id:'sho-en',e:'⭕',t:'円の面積',b:'円を こまかく切って ならべると 長方形に なる。たて＝半径、よこ＝円周の半分。だから 半径×半径×3.14。',link:'/math-site/sho/en.html'},
+    {id:'sho-puzzle',e:'🧩',t:'きまりを見つける',b:'1,2,4,8…は 2ばいずつ。数の ならびには かならず「きまり」が かくれている。見つけると 未来が よめる！',link:'/math-site/sho/puzzle.html'}
+  ]
+},
+
+/* ───────────────────────── 1階層下：中学生（洞窟・岩場） ───────────────────────── */
+chu:{
+  zone:'chu', kids:false, border:'#', decor:'cave',
+  title:'文字の洞窟', depth:'B1 ─ 中学生フィールド',
+  theme:{bg:'#0c0a14', floorA:'#2c2636', floorB:'#272031', accent:'#8be0ff', wall:'#3a3346'},
+  boss:2, bossName:'関数の壁', bossEmoji:'🐲', bossPage:'/math-site/boss_2.html',
+  requireBoss:1, requireBossPage:'/math-site/boss_1.html', requireBossName:'文字式の壁',
+  up:{href:'/math-site/sho/map.html', name:'地上（森）にもどる'},
+  next:{href:'/math-site/ko/map.html', name:'高校フィールド（遺跡）'},
+  map:[
+    '###################',
+    '#P..R....RR....E..#',
+    '#..RR.......C....R#',
+    '#.E....C......RR..#',
+    '#...RR....E......C#',
+    '#.C.....RR.....E..#',
+    '#....E......C..R..#',
+    '#.RR.....C.....R..#',
+    '#U..C...RR....E...#',
+    '#B...E.....C....S.#',
+    '#...RR.......R....#',
+    '###################'
+  ],
+  enemies:[
+    E('👤','シャドウX',46,'#90a4ae',[
+      {q:'a×3 を文字式のルールで書くと？',c:['3a','a3','3×a'],a:0,exp:'数字を前に置き、×記号は省略する。'},
+      {q:'x＋x＋x を簡単にすると？',c:['x³','3x','3＋x'],a:1,exp:'xが3個ぶんで 3x。x³は x×x×x なので別物。'},
+      {q:'1個150円のりんごを n個買う。代金は？',c:['150＋n 円','n÷150 円','150n 円'],a:2,exp:'150×n。×を省略して 150n。'}
+    ]),
+    E('⚖️','バランスキメラ',48,'#b39ddb',[
+      {q:'x＋7＝15 のとき、xは？',c:['8','7','22'],a:0,exp:'両辺から7を引いて x＝8。天秤の両側から同じだけ取る。'},
+      {q:'3x＝12 のとき、xは？',c:['36','4','9'],a:1,exp:'両辺を3で割って x＝4。'},
+      {q:'2x－3＝7。最初の一手は？',c:['両辺を2で割る','両辺から7を引く','両辺に3を足す'],a:2,exp:'まず＋3で 2x＝10。それから2で割って x＝5。'}
+    ]),
+    E('🐺','グラフウルフ',50,'#81d4fa',[
+      {q:'y＝2x＋3 の「傾き」は？',c:['3','2','x'],a:1,exp:'xが1増えるとyが2増える。それが傾き。'},
+      {q:'y＝2x＋3 がy軸と交わる点は？',c:['(0, 3)','(3, 0)','(0, 2)'],a:0,exp:'x＝0のとき y＝3。切片はy軸との交点。'},
+      {q:'傾きがマイナスの直線は？',c:['右上がり','水平','右下がり'],a:2,exp:'xが増えるとyが減る＝右下がり。'}
+    ]),
+    E('🦅','パラボラファルコン',52,'#4fc3f7',[
+      {q:'y＝(x－2)²＋1 の頂点は？',c:['(2, 1)','(－2, 1)','(2, －1)'],a:0,exp:'y＝a(x－p)²＋q の頂点は (p, q)。'},
+      {q:'y＝ax² で aを大きくすると、放物線は？',c:['開きが広がる','細く急になる','変わらない'],a:1,exp:'同じxでもyが大きく跳ね上がり、細く急になる。'},
+      {q:'y＝－x² のグラフは？',c:['上に凸（山型）','下に凸（谷型）','直線になる'],a:0,exp:'aが負なら上に凸＝山型。'}
+    ]),
+    E('🦂','ピタゴラスコーピオン',54,'#ff8a65',[
+      {q:'直角をはさむ2辺が 3と4。斜辺は？',c:['6','5','7'],a:1,exp:'3²＋4²＝9＋16＝25＝5²。'},
+      {q:'三平方の定理 a²＋b²＝c² が成り立つのは？',c:['直角三角形','すべての三角形','二等辺三角形だけ'],a:0,exp:'直角三角形だけ。逆に成り立てば直角と分かる。'},
+      {q:'斜辺13、一辺5の直角三角形。残りの辺は？',c:['8','18','12'],a:2,exp:'13²－5²＝169－25＝144＝12²。'}
+    ])
+  ],
+  cards:[
+    {id:'chu-moji',e:'✏️',t:'文字式の正体',b:'文字は「なんでも入る箱」。a×3は 3a（×は省略・数字が前）。x＋x＋x＝3x。一文字で 無限の場合をまとめて表せる。',link:'/math-site/chu/moji.html'},
+    {id:'chu-hou',e:'⚖️',t:'方程式＝天秤',b:'＝は 左右がつり合った天秤。両側から 同じだけ 引いたり割ったりして xを取り出す。x＋7＝15 → x＝8。',link:'/math-site/chu/houteishiki.html'},
+    {id:'chu-ikiji',e:'📈',t:'一次関数の傾きとは',b:'y＝2x＋3 の「2」が傾き。xが1増えると yが2増える「変化の割合」。3は y軸との交点（切片）。',link:'/math-site/chu/ikiji.html'},
+    {id:'chu-niji',e:'🌉',t:'二次関数＝放物線',b:'y＝x²のグラフは U字の曲線。y＝a(x－p)²＋q なら頂点は(p,q)。aが大きいほど 細く急に、負なら山型に。',link:'/math-site/chu/niji.html'},
+    {id:'chu-sanpei',e:'📐',t:'三平方の定理',b:'直角三角形で a²＋b²＝c²（cは斜辺）。3,4,5 や 5,12,13 が有名。直角を見抜く魔法の式。',link:'/math-site/chu/sanpei.html'},
+    {id:'chu-neg',e:'❄️',t:'負の数の正体',b:'0より小さい数。数直線で0の左側。「マイナス×マイナス＝プラス」は、反対の反対は元どおり、という意味。',link:'/math-site/chu/moji.html'}
+  ]
+},
+
+/* ───────────────────────── 2階層下：高校生（霧の遺跡） ───────────────────────── */
+ko:{
+  zone:'ko', kids:false, border:'#', decor:'ruins',
+  title:'霧の遺跡', depth:'B2 ─ 高校生フィールド',
+  theme:{bg:'#101820', floorA:'#39424f', floorB:'#333b47', accent:'#9fe8da', wall:'#566072'},
+  boss:3, bossName:'εδの壁', bossEmoji:'👁️', bossPage:'/math-site/boss_3.html',
+  requireBoss:2, requireBossPage:'/math-site/boss_2.html', requireBossName:'関数の壁',
+  up:{href:'/math-site/chu/map.html', name:'洞窟にもどる'},
+  next:{href:'/math-site/dai/map.html', name:'大学フィールド（浮遊島）'},
+  map:[
+    '###################',
+    '#P..C...R....E...C#',
+    '#..RR.......R.....#',
+    '#.E.....C......RR.#',
+    '#...R.....E.....C.#',
+    '#.C....RR.....E...#',
+    '#....E.....C...R..#',
+    '#.RR....C......R..#',
+    '#U...E....RR.....C#',
+    '#B....C....E....S.#',
+    '#..R......R.......#',
+    '###################'
+  ],
+  enemies:[
+    E('🌊','シヌソイドの幻影',56,'#4dd0e1',[
+      {q:'sin 30° の値は？',c:['1/2','√3/2','1'],a:0,exp:'30°-60°-90°の三角形。斜辺2に対し、30°の向かいの辺は1。'},
+      {q:'sin²θ＋cos²θ の値は？',c:['θによって変わる','常に1','常に0'],a:1,exp:'単位円上の点(cosθ, sinθ)。原点からの距離は常に1──三平方の定理そのもの。'},
+      {q:'tanθ が図形的に表すものは？',c:['原点を通る直線の傾き','扇形の面積','円の周期'],a:0,exp:'tanθ＝sinθ/cosθ＝縦/横＝傾き。'}
+    ]),
+    E('⚡','タンジェントの影',60,'#9575cd',[
+      {q:'f(x)＝x² の導関数は？',c:['x','x³/3','2x'],a:2,exp:'定義 lim{f(x＋h)－f(x)}/h から (x²)′＝2x。'},
+      {q:'微分係数 f′(a) の図形的な意味は？',c:['x＝aでの接線の傾き','x＝aまでの面積','y切片の値'],a:0,exp:'限りなく近い2点を結ぶ直線の極限＝接線の傾き。'},
+      {q:'f′(a)＝0 となる点で起こりうるのは？',c:['必ず最大になる','極大・極小の候補','グラフが切れる'],a:1,exp:'接線が水平になる点。y＝x³ の原点のような例外もある。'}
+    ]),
+    E('🧱','リーマンの壁兵',62,'#a1887f',[
+      {q:'∫₀¹ x dx の値は？',c:['1','1/2','0'],a:1,exp:'y＝x の下にできる三角形。1×1÷2＝1/2。'},
+      {q:'定積分の正体は、何の極限？',c:['接線の傾きの平均','細い長方形の面積の和','数列の差'],a:1,exp:'幅を限りなく細くした長方形の和──リーマン和の極限。'},
+      {q:'F′(x)＝f(x) のとき、∫ₐᵇ f(x)dx は？',c:['F(b)－F(a)','F(a)－F(b)','F(b)×F(a)'],a:0,exp:'微積分学の基本定理。微分の逆演算が面積を与える。'}
+    ]),
+    E('🚪','大学の門番',66,'#7986cb',[
+      {q:'「すべてのxでP(x)」の否定は？',c:['すべてのxでP(x)でない','あるxでP(x)でない','P(x)は常に真'],a:1,exp:'全否定ではなく「反例が1つ存在する」。'},
+      {q:'高校の「限りなく近づく」が大学で問題になる理由は？',c:['曖昧で証明の道具にならない','計算が遅い','答えが変わる'],a:0,exp:'「近づく」を数式で定義しない限り、厳密な証明は書けない。'},
+      {q:'なぜ厳密な定義が必要？',c:['伝統のため','試験のため','直感が裏切られる例が実在するから'],a:2,exp:'至るところ微分不可能な連続関数など、直感を超える存在が実在する。'}
+    ]),
+    E('🌫️','イプシロンの霧',70,'#b0bec5',[
+      {q:'lim x→a f(x)＝L のε-δ定式化は？',c:['任意のε>0に対し あるδ>0が存在し…','あるε>0に対し 任意のδ>0で…','ε＝δと選ぶ'],a:0,exp:'どんな小さな許容誤差εにも 応じるδを返せる──それが「近づく」の正体。'},
+      {q:'はさみうちの原理が使える条件は？',c:['両側の極限が同じ値に収束','片側だけ収束','中央が単調増加'],a:0,exp:'g≦f≦h で lim g＝lim h＝L なら lim f＝L。'},
+      {q:'1/n は n→∞ でどうなる？',c:['0に近づく','1に近づく','∞に発散'],a:0,exp:'nが大きいほど 1/n は限りなく0へ。'}
+    ])
+  ],
+  cards:[
+    {id:'ko-sin',e:'🌊',t:'sinとcosの正体',b:'単位円（半径1の円）上の点の、たて＝sinθ、よこ＝cosθ。だから sin²θ＋cos²θ＝1。三平方の定理そのもの。',link:'/math-site/ko/sankakuhi.html'},
+    {id:'ko-bibun',e:'🎢',t:'微分のイメージ',b:'微分は「その瞬間の傾き」。曲線の1点に引いた接線の傾き。速さ＝位置の微分。変化を捉える道具。',link:'/math-site/ko/bibun.html'},
+    {id:'ko-sekibun',e:'🧱',t:'積分＝面積',b:'積分は「細い長方形の面積を 無限に足したもの」。微分の逆。∫ₐᵇf(x)dx＝F(b)－F(a)。',link:'/math-site/ko/sekibun.html'},
+    {id:'ko-epsilon',e:'👁️',t:'εδ・厳密さ',b:'「限りなく近づく」を数式で定義したもの。どんな小さな誤差εにも 応じるδを返せる──それが極限の正体。',link:'/math-site/ko/kyokugen.html'},
+    {id:'ko-kyoku',e:'🔭',t:'極限とは',b:'近づいた先の値。1/nは nが大きくなると 限りなく0へ。届かなくても「向かう先」を数学は捉える。',link:'/math-site/ko/kyokugen.html'}
+  ]
+},
+
+/* ───────────────────────── 3階層下：大学生（幾何学的な浮遊島） ───────────────────────── */
+dai:{
+  zone:'dai', kids:false, border:'R', decor:'island',
+  title:'抽象の浮遊島', depth:'B3 ─ 大学生フィールド',
+  theme:{bg:'#070b18', floorA:'#162343', floorB:'#13203c', accent:'#67e8f9', wall:'#2a3f6e'},
+  boss:4, bossName:'抽象の壁', bossEmoji:'💠', bossPage:'/math-site/boss_4.html',
+  requireBoss:3, requireBossPage:'/math-site/boss_3.html', requireBossName:'εδの壁',
+  up:{href:'/math-site/ko/map.html', name:'遺跡にもどる'},
+  next:{href:'/math-site/in/map.html', name:'大学院フィールド（虚空）'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RP..C...R....E...CR',
+    'R..RR.......R.....R',
+    'R.E.....C......RR.R',
+    'R...R.....E.....C.R',
+    'R.C....RR.....E...R',
+    'R....E.....C...R..R',
+    'R.RR....C......E..R',
+    'RU...C....RR....CR',
+    'RB....E....C....SR',
+    'R..R......R.......R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[
+    E('🧮','次元の番人',66,'#4dd0e1',[
+      {q:'線形写像 f:R⁵→R³ で rank f＝3。dim Ker f は？',c:['3','2','5'],a:1,exp:'次元定理：dim Ker f＋rank f＝5。5－3＝2。'},
+      {q:'線形写像の定義に含まれる条件は？',c:['f(x＋y)＝f(x)＋f(y) かつ f(cx)＝cf(x)','f(xy)＝f(x)f(y)','f(x)≧0'],a:0,exp:'和とスカラー倍を保つ──線形性。'},
+      {q:'rank f が表すものは？',c:['核 Ker f の次元','行列の成分の個数','像 Im f の次元'],a:2,exp:'写像がつぶさず残せた次元の数。'}
+    ]),
+    E('🔁','対称の精霊',70,'#9575cd',[
+      {q:'群の公理に含まれないものは？',c:['結合法則','可換性（ab＝ba）','逆元の存在'],a:1,exp:'可換性は不要。可換な群はアーベル群と呼ぶ。'},
+      {q:'整数の群 (Z, ＋) の単位元は？',c:['0','1','－1'],a:0,exp:'a＋0＝a。加法の単位元は0。'},
+      {q:'3次対称群 S₃ の位数（元の個数）は？',c:['3','9','6'],a:2,exp:'3つの並べ替えは 3!＝6通り。最小の非可換群。'}
+    ]),
+    E('🌀','複素の渦',74,'#4fc3f7',[
+      {q:'e^iπ の値は？',c:['－1','1','i'],a:0,exp:'オイラーの公式 e^iθ＝cosθ＋isinθ に θ＝π。'},
+      {q:'正則関数が満たす方程式は？',c:['波動方程式','コーシー・リーマンの方程式','熱方程式'],a:1,exp:'u_x＝v_y, u_y＝－v_x。複素微分可能性の翻訳。'},
+      {q:'虚数 i を掛けることは、平面上で何を表す？',c:['90°回転','平行移動','拡大だけ'],a:0,exp:'iを掛ける＝反時計回りに90°回す。'}
+    ]),
+    E('🎵','周波数の歌い手',76,'#4db6ac',[
+      {q:'フーリエ級数は、関数を何の和に分解する？',c:['sinとcos（純粋な波）','多項式','階段関数'],a:0,exp:'どんな周期関数も 純音の重ね合わせで書ける。'},
+      {q:'スペクトルが表すのは？',c:['関数の最大値','各周波数成分の強さ','微分可能な回数'],a:1,exp:'どの高さの純音が どれだけ含まれるかの一覧。'},
+      {q:'矩形波のフーリエ係数は、高周波になるほど？',c:['一定のまま','増大する','1/n で減衰'],a:2,exp:'角があると減衰が遅い。滑らかさと係数の減衰は表裏一体。'}
+    ]),
+    E('🔢','素数の鉱夫',78,'#ffb74d',[
+      {q:'フェルマーの小定理：pが素数、aがpと互いに素のとき？',c:['a^(p－1) ≡ 1 (mod p)','a^p ≡ 0 (mod p)','a ≡ p (mod a)'],a:0,exp:'mod p では p－1乗で1に戻る。'},
+      {q:'17 mod 5 は？',c:['3','2','1'],a:1,exp:'17＝5×3＋2。余りは2。'},
+      {q:'RSA暗号の安全性が依拠するのは？',c:['円周率の無理性','行列の可逆性','巨大な数の素因数分解の困難さ'],a:2,exp:'掛けるのは一瞬、分解は天文学的時間。その非対称性。'}
+    ]),
+    E('🌐','多様体の獣',82,'#81c784',[
+      {q:'grad f（勾配）が指す方向は？',c:['fが最も急に増える方向','等高線に沿う方向','常にx軸方向'],a:0,exp:'等高線に直交し、最大増加の方向を向く。'},
+      {q:'ストークスの定理が結びつけるのは？',c:['微分と極限','領域内部の積分と境界の積分','行列と行列式'],a:1,exp:'∫_M dω＝∫_∂M ω。境界が内部を語る。'},
+      {q:'コーヒーカップとドーナツが「同じ形」とされる幾何学は？',c:['位相幾何学（トポロジー）','ユークリッド幾何','解析幾何'],a:0,exp:'穴の数が同じなら同相。伸縮は許され、切断は禁止。'}
+    ])
+  ],
+  cards:[
+    {id:'dai-dim',e:'🧮',t:'次元定理',b:'線形写像で「つぶれた次元＋残った次元＝元の次元」。dim Ker f ＋ rank f ＝ n。空間の骨格を測る定理。',link:'/math-site/dai/senkei.html'},
+    {id:'dai-gun',e:'🔁',t:'群とは何か',b:'「演算・結合法則・単位元・逆元」をもつ集合。回転や対称性の正体。数の足し算も あみだくじも 群。',link:'/math-site/dai/gun.html'},
+    {id:'dai-fukuso',e:'🌀',t:'複素＝回転',b:'虚数iを掛けると 90°回転。e^iθ＝cosθ＋isinθ。複素数は 平面上の「回転と拡大」を表す数。',link:'/math-site/dai/fukuso.html'},
+    {id:'dai-fourier',e:'🎵',t:'フーリエ＝波の分解',b:'どんな波も、純粋なsin・cosの和に分解できる。音も画像も この技で 周波数に切り分けられる。',link:'/math-site/dai/fourier.html'},
+    {id:'dai-mod',e:'🔢',t:'合同式',b:'時計の数学。17 mod 5 ＝ 2（5で割った余り）。RSA暗号は 素因数分解の難しさに守られている。',link:'/math-site/dai/seisuron.html'},
+    {id:'dai-iso',e:'🌐',t:'位相の直感',b:'「つながり方」だけを見る幾何学。コーヒーカップとドーナツは 穴が1つで同じ形。伸ばしてOK、切るのはNG。',link:'/math-site/dai/tahensuu.html'}
+  ]
+},
+
+/* ───────────────────────── 4階層下：大学院（暗黒の虚空・数式の漂う空間） ───────────────────────── */
+in:{
+  zone:'in', kids:false, border:'R', decor:'void',
+  title:'数式の虚空', depth:'B4 ─ 大学院フィールド',
+  theme:{bg:'#04050d', floorA:'#0d1330', floorB:'#0a0f26', accent:'#c4b5fd', wall:'#241a4a'},
+  boss:5, bossName:'研究の壁', bossEmoji:'🌌', bossPage:'/math-site/boss_5.html',
+  requireBoss:4, requireBossPage:'/math-site/boss_4.html', requireBossName:'抽象の壁',
+  up:{href:'/math-site/dai/map.html', name:'浮遊島にもどる'},
+  next:{href:'/math-site/mikaiketsu.html', name:'未解決問題の世界'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RP....C......E....R',
+    'R....RR.........C.R',
+    'R..E......C.......R',
+    'R......RR......E..R',
+    'R.C........E......R',
+    'R....RR.......C...R',
+    'RU......C....R....R',
+    'RB....E.........SR',
+    'R...RR.......R....R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[
+    E('📜','証明の番人',84,'#b39ddb',[
+      {q:'「すべての偶数は2で割り切れる」を証明する第一歩は？',c:['偶数を 2k と置く','例を3つ挙げる','割り算してみる'],a:0,exp:'任意の偶数は整数kを使い 2k と書ける──一般化が証明の出発点。'},
+      {q:'反例が1つ見つかると、その主張は？',c:['偽だと分かる','まだ正しいかも','証明できる'],a:0,exp:'全称命題は 反例ひとつで崩れる。'},
+      {q:'背理法とは？',c:['結論を否定して矛盾を導く','例を集める','図を描く'],a:0,exp:'「成り立たない」と仮定し 矛盾を導く→だから成り立つ。'}
+    ]),
+    E('🔮','予想の亡霊',92,'#9575cd',[
+      {q:'「予想」と「定理」の違いは？',c:['証明されたかどうか','難しさ','分野'],a:0,exp:'証明されて初めて定理。未証明なら予想。'},
+      {q:'フェルマーの最終定理が長く未解決だった理由は？',c:['証明が極めて難しかった','間違っていた','誰も知らなかった'],a:0,exp:'1994年ワイルズが証明するまで350年以上かかった。'},
+      {q:'数学で「正しい」とは最終的に？',c:['証明があること','多数決','実験'],a:0,exp:'証明だけが真理を保証する。'}
+    ]),
+    E('♾️','無限の使者',100,'#7dd3fc',[
+      {q:'自然数と偶数、個数は？',c:['同じ（1対1対応）','自然数が多い','比べられない'],a:0,exp:'n↔2n で全単射。無限では「部分＝全体」が起こりうる。'},
+      {q:'カントールの対角線論法が示したのは？',c:['実数は自然数より多い','すべて同じ','無限はない'],a:0,exp:'実数は数え切れない──非可算無限。'},
+      {q:'「数えられる無限」を何という？',c:['可算無限','連続無限','有限'],a:0,exp:'可算無限（濃度アレフゼロ）。'}
+    ]),
+    E('🌌','未解決の影',110,'#a78bfa',[
+      {q:'P≠NP問題は何の問題？',c:['計算の難しさ（計算量）','図形','確率'],a:0,exp:'答えの検証は速いが、発見も速いか？ミレニアム問題のひとつ。'},
+      {q:'リーマン予想は何に関する？',c:['素数の分布','円周率','三角形'],a:0,exp:'ゼータ関数の零点と素数の並びの謎。'},
+      {q:'未解決問題に挑むとは？',c:['誰も知らない答えを探すこと','暗記','過去問演習'],a:0,exp:'正解の保証がない──それが研究だ。'}
+    ])
+  ],
+  cards:[
+    {id:'in-proof',e:'📜',t:'証明とは',b:'「これは絶対に正しい」を、誰が見ても認めるしかない形で示すこと。実験や例では足りない。仮定から結論まで、論理だけで橋を架ける。'},
+    {id:'in-counter',e:'⚡',t:'反例の力',b:'どんなに多くの例で成り立っても証明にはならない。だが たった1つの反例は 主張を完全に打ち砕く。「すべて」を覆すのは「ひとつ」。'},
+    {id:'in-inf',e:'♾️',t:'無限のひみつ',b:'無限の世界では直感が裏切られる。自然数と偶数は「同じ個数」。でも実数はそれより「多い」。無限にも大きさの違いがある。'},
+    {id:'in-conj',e:'🔮',t:'予想と定理',b:'「たぶん正しい」が予想、「証明された」が定理。フェルマーの最終定理は350年間 予想だった。証明された瞬間、世界が変わる。'},
+    {id:'in-open',e:'🌌',t:'未解決問題',b:'数学にはまだ誰も解けていない問いがある。リーマン予想、P≠NP…。教科書の外側、人類の最前線。君が解く番かもしれない。'}
+  ]
+}
+};
+
+/* 図鑑用：全層のカードを順番に */
+function dexOrder(){ return ['sho','chu','ko','dai','in']; }
+function allCards(){
+  var out=[];
+  dexOrder().forEach(function(z){
+    (LAYERS[z].cards||[]).forEach(function(c){ out.push({zone:z,card:c}); });
+  });
+  return out;
+}
+
+/* ════════════════════════════════════════════════════════
+   エンジン本体
+   ════════════════════════════════════════════════════════ */
+window.FieldMap=function(zoneId){
+  var CFG=LAYERS[zoneId];
+  if(!CFG){ document.body.innerHTML='<p style="color:#fff;padding:20px;">unknown zone: '+zoneId+'</p>'; return; }
+  var KIDS=CFG.kids;
+  var BLOCK={'#':1,'T':1,'R':1,'~':1,' ':1};
+  var TILE=46;
+
+  /* ── マップ整形：最大幅にパディングし、外周を border で囲う ── */
+  var rows=CFG.map.slice();
+  var W=0; rows.forEach(function(r){ if(r.length>W) W=r.length; });
+  var grid=[];
+  for(var y=0;y<rows.length;y++){
+    var r=rows[y];
+    while(r.length<W) r+=CFG.border;
+    grid.push(r.split(''));
+  }
+  var H=grid.length;
+  for(var x=0;x<W;x++){ grid[0][x]=CFG.border; grid[H-1][x]=CFG.border; }
+  for(var yy=0;yy<H;yy++){ grid[yy][0]=CFG.border; grid[yy][W-1]=CFG.border; }
+
+  /* ── 配置スキャン ── */
+  var spawn={x:1,y:1}, enemies=[], chestTiles=[], enemyIdx=0, cardIdx=0;
+  for(var ty=0;ty<H;ty++){
+    for(var tx=0;tx<W;tx++){
+      var ch=grid[ty][tx];
+      if(ch==='P'){ spawn={x:tx,y:ty}; grid[ty][tx]='.'; }
+      else if(ch==='E'){
+        var def=CFG.enemies[enemyIdx%CFG.enemies.length]; enemyIdx++;
+        enemies.push({def:def,emoji:def.emoji,name:def.name,color:def.color,
+          px:(tx+0.5)*TILE, py:(ty+0.5)*TILE, hx:(tx+0.5)*TILE, hy:(ty+0.5)*TILE,
+          dir:Math.random()*Math.PI*2, dirT:0, alive:true, cool:0, bob:Math.random()*6});
+        grid[ty][tx]='.';
+      }
+      else if(ch==='C'){
+        var card=CFG.cards[cardIdx]; cardIdx++;
+        if(card){ chestTiles.push({tx:tx,ty:ty,card:card}); grid[ty][tx]='c'; }
+        else grid[ty][tx]='.';
+      }
+    }
+  }
+
+  /* ── DOM/スタイル ── */
+  injectCSS();
+  document.body.innerHTML='';
+  document.body.style.margin='0';
+  var canvas=document.createElement('canvas');
+  canvas.className='fm-canvas';
+  document.body.appendChild(canvas);
+  var ctx=canvas.getContext('2d');
+
+  buildHUD();
+  var dpad=buildDpad();
+
+  /* ── 入力 ── */
+  var keys={u:false,d:false,l:false,r:false};
+  var mode='field'; /* field | battle | menu | gate */
+  function setKey(e,v){
+    var k=e.key;
+    if(k==='ArrowUp'||k==='w'||k==='W'){ keys.u=v; e.preventDefault(); }
+    else if(k==='ArrowDown'||k==='s'||k==='S'){ keys.d=v; e.preventDefault(); }
+    else if(k==='ArrowLeft'||k==='a'||k==='A'){ keys.l=v; e.preventDefault(); }
+    else if(k==='ArrowRight'||k==='d'||k==='D'){ keys.r=v; e.preventDefault(); }
+  }
+  window.addEventListener('keydown',function(e){ if(mode==='field') setKey(e,true); });
+  window.addEventListener('keyup',function(e){ setKey(e,false); });
+
+  /* ── プレイヤー ── */
+  var player={px:(spawn.x+0.5)*TILE, py:(spawn.y+0.5)*TILE, dir:0};
+  var cam={x:0,y:0};
+  var lastSpecial=null; /* "tx,ty" 直近に発動した特殊タイル */
+
+  /* ── 衝突判定 ── */
+  function solidAt(wx,wy){
+    var tx=Math.floor(wx/TILE), ty=Math.floor(wy/TILE);
+    if(tx<0||ty<0||tx>=W||ty>=H) return true;
+    return !!BLOCK[grid[ty][tx]];
+  }
+  var RAD=TILE*0.30;
+  function canBe(px,py){
+    return !solidAt(px-RAD,py-RAD)&&!solidAt(px+RAD,py-RAD)&&
+           !solidAt(px-RAD,py+RAD)&&!solidAt(px+RAD,py+RAD);
+  }
+
+  /* ── ゲート（前ゾーンのボス未撃破時の封印） ── */
+  function maybeGate(){
+    if(!CFG.requireBoss) return false;
+    if(window.RPG&&RPG.bossCleared(CFG.requireBoss)) return false;
+    if(sessionStorage.getItem('rpg_gate_skip_'+CFG.zone)==='1') return false;
+    showGate();
+    return true;
+  }
+
+  /* ── ループ ── */
+  var lastT=performance.now();
+  function loop(now){
+    var dt=Math.min(40,now-lastT)/1000; lastT=now;
+    if(mode==='field') update(dt);
+    render(now/1000);
+    requestAnimationFrame(loop);
+  }
+
+  function update(dt){
+    /* プレイヤー移動 */
+    var vx=(keys.r?1:0)-(keys.l?1:0);
+    var vy=(keys.d?1:0)-(keys.u?1:0);
+    if(vx||vy){
+      var len=Math.hypot(vx,vy)||1;
+      var sp=190*dt;
+      var nx=player.px+vx/len*sp, ny=player.py+vy/len*sp;
+      if(canBe(nx,player.py)) player.px=nx;
+      if(canBe(player.px,ny)) player.py=ny;
+      if(Math.abs(vx)>Math.abs(vy)) player.dir=vx>0?0:Math.PI; else player.dir=vy>0?Math.PI/2:-Math.PI/2;
+    }
+    /* 敵の徘徊 */
+    enemies.forEach(function(en){
+      if(!en.alive) return;
+      if(en.cool>0) en.cool-=dt;
+      en.dirT-=dt;
+      if(en.dirT<=0){ en.dir=Math.random()*Math.PI*2; en.dirT=0.8+Math.random()*1.4; }
+      var sp=42*dt;
+      var nx=en.px+Math.cos(en.dir)*sp, ny=en.py+Math.sin(en.dir)*sp;
+      /* ホームから離れすぎない */
+      if(Math.hypot(nx-en.hx,ny-en.hy)>TILE*2.6){ en.dir=Math.atan2(en.hy-en.py,en.hx-en.px); }
+      else{
+        if(canBe(nx,en.py)) en.px=nx; else en.dir=Math.PI-en.dir;
+        if(canBe(en.px,ny)) en.py=ny; else en.dir=-en.dir;
+      }
+      /* 接触で戦闘 */
+      if(en.cool<=0&&Math.hypot(en.px-player.px,en.py-player.py)<TILE*0.66){
+        startBattle(en);
+      }
+    });
+    /* 特殊タイル判定 */
+    var ptx=Math.floor(player.px/TILE), pty=Math.floor(player.py/TILE);
+    var key=ptx+','+pty, c=grid[pty]&&grid[pty][ptx];
+    if(c==='c'){
+      var ct=findChest(ptx,pty);
+      if(ct&&!hasCard(ct.card.id)){ pickupCard(ct); }
+    }
+    if(c==='S'||c==='U'||c==='B'){
+      if(lastSpecial!==key){ lastSpecial=key; handleSpecial(c); }
+    } else if(c!=='c'){
+      if(lastSpecial){
+        var sp2=lastSpecial.split(','); var lx=+sp2[0], ly=+sp2[1];
+        if(lx!==ptx||ly!==pty) lastSpecial=null;
+      }
+    }
+  }
+  function findChest(tx,ty){
+    for(var i=0;i<chestTiles.length;i++){ if(chestTiles[i].tx===tx&&chestTiles[i].ty===ty) return chestTiles[i]; }
+    return null;
+  }
+
+  function handleSpecial(c){
+    if(c==='B'){ confirmBoss(); }
+    else if(c==='U'){ travel(CFG.up.href,CFG.up.name,false); }
+    else if(c==='S'){
+      var unlocked=window.RPG&&RPG.bossCleared(CFG.boss);
+      if(unlocked) travel(CFG.next.href,CFG.next.name,true);
+      else lockedStairs();
+    }
+  }
+
+  /* ════ 描画 ════ */
+  function resize(){
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    canvas.width=Math.floor(window.innerWidth*dpr);
+    canvas.height=Math.floor(window.innerHeight*dpr);
+    canvas.style.width=window.innerWidth+'px';
+    canvas.style.height=window.innerHeight+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize',resize);
+  resize();
+
+  function render(t){
+    var VW=window.innerWidth, VH=window.innerHeight;
+    var mapW=W*TILE, mapH=H*TILE;
+    cam.x=(mapW<=VW)?(mapW-VW)/2:clamp(player.px-VW/2,0,mapW-VW);
+    cam.y=(mapH<=VH)?(mapH-VH)/2:clamp(player.py-VH/2,0,mapH-VH);
+
+    /* 背景 */
+    ctx.fillStyle=CFG.theme.bg;
+    ctx.fillRect(0,0,VW,VH);
+    drawBackdrop(t,VW,VH);
+
+    /* タイル */
+    var x0=Math.max(0,Math.floor(cam.x/TILE)), x1=Math.min(W-1,Math.floor((cam.x+VW)/TILE));
+    var y0=Math.max(0,Math.floor(cam.y/TILE)), y1=Math.min(H-1,Math.floor((cam.y+VH)/TILE));
+    for(var ty=y0;ty<=y1;ty++) for(var tx=x0;tx<=x1;tx++){
+      drawTile(grid[ty][tx],tx,ty,tx*TILE-cam.x,ty*TILE-cam.y,t);
+    }
+    /* 敵 */
+    enemies.forEach(function(en){ if(en.alive) drawEnemy(en,t); });
+    /* プレイヤー */
+    drawPlayer(t);
+    /* 前景（霧・闇・パーティクル） */
+    drawForeground(t,VW,VH);
+  }
+
+  function drawTile(ch,tx,ty,sx,sy,t){
+    var th=CFG.theme;
+    var even=((tx+ty)&1)===0;
+    if(!BLOCK[ch]||ch==='c'){
+      /* 床 */
+      ctx.fillStyle=even?th.floorA:th.floorB;
+      ctx.fillRect(sx,sy,TILE,TILE);
+      drawFloorDecor(tx,ty,sx,sy,t);
+    }
+    if(ch==='S') drawStairs(sx,sy,t,true);
+    else if(ch==='U') drawStairs(sx,sy,t,false);
+    else if(ch==='B') drawBossDoor(sx,sy,t);
+    else if(ch==='c'){ var ct=findChest(tx,ty); drawChest(sx,sy,ct&&hasCard(ct.card.id),t); }
+    else if(BLOCK[ch]) drawBlock(ch,tx,ty,sx,sy,t);
+  }
+
+  /* 床の装飾（ゾーン別・タイル位置で決定論的に） */
+  function drawFloorDecor(tx,ty,sx,sy,t){
+    var h=(tx*73856093^ty*19349663)>>>0;
+    var d=CFG.decor;
+    if(d==='forest'){
+      if(h%7===0){ ctx.fillStyle='rgba(255,255,255,.55)';
+        var fx=sx+8+(h%20), fy=sy+10+((h>>3)%20);
+        for(var i=0;i<5;i++){ ctx.beginPath(); ctx.arc(fx+Math.cos(i*1.25)*4,fy+Math.sin(i*1.25)*4,2.1,0,7); ctx.fill(); }
+        ctx.fillStyle=(h%2)?'#ffd54f':'#ff8a9b'; ctx.beginPath(); ctx.arc(fx,fy,2.4,0,7); ctx.fill();
+      } else if(h%5===0){ ctx.fillStyle='rgba(0,0,0,.10)'; ctx.fillRect(sx+6+(h%24),sy+18+((h>>2)%18),5,3); }
+    } else if(d==='cave'){
+      if(h%6===0){ ctx.strokeStyle='rgba(0,0,0,.28)'; ctx.lineWidth=1.4; ctx.beginPath();
+        ctx.moveTo(sx+6+(h%20),sy+8); ctx.lineTo(sx+10+(h%18),sy+30); ctx.stroke(); }
+    } else if(d==='ruins'){
+      ctx.strokeStyle='rgba(0,0,0,.22)'; ctx.lineWidth=1; ctx.strokeRect(sx+2.5,sy+2.5,TILE-5,TILE-5);
+      if(h%5===0){ ctx.fillStyle='rgba(120,160,120,.16)'; ctx.fillRect(sx+5+(h%22),sy+6+((h>>2)%22),9,6); }
+    } else if(d==='island'){
+      ctx.strokeStyle='rgba(103,232,249,.16)'; ctx.lineWidth=1; ctx.strokeRect(sx+1.5,sy+1.5,TILE-3,TILE-3);
+      if(h%9===0){ ctx.fillStyle='rgba(103,232,249,.30)'; ctx.beginPath();
+        ctx.arc(sx+TILE/2,sy+TILE/2,2,0,7); ctx.fill(); }
+    } else if(d==='void'){
+      if(h%11===0){ ctx.fillStyle='rgba(196,181,253,.20)'; ctx.beginPath(); ctx.arc(sx+10+(h%24),sy+10+((h>>2)%24),1.4,0,7); ctx.fill(); }
+    }
+  }
+
+  /* 通行不可ブロック（ゾーン別） */
+  function drawBlock(ch,tx,ty,sx,sy,t){
+    var cx=sx+TILE/2, cy=sy+TILE/2, d=CFG.decor;
+    if(d==='forest'){
+      ctx.fillStyle='rgba(0,0,0,.28)'; ctx.beginPath(); ctx.ellipse(cx,sy+TILE-6,15,5,0,0,7); ctx.fill();
+      ctx.fillStyle='#6b4226'; ctx.fillRect(cx-4,cy,8,TILE/2-4);
+      ctx.fillStyle='#2e7d32'; circle(cx,cy-2,16); ctx.fillStyle='#388e3c'; circle(cx-9,cy+4,12); circle(cx+9,cy+4,12);
+      ctx.fillStyle='rgba(255,255,255,.12)'; circle(cx-5,cy-8,6);
+    } else if(d==='cave'){
+      ctx.fillStyle='rgba(0,0,0,.30)'; ctx.beginPath(); ctx.ellipse(cx,sy+TILE-6,16,5,0,0,7); ctx.fill();
+      ctx.fillStyle='#4a4456'; roundPath(sx+5,sy+8,TILE-10,TILE-12,7); ctx.fill();
+      ctx.fillStyle='#5a5468'; roundPath(sx+9,sy+11,TILE-22,12,5); ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(sx+12,sy+16); ctx.lineTo(sx+20,sy+34); ctx.stroke();
+    } else if(d==='ruins'){
+      ctx.fillStyle='rgba(0,0,0,.28)'; ctx.beginPath(); ctx.ellipse(cx,sy+TILE-6,14,5,0,0,7); ctx.fill();
+      ctx.fillStyle='#7b8493'; ctx.fillRect(cx-11,sy+6,22,TILE-12);
+      ctx.fillStyle='#8d97a8'; ctx.fillRect(cx-13,sy+6,26,7);
+      ctx.fillStyle='rgba(0,0,0,.25)'; ctx.fillRect(cx-3,sy+14,6,TILE-20);
+      ctx.fillStyle='rgba(120,160,120,.25)'; ctx.fillRect(cx-11,sy+TILE-16,22,5);
+    } else if(d==='island'){
+      var bob=Math.sin(t*1.3+tx*0.7+ty)*3;
+      ctx.save(); ctx.translate(0,bob);
+      ctx.fillStyle='rgba(103,232,249,.10)'; ctx.beginPath(); ctx.ellipse(cx,sy+TILE-2,13,4,0,0,7); ctx.fill();
+      ctx.shadowColor='rgba(103,232,249,.6)'; ctx.shadowBlur=14;
+      ctx.fillStyle='#1f6f86'; diamond(cx,cy,14,20);
+      ctx.fillStyle='#67e8f9'; diamond(cx,cy,8,13);
+      ctx.restore();
+    } else if(d==='void'){
+      var pul=0.5+0.5*Math.sin(t*1.6+tx+ty);
+      ctx.save(); ctx.shadowColor='rgba(167,139,250,'+(0.4+0.4*pul)+')'; ctx.shadowBlur=18;
+      ctx.fillStyle='#120a28'; circle(cx,cy,14);
+      ctx.strokeStyle='rgba(167,139,250,'+(0.5+0.4*pul)+')'; ctx.lineWidth=2.2; ctx.beginPath(); ctx.arc(cx,cy,12,0,7); ctx.stroke();
+      ctx.restore();
+    } else { ctx.fillStyle=CFG.theme.wall; ctx.fillRect(sx+3,sy+3,TILE-6,TILE-6); }
+  }
+
+  function drawStairs(sx,sy,t,down){
+    var locked=down&&!(window.RPG&&RPG.bossCleared(CFG.boss));
+    ctx.fillStyle=down?'#1a1208':'#10131f';
+    roundPath(sx+4,sy+4,TILE-8,TILE-8,6); ctx.fill();
+    ctx.fillStyle=down?'#3a2e16':'#26304a';
+    for(var i=0;i<4;i++){ ctx.fillRect(sx+7,sy+9+i*8,TILE-14-(down?i*3:-(i*3)),5); }
+    ctx.fillStyle='rgba(255,255,255,.10)'; ctx.fillRect(sx+7,sy+9,TILE-14,2);
+    /* 矢印 */
+    ctx.font='900 16px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle=down?CFG.theme.accent:'#9fb0d0';
+    ctx.fillText(down?'▼':'▲',sx+TILE/2,sy+TILE/2+1);
+    if(locked){
+      var pul=0.6+0.4*Math.sin(t*4);
+      ctx.save(); ctx.shadowColor='rgba(255,80,60,'+pul+')'; ctx.shadowBlur=10;
+      ctx.font='20px sans-serif'; ctx.fillText('🔒',sx+TILE/2,sy+TILE/2);
+      ctx.restore();
+    }
+  }
+  function drawBossDoor(sx,sy,t){
+    var cleared=window.RPG&&RPG.bossCleared(CFG.boss);
+    var pul=0.55+0.45*Math.sin(t*3);
+    ctx.save();
+    ctx.shadowColor=cleared?'rgba(232,201,107,'+pul+')':'rgba(200,40,40,'+pul+')';
+    ctx.shadowBlur=18;
+    ctx.fillStyle=cleared?'#2a2418':'#1c0c10';
+    roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle=cleared?'#c8a84b':'#c0392b'; ctx.lineWidth=2.5;
+    roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.stroke();
+    /* 鳥居 */
+    ctx.strokeStyle=cleared?'#e8c96b':'#e05a3a'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(sx+11,sy+15); ctx.lineTo(sx+TILE-11,sy+15);
+    ctx.moveTo(sx+13,sy+20); ctx.lineTo(sx+TILE-13,sy+20);
+    ctx.moveTo(sx+15,sy+15); ctx.lineTo(sx+15,sy+TILE-8);
+    ctx.moveTo(sx+TILE-15,sy+15); ctx.lineTo(sx+TILE-15,sy+TILE-8); ctx.stroke();
+    ctx.font='16px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(cleared?'👑':CFG.bossEmoji,sx+TILE/2,sy+TILE/2+4);
+  }
+  function drawChest(sx,sy,opened,t){
+    var cx=sx+TILE/2, cy=sy+TILE/2;
+    ctx.fillStyle='rgba(0,0,0,.28)'; ctx.beginPath(); ctx.ellipse(cx,sy+TILE-7,13,4,0,0,7); ctx.fill();
+    if(opened){
+      ctx.globalAlpha=0.55;
+      ctx.fillStyle='#6b5226'; roundPath(sx+11,sy+22,TILE-22,12,3); ctx.fill();
+      ctx.fillStyle='#3a2e16'; ctx.fillRect(sx+11,sy+22,TILE-22,4);
+      ctx.globalAlpha=1;
+    } else {
+      var pul=0.5+0.5*Math.sin(t*3);
+      ctx.save(); ctx.shadowColor='rgba(255,220,120,'+pul+')'; ctx.shadowBlur=14;
+      ctx.fillStyle='#8a6a2a'; roundPath(sx+10,sy+20,TILE-20,15,3); ctx.fill();
+      ctx.fillStyle='#caa24a'; roundPath(sx+10,sy+13,TILE-20,9,4); ctx.fill();
+      ctx.fillStyle='#ffe08a'; ctx.fillRect(cx-2,sy+18,4,9);
+      ctx.restore();
+      ctx.fillStyle='rgba(255,240,180,'+(0.4+0.4*pul)+')'; ctx.font='12px sans-serif'; ctx.textAlign='center'; ctx.fillText('✨',cx,sy+9);
+    }
+  }
+
+  function drawEnemy(en,t){
+    var sx=en.px-cam.x, sy=en.py-cam.y;
+    var bob=Math.sin(t*3+en.bob)*3;
+    ctx.fillStyle='rgba(0,0,0,.30)'; ctx.beginPath(); ctx.ellipse(sx,sy+16,14,5,0,0,7); ctx.fill();
+    ctx.save();
+    ctx.shadowColor=en.color; ctx.shadowBlur=12;
+    ctx.font='30px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(en.emoji,sx,sy+bob);
+    ctx.restore();
+    /* 近づくと名前 */
+    if(Math.hypot(en.px-player.px,en.py-player.py)<TILE*2.4){
+      var label=en.name;
+      ctx.font='700 11px "Noto Sans JP",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      var tw=ctx.measureText(label).width+12;
+      ctx.fillStyle='rgba(8,6,20,.85)'; roundPath(sx-tw/2,sy-30,tw,16,8); ctx.fill();
+      ctx.strokeStyle=en.color; ctx.lineWidth=1; roundPath(sx-tw/2,sy-30,tw,16,8); ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.fillText(label,sx,sy-21);
+    }
+  }
+
+  function drawPlayer(t){
+    var sx=player.px-cam.x, sy=player.py-cam.y;
+    var emoji=(window.RPG?RPG.levelFor(RPG.getXP()).emoji:'🧒');
+    var bob=Math.sin(t*5)*((keys.u||keys.d||keys.l||keys.r)?2.5:1.2);
+    ctx.fillStyle='rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(sx,sy+17,13,5,0,0,7); ctx.fill();
+    /* マント／体 */
+    ctx.save();
+    ctx.shadowColor=CFG.theme.accent; ctx.shadowBlur=14;
+    ctx.fillStyle=CFG.theme.accent;
+    ctx.beginPath(); ctx.ellipse(sx,sy+6+bob,12,13,0,0,7); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(sx,sy+9+bob,12,9,0,0,7); ctx.fill();
+    /* 顔（レベル絵文字） */
+    ctx.font='22px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(emoji,sx,sy-4+bob);
+    /* 向きインジケータ */
+    ctx.fillStyle='#fff';
+    var dx=Math.cos(player.dir)*15, dy=Math.sin(player.dir)*15;
+    ctx.beginPath(); ctx.arc(sx+dx,sy+6+dy+bob,2.4,0,7); ctx.fill();
+  }
+
+  /* 背景演出（タイルの下） */
+  var stars=[]; for(var s=0;s<70;s++) stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.6+0.3,p:Math.random()*7});
+  function drawBackdrop(t,VW,VH){
+    var d=CFG.decor;
+    if(d==='island'||d==='void'){
+      for(var i=0;i<stars.length;i++){ var st=stars[i];
+        var a=0.3+0.5*Math.abs(Math.sin(t*1.5+st.p));
+        ctx.fillStyle=(d==='void'?'rgba(196,181,253,':'rgba(160,220,255,')+a+')';
+        ctx.beginPath(); ctx.arc(st.x*VW,st.y*VH,st.r,0,7); ctx.fill();
+      }
+    }
+  }
+
+  /* 前景演出（タイルの上：霧・闇・数式・木漏れ日） */
+  var formulas=['∫','∑','∂','π','√','∞','λ','θ','dx','e^{iπ}','∇','∀∃','lim','ℝ','dω'];
+  var fStream=[]; for(var f=0;f<16;f++) fStream.push({x:Math.random(),y:Math.random(),v:0.01+Math.random()*0.03,txt:formulas[f%formulas.length],s:14+Math.random()*16});
+  function drawForeground(t,VW,VH){
+    var d=CFG.decor, sxp=player.px-cam.x, syp=player.py-cam.y;
+    if(d==='forest'){
+      var g=ctx.createRadialGradient(VW*0.5,VH*0.2,40,VW*0.5,VH*0.5,Math.max(VW,VH));
+      g.addColorStop(0,'rgba(255,250,200,.10)'); g.addColorStop(1,'rgba(0,20,0,.30)');
+      ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
+    } else if(d==='cave'){
+      var g2=ctx.createRadialGradient(sxp,syp,30,sxp,syp,260);
+      g2.addColorStop(0,'rgba(0,0,0,0)'); g2.addColorStop(1,'rgba(0,0,0,.74)');
+      ctx.fillStyle=g2; ctx.fillRect(0,0,VW,VH);
+    } else if(d==='ruins'){
+      for(var i=0;i<3;i++){
+        var fy=((t*12+i*220)% (VH+200))-100;
+        var g3=ctx.createLinearGradient(0,fy,0,fy+120); g3.addColorStop(0,'rgba(200,220,210,0)');
+        g3.addColorStop(0.5,'rgba(200,220,210,.10)'); g3.addColorStop(1,'rgba(200,220,210,0)');
+        ctx.fillStyle=g3; ctx.fillRect(0,fy,VW,120);
+      }
+      vignette(VW,VH,'rgba(10,18,24,.45)');
+    } else if(d==='island'){
+      vignette(VW,VH,'rgba(7,11,24,.5)');
+    } else if(d==='void'){
+      ctx.font='400 1px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      fStream.forEach(function(fo){
+        fo.y-=fo.v*0.016*60/60; if(fo.y<-0.05){ fo.y=1.05; fo.x=Math.random(); }
+        ctx.save(); ctx.globalAlpha=0.22; ctx.fillStyle='#c4b5fd';
+        ctx.font='italic '+fo.s+'px Georgia,serif';
+        ctx.fillText(fo.txt,fo.x*VW,fo.y*VH); ctx.restore();
+      });
+      var g4=ctx.createRadialGradient(sxp,syp,40,sxp,syp,320);
+      g4.addColorStop(0,'rgba(0,0,0,0)'); g4.addColorStop(1,'rgba(0,0,0,.6)');
+      ctx.fillStyle=g4; ctx.fillRect(0,0,VW,VH);
+    }
+  }
+  function vignette(VW,VH,col){
+    var g=ctx.createRadialGradient(VW/2,VH/2,Math.min(VW,VH)*0.3,VW/2,VH/2,Math.max(VW,VH)*0.75);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,col);
+    ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
+  }
+
+  /* canvas小道具 */
+  function circle(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+  function diamond(x,y,w,h){ ctx.beginPath(); ctx.moveTo(x,y-h); ctx.lineTo(x+w,y); ctx.lineTo(x,y+h); ctx.lineTo(x-w,y); ctx.closePath(); ctx.fill(); }
+  function roundPath(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  /* ════ 戦闘 ════ */
+  function startBattle(en){
+    mode='battle'; keys.u=keys.d=keys.l=keys.r=false;
+    if(window.SND) SND.click();
+    var hp=en.def.q.length, qi=0;
+    var ov=el('div','fm-ov fm-battle');
+    ov.innerHTML=
+      '<div class="fm-bt-stage">⚔️ '+(KIDS?'たたかい':'BATTLE')+'</div>'+
+      '<div class="fm-bt-enemy">'+
+        '<div class="fm-bt-emoji" style="filter:drop-shadow(0 0 18px '+en.color+');">'+en.emoji+'</div>'+
+        '<div class="fm-bt-name" style="border-color:'+en.color+';">'+en.name+'</div>'+
+        '<div class="fm-bt-hpbar"><div class="fm-bt-hpfill" id="fmHp"></div></div>'+
+      '</div>'+
+      '<div class="fm-bt-area" id="fmArea"></div>';
+    document.body.appendChild(ov);
+    var area=ov.querySelector('#fmArea'), hpfill=ov.querySelector('#fmHp');
+    function paintHp(){ hpfill.style.width=Math.max(0,hp)/en.def.q.length*100+'%'; }
+    paintHp();
+
+    function showQ(){
+      var Q=en.def.q[qi];
+      var h='<div class="fm-q">'+
+        '<div class="fm-qno">'+(KIDS?'もんだい ':'問 ')+(qi+1)+' / '+en.def.q.length+'</div>'+
+        '<div class="fm-qt">'+Q.q+'</div><div class="fm-cs">';
+      for(var i=0;i<Q.c.length;i++) h+='<button class="fm-c" data-i="'+i+'">'+Q.c[i]+'</button>';
+      h+='</div><div class="fm-tail"></div>';
+      area.innerHTML=h;
+      var card=area.querySelector('.fm-q');
+      var btns=area.querySelectorAll('.fm-c'), answered=false;
+      Array.prototype.forEach.call(btns,function(b){
+        b.addEventListener('click',function(){
+          if(answered) return; answered=true;
+          var i=+b.getAttribute('data-i'), ok=(i===Q.a);
+          Array.prototype.forEach.call(btns,function(x){ x.disabled=true; });
+          var tail=area.querySelector('.fm-tail');
+          if(ok){
+            b.classList.add('ok'); if(window.SND) SND.correct();
+            if(window.RPG) RPG.quizCorrect();
+            hp--; paintHp();
+            tail.innerHTML='<div class="fm-fb ok">⚡ '+(KIDS?'かいしんの いちげき！':'会心の一撃！')+'</div>'+
+              (Q.exp?'<div class="fm-exp">'+Q.exp+'</div>':'')+
+              '<button class="fm-go" id="fmNext">'+(hp<=0?(KIDS?'とどめ！':'とどめを刺す'):(KIDS?'つぎへ':'攻撃を続ける'))+'</button>';
+            tail.querySelector('#fmNext').addEventListener('click',function(){
+              if(hp<=0){ victory(); } else { qi++; showQ(); }
+            });
+          } else {
+            b.classList.add('ng'); if(btns[Q.a]) btns[Q.a].classList.add('ok');
+            if(window.SND) SND.wrong(); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+            tail.innerHTML='<div class="fm-fb ng">💥 '+(KIDS?'こうげきを うけた…':'反撃を受けた…')+'</div>'+
+              (Q.exp?'<div class="fm-exp">'+Q.exp+'</div>':'')+
+              '<button class="fm-go retry" id="fmRetry">'+(KIDS?'もういちど！':'もう一度')+'</button>';
+            tail.querySelector('#fmRetry').addEventListener('click',function(){ showQ(); });
+          }
+        });
+      });
+    }
+    function victory(){
+      if(window.SND) SND.clear();
+      en.alive=false;
+      area.innerHTML='<div class="fm-win">'+
+        '<div class="fm-win-t">🎉 '+(KIDS?'やっつけた！':'撃破！')+'</div>'+
+        '<div class="fm-win-l">'+en.name+'を '+(KIDS?'たおした！':'打ち破った！')+'</div>'+
+        '<button class="fm-go" id="fmClose">'+(KIDS?'フィールドに もどる':'フィールドへ戻る')+'</button></div>';
+      area.querySelector('#fmClose').addEventListener('click',function(){ closeOv(ov); mode='field'; });
+      if(window.RPG) setTimeout(function(){ RPG.addXP(en.def.xp,(KIDS?en.name+'げきは！':en.name+'撃破！')); },350);
+      ov.querySelector('.fm-bt-emoji').classList.add('fm-die');
+    }
+    /* にげる */
+    var flee=el('button','fm-flee'); flee.textContent=KIDS?'← にげる':'← 退却する';
+    flee.addEventListener('click',function(){
+      if(window.SND) SND.click();
+      en.cool=1.6;
+      /* 少し押し戻す */
+      var ang=Math.atan2(player.py-en.py,player.px-en.px);
+      var nx=player.px+Math.cos(ang)*TILE*0.9, ny=player.py+Math.sin(ang)*TILE*0.9;
+      if(canBe(nx,player.py)) player.px=nx; if(canBe(player.px,ny)) player.py=ny;
+      closeOv(ov); mode='field';
+    });
+    ov.appendChild(flee);
+    /* 導入 → 出題 */
+    var warn=el('div','fm-warn'); warn.textContent='⚠️ '+en.name+(KIDS?' が あらわれた！':' が現れた！');
+    ov.appendChild(warn);
+    if(window.SND) SND.wrong();
+    setTimeout(function(){ warn.remove(); showQ(); },950);
+  }
+
+  /* ════ カード入手 ════ */
+  function pickupCard(ct){
+    mode='menu'; keys.u=keys.d=keys.l=keys.r=false;
+    addCardId(ct.card.id);
+    if(window.SND) SND.stamp();
+    if(window.RPG) RPG.addXP(15,KIDS?'ちしきカード':'知識カード入手');
+    var c=ct.card;
+    var ov=el('div','fm-ov fm-card');
+    ov.innerHTML=
+      '<div class="fm-cardbox">'+
+        '<div class="fm-card-label">'+(KIDS?'ちしきカードを てにいれた！':'知識カードを手に入れた！')+'</div>'+
+        '<div class="fm-card-e">'+c.e+'</div>'+
+        '<div class="fm-card-t">'+c.t+'</div>'+
+        '<div class="fm-card-b">'+c.b+'</div>'+
+        (c.link?'<a class="fm-card-link" href="'+c.link+'">📖 '+(KIDS?'くわしく まなぶ':'詳しく学ぶ')+' →</a>':'')+
+        '<div class="fm-card-hint">'+(KIDS?'ずかんに とうろくされたよ':'図鑑に登録されました')+'</div>'+
+        '<button class="fm-go" id="fmCardClose">'+(KIDS?'とじる':'閉じる')+'</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmCardClose').addEventListener('click',function(){ closeOv(ov); mode='field'; });
+    ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; } });
+    updateDexBadge();
+  }
+
+  /* ════ 図鑑（ポケモン図鑑的） ════ */
+  function openDex(){
+    if(mode!=='field'&&mode!=='menu') return;
+    var prev=mode; mode='menu'; keys.u=keys.d=keys.l=keys.r=false;
+    if(window.SND) SND.click();
+    var cards=allCards();
+    var got=0; cards.forEach(function(o){ if(hasCard(o.card.id)) got++; });
+    var zlabel={sho:'地上・小学生',chu:'B1・中学生',ko:'B2・高校生',dai:'B3・大学生',in:'B4・大学院'};
+    var ov=el('div','fm-ov fm-dex');
+    var h='<div class="fm-dexbox">'+
+      '<div class="fm-dex-head">'+
+        '<div class="fm-dex-title">📖 '+(KIDS?'ちしき ずかん':'知識カード図鑑')+'</div>'+
+        '<div class="fm-dex-count">'+got+' / '+cards.length+'</div>'+
+        '<button class="fm-dex-x" id="fmDexX">✕</button>'+
+      '</div><div class="fm-dex-scroll">';
+    dexOrder().forEach(function(z){
+      var list=LAYERS[z].cards||[];
+      h+='<div class="fm-dex-zone">'+zlabel[z]+'</div><div class="fm-dex-grid">';
+      list.forEach(function(c){
+        if(hasCard(c.id)){
+          h+='<button class="fm-dx got" data-id="'+c.id+'" data-zone="'+z+'">'+
+            '<span class="fm-dx-e">'+c.e+'</span><span class="fm-dx-t">'+c.t+'</span></button>';
+        } else {
+          h+='<div class="fm-dx locked"><span class="fm-dx-e">❓</span><span class="fm-dx-t">？？？</span></div>';
+        }
+      });
+      h+='</div>';
+    });
+    h+='</div></div>';
+    ov.innerHTML=h;
+    document.body.appendChild(ov);
+    function close(){ closeOv(ov); mode=(prev==='menu'?'field':prev); }
+    ov.querySelector('#fmDexX').addEventListener('click',close);
+    ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
+    Array.prototype.forEach.call(ov.querySelectorAll('.fm-dx.got'),function(b){
+      b.addEventListener('click',function(){ showCardDetail(b.getAttribute('data-zone'),b.getAttribute('data-id')); });
+    });
+  }
+  function showCardDetail(z,id){
+    var c=null; (LAYERS[z].cards||[]).forEach(function(x){ if(x.id===id) c=x; });
+    if(!c) return;
+    if(window.SND) SND.click();
+    var ov=el('div','fm-ov fm-card');
+    ov.style.zIndex='100050';
+    ov.innerHTML='<div class="fm-cardbox">'+
+      '<div class="fm-card-e">'+c.e+'</div>'+
+      '<div class="fm-card-t">'+c.t+'</div>'+
+      '<div class="fm-card-b">'+c.b+'</div>'+
+      (c.link?'<a class="fm-card-link" href="'+c.link+'">📖 '+(KIDS?'くわしく まなぶ':'詳しく学ぶ')+' →</a>':'')+
+      '<button class="fm-go" id="fmDcl">'+(KIDS?'とじる':'閉じる')+'</button></div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmDcl').addEventListener('click',function(){ closeOv(ov); });
+    ov.addEventListener('click',function(e){ if(e.target===ov) closeOv(ov); });
+  }
+
+  /* ════ 階段・ボス・封印 ════ */
+  function travel(href,name,down){
+    mode='menu';
+    var ov=el('div','fm-ov fm-travel');
+    ov.innerHTML='<div class="fm-travel-in"><div class="fm-travel-ic">'+(down?'▼':'▲')+'</div>'+
+      '<div class="fm-travel-t">'+(down?(KIDS?'ふかい かいそうへ…':'さらに深層へ…'):(KIDS?'うえの かいそうへ…':'上の階層へ…'))+'</div>'+
+      '<div class="fm-travel-n">'+name+'</div></div>';
+    document.body.appendChild(ov);
+    if(window.SND) SND.clear();
+    setTimeout(function(){ location.href=href; },850);
+  }
+  function lockedStairs(){
+    mode='menu';
+    if(window.SND) SND.wrong();
+    var ov=el('div','fm-ov fm-locked');
+    ov.innerHTML='<div class="fm-locked-in">'+
+      '<div class="fm-locked-ic">🔒</div>'+
+      '<div class="fm-locked-t">'+(KIDS?'かいだんに かぎが かかっている！':'階段は封印されている')+'</div>'+
+      '<div class="fm-locked-d">'+(KIDS
+        ?'ボス「'+CFG.bossName+'」を たおすと、つぎの かいそうへ おりられる。'
+        :'ボス「'+CFG.bossName+'」を倒すと、下の階層への封印が解ける。')+'</div>'+
+      '<a class="fm-go boss" href="'+CFG.bossPage+'">⚔️ '+(KIDS?'ボスに いどむ':'ボスに挑む')+'</a>'+
+      '<button class="fm-go ghost" id="fmLx">'+(KIDS?'もどる':'戻る')+'</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmLx').addEventListener('click',function(){ closeOv(ov); mode='field'; nudgeOff(); });
+    ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; nudgeOff(); } });
+  }
+  function confirmBoss(){
+    mode='menu';
+    var cleared=window.RPG&&RPG.bossCleared(CFG.boss);
+    if(window.SND) SND.stamp();
+    var ov=el('div','fm-ov fm-locked');
+    ov.innerHTML='<div class="fm-locked-in">'+
+      '<div class="fm-locked-ic" style="filter:drop-shadow(0 0 16px rgba(220,60,40,.7));">'+(cleared?'👑':CFG.bossEmoji)+'</div>'+
+      '<div class="fm-locked-t" style="color:#ffd9c8;">'+(cleared?(KIDS?'げきは ずみの ボス':'撃破済みのボス'):'BOSS ─ '+CFG.bossName)+'</div>'+
+      '<div class="fm-locked-d">'+(cleared
+        ?(KIDS?'もういちど たたかう？ たたかうたびに つよく なるぞ。':'再戦するか？ 来るたびに、奴は強くなる。')
+        :(KIDS?'この とびらの おくに ボスが いる。じゅんびは いい？':'この扉の奥にボスがいる。挑むか？'))+'</div>'+
+      '<a class="fm-go boss" href="'+CFG.bossPage+'">⚔️ '+(cleared?(KIDS?'さいせん する':'再戦する'):(KIDS?'ボスに いどむ':'ボスに挑む'))+'</a>'+
+      '<button class="fm-go ghost" id="fmBx">'+(KIDS?'やめておく':'やめておく')+'</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmBx').addEventListener('click',function(){ closeOv(ov); mode='field'; nudgeOff(); });
+    ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; nudgeOff(); } });
+  }
+  function nudgeOff(){
+    /* 特殊タイルから1歩戻して連続発動を防ぐ */
+    player.py+=4; if(!canBe(player.px,player.py)) player.py-=4;
+    lastSpecial=Math.floor(player.px/TILE)+','+Math.floor(player.py/TILE);
+  }
+
+  function showGate(){
+    mode='gate';
+    var ov=el('div','fm-ov fm-gate');
+    ov.innerHTML='<div class="fm-gate-in">'+
+      '<div class="fm-gate-ic">'+(CFG.requireBossName?'🔒':'⛩')+'</div>'+
+      '<div class="fm-gate-seal">─ この階層は封印されている ─</div>'+
+      '<div class="fm-gate-name">'+CFG.title+'</div>'+
+      '<div class="fm-gate-d">ここへ来るには、上の階層のボス「'+CFG.requireBossName+'」を倒している必要がある。</div>'+
+      '<a class="fm-go boss" href="'+CFG.requireBossPage+'">⚔️ ボス「'+CFG.requireBossName+'」に挑む</a>'+
+      '<button class="fm-gate-skip" id="fmGskip">封印をすり抜けて探索する（ボスはあとで）</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmGskip').addEventListener('click',function(){
+      sessionStorage.setItem('rpg_gate_skip_'+CFG.zone,'1');
+      closeOv(ov); mode='field';
+    });
+  }
+
+  /* ════ HUD ════ */
+  function buildHUD(){
+    var bar=el('div','fm-hud');
+    bar.innerHTML=
+      '<div class="fm-hud-l">'+
+        '<div class="fm-depth">'+CFG.depth+'</div>'+
+        '<div class="fm-hero"><span class="fm-hero-face" id="fmFace">🧒</span>'+
+          '<span class="fm-hero-lv" id="fmLv">Lv1</span>'+
+          '<span class="fm-bar"><span class="fm-fill" id="fmXpFill"></span></span>'+
+          '<span class="fm-xp" id="fmXp"></span></div>'+
+      '</div>'+
+      '<div class="fm-hud-r">'+
+        '<button class="fm-btn" id="fmDex">📖 <span>'+(KIDS?'ずかん':'図鑑')+'</span><i class="fm-badge" id="fmBadge"></i></button>'+
+        '<a class="fm-btn" href="'+CFG.up.href+'">🏠 <span>'+(KIDS?'もどる':'戻る')+'</span></a>'+
+      '</div>';
+    document.body.appendChild(bar);
+    document.getElementById('fmDex').addEventListener('click',openDex);
+    var hint=el('div','fm-hint');
+    hint.innerHTML=(KIDS
+      ?'やじるし／下のボタンで うごく　・　てきに ふれると たたかい　・　たからばこで カード'
+      :'矢印キー／D-padで移動　・　敵に触れて戦闘　・　宝箱で知識カード　・　階段で次の階層へ');
+    document.body.appendChild(hint);
+    setTimeout(function(){ hint.classList.add('fade'); },5200);
+    updateHero(); updateDexBadge();
+    document.addEventListener('rpg:xp',updateHero);
+  }
+  function updateHero(){
+    if(!window.RPG) return;
+    var xp=RPG.getXP(), lv=RPG.levelFor(xp), nx=RPG.nextLevel(xp);
+    var f=document.getElementById('fmFace'); if(!f) return;
+    f.textContent=lv.emoji;
+    document.getElementById('fmLv').textContent='Lv'+lv.lv;
+    document.getElementById('fmXpFill').style.width=nx?Math.min(100,Math.round((xp-lv.xp)/(nx.xp-lv.xp)*100))+'%':'100%';
+    document.getElementById('fmXp').textContent=xp+' XP';
+  }
+  function updateDexBadge(){
+    var b=document.getElementById('fmBadge'); if(!b) return;
+    var cards=allCards(), got=0; cards.forEach(function(o){ if(hasCard(o.card.id)) got++; });
+    b.textContent=got+'/'+cards.length;
+  }
+  function buildDpad(){
+    var pad=el('div','fm-dpad');
+    var defs=[['u','▲','up'],['l','◀','left'],['r','▶','right'],['d','▼','down']];
+    pad.innerHTML=defs.map(function(d){ return '<button class="fm-dbtn fm-'+d[2]+'" data-k="'+d[0]+'">'+d[1]+'</button>'; }).join('');
+    document.body.appendChild(pad);
+    Array.prototype.forEach.call(pad.querySelectorAll('.fm-dbtn'),function(b){
+      var k=b.getAttribute('data-k');
+      function on(e){ e.preventDefault(); if(mode==='field') keys[k]=true; b.classList.add('on'); }
+      function off(e){ if(e)e.preventDefault(); keys[k]=false; b.classList.remove('on'); }
+      b.addEventListener('pointerdown',on);
+      b.addEventListener('pointerup',off);
+      b.addEventListener('pointerleave',off);
+      b.addEventListener('pointercancel',off);
+    });
+    return pad;
+  }
+
+  /* ════ helpers ════ */
+  function el(tag,cls){ var d=document.createElement(tag); if(cls) d.className=cls; return d; }
+  function closeOv(ov){ ov.style.transition='opacity .3s'; ov.style.opacity='0'; setTimeout(function(){ ov.remove(); },320); }
+
+  /* ── 起動 ── */
+  if(window.SND){} /* sound.js は自動でアンロック */
+  maybeGate();
+  requestAnimationFrame(loop);
+};
+
+/* ════════════════════════════════════════════════════════
+   スタイル注入
+   ════════════════════════════════════════════════════════ */
+function injectCSS(){
+  if(document.getElementById('fmCss')) return;
+  if(!document.getElementById('fmFont')){
+    var fl=document.createElement('link'); fl.id='fmFont'; fl.rel='stylesheet';
+    fl.href='https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap';
+    document.head.appendChild(fl);
+  }
+  var st=document.createElement('style'); st.id='fmCss';
+  st.textContent=[
+  'html,body{margin:0;height:100%;overflow:hidden;background:#05060c;}',
+  '*{-webkit-tap-highlight-color:transparent;}',
+  '.fm-canvas{position:fixed;inset:0;display:block;touch-action:none;image-rendering:auto;}',
+  '/* HUD */',
+  '.fm-hud{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px 12px;font-family:"Noto Sans JP",sans-serif;pointer-events:none;background:linear-gradient(180deg,rgba(5,6,12,.85),rgba(5,6,12,0));}',
+  '.fm-hud-l,.fm-hud-r{pointer-events:auto;}',
+  '.fm-depth{font-size:.66rem;font-weight:700;letter-spacing:.12em;color:#c8a84b;margin-bottom:4px;text-shadow:0 1px 3px #000;}',
+  '.fm-hero{display:flex;align-items:center;gap:7px;background:rgba(10,8,26,.82);border:1.5px solid rgba(200,168,75,.5);border-radius:999px;padding:5px 12px 5px 7px;box-shadow:0 3px 12px rgba(0,0,0,.5);}',
+  '.fm-hero-face{font-size:1.25rem;}',
+  '.fm-hero-lv{font-size:.74rem;font-weight:900;color:#e8c96b;white-space:nowrap;}',
+  '.fm-bar{width:70px;height:8px;background:rgba(0,0,0,.5);border:1px solid rgba(200,168,75,.4);border-radius:999px;overflow:hidden;}',
+  '.fm-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c5cbf,#3a6fd8 45%,#e8c96b);transition:width .6s;}',
+  '.fm-xp{font-size:.62rem;color:#9fb0d0;white-space:nowrap;}',
+  '.fm-hud-r{display:flex;gap:8px;}',
+  '.fm-btn{position:relative;display:inline-flex;align-items:center;gap:3px;text-decoration:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:.82rem;color:#ffe9a8;background:rgba(20,14,40,.9);border:1.5px solid #c8a84b;border-radius:12px;padding:8px 12px;box-shadow:0 3px 12px rgba(0,0,0,.5);}',
+  '.fm-btn span{font-size:.72rem;}',
+  '.fm-btn:active{transform:scale(.95);}',
+  '.fm-badge{position:absolute;top:-7px;right:-7px;background:#c0392b;color:#fff;font-style:normal;font-size:.56rem;font-weight:900;padding:2px 5px;border-radius:999px;border:1px solid #fff;}',
+  '.fm-hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:40;font-family:"Noto Sans JP",sans-serif;font-size:.7rem;color:#cfd8ff;background:rgba(8,6,20,.78);border:1px solid rgba(200,168,75,.35);border-radius:999px;padding:7px 16px;max-width:92vw;text-align:center;transition:opacity .8s;pointer-events:none;}',
+  '.fm-hint.fade{opacity:0;}',
+  '/* D-pad */',
+  '.fm-dpad{position:fixed;left:16px;bottom:20px;z-index:45;width:150px;height:150px;}',
+  '.fm-dbtn{position:absolute;width:50px;height:50px;font-size:1.2rem;color:#ffe9a8;background:rgba(20,16,42,.7);border:1.6px solid rgba(200,168,75,.55);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;touch-action:none;backdrop-filter:blur(2px);}',
+  '.fm-dbtn.on{background:rgba(200,168,75,.45);color:#fff;}',
+  '.fm-up{left:50px;top:0;}.fm-left{left:0;top:50px;}.fm-right{left:100px;top:50px;}.fm-down{left:50px;top:100px;}',
+  '@media(hover:hover) and (pointer:fine){.fm-dpad{opacity:.45;}.fm-dpad:hover{opacity:1;}}',
+  '/* overlays */',
+  '@keyframes fmIn{from{opacity:0;}to{opacity:1;}}',
+  '@keyframes fmPop{0%{transform:scale(.6);opacity:0;}60%{transform:scale(1.05);}100%{transform:scale(1);opacity:1;}}',
+  '@keyframes fmFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}',
+  '@keyframes fmShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(4px);}}',
+  '@keyframes fmWarn{0%{transform:translate(-50%,-50%) scale(.6);opacity:0;}25%{transform:translate(-50%,-50%) scale(1.05);opacity:1;}80%{opacity:1;}100%{opacity:0;}}',
+  '@keyframes fmDie{0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3) rotate(12deg);}100%{transform:scale(.1) rotate(160deg);opacity:0;}}',
+  '.fm-ov{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;font-family:"Noto Sans JP",sans-serif;text-align:center;animation:fmIn .3s ease;overflow-y:auto;}',
+  '.fm-battle{background:radial-gradient(circle at 50% 32%,rgba(40,12,18,.96),rgba(6,4,12,.98));}',
+  '.fm-go{display:inline-block;margin-top:16px;font-family:inherit;font-weight:900;font-size:1rem;color:#fff;background:linear-gradient(135deg,#8a2020,#c0392b);border:1px solid #ffb09a;border-radius:999px;padding:13px 34px;cursor:pointer;text-decoration:none;}',
+  '.fm-go:active{transform:scale(.96);}',
+  '.fm-go.ghost{background:transparent;border:1px solid rgba(255,255,255,.3);color:#cfd8ff;}',
+  '.fm-go.retry{background:linear-gradient(135deg,#5a4ba8,#7c5cbf);border-color:#bdb2f0;}',
+  '.fm-go.boss{background:linear-gradient(135deg,#8a2020,#c0392b);}',
+  '/* battle */',
+  '.fm-bt-stage{font-size:.7rem;font-weight:700;letter-spacing:.3em;color:#e8c96b;margin-bottom:6px;}',
+  '.fm-bt-enemy{margin-bottom:8px;}',
+  '.fm-bt-emoji{font-size:4rem;animation:fmFloat 2.6s ease-in-out infinite;}',
+  '.fm-bt-emoji.fm-die{animation:fmDie .9s ease forwards;}',
+  '.fm-bt-name{display:inline-block;font-size:1.15rem;font-weight:900;color:#fff;background:rgba(3,2,10,.9);border:2px solid #e8c96b;border-radius:12px;padding:6px 20px;margin:8px 0;}',
+  '.fm-bt-hpbar{width:min(360px,80vw);height:10px;margin:0 auto;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden;}',
+  '.fm-bt-hpfill{height:100%;width:100%;background:linear-gradient(90deg,#c0392b,#e8884b);transition:width .4s cubic-bezier(.22,1,.36,1);}',
+  '.fm-bt-area{width:min(480px,94vw);}',
+  '.fm-q{background:#10142a;border:2px solid #8a2020;border-radius:16px;padding:18px 16px;margin-top:6px;box-shadow:0 0 30px rgba(192,57,43,.3);animation:fmPop .4s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-q.shake{animation:fmShake .4s ease;}',
+  '.fm-qno{font-size:.66rem;font-weight:700;letter-spacing:.2em;color:#e8884b;margin-bottom:6px;}',
+  '.fm-qt{font-size:1.04rem;font-weight:900;line-height:1.8;color:#f0f4ff;margin-bottom:12px;}',
+  '.fm-cs{display:grid;gap:8px;}',
+  '.fm-c{font-family:inherit;font-size:.95rem;font-weight:700;color:#f0f4ff;background:#1a2235;border:1px solid rgba(255,255,255,.18);border-radius:11px;padding:12px 14px;cursor:pointer;text-align:left;transition:all .15s;}',
+  '.fm-c:hover{border-color:#c8a84b;background:#222c45;}',
+  '.fm-c.ok{background:#1d4a2a;border-color:#2ecc71;color:#fff;}',
+  '.fm-c.ng{background:#4a1d1d;border-color:#c0392b;}',
+  '.fm-c:disabled{cursor:default;}',
+  '.fm-tail{}',
+  '.fm-fb{margin-top:12px;font-size:.95rem;font-weight:900;line-height:1.7;}',
+  '.fm-fb.ok{color:#7bd88a;}.fm-fb.ng{color:#ff9d8a;}',
+  '.fm-exp{margin-top:8px;background:rgba(0,0,0,.3);border-left:3px solid #c8a84b;border-radius:8px;padding:9px 12px;font-size:.84rem;color:#cfd8ff;line-height:1.8;text-align:left;}',
+  '.fm-win{animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-win-t{font-size:1.6rem;font-weight:900;color:#ffe9a8;text-shadow:0 0 18px rgba(255,217,94,.8);}',
+  '.fm-win-l{font-size:.95rem;color:#cfd8ff;margin-top:6px;}',
+  '.fm-flee{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);font-family:inherit;font-size:.8rem;color:#99a;background:none;border:none;text-decoration:underline;cursor:pointer;z-index:1;}',
+  '.fm-flee:hover{color:#cfd8ff;}',
+  '.fm-warn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;font-weight:900;font-size:clamp(1.1rem,4.5vw,1.6rem);color:#fff;background:rgba(3,2,10,.94);border:2px solid #e8c96b;border-radius:999px;padding:13px 30px;box-shadow:0 0 26px rgba(200,168,75,.45);animation:fmWarn 1s ease forwards;pointer-events:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;}',
+  '/* card */',
+  '.fm-card{background:rgba(6,8,18,.9);}',
+  '.fm-cardbox{max-width:400px;width:100%;background:linear-gradient(135deg,#1a1040,#241a52 55%,#0f1f4a);border:2px solid #c8a84b;border-radius:20px;padding:26px 22px;box-shadow:0 0 44px rgba(200,168,75,.4);animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-card-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;color:#e8c96b;margin-bottom:10px;}',
+  '.fm-card-e{font-size:3.4rem;filter:drop-shadow(0 0 16px rgba(232,201,107,.6));}',
+  '.fm-card-t{font-size:1.3rem;font-weight:900;color:#ffe9a8;margin:8px 0 12px;}',
+  '.fm-card-b{font-size:.92rem;line-height:1.95;color:#e8eeff;text-align:left;background:rgba(0,0,0,.22);border-radius:12px;padding:14px 16px;}',
+  '.fm-card-link{display:inline-block;margin-top:14px;font-size:.82rem;font-weight:900;color:#1a1040;background:linear-gradient(90deg,#c8a84b,#e8c96b);border-radius:999px;padding:9px 20px;text-decoration:none;}',
+  '.fm-card-hint{font-size:.68rem;color:#9fb0d0;margin-top:12px;}',
+  '/* dex */',
+  '.fm-dex{background:rgba(5,6,14,.94);}',
+  '.fm-dexbox{max-width:640px;width:100%;max-height:88vh;display:flex;flex-direction:column;background:#0d1124;border:2px solid #c8a84b;border-radius:18px;overflow:hidden;animation:fmPop .4s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-dex-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(200,168,75,.3);background:linear-gradient(135deg,#1a1040,#0f1f4a);}',
+  '.fm-dex-title{font-size:1.05rem;font-weight:900;color:#ffe9a8;flex:1;text-align:left;}',
+  '.fm-dex-count{font-size:.82rem;font-weight:900;color:#e8c96b;background:rgba(0,0,0,.35);border-radius:999px;padding:4px 12px;}',
+  '.fm-dex-x{font-size:1rem;color:#cfd8ff;background:none;border:none;cursor:pointer;padding:4px 8px;}',
+  '.fm-dex-scroll{overflow-y:auto;padding:14px 16px 20px;}',
+  '.fm-dex-zone{font-size:.7rem;font-weight:700;letter-spacing:.15em;color:#c8a84b;margin:14px 0 8px;text-align:left;border-bottom:1px dashed rgba(200,168,75,.25);padding-bottom:4px;}',
+  '.fm-dex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px;}',
+  '.fm-dx{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:#141a30;cursor:default;font-family:inherit;}',
+  '.fm-dx.got{border-color:rgba(200,168,75,.55);background:linear-gradient(135deg,#1a2148,#101830);box-shadow:0 0 12px rgba(200,168,75,.15);cursor:pointer;}',
+  '.fm-dx.got:hover{border-color:#e8c96b;transform:translateY(-2px);}',
+  '.fm-dx.locked{filter:grayscale(1);opacity:.5;}',
+  '.fm-dx-e{font-size:1.7rem;}',
+  '.fm-dx-t{font-size:.66rem;font-weight:700;color:#e8eeff;line-height:1.3;text-align:center;}',
+  '.fm-dx.locked .fm-dx-t{color:#667;}',
+  '/* travel / locked / gate */',
+  '.fm-travel{background:rgba(3,4,10,.92);}',
+  '.fm-travel-in{animation:fmPop .5s ease;}',
+  '.fm-travel-ic{font-size:3rem;color:#e8c96b;animation:fmFloat 1.2s ease-in-out infinite;}',
+  '.fm-travel-t{font-size:1rem;font-weight:900;color:#ffe9a8;margin-top:8px;}',
+  '.fm-travel-n{font-size:.85rem;color:#9fb0d0;margin-top:4px;}',
+  '.fm-locked{background:radial-gradient(circle at 50% 35%,rgba(30,14,18,.95),rgba(5,4,12,.97));}',
+  '.fm-locked-in{max-width:400px;animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-locked-ic{font-size:3.4rem;}',
+  '.fm-locked-t{font-size:1.2rem;font-weight:900;color:#ffd9c8;margin:8px 0 8px;}',
+  '.fm-locked-d{font-size:.9rem;line-height:1.9;color:#cdb;margin-bottom:6px;}',
+  '.fm-locked .fm-go{display:block;margin:14px auto 0;max-width:280px;}',
+  '.fm-gate{background:radial-gradient(circle at 50% 30%,#1c0f1e,#08060e 72%);}',
+  '.fm-gate-in{max-width:460px;animation:fmPop .55s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-gate-ic{font-size:3.8rem;filter:drop-shadow(0 0 18px rgba(255,90,60,.5));}',
+  '.fm-gate-seal{font-size:.72rem;font-weight:700;letter-spacing:.25em;color:#b06060;margin:8px 0 6px;}',
+  '.fm-gate-name{font-size:clamp(1.5rem,6vw,2.2rem);font-weight:900;color:#ffd9c8;letter-spacing:.1em;text-shadow:0 0 22px rgba(255,90,60,.45);margin-bottom:10px;}',
+  '.fm-gate-d{font-size:.92rem;line-height:2;color:#caa;margin-bottom:8px;}',
+  '.fm-gate .fm-go{display:block;margin:16px auto 0;max-width:320px;}',
+  '.fm-gate-skip{display:block;margin:18px auto 0;font-size:.76rem;color:#667;text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit;}',
+  '.fm-gate-skip:hover{color:#99a;}',
+  '@media(max-width:480px){.fm-btn span{display:none;}.fm-dpad{width:138px;height:138px;}.fm-dbtn{width:46px;height:46px;}.fm-up{left:46px;}.fm-left{top:46px;}.fm-right{left:92px;top:46px;}.fm-down{left:46px;top:92px;}}'
+  ].join('\n');
+  document.head.appendChild(st);
+}
+
+})();
