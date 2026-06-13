@@ -49,6 +49,73 @@ function DOTS(cols,rows){
 }
 
 /* ════════════════════════════════════════════════════════
+   プレイヤーキャラクター（タイトルで選択・フィールド描画と共有）
+   各キャラは1枚の自己完結SVGで定義する。
+     ・キャラ選択画面 … DOMにそのまま表示（くっきり大きく）
+     ・フィールドのcanvas … このSVGを画像化し drawPlayer() で描画
+   localStorage 'rpg_char' に 'yuusha' / 'mahou' を保存。
+   ════════════════════════════════════════════════════════ */
+var HEROES={
+  yuusha:{
+    name:'ゆうしゃ', color:'#5b8cff',
+    svg:'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="120" viewBox="0 0 100 120">'+
+      '<line x1="80" y1="32" x2="76" y2="104" stroke="#9c6b3f" stroke-width="5" stroke-linecap="round"/>'+
+      '<circle cx="81" cy="28" r="8" fill="#7ee8fa"/><circle cx="81" cy="28" r="8" fill="none" stroke="#e8f9ff" stroke-width="1.5"/><circle cx="78" cy="25" r="2" fill="#fff" opacity=".9"/>'+
+      '<path d="M30 58 Q18 92 26 108 L50 96 L74 108 Q82 92 70 58 Z" fill="#2a4fa8"/>'+
+      '<path d="M34 60 Q50 54 66 60 L62 96 Q50 102 38 96 Z" fill="#3a6fd8"/>'+
+      '<path d="M34 60 Q50 54 66 60 L64 72 Q50 66 36 72 Z" fill="#5b8cff"/>'+
+      '<rect x="37" y="84" width="26" height="6" rx="3" fill="#1f3a78"/>'+
+      '<rect x="40" y="98" width="9" height="12" rx="3" fill="#4a3220"/><rect x="51" y="98" width="9" height="12" rx="3" fill="#4a3220"/>'+
+      '<circle cx="72" cy="74" r="5" fill="#ffd9b3"/><circle cx="33" cy="78" r="5" fill="#ffd9b3"/>'+
+      '<circle cx="50" cy="42" r="15" fill="#ffd9b3"/>'+
+      '<circle cx="36" cy="44" r="3" fill="#ffcaa0"/><circle cx="64" cy="44" r="3" fill="#ffcaa0"/>'+
+      '<circle cx="44" cy="43" r="2.2" fill="#3a2a2a"/><circle cx="56" cy="43" r="2.2" fill="#3a2a2a"/>'+
+      '<path d="M45 49 Q50 53 55 49" fill="none" stroke="#b5654a" stroke-width="1.8" stroke-linecap="round"/>'+
+      '<circle cx="40" cy="47" r="2.4" fill="#ffb0a0" opacity=".6"/><circle cx="60" cy="47" r="2.4" fill="#ffb0a0" opacity=".6"/>'+
+      '<ellipse cx="50" cy="30" rx="22" ry="6" fill="#274a96"/>'+
+      '<path d="M32 30 Q50 31 68 30 Q56 9 50 3 Q45 14 32 30 Z" fill="#3a6fd8"/>'+
+      '<path d="M50 3 Q45 14 32 30 Q42 31 50 31 Z" fill="#2f5bbf"/>'+
+      '<path d="M34 27 Q50 31 66 27 L64 22 Q50 26 36 22 Z" fill="#e8c96b"/>'+
+      '<path d="M50 11 L52.5 17 L58 19 L52.5 21 L50 27 L47.5 21 L42 19 L47.5 17 Z" fill="#ffe9a8"/>'+
+      '</svg>'
+  },
+  mahou:{
+    name:'まほうつかい', color:'#ff7ec8',
+    svg:'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="120" viewBox="0 0 100 120">'+
+      '<path d="M30 40 Q10 50 16 80 Q24 70 32 62 Z" fill="#ff8fc4"/>'+
+      '<path d="M70 40 Q90 50 84 80 Q76 70 68 62 Z" fill="#ff8fc4"/>'+
+      '<circle cx="17" cy="76" r="7" fill="#ff8fc4"/><circle cx="83" cy="76" r="7" fill="#ff8fc4"/>'+
+      '<path d="M11 66 l-7 -4 v8 z" fill="#ff4f8b"/><path d="M23 66 l7 -4 v8 z" fill="#ff4f8b"/><circle cx="17" cy="66" r="3" fill="#ffd54f"/>'+
+      '<path d="M77 66 l-7 -4 v8 z" fill="#ff4f8b"/><path d="M89 66 l7 -4 v8 z" fill="#ff4f8b"/><circle cx="83" cy="66" r="3" fill="#ffd54f"/>'+
+      '<line x1="72" y1="64" x2="84" y2="100" stroke="#ffd54f" stroke-width="4" stroke-linecap="round"/>'+
+      '<g transform="translate(70,58)" fill="#ff4f8b"><path d="M0 -2 C -2 -6 -8 -6 -8 -1 C -8 3 -3 6 0 9 C 3 6 8 3 8 -1 C 8 -6 2 -6 0 -2 Z"/></g>'+
+      '<path d="M34 66 Q50 60 66 66 L74 104 Q50 98 26 104 Z" fill="#ff6fb0"/>'+
+      '<path d="M26 104 q6 -8 12 0 q6 -8 12 0 q6 -8 12 0 q6 -8 12 0" fill="none" stroke="#ffb3d9" stroke-width="4"/>'+
+      '<path d="M40 66 Q50 62 60 66 L58 80 Q50 76 42 80 Z" fill="#ffb3d9"/>'+
+      '<rect x="42" y="102" width="6" height="11" rx="3" fill="#ffe0c2"/><rect x="52" y="102" width="6" height="11" rx="3" fill="#ffe0c2"/>'+
+      '<ellipse cx="45" cy="113" rx="5" ry="3" fill="#ff4f8b"/><ellipse cx="55" cy="113" rx="5" ry="3" fill="#ff4f8b"/>'+
+      '<circle cx="70" cy="68" r="4.5" fill="#ffe0c2"/><circle cx="32" cy="72" r="4.5" fill="#ffe0c2"/>'+
+      '<circle cx="50" cy="44" r="16" fill="#ffe0c2"/>'+
+      '<path d="M34 44 Q30 54 34 60 L39 51 Z" fill="#ff8fc4"/><path d="M66 44 Q70 54 66 60 L61 51 Z" fill="#ff8fc4"/>'+
+      '<path d="M34 42 Q34 24 50 24 Q66 24 66 42 Q60 34 54 37 Q50 30 46 37 Q40 34 34 42 Z" fill="#ff8fc4"/>'+
+      '<path d="M50 23 l-10 -6 v12 z" fill="#ff4f8b"/><path d="M50 23 l10 -6 v12 z" fill="#ff4f8b"/><circle cx="50" cy="23" r="4" fill="#ffd54f"/>'+
+      '<ellipse cx="43" cy="46" rx="3.6" ry="4.6" fill="#7a2f5a"/><ellipse cx="57" cy="46" rx="3.6" ry="4.6" fill="#7a2f5a"/>'+
+      '<circle cx="44.4" cy="44.4" r="1.4" fill="#fff"/><circle cx="58.4" cy="44.4" r="1.4" fill="#fff"/>'+
+      '<path d="M46 53 Q50 56 54 53" fill="none" stroke="#cc4477" stroke-width="1.6" stroke-linecap="round"/>'+
+      '<circle cx="37" cy="50" r="2.6" fill="#ff8fb0" opacity=".7"/><circle cx="63" cy="50" r="2.6" fill="#ff8fb0" opacity=".7"/>'+
+      '</svg>'
+  }
+};
+function heroId(){ var c=null; try{ c=localStorage.getItem('rpg_char'); }catch(e){} return (c==='mahou'||c==='yuusha')?c:'yuusha'; }
+var _heroImg={};
+function heroImage(id){
+  if(_heroImg[id]) return _heroImg[id];
+  var img=new Image();
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(HEROES[id].svg);
+  _heroImg[id]=img; return img;
+}
+
+/* ════════════════════════════════════════════════════════
    全層データ（マップ・敵・カード）
    マップ凡例：
      P=主人公 . =床  S=下り階段(ボス撃破で解錠)  U=上り階段
@@ -772,19 +839,25 @@ window.FieldMap=function(zoneId){
 
   function drawPlayer(t){
     var sx=player.px-cam.x, sy=player.py-cam.y;
-    var emoji=(window.RPG?RPG.levelFor(RPG.getXP()).emoji:'🧒');
-    var bob=Math.sin(t*5)*((keys.u||keys.d||keys.l||keys.r)?2.5:1.2);
+    var moving=(keys.u||keys.d||keys.l||keys.r);
+    var bob=Math.sin(t*5)*(moving?2.5:1.2);
+    /* 影 */
     ctx.fillStyle='rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(sx,sy+17,13,5,0,0,7); ctx.fill();
-    /* マント／体 */
-    ctx.save();
-    ctx.shadowColor=CFG.theme.accent; ctx.shadowBlur=14;
-    ctx.fillStyle=CFG.theme.accent;
-    ctx.beginPath(); ctx.ellipse(sx,sy+6+bob,12,13,0,0,7); ctx.fill();
-    ctx.restore();
-    ctx.fillStyle='rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(sx,sy+9+bob,12,9,0,0,7); ctx.fill();
-    /* 顔（レベル絵文字） */
-    ctx.font='22px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(emoji,sx,sy-4+bob);
+    var id=heroId(), img=heroImage(id);
+    if(img&&img.complete&&img.naturalWidth){
+      /* 選択キャラのSVGをそのまま描画（選択画面と共通の絵） */
+      var hw=42, hh=50;
+      ctx.save();
+      ctx.shadowColor=HEROES[id].color; ctx.shadowBlur=12;
+      ctx.drawImage(img, sx-hw/2, sy+18-hh+bob, hw, hh);
+      ctx.restore();
+    } else {
+      /* 画像読み込み前のフォールバック（レベル絵文字） */
+      var emoji=(window.RPG?RPG.levelFor(RPG.getXP()).emoji:'🧒');
+      ctx.save(); ctx.shadowColor=CFG.theme.accent; ctx.shadowBlur=14;
+      ctx.fillStyle=CFG.theme.accent; ctx.beginPath(); ctx.ellipse(sx,sy+6+bob,12,13,0,0,7); ctx.fill(); ctx.restore();
+      ctx.font='22px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(emoji,sx,sy-4+bob);
+    }
     /* 向きインジケータ */
     ctx.fillStyle='#fff';
     var dx=Math.cos(player.dir)*15, dy=Math.sin(player.dir)*15;
@@ -1085,6 +1158,82 @@ window.FieldMap=function(zoneId){
     });
   }
 
+  /* ════ リセット ════ */
+  function confirmReset(){
+    if(mode!=='field'&&mode!=='menu') return;
+    mode='menu'; keys.u=keys.d=keys.l=keys.r=false;
+    if(window.SND) SND.click();
+    var ov=el('div','fm-ov fm-reset');
+    ov.innerHTML='<div class="fm-reset-in">'+
+      '<div class="fm-reset-ic">🔄</div>'+
+      '<div class="fm-reset-t">'+(KIDS?'ほんとうに リセットする？':'本当にリセットしますか？')+'</div>'+
+      '<div class="fm-reset-d">'+(KIDS
+        ?'すべての すすみぐあいが きえます。レベル・しらべたカード・ボスの きろくが ぜんぶ さいしょに もどります。'
+        :'すべての進行状況が消えます。レベル・知識カード・ボス撃破の記録がすべて初期化されます。')+'</div>'+
+      '<button class="fm-go fm-reset-yes" id="fmRsYes">'+(KIDS?'リセットする':'リセットする')+'</button>'+
+      '<button class="fm-go ghost" id="fmRsNo">'+(KIDS?'やめておく':'やめておく')+'</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmRsYes').addEventListener('click',function(){
+      if(window.RPG&&RPG.resetAll){ RPG.resetAll(); }
+      else { try{ var d=[],i,k; for(i=0;i<localStorage.length;i++){ k=localStorage.key(i); if(/^rpg_/.test(k)) d.push(k); } d.forEach(function(x){ localStorage.removeItem(x); }); }catch(e){} }
+      try{ sessionStorage.removeItem('rpg_started'); }catch(e){}
+      if(window.SND) SND.clear();
+      location.href='/math-site/sho/map.html';
+    });
+    ov.querySelector('#fmRsNo').addEventListener('click',function(){ closeOv(ov); mode='field'; });
+    ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; } });
+  }
+
+  /* ════ タイトル & キャラ選択 ════ */
+  function showTitle(){
+    mode='title'; keys.u=keys.d=keys.l=keys.r=false;
+    var ov=el('div','fm-ov fm-title');
+    ov.innerHTML='<div class="fm-title-in">'+
+      '<div class="fm-title-badge">MATH ADVENTURE</div>'+
+      '<h1 class="fm-title-main">数学の教室 ― 大冒険</h1>'+
+      '<p class="fm-title-sub">知識カードを集めて、数学の世界を探検しよう！</p>'+
+      '<button class="fm-go" id="fmStart">⚔️ 冒険をはじめる</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmStart').addEventListener('click',function(){
+      if(window.SND) SND.click();
+      renderCharSelect(ov);
+    });
+  }
+  function renderCharSelect(ov){
+    ov.className='fm-ov fm-sel';
+    var saved=heroId();
+    function cardHtml(id){
+      return '<div class="fm-sel-card'+(id===saved?' on':'')+'" data-id="'+id+'">'+
+        '<div class="fm-sel-viz">'+HEROES[id].svg+'</div>'+
+        '<div class="fm-sel-name">'+HEROES[id].name+'</div>'+
+        '<button class="fm-go fm-sel-btn" data-id="'+id+'">このキャラで冒険する</button>'+
+        '</div>';
+    }
+    ov.innerHTML='<div class="fm-sel-in">'+
+      '<h2 class="fm-sel-head">キャラを えらぼう</h2>'+
+      '<div class="fm-sel-grid">'+cardHtml('yuusha')+cardHtml('mahou')+'</div>'+
+      '</div>';
+    Array.prototype.forEach.call(ov.querySelectorAll('.fm-sel-card'),function(card){
+      card.addEventListener('click',function(){
+        Array.prototype.forEach.call(ov.querySelectorAll('.fm-sel-card'),function(c){ c.classList.remove('on'); });
+        card.classList.add('on'); if(window.SND) SND.click();
+      });
+    });
+    Array.prototype.forEach.call(ov.querySelectorAll('.fm-sel-btn'),function(btn){
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        var id=btn.getAttribute('data-id');
+        try{ localStorage.setItem('rpg_char',id); }catch(err){}
+        try{ sessionStorage.setItem('rpg_started','1'); }catch(err){}
+        heroImage(id);
+        if(window.SND) SND.clear();
+        closeOv(ov); mode='field';
+      });
+    });
+  }
+
   /* ════ HUD ════ */
   function buildHUD(){
     var bar=el('div','fm-hud');
@@ -1099,9 +1248,11 @@ window.FieldMap=function(zoneId){
       '<div class="fm-hud-r">'+
         '<button class="fm-btn" id="fmDex">📖 <span>'+(KIDS?'ずかん':'図鑑')+'</span><i class="fm-badge" id="fmBadge"></i></button>'+
         '<a class="fm-btn" href="'+CFG.up.href+'">🏠 <span>'+(KIDS?'もどる':'戻る')+'</span></a>'+
+        '<button class="fm-btn reset" id="fmReset">🔄 <span>リセット</span></button>'+
       '</div>';
     document.body.appendChild(bar);
     document.getElementById('fmDex').addEventListener('click',openDex);
+    document.getElementById('fmReset').addEventListener('click',confirmReset);
     var hint=el('div','fm-hint');
     hint.innerHTML=(KIDS
       ?'やじるし／下のボタンで うごく　・　てきに ふれると たたかい　・　たからばこで カード'
@@ -1148,7 +1299,12 @@ window.FieldMap=function(zoneId){
 
   /* ── 起動 ── */
   if(window.SND){} /* sound.js は自動でアンロック */
-  maybeGate();
+  var freshSession=(function(){ try{ return sessionStorage.getItem('rpg_started')!=='1'; }catch(e){ return true; } })();
+  if(zoneId==='sho' && freshSession){
+    showTitle();          /* 入口（小学生フィールド）ではまずタイトル → キャラ選択 */
+  } else {
+    maybeGate();
+  }
   requestAnimationFrame(loop);
 };
 
@@ -1281,6 +1437,34 @@ function injectCSS(){
   '.fm-gate .fm-go{display:block;margin:16px auto 0;max-width:320px;}',
   '.fm-gate-skip{display:block;margin:18px auto 0;font-size:.76rem;color:#667;text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit;}',
   '.fm-gate-skip:hover{color:#99a;}',
+  '/* title & character select */',
+  '.fm-title{background:radial-gradient(circle at 50% 28%,rgba(20,14,46,.98),rgba(4,5,12,.99));}',
+  '.fm-title-in{max-width:520px;animation:fmPop .6s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-title-badge{font-size:.72rem;font-weight:700;letter-spacing:.35em;color:#c8a84b;margin-bottom:14px;}',
+  '.fm-title-main{font-size:clamp(1.8rem,7vw,3rem);font-weight:900;color:#ffe9a8;letter-spacing:.05em;line-height:1.35;margin:0 0 14px;text-shadow:0 0 30px rgba(255,217,94,.6),0 0 60px rgba(200,168,75,.35);}',
+  '.fm-title-sub{font-size:clamp(.85rem,3.5vw,1.05rem);color:#cfd8ff;line-height:1.9;margin-bottom:30px;}',
+  '.fm-title .fm-go{font-size:1.1rem;padding:15px 42px;background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;border-color:#fff3c4;box-shadow:0 0 22px rgba(200,168,75,.5);}',
+  '.fm-sel{background:radial-gradient(circle at 50% 25%,rgba(20,14,46,.98),rgba(4,5,12,.99));}',
+  '.fm-sel-in{max-width:660px;width:100%;animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-sel-head{font-size:clamp(1.2rem,5vw,1.7rem);font-weight:900;color:#ffe9a8;margin-bottom:20px;text-shadow:0 0 20px rgba(255,217,94,.5);}',
+  '.fm-sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}',
+  '.fm-sel-card{background:linear-gradient(160deg,#1a1040,#241a52 55%,#0f1f4a);border:2px solid rgba(200,168,75,.4);border-radius:18px;padding:16px 14px 18px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;}',
+  '.fm-sel-card:hover{transform:translateY(-3px);border-color:#c8a84b;}',
+  '.fm-sel-card.on{border-color:#e8c96b;box-shadow:0 0 22px rgba(200,168,75,.5);}',
+  '.fm-sel-viz{width:100%;max-width:150px;margin:0 auto 10px;background:rgba(0,0,0,.28);border:1px solid rgba(200,168,75,.25);border-radius:14px;padding:8px;}',
+  '.fm-sel-viz svg{display:block;width:100%;height:auto;}',
+  '.fm-sel-name{font-size:1.15rem;font-weight:900;color:#ffe9a8;margin-bottom:12px;}',
+  '.fm-sel-btn{margin-top:4px;width:100%;font-size:.85rem;padding:11px 14px;background:linear-gradient(135deg,#5a4ba8,#7c5cbf);border-color:#bdb2f0;}',
+  '/* reset */',
+  '.fm-btn.reset{border-color:#c0392b;color:#ff9d8a;background:rgba(40,14,18,.9);}',
+  '.fm-reset{background:radial-gradient(circle at 50% 35%,rgba(30,14,18,.96),rgba(5,4,12,.98));}',
+  '.fm-reset-in{max-width:420px;animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
+  '.fm-reset-ic{font-size:3rem;margin-bottom:6px;}',
+  '.fm-reset-t{font-size:1.2rem;font-weight:900;color:#ffd9c8;margin:6px 0 10px;}',
+  '.fm-reset-d{font-size:.9rem;line-height:1.9;color:#cdb3b3;margin-bottom:4px;}',
+  '.fm-reset .fm-go{display:block;margin:12px auto 0;max-width:300px;}',
+  '.fm-reset-yes{background:linear-gradient(135deg,#8a2020,#c0392b);border-color:#ffb09a;}',
+  '@media(max-width:420px){.fm-sel-grid{grid-template-columns:1fr;}}',
   '@media(max-width:480px){.fm-btn span{display:none;}.fm-dpad{width:138px;height:138px;}.fm-dbtn{width:46px;height:46px;}.fm-up{left:46px;}.fm-left{top:46px;}.fm-right{left:92px;top:46px;}.fm-down{left:46px;top:92px;}}'
   ].join('\n');
   document.head.appendChild(st);
