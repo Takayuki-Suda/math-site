@@ -29,6 +29,25 @@ function addCardId(id){
 /* ── クイズ定義のショートハンド ── */
 function E(emoji,name,xp,color,q){ return {emoji:emoji,name:name,xp:xp,color:color,q:q}; }
 
+/* ── 知識カードのビジュアル：数式テキストを 1枚のSVGに ──
+   各カードは canvas/SVG の簡単な図 or 数式を自前で持ち、ポップアップ内で完結する。 */
+function SVG(inner){
+  return '<svg viewBox="0 0 240 120" width="100%" preserveAspectRatio="xMidYMid meet" '+
+    'xmlns="http://www.w3.org/2000/svg" font-family="Georgia, \'Noto Sans JP\', serif">'+inner+'</svg>';
+}
+function F(main,sub){
+  var n=(main||'').length, fs=n>13?22:(n>9?27:34);
+  return SVG(
+    '<text x="120" y="'+(sub?56:70)+'" text-anchor="middle" font-weight="bold" font-size="'+fs+'" fill="#ffe9a8">'+main+'</text>'+
+    (sub?'<text x="120" y="91" text-anchor="middle" font-family="\'Noto Sans JP\',sans-serif" font-size="13" fill="#9fb0d0">'+sub+'</text>':'')
+  );
+}
+function DOTS(cols,rows){
+  var s='',i,j;
+  for(j=0;j<rows;j++) for(i=0;i<cols;i++) s+='<circle cx="'+(26+i*18)+'" cy="'+(22+j*15)+'" r="4.5" fill="#7ec850"/>';
+  return s;
+}
+
 /* ════════════════════════════════════════════════════════
    全層データ（マップ・敵・カード）
    マップ凡例：
@@ -105,14 +124,22 @@ sho:{
     ])
   ],
   cards:[
-    {id:'sho-ten',e:'🔟',t:'10のまとまり',b:'10こ あつまると くらいが ひとつ あがる。28は 10が2つと ばらが8つ。これが 数の せかいの きほんだよ。',link:'/math-site/sho/kazu.html'},
-    {id:'sho-tashi',e:'➕',t:'たしざんのコツ',b:'8＋5は、8に2を たして10、のこり3で13。「10を つくってから たす」と はやい！',link:'/math-site/sho/tashizan.html'},
-    {id:'sho-hiki',e:'➖',t:'ひきざんのコツ',b:'13－5は、13を10と3に わけて、10－5＝5、それと3で8。「10から ひく」が ポイント。',link:'/math-site/sho/hikizan.html'},
-    {id:'sho-kuku',e:'✖️',t:'九九のひみつ',b:'7×6は 7×5＝35に 7を たして42。九九は たしざんの くりかえし。じゅんばんを かえても こたえは おなじ！',link:'/math-site/sho/kuku.html'},
-    {id:'sho-bunsu',e:'🍕',t:'分数って何',b:'1/2は ピザを2つに わった1きれ。たすときは 分母（下の数）を そろえてから 上を たすよ。',link:'/math-site/sho/bunsu.html'},
-    {id:'sho-sankaku',e:'📐',t:'三角形の面積',b:'三角形は 長方形の はんぶん。だから「底辺×高さ÷2」。÷2を わすれないでね。',link:'/math-site/sho/sankaku.html'},
-    {id:'sho-en',e:'⭕',t:'円の面積',b:'円を こまかく切って ならべると 長方形に なる。たて＝半径、よこ＝円周の半分。だから 半径×半径×3.14。',link:'/math-site/sho/en.html'},
-    {id:'sho-puzzle',e:'🧩',t:'きまりを見つける',b:'1,2,4,8…は 2ばいずつ。数の ならびには かならず「きまり」が かくれている。見つけると 未来が よめる！',link:'/math-site/sho/puzzle.html'}
+    {id:'sho-ten',e:'🔟',t:'10のまとまり',b:'10こ あつまると くらいが ひとつ あがる。28は 10が2つと ばらが8つ。これが 数の せかいの きほんだよ。',
+      svg:SVG('<rect x="14" y="32" width="40" height="56" rx="7" fill="#7e57c2"/><text x="34" y="67" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff" font-family="sans-serif">10</text><rect x="60" y="32" width="40" height="56" rx="7" fill="#7e57c2"/><text x="80" y="67" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff" font-family="sans-serif">10</text><text x="116" y="64" text-anchor="middle" font-size="20" fill="#ffe9a8">＋</text><circle cx="140" cy="48" r="6" fill="#ffd54f"/><circle cx="158" cy="48" r="6" fill="#ffd54f"/><circle cx="176" cy="48" r="6" fill="#ffd54f"/><circle cx="194" cy="48" r="6" fill="#ffd54f"/><circle cx="140" cy="70" r="6" fill="#ffd54f"/><circle cx="158" cy="70" r="6" fill="#ffd54f"/><circle cx="176" cy="70" r="6" fill="#ffd54f"/><circle cx="194" cy="70" r="6" fill="#ffd54f"/><text x="167" y="106" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff" font-family="sans-serif">＝ 28</text>')},
+    {id:'sho-tashi',e:'➕',t:'たしざんのコツ',b:'8＋5は、8に2を たして10、のこり3で13。「10を つくってから たす」と はやい！',
+      svg:F('8 ＋ 5 ＝ 13','10を つくってから たす')},
+    {id:'sho-hiki',e:'➖',t:'ひきざんのコツ',b:'13－5は、13を10と3に わけて、10－5＝5、それと3で8。「10から ひく」が ポイント。',
+      svg:F('13 − 5 ＝ 8','10から ひいて かんがえる')},
+    {id:'sho-kuku',e:'✖️',t:'九九のひみつ',b:'7×6は 7×5＝35に 7を たして42。九九は たしざんの くりかえし。じゅんばんを かえても こたえは おなじ！',
+      svg:SVG(DOTS(7,6)+'<text x="192" y="50" text-anchor="middle" font-size="15" fill="#cfe3ff" font-family="sans-serif">7 × 6</text><text x="192" y="86" text-anchor="middle" font-size="30" font-weight="bold" fill="#ffe9a8">42</text>')},
+    {id:'sho-bunsu',e:'🍕',t:'分数って何',b:'1/2は ピザを2つに わった1きれ。たすときは 分母（下の数）を そろえてから 上を たすよ。',
+      svg:SVG('<path d="M70,60 L70,20 A40,40 0 0 1 110,60 Z" fill="#ff8a9b"/><path d="M70,60 L110,60 A40,40 0 0 1 70,100 Z" fill="#ff8a9b"/><path d="M70,60 L70,100 A40,40 0 0 1 30,60 Z" fill="#ff8a9b"/><path d="M70,60 L30,60 A40,40 0 0 1 70,20 Z" fill="#3a2233"/><circle cx="70" cy="60" r="40" fill="none" stroke="#ffe9a8" stroke-width="2"/><line x1="30" y1="60" x2="110" y2="60" stroke="#ffe9a8" stroke-width="1.5"/><line x1="70" y1="20" x2="70" y2="100" stroke="#ffe9a8" stroke-width="1.5"/><text x="175" y="56" text-anchor="middle" font-size="34" font-weight="bold" fill="#ffe9a8">¾</text><text x="175" y="84" text-anchor="middle" font-size="14" fill="#9fb0d0" font-family="sans-serif">½ ＋ ¼</text>')},
+    {id:'sho-sankaku',e:'📐',t:'三角形の面積',b:'三角形は 長方形の はんぶん。だから「底辺×高さ÷2」。÷2を わすれないでね。',
+      svg:SVG('<polygon points="40,92 170,92 95,34" fill="rgba(126,200,80,.25)" stroke="#7ec850" stroke-width="2"/><line x1="95" y1="34" x2="95" y2="92" stroke="#ffe9a8" stroke-width="1.5" stroke-dasharray="5 3"/><path d="M95,82 L105,82 L105,92" fill="none" stroke="#ffe9a8" stroke-width="1.2"/><text x="105" y="108" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">底辺</text><text x="58" y="64" font-size="12" fill="#cfe3ff" font-family="sans-serif">高さ</text><text x="205" y="58" text-anchor="middle" font-size="22" font-weight="bold" fill="#ffe9a8">÷2</text>')},
+    {id:'sho-en',e:'⭕',t:'円の面積',b:'円を こまかく切って ならべると 長方形に なる。たて＝半径、よこ＝円周の半分。だから 半径×半径×3.14。',
+      svg:SVG('<circle cx="78" cy="60" r="42" fill="rgba(255,213,79,.18)" stroke="#ffd54f" stroke-width="2"/><circle cx="78" cy="60" r="3" fill="#ffe9a8"/><line x1="78" y1="60" x2="120" y2="60" stroke="#ffe9a8" stroke-width="2"/><text x="98" y="53" text-anchor="middle" font-size="14" fill="#ffe9a8">r</text><text x="188" y="56" text-anchor="middle" font-size="26" font-weight="bold" fill="#ffe9a8">πr²</text><text x="188" y="80" text-anchor="middle" font-size="11" fill="#9fb0d0" font-family="sans-serif">半径×半径×3.14</text>')},
+    {id:'sho-puzzle',e:'🧩',t:'きまりを見つける',b:'1,2,4,8…は 2ばいずつ。数の ならびには かならず「きまり」が かくれている。見つけると 未来が よめる！',
+      svg:SVG('<g font-size="22" font-weight="bold" font-family="Georgia"><text x="22" y="72" fill="#7ec850">1</text><text x="70" y="72" fill="#7ec850">2</text><text x="118" y="72" fill="#7ec850">4</text><text x="164" y="72" fill="#7ec850">8</text><text x="200" y="72" fill="#ffd54f">16</text></g><g fill="none" stroke="#9fb0d0" stroke-width="1.6"><path d="M34,60 Q48,42 60,60"/><path d="M82,60 Q96,42 108,60"/><path d="M130,60 Q144,42 154,60"/><path d="M176,60 Q190,42 200,60"/></g><g fill="#9fb0d0" font-size="11" font-family="sans-serif" text-anchor="middle"><text x="47" y="38">×2</text><text x="95" y="38">×2</text><text x="142" y="38">×2</text><text x="188" y="38">×2</text></g>')}
   ]
 },
 
@@ -167,12 +194,18 @@ chu:{
     ])
   ],
   cards:[
-    {id:'chu-moji',e:'✏️',t:'文字式の正体',b:'文字は「なんでも入る箱」。a×3は 3a（×は省略・数字が前）。x＋x＋x＝3x。一文字で 無限の場合をまとめて表せる。',link:'/math-site/chu/moji.html'},
-    {id:'chu-hou',e:'⚖️',t:'方程式＝天秤',b:'＝は 左右がつり合った天秤。両側から 同じだけ 引いたり割ったりして xを取り出す。x＋7＝15 → x＝8。',link:'/math-site/chu/houteishiki.html'},
-    {id:'chu-ikiji',e:'📈',t:'一次関数の傾きとは',b:'y＝2x＋3 の「2」が傾き。xが1増えると yが2増える「変化の割合」。3は y軸との交点（切片）。',link:'/math-site/chu/ikiji.html'},
-    {id:'chu-niji',e:'🌉',t:'二次関数＝放物線',b:'y＝x²のグラフは U字の曲線。y＝a(x－p)²＋q なら頂点は(p,q)。aが大きいほど 細く急に、負なら山型に。',link:'/math-site/chu/niji.html'},
-    {id:'chu-sanpei',e:'📐',t:'三平方の定理',b:'直角三角形で a²＋b²＝c²（cは斜辺）。3,4,5 や 5,12,13 が有名。直角を見抜く魔法の式。',link:'/math-site/chu/sanpei.html'},
-    {id:'chu-neg',e:'❄️',t:'負の数の正体',b:'0より小さい数。数直線で0の左側。「マイナス×マイナス＝プラス」は、反対の反対は元どおり、という意味。',link:'/math-site/chu/moji.html'}
+    {id:'chu-moji',e:'✏️',t:'文字式の正体',b:'文字は「なんでも入る箱」。a×3は 3a（×は省略・数字が前）。x＋x＋x＝3x。一文字で 無限の場合をまとめて表せる。',
+      svg:F('a × 3 ＝ 3a','×は はぶき 数字を前に')},
+    {id:'chu-hou',e:'⚖️',t:'方程式＝天秤',b:'＝は 左右がつり合った天秤。両側から 同じだけ 引いたり割ったりして xを取り出す。x＋7＝15 → x＝8。',
+      svg:SVG('<line x1="40" y1="44" x2="200" y2="44" stroke="#e8c96b" stroke-width="3"/><polygon points="120,44 108,80 132,80" fill="#b08d57"/><line x1="60" y1="44" x2="60" y2="62" stroke="#9fb0d0" stroke-width="1.5"/><line x1="180" y1="44" x2="180" y2="62" stroke="#9fb0d0" stroke-width="1.5"/><path d="M44,62 a16,9 0 0 0 32,0" fill="none" stroke="#cfe3ff" stroke-width="2"/><path d="M164,62 a16,9 0 0 0 32,0" fill="none" stroke="#cfe3ff" stroke-width="2"/><text x="60" y="58" text-anchor="middle" font-size="13" fill="#fff" font-family="sans-serif">x+7</text><text x="180" y="58" text-anchor="middle" font-size="13" fill="#fff" font-family="sans-serif">15</text><text x="120" y="102" text-anchor="middle" font-size="12" fill="#9fb0d0" font-family="sans-serif">両側から 7をひく → x=8</text>')},
+    {id:'chu-ikiji',e:'📈',t:'一次関数の傾きとは',b:'y＝2x＋3 の「2」が傾き。xが1増えると yが2増える「変化の割合」。3は y軸との交点（切片）。',
+      svg:SVG('<line x1="30" y1="92" x2="222" y2="92" stroke="#5a6b85" stroke-width="1.5"/><line x1="48" y1="16" x2="48" y2="100" stroke="#5a6b85" stroke-width="1.5"/><line x1="48" y1="80" x2="208" y2="28" stroke="#67e8f9" stroke-width="2.5"/><line x1="112" y1="60" x2="150" y2="60" stroke="#ffe9a8" stroke-width="1.3" stroke-dasharray="3 2"/><line x1="150" y1="60" x2="150" y2="47" stroke="#ffe9a8" stroke-width="1.3" stroke-dasharray="3 2"/><text x="130" y="74" text-anchor="middle" font-size="11" fill="#ffe9a8">1</text><text x="158" y="56" font-size="11" fill="#ffe9a8">2</text><text x="200" y="22" text-anchor="middle" font-size="13" fill="#67e8f9">y=2x+3</text>')},
+    {id:'chu-niji',e:'🌉',t:'二次関数＝放物線',b:'y＝x²のグラフは U字の曲線。y＝a(x－p)²＋q なら頂点は(p,q)。aが大きいほど 細く急に、負なら山型に。',
+      svg:SVG('<line x1="30" y1="95" x2="222" y2="95" stroke="#5a6b85" stroke-width="1.5"/><line x1="125" y1="16" x2="125" y2="102" stroke="#5a6b85" stroke-width="1.5"/><path d="M72,30 Q125,118 178,30" fill="none" stroke="#67e8f9" stroke-width="2.5"/><circle cx="125" cy="74" r="3.5" fill="#ffe9a8"/><text x="150" y="70" font-size="12" fill="#ffe9a8">頂点</text><text x="196" y="40" text-anchor="middle" font-size="13" fill="#67e8f9">y=x²</text>')},
+    {id:'chu-sanpei',e:'📐',t:'三平方の定理',b:'直角三角形で a²＋b²＝c²（cは斜辺）。3,4,5 や 5,12,13 が有名。直角を見抜く魔法の式。',
+      svg:SVG('<polygon points="60,90 140,90 60,30" fill="rgba(103,232,249,.18)" stroke="#67e8f9" stroke-width="2"/><rect x="60" y="80" width="10" height="10" fill="none" stroke="#67e8f9" stroke-width="1.2"/><text x="50" y="64" text-anchor="end" font-size="13" fill="#cfe3ff">a</text><text x="100" y="104" text-anchor="middle" font-size="13" fill="#cfe3ff">b</text><text x="106" y="56" font-size="13" fill="#ffe9a8">c</text><text x="188" y="62" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffe9a8">a²+b²</text><text x="188" y="84" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffe9a8">＝ c²</text>')},
+    {id:'chu-neg',e:'❄️',t:'負の数の正体',b:'0より小さい数。数直線で0の左側。「マイナス×マイナス＝プラス」は、反対の反対は元どおり、という意味。',
+      svg:SVG('<text x="120" y="30" text-anchor="middle" font-size="17" font-weight="bold" fill="#ffe9a8">(−)×(−) ＝ ＋</text><line x1="20" y1="62" x2="220" y2="62" stroke="#9fb0d0" stroke-width="2"/><g stroke="#9fb0d0" stroke-width="1.3"><line x1="30" y1="56" x2="30" y2="68"/><line x1="60" y1="56" x2="60" y2="68"/><line x1="90" y1="56" x2="90" y2="68"/><line x1="120" y1="54" x2="120" y2="70"/><line x1="150" y1="56" x2="150" y2="68"/><line x1="180" y1="56" x2="180" y2="68"/><line x1="210" y1="56" x2="210" y2="68"/></g><circle cx="120" cy="62" r="4" fill="#ffe9a8"/><g fill="#9fb0d0" font-size="11" text-anchor="middle" font-family="sans-serif"><text x="30" y="84">-3</text><text x="60" y="84">-2</text><text x="90" y="84">-1</text><text x="120" y="86" fill="#ffe9a8">0</text><text x="150" y="84">1</text><text x="180" y="84">2</text><text x="210" y="84">3</text></g>')}
   ]
 },
 
@@ -227,11 +260,16 @@ ko:{
     ])
   ],
   cards:[
-    {id:'ko-sin',e:'🌊',t:'sinとcosの正体',b:'単位円（半径1の円）上の点の、たて＝sinθ、よこ＝cosθ。だから sin²θ＋cos²θ＝1。三平方の定理そのもの。',link:'/math-site/ko/sankakuhi.html'},
-    {id:'ko-bibun',e:'🎢',t:'微分のイメージ',b:'微分は「その瞬間の傾き」。曲線の1点に引いた接線の傾き。速さ＝位置の微分。変化を捉える道具。',link:'/math-site/ko/bibun.html'},
-    {id:'ko-sekibun',e:'🧱',t:'積分＝面積',b:'積分は「細い長方形の面積を 無限に足したもの」。微分の逆。∫ₐᵇf(x)dx＝F(b)－F(a)。',link:'/math-site/ko/sekibun.html'},
-    {id:'ko-epsilon',e:'👁️',t:'εδ・厳密さ',b:'「限りなく近づく」を数式で定義したもの。どんな小さな誤差εにも 応じるδを返せる──それが極限の正体。',link:'/math-site/ko/kyokugen.html'},
-    {id:'ko-kyoku',e:'🔭',t:'極限とは',b:'近づいた先の値。1/nは nが大きくなると 限りなく0へ。届かなくても「向かう先」を数学は捉える。',link:'/math-site/ko/kyokugen.html'}
+    {id:'ko-sin',e:'🌊',t:'sinとcosの正体',b:'単位円（半径1の円）上の点の、たて＝sinθ、よこ＝cosθ。だから sin²θ＋cos²θ＝1。三平方の定理そのもの。',
+      svg:SVG('<line x1="20" y1="62" x2="150" y2="62" stroke="#5a6b85" stroke-width="1.5"/><line x1="80" y1="14" x2="80" y2="106" stroke="#5a6b85" stroke-width="1.5"/><circle cx="80" cy="62" r="40" fill="none" stroke="#9fb0d0" stroke-width="1.5"/><line x1="80" y1="62" x2="111" y2="36" stroke="#67e8f9" stroke-width="2.5"/><line x1="111" y1="36" x2="111" y2="62" stroke="#ff8a9b" stroke-width="2" stroke-dasharray="3 2"/><line x1="80" y1="62" x2="111" y2="62" stroke="#7ec850" stroke-width="2.5"/><circle cx="111" cy="36" r="3" fill="#ffe9a8"/><text x="118" y="48" font-size="11" fill="#ff8a9b">sin</text><text x="92" y="76" font-size="11" fill="#7ec850">cos</text><text x="186" y="56" text-anchor="middle" font-size="13" fill="#cfe3ff">sin²+cos²</text><text x="186" y="78" text-anchor="middle" font-size="15" font-weight="bold" fill="#ffe9a8">= 1</text>')},
+    {id:'ko-bibun',e:'🎢',t:'微分のイメージ',b:'微分は「その瞬間の傾き」。曲線の1点に引いた接線の傾き。速さ＝位置の微分。変化を捉える道具。',
+      svg:SVG('<path d="M30,96 Q95,18 212,52" fill="none" stroke="#9fb0d0" stroke-width="2.5"/><line x1="66" y1="80" x2="190" y2="38" stroke="#ff8a9b" stroke-width="2"/><circle cx="125" cy="55" r="4" fill="#ffe9a8"/><text x="138" y="46" font-size="12" fill="#ff8a9b">接線</text><text x="120" y="108" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">その瞬間の傾き</text>')},
+    {id:'ko-sekibun',e:'🧱',t:'積分＝面積',b:'積分は「細い長方形の面積を 無限に足したもの」。微分の逆。∫ₐᵇf(x)dx＝F(b)－F(a)。',
+      svg:SVG('<path d="M40,90 Q120,22 200,42 L200,95 L40,95 Z" fill="rgba(103,232,249,.2)"/><path d="M40,90 Q120,22 200,42" fill="none" stroke="#67e8f9" stroke-width="2.5"/><line x1="30" y1="95" x2="214" y2="95" stroke="#5a6b85" stroke-width="1.5"/><g stroke="#67e8f9" stroke-width="0.8" opacity="0.55"><line x1="70" y1="95" x2="70" y2="58"/><line x1="100" y1="95" x2="100" y2="44"/><line x1="130" y1="95" x2="130" y2="38"/><line x1="160" y1="95" x2="160" y2="38"/><line x1="190" y1="95" x2="190" y2="43"/></g><text x="120" y="112" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">細い長方形の面積の和</text>')},
+    {id:'ko-epsilon',e:'👁️',t:'εδ・厳密さ',b:'「限りなく近づく」を数式で定義したもの。どんな小さな誤差εにも 応じるδを返せる──それが極限の正体。',
+      svg:F('∀ε&gt;0  ∃δ&gt;0','どんな誤差εにも δで応える')},
+    {id:'ko-kyoku',e:'🔭',t:'極限とは',b:'近づいた先の値。1/nは nが大きくなると 限りなく0へ。届かなくても「向かう先」を数学は捉える。',
+      svg:SVG('<line x1="30" y1="64" x2="215" y2="64" stroke="#9fb0d0" stroke-width="2"/><circle cx="40" cy="64" r="5" fill="#ffe9a8"/><circle cx="205" cy="64" r="4" fill="#67e8f9"/><circle cx="122" cy="64" r="4" fill="#67e8f9"/><circle cx="95" cy="64" r="4" fill="#67e8f9"/><circle cx="81" cy="64" r="4" fill="#67e8f9"/><circle cx="73" cy="64" r="4" fill="#67e8f9"/><g fill="#9fb0d0" font-size="11" text-anchor="middle" font-family="sans-serif"><text x="40" y="84">0</text><text x="205" y="84">1</text></g><text x="120" y="34" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffe9a8">1/n → 0</text>')}
   ]
 },
 
@@ -291,12 +329,18 @@ dai:{
     ])
   ],
   cards:[
-    {id:'dai-dim',e:'🧮',t:'次元定理',b:'線形写像で「つぶれた次元＋残った次元＝元の次元」。dim Ker f ＋ rank f ＝ n。空間の骨格を測る定理。',link:'/math-site/dai/senkei.html'},
-    {id:'dai-gun',e:'🔁',t:'群とは何か',b:'「演算・結合法則・単位元・逆元」をもつ集合。回転や対称性の正体。数の足し算も あみだくじも 群。',link:'/math-site/dai/gun.html'},
-    {id:'dai-fukuso',e:'🌀',t:'複素＝回転',b:'虚数iを掛けると 90°回転。e^iθ＝cosθ＋isinθ。複素数は 平面上の「回転と拡大」を表す数。',link:'/math-site/dai/fukuso.html'},
-    {id:'dai-fourier',e:'🎵',t:'フーリエ＝波の分解',b:'どんな波も、純粋なsin・cosの和に分解できる。音も画像も この技で 周波数に切り分けられる。',link:'/math-site/dai/fourier.html'},
-    {id:'dai-mod',e:'🔢',t:'合同式',b:'時計の数学。17 mod 5 ＝ 2（5で割った余り）。RSA暗号は 素因数分解の難しさに守られている。',link:'/math-site/dai/seisuron.html'},
-    {id:'dai-iso',e:'🌐',t:'位相の直感',b:'「つながり方」だけを見る幾何学。コーヒーカップとドーナツは 穴が1つで同じ形。伸ばしてOK、切るのはNG。',link:'/math-site/dai/tahensuu.html'}
+    {id:'dai-dim',e:'🧮',t:'次元定理',b:'線形写像で「つぶれた次元＋残った次元＝元の次元」。dim Ker f ＋ rank f ＝ n。空間の骨格を測る定理。',
+      svg:F('dim Ker f + rank f','= n  （次元定理）')},
+    {id:'dai-gun',e:'🔁',t:'群とは何か',b:'「演算・結合法則・単位元・逆元」をもつ集合。回転や対称性の正体。数の足し算も あみだくじも 群。',
+      svg:SVG('<polygon points="90,30 64,80 116,80" fill="rgba(179,157,219,.22)" stroke="#b39ddb" stroke-width="2"/><path d="M124,32 A60,60 0 0 1 150,86" fill="none" stroke="#ffe9a8" stroke-width="2"/><polygon points="150,86 142,76 154,75" fill="#ffe9a8"/><text x="120" y="110" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">回してもピタリ重なる＝対称性</text>')},
+    {id:'dai-fukuso',e:'🌀',t:'複素＝回転',b:'虚数iを掛けると 90°回転。e^iθ＝cosθ＋isinθ。複素数は 平面上の「回転と拡大」を表す数。',
+      svg:SVG('<line x1="20" y1="62" x2="184" y2="62" stroke="#5a6b85" stroke-width="1.5"/><line x1="100" y1="12" x2="100" y2="108" stroke="#5a6b85" stroke-width="1.5"/><line x1="100" y1="62" x2="150" y2="62" stroke="#67e8f9" stroke-width="2.5"/><line x1="100" y1="62" x2="100" y2="14" stroke="#ff8a9b" stroke-width="2.5"/><path d="M150,62 A50,50 0 0 0 100,12" fill="none" stroke="#ffe9a8" stroke-width="1.5" stroke-dasharray="3 2"/><text x="156" y="60" font-size="12" fill="#67e8f9">1</text><text x="104" y="22" font-size="12" fill="#ff8a9b">i</text><text x="138" y="38" font-size="11" fill="#ffe9a8">90°</text><text x="205" y="64" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">×i で 回転</text>')},
+    {id:'dai-fourier',e:'🎵',t:'フーリエ＝波の分解',b:'どんな波も、純粋なsin・cosの和に分解できる。音も画像も この技で 周波数に切り分けられる。',
+      svg:SVG('<path d="M20,38 C50,8 70,68 100,38 C130,8 150,68 180,38 C200,18 212,52 222,38" fill="none" stroke="#67e8f9" stroke-width="2.5"/><text x="120" y="72" text-anchor="middle" font-size="15" fill="#ffe9a8">=</text><path d="M20,92 Q45,74 70,92 T120,92 T170,92 T220,92" fill="none" stroke="#9fb0d0" stroke-width="1.6"/><path d="M20,92 Q33,82 45,92 T70,92 T95,92 T120,92 T145,92 T170,92 T195,92 T220,92" fill="none" stroke="#b39ddb" stroke-width="1.4"/><text x="120" y="110" text-anchor="middle" font-size="11" fill="#cfe3ff" font-family="sans-serif">純粋な波の重ね合わせ</text>')},
+    {id:'dai-mod',e:'🔢',t:'合同式',b:'時計の数学。17 mod 5 ＝ 2（5で割った余り）。RSA暗号は 素因数分解の難しさに守られている。',
+      svg:SVG('<circle cx="70" cy="60" r="40" fill="none" stroke="#9fb0d0" stroke-width="2"/><circle cx="70" cy="20" r="3" fill="#9fb0d0"/><text x="70" y="14" text-anchor="middle" font-size="11" fill="#cfe3ff">0</text><circle cx="108" cy="48" r="3" fill="#9fb0d0"/><text x="120" y="46" font-size="11" fill="#cfe3ff">1</text><circle cx="94" cy="92" r="5" fill="#ffe9a8"/><text x="106" y="104" font-size="12" font-weight="bold" fill="#ffe9a8">2</text><circle cx="46" cy="92" r="3" fill="#9fb0d0"/><text x="32" y="104" font-size="11" fill="#cfe3ff">3</text><circle cx="32" cy="48" r="3" fill="#9fb0d0"/><text x="18" y="46" font-size="11" fill="#cfe3ff">4</text><line x1="70" y1="60" x2="94" y2="92" stroke="#ffe9a8" stroke-width="2"/><text x="186" y="56" text-anchor="middle" font-size="14" fill="#cfe3ff">17 mod 5</text><text x="186" y="80" text-anchor="middle" font-size="20" font-weight="bold" fill="#ffe9a8">= 2</text>')},
+    {id:'dai-iso',e:'🌐',t:'位相の直感',b:'「つながり方」だけを見る幾何学。コーヒーカップとドーナツは 穴が1つで同じ形。伸ばしてOK、切るのはNG。',
+      svg:SVG('<ellipse cx="80" cy="60" rx="52" ry="34" fill="#b39ddb" stroke="#cfb8f0" stroke-width="2"/><ellipse cx="80" cy="60" rx="20" ry="12" fill="#241a4a" stroke="#cfb8f0" stroke-width="2"/><text x="80" y="64" text-anchor="middle" font-size="11" fill="#cfe3ff" font-family="sans-serif">穴</text><text x="190" y="54" text-anchor="middle" font-size="13" fill="#cfe3ff" font-family="sans-serif">穴が1つなら</text><text x="190" y="78" text-anchor="middle" font-size="15" font-weight="bold" fill="#ffe9a8" font-family="sans-serif">同じ形</text>')}
   ]
 },
 
@@ -345,11 +389,16 @@ in:{
     ])
   ],
   cards:[
-    {id:'in-proof',e:'📜',t:'証明とは',b:'「これは絶対に正しい」を、誰が見ても認めるしかない形で示すこと。実験や例では足りない。仮定から結論まで、論理だけで橋を架ける。'},
-    {id:'in-counter',e:'⚡',t:'反例の力',b:'どんなに多くの例で成り立っても証明にはならない。だが たった1つの反例は 主張を完全に打ち砕く。「すべて」を覆すのは「ひとつ」。'},
-    {id:'in-inf',e:'♾️',t:'無限のひみつ',b:'無限の世界では直感が裏切られる。自然数と偶数は「同じ個数」。でも実数はそれより「多い」。無限にも大きさの違いがある。'},
-    {id:'in-conj',e:'🔮',t:'予想と定理',b:'「たぶん正しい」が予想、「証明された」が定理。フェルマーの最終定理は350年間 予想だった。証明された瞬間、世界が変わる。'},
-    {id:'in-open',e:'🌌',t:'未解決問題',b:'数学にはまだ誰も解けていない問いがある。リーマン予想、P≠NP…。教科書の外側、人類の最前線。君が解く番かもしれない。'}
+    {id:'in-proof',e:'📜',t:'証明とは',b:'「これは絶対に正しい」を、誰が見ても認めるしかない形で示すこと。実験や例では足りない。仮定から結論まで、論理だけで橋を架ける。',
+      svg:SVG('<rect x="18" y="44" width="60" height="34" rx="6" fill="rgba(179,157,219,.2)" stroke="#b39ddb" stroke-width="1.6"/><text x="48" y="65" text-anchor="middle" font-size="13" fill="#fff" font-family="sans-serif">仮定</text><rect x="162" y="44" width="60" height="34" rx="6" fill="rgba(179,157,219,.2)" stroke="#b39ddb" stroke-width="1.6"/><text x="192" y="65" text-anchor="middle" font-size="13" fill="#fff" font-family="sans-serif">結論</text><line x1="82" y1="61" x2="158" y2="61" stroke="#ffe9a8" stroke-width="2"/><polygon points="158,61 148,55 148,67" fill="#ffe9a8"/><text x="120" y="50" text-anchor="middle" font-size="12" fill="#ffe9a8" font-family="sans-serif">論理だけで</text><text x="120" y="100" text-anchor="middle" font-size="11" fill="#9fb0d0" font-family="sans-serif">例ではなく 証明でつなぐ</text>')},
+    {id:'in-counter',e:'⚡',t:'反例の力',b:'どんなに多くの例で成り立っても証明にはならない。だが たった1つの反例は 主張を完全に打ち砕く。「すべて」を覆すのは「ひとつ」。',
+      svg:SVG('<g text-anchor="middle"><text x="40" y="66" font-size="30" fill="#7ec850">✓</text><text x="80" y="66" font-size="30" fill="#7ec850">✓</text><text x="120" y="66" font-size="30" fill="#7ec850">✓</text><text x="178" y="68" font-size="44" fill="#ff5a5a">✗</text></g><text x="120" y="100" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">どれだけ例があっても 反例1つで崩れる</text>')},
+    {id:'in-inf',e:'♾️',t:'無限のひみつ',b:'無限の世界では直感が裏切られる。自然数と偶数は「同じ個数」。でも実数はそれより「多い」。無限にも大きさの違いがある。',
+      svg:SVG('<text x="55" y="28" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">自然数</text><text x="185" y="28" text-anchor="middle" font-size="12" fill="#cfe3ff" font-family="sans-serif">偶数</text><g font-size="15" fill="#fff"><text x="55" y="52" text-anchor="middle">1</text><text x="185" y="52" text-anchor="middle">2</text><text x="55" y="76" text-anchor="middle">2</text><text x="185" y="76" text-anchor="middle">4</text><text x="55" y="100" text-anchor="middle">3</text><text x="185" y="100" text-anchor="middle">6</text></g><g stroke="#ffe9a8" stroke-width="1.6"><line x1="72" y1="47" x2="166" y2="47"/><line x1="72" y1="71" x2="166" y2="71"/><line x1="72" y1="95" x2="166" y2="95"/></g><g fill="#ffe9a8"><polygon points="168,47 158,42 158,52"/><polygon points="168,71 158,66 158,76"/><polygon points="168,95 158,90 158,100"/></g>')},
+    {id:'in-conj',e:'🔮',t:'予想と定理',b:'「たぶん正しい」が予想、「証明された」が定理。フェルマーの最終定理は350年間 予想だった。証明された瞬間、世界が変わる。',
+      svg:SVG('<rect x="16" y="44" width="64" height="34" rx="6" fill="rgba(149,117,205,.22)" stroke="#9575cd" stroke-width="1.6"/><text x="48" y="65" text-anchor="middle" font-size="13" fill="#fff" font-family="sans-serif">予想</text><rect x="160" y="44" width="64" height="34" rx="6" fill="rgba(232,201,107,.2)" stroke="#e8c96b" stroke-width="1.6"/><text x="192" y="65" text-anchor="middle" font-size="13" fill="#ffe9a8" font-family="sans-serif">定理</text><line x1="84" y1="61" x2="156" y2="61" stroke="#ffe9a8" stroke-width="2"/><polygon points="156,61 146,55 146,67" fill="#ffe9a8"/><text x="120" y="50" text-anchor="middle" font-size="12" fill="#ffe9a8" font-family="sans-serif">証明</text><text x="120" y="98" text-anchor="middle" font-size="11" fill="#9fb0d0" font-family="sans-serif">証明された瞬間 世界が変わる</text>')},
+    {id:'in-open',e:'🌌',t:'未解決問題',b:'数学にはまだ誰も解けていない問いがある。リーマン予想、P≠NP…。教科書の外側、人類の最前線。君が解く番かもしれない。',
+      svg:F('P ≟ NP','ζ(s)=0 ?   人類の最前線')}
   ]
 }
 };
@@ -900,12 +949,11 @@ window.FieldMap=function(zoneId){
     ov.innerHTML=
       '<div class="fm-cardbox">'+
         '<div class="fm-card-label">'+(KIDS?'ちしきカードを てにいれた！':'知識カードを手に入れた！')+'</div>'+
-        '<div class="fm-card-e">'+c.e+'</div>'+
-        '<div class="fm-card-t">'+c.t+'</div>'+
+        '<div class="fm-card-viz">'+(c.svg||('<div class="fm-card-e">'+c.e+'</div>'))+'</div>'+
+        '<div class="fm-card-t">'+c.e+' '+c.t+'</div>'+
         '<div class="fm-card-b">'+c.b+'</div>'+
-        (c.link?'<a class="fm-card-link" href="'+c.link+'">📖 '+(KIDS?'くわしく まなぶ':'詳しく学ぶ')+' →</a>':'')+
         '<div class="fm-card-hint">'+(KIDS?'ずかんに とうろくされたよ':'図鑑に登録されました')+'</div>'+
-        '<button class="fm-go" id="fmCardClose">'+(KIDS?'とじる':'閉じる')+'</button>'+
+        '<button class="fm-go" id="fmCardClose">'+(KIDS?'とじて マップに もどる':'とじてマップに戻る')+'</button>'+
       '</div>';
     document.body.appendChild(ov);
     ov.querySelector('#fmCardClose').addEventListener('click',function(){ closeOv(ov); mode='field'; });
@@ -958,10 +1006,9 @@ window.FieldMap=function(zoneId){
     var ov=el('div','fm-ov fm-card');
     ov.style.zIndex='100050';
     ov.innerHTML='<div class="fm-cardbox">'+
-      '<div class="fm-card-e">'+c.e+'</div>'+
-      '<div class="fm-card-t">'+c.t+'</div>'+
+      '<div class="fm-card-viz">'+(c.svg||('<div class="fm-card-e">'+c.e+'</div>'))+'</div>'+
+      '<div class="fm-card-t">'+c.e+' '+c.t+'</div>'+
       '<div class="fm-card-b">'+c.b+'</div>'+
-      (c.link?'<a class="fm-card-link" href="'+c.link+'">📖 '+(KIDS?'くわしく まなぶ':'詳しく学ぶ')+' →</a>':'')+
       '<button class="fm-go" id="fmDcl">'+(KIDS?'とじる':'閉じる')+'</button></div>';
     document.body.appendChild(ov);
     ov.querySelector('#fmDcl').addEventListener('click',function(){ closeOv(ov); });
@@ -1193,7 +1240,8 @@ function injectCSS(){
   '.fm-card-e{font-size:3.4rem;filter:drop-shadow(0 0 16px rgba(232,201,107,.6));}',
   '.fm-card-t{font-size:1.3rem;font-weight:900;color:#ffe9a8;margin:8px 0 12px;}',
   '.fm-card-b{font-size:.92rem;line-height:1.95;color:#e8eeff;text-align:left;background:rgba(0,0,0,.22);border-radius:12px;padding:14px 16px;}',
-  '.fm-card-link{display:inline-block;margin-top:14px;font-size:.82rem;font-weight:900;color:#1a1040;background:linear-gradient(90deg,#c8a84b,#e8c96b);border-radius:999px;padding:9px 20px;text-decoration:none;}',
+  '.fm-card-viz{margin:6px auto 12px;width:100%;max-width:300px;background:rgba(0,0,0,.25);border:1px solid rgba(200,168,75,.3);border-radius:14px;padding:8px 8px 4px;}',
+  '.fm-card-viz svg{display:block;width:100%;height:auto;}',
   '.fm-card-hint{font-size:.68rem;color:#9fb0d0;margin-top:12px;}',
   '/* dex */',
   '.fm-dex{background:rgba(5,6,14,.94);}',
