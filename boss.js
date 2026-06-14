@@ -77,9 +77,12 @@ function BossBattle(cfg){
       'background:linear-gradient(90deg,#c8a84b,#e8c96b);border:none;border-radius:999px;padding:11px 28px;cursor:pointer;}'+
     '.bb-next:hover{filter:brightness(1.1);}'+
     /* オーバーレイ共通 */
-    '.bb-ov{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;'+
-      'flex-direction:column;background:rgba(5,4,14,.94);padding:24px;text-align:center;overflow-y:auto;}'+
-    '.bb-ov-inner{max-width:560px;width:100%;animation:bbPop .55s cubic-bezier(.34,1.56,.64,1);}'+
+    /* justify-content:center + overflow だと縦に長い勝利画面の上部が切れて届かなくなるため、
+       中央寄せは .bb-ov-inner の margin:auto で行う（はみ出す時は上端から全部スクロールできる）*/
+    '.bb-ov{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:flex-start;'+
+      'flex-direction:column;background:rgba(5,4,14,.94);padding:24px;text-align:center;'+
+      'overflow-y:auto;-webkit-overflow-scrolling:touch;}'+
+    '.bb-ov-inner{max-width:560px;width:100%;margin:auto;animation:bbPop .55s cubic-bezier(.34,1.56,.64,1);}'+
     '.bb-intro-no{font-size:.75rem;font-weight:700;letter-spacing:.35em;color:'+th.main+';margin-bottom:10px;}'+
     '.bb-intro-name{font-size:clamp(2rem,9vw,3.2rem);font-weight:900;color:#ffd9c8;letter-spacing:.14em;'+
       'text-shadow:0 0 30px '+th.glow+',0 0 60px '+th.glow+';margin-bottom:6px;}'+
@@ -128,7 +131,19 @@ function BossBattle(cfg){
       'text-shadow:0 2px 6px rgba(0,0,0,.85);}'+
     '.bb-rematch{margin-top:26px;padding:18px;border:1px dashed rgba(255,255,255,.28);border-radius:14px;}'+
     '.bb-rematch-msg{color:#ff9d8a;font-weight:900;font-size:.98rem;letter-spacing:.06em;line-height:2;margin-bottom:12px;}'+
-    '@media(max-width:480px){.bb-qtext{font-size:1.02rem;}}';
+    '@media(max-width:480px){.bb-qtext{font-size:1.02rem;}'+
+      '.bb-ov{padding:16px 13px;}'+
+      '.bb-win-title{margin-bottom:10px;}'+
+      '.bb-win-msg{padding:15px 16px;font-size:.96rem;line-height:1.95;}'+
+      '.bb-door{width:140px;height:165px;}'+
+      '.bb-doorzone{margin-top:20px;}.bb-door-note{margin-bottom:8px;}'+
+      '.bb-rematch{margin-top:16px;padding:13px;}'+
+      '.bb-fight{padding:13px 34px;font-size:1rem;}'+
+      '.bb-cta{padding:11px 24px;}}'+
+    '@media(max-height:740px){'+
+      '.bb-door{height:150px;}.bb-doorzone{margin-top:16px;}'+
+      '.bb-rematch{margin-top:14px;padding:12px;}'+
+      '.bb-win-msg{font-size:.95rem;line-height:1.85;}}';
   document.head.appendChild(st);
 
   /* ── 効果音（サイト共通SNDのバスにつなぐ） ── */
