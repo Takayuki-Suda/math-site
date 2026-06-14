@@ -202,13 +202,16 @@ function BossBattle(cfg){
      }}
   ];
   var form=1;
-  var rematch=parseInt(localStorage.getItem('rpg_bossrematch_'+cfg.no)||'0',10)||0;
+  /* 挑戦回数（＝撃破回数）で戦う形態を決める：1回目→第1形態 / 2回目→第2形態 / 3回目以降→最終形態。
+     毎回1形態だけ戦い、連戦はしない。リセット時は /^rpg_/ で自動削除される。 */
+  var attempts=parseInt(localStorage.getItem('rpg_boss_attempts_'+cfg.no)||'0',10)||0;
+  function currentForm(){ return Math.min(attempts+1,3); }
   function formHP(f){
     var h=HP+FORM_DEFS[f-1].hpBonus;
-    if(f===3) h+=Math.min(3,rematch); /* 再挑戦のたびに強くなる（上限+3） */
+    if(f===3) h+=Math.min(3,Math.max(0,attempts-2)); /* 最終形態を繰り返すほど強くなる（上限+3） */
     return h;
   }
-  var HPcur=formHP(1);
+  var HPcur=formHP(currentForm());
 
   /* ── 状態 ── */
   var S={hp:HPcur,hearts:HEARTS,phase:'intro',hurtT:0,deadT:-1,t0:performance.now()};
@@ -433,13 +436,9 @@ function BossBattle(cfg){
       renderHud();
       if(window.RPG) RPG.quizCorrect();
       if(S.hp<=0){
-        if(form<3){
-          fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ たおした…… のか？':'⚔️ 倒した……のか？')+'</span>';
-          setTimeout(function(){ formTransition(form+1); },900);
-        }else{
-          fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ かいしんのいちげき！！':'⚔️ 会心の一撃！！')+'</span>';
-          setTimeout(win,900);
-        }
+        /* 1形態だけ戦う：この形態を倒したら勝利（連戦しない） */
+        fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ かいしんのいちげき！！':'⚔️ 会心の一撃！！')+'</span>';
+        setTimeout(win,900);
       }else{
         fb.innerHTML='<span style="color:#2ecc71;">'+(kids?'⚔️ こうげきがヒット！ボスがひるんでいる！':'⚔️ 攻撃がヒット！ボスがひるんでいる！')+'</span>';
         qIdx++;
@@ -472,48 +471,9 @@ function BossBattle(cfg){
     }
   }
 
-  /* ── 形態変化：撃破したかに見えて、より強く蘇る ── */
-  function formTransition(nf){
-    S.deadT=0; /* 一度倒れたように見せる */
-    SfxDeath();
-    burst(90,5.5,[th.main,'#fff']);
-    panel.innerHTML='<div style="color:#8899aa;font-size:.9rem;">…</div>';
-    setTimeout(function(){
-      var fd=FORM_DEFS[nf-1];
-      var ov=document.createElement('div');
-      ov.className='bb-ov';
-      var lines=(nf===2)
-        ?(kids?['……まだだ。','まだ おわってないぞ……','<strong style="color:'+fd.auraC+';">だいに けいたい だ！！</strong>']
-              :['……まだだ。','この程度で終わると思ったか。','<strong style="color:'+fd.auraC+';">──第二形態。</strong>'])
-        :(kids?['……やるな。','でも つぎで さいごだ。','<strong style="color:'+fd.auraC+';">さいしゅうけいたい…… かくごしろ！！</strong>']
-              :['……ほう。やるじゃないか。','だが、ここからが本当の地獄だ。','<strong style="color:'+fd.auraC+';">──最終形態。覚悟しろ。</strong>']);
-      var h='<div class="bb-ov-inner">'+
-        '<div class="bb-intro-no" style="color:'+fd.auraC+';">'+(nf===2?'PHASE 2':'FINAL PHASE')+'</div>'+
-        '<div class="bb-phase-title" style="border-color:'+fd.auraC+';box-shadow:0 0 30px '+fd.aura+'.5);">'+
-          cfg.theme.icon+' '+cfg.name+'・'+fd.label+'</div>';
-      lines.forEach(function(l,i){
-        h+='<div class="bb-intro-line" style="animation-delay:'+(0.4+i*0.75)+'s;">'+l+'</div>';
-      });
-      h+='<div><button class="bb-fight" id="bbPhaseGo" style="background:linear-gradient(135deg,#2a0a30,'+fd.auraC+');border-color:'+fd.auraC+';">'+
-        '⚔️ '+(kids?'うけて たつ！':'受けて立つ')+'</button></div></div>';
-      ov.innerHTML=h;
-      document.body.appendChild(ov); lockBg(true);
-      SfxRoar(); setTimeout(SfxRoar,650);
-      document.getElementById('bbPhaseGo').addEventListener('click',function(){
-        if(window.SND) SND.click();
-        ov.style.transition='opacity .5s'; ov.style.opacity='0';
-        setTimeout(function(){ ov.remove(); },500);
-        lockBg(false);
-        resetBattle(nf);          /* HP増加＋難問プール＋ビジュアル変化 */
-        burst(70,5,[FORM_DEFS[nf-1].auraC,'#fff']);
-        SfxRoar();
-        renderHud();
-        showQuestion();
-      });
-    },1300);
-  }
+  /* （旧：形態を連戦する formTransition は廃止。挑戦回数に応じて毎回1形態だけ戦う） */
 
-  /* ── 勝利（最終形態撃破）── */
+  /* ── 勝利（その形態を撃破）── */
   function win(){
     S.deadT=0;
     SfxDeath();
@@ -529,9 +489,9 @@ function BossBattle(cfg){
     }else if(!first){
       setTimeout(function(){ RPG.addXP(30,kids?'さいせん しょうり！':'再戦勝利！'); },1200);
     }
-    /* 来るたびに強くなる：再挑戦カウンタを進める */
-    rematch++;
-    try{ localStorage.setItem('rpg_bossrematch_'+cfg.no,String(rematch)); }catch(e){}
+    /* 挑戦回数を1つ進める（次回はより強い形態に）。リセット時は /^rpg_/ で自動削除される */
+    attempts++;
+    try{ localStorage.setItem('rpg_boss_attempts_'+cfg.no,String(attempts)); }catch(e){}
     setTimeout(function(){ victoryOverlay(); },2000);
   }
   function victoryOverlay(){
@@ -547,7 +507,8 @@ function BossBattle(cfg){
          '<div class="bb-cta-note">'+v.cta.note+'</div></div>';
     }
     /* 自動で次フィールドへは進まない：撃破後はマップ（来たフィールド）に戻り、
-       封印の解けた階段まで自分で歩いて降りる流れにする */
+       封印の解けた階段まで自分で歩いて降りる。連戦はしないので、その場での再戦ボタンは置かない。
+       次の形態は、フィールドからもう一度ボスに入り直したときに戦う。 */
     h+='<div class="bb-doorzone">'+
         '<div class="bb-door-note">'+(kids
           ?'ふういんが とけた！ フィールドに もどって、おくの かいだんを おりよう。'
@@ -558,29 +519,9 @@ function BossBattle(cfg){
           '<div class="bb-door-frame"></div>'+
         '</div>'+
         '<a class="bb-door-go" href="'+cfg.fleeHref+'?from=boss">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>'+
-      '</div>'+
-      /* 最終形態は何度でも蘇る */
-      '<div class="bb-rematch">'+
-        '<div class="bb-rematch-msg">'+cfg.theme.icon+'「'+(kids
-          ?'またこい。おまえが くるたびに、おれは つよくなるぞ。'
-          :'また来い。お前が来るたびに、俺は強くなる。')+'」</div>'+
-        '<button class="bb-fight" id="bbRematch" style="font-size:.95rem;padding:12px 32px;">'+
-          '🔥 '+(kids?'さいしゅうけいたいに もういちど いどむ':'最終形態に再挑戦する')+
-          (rematch>1?'（'+rematch+'回目・強化済み）':'')+'</button>'+
-        '<div class="bb-cta-note">'+(kids?'もんだいは まいかい かわるよ':'問題は毎回ランダムに変わる')+'</div>'+
       '</div></div>';
     ov.innerHTML=h;
     document.body.appendChild(ov); lockBg(true);
-    document.getElementById('bbRematch').addEventListener('click',function(){
-      if(window.SND) SND.click();
-      ov.style.transition='opacity .5s'; ov.style.opacity='0';
-      setTimeout(function(){ ov.remove(); },500);
-      lockBg(false);
-      resetBattle(3);
-      SfxRoar();
-      renderHud();
-      showQuestion();
-    });
   }
 
   /* ── 敗北 ── */
@@ -609,7 +550,9 @@ function BossBattle(cfg){
 
   /* ── 導入 ── */
   function intro(){
-    var cleared=window.RPG&&RPG.bossCleared(cfg.no);
+    var again=attempts>0;          /* 1度でも倒していれば、より上の形態に挑む */
+    var cf=currentForm();          /* 今回戦う形態（1〜3） */
+    var fd=FORM_DEFS[cf-1];
     var ov=document.createElement('div');
     ov.className='bb-ov';
     var h='<div class="bb-ov-inner">'+
@@ -619,18 +562,17 @@ function BossBattle(cfg){
     cfg.intro.forEach(function(line,i){
       h+='<div class="bb-intro-line" style="animation-delay:'+(0.5+i*0.8)+'s;">'+line+'</div>';
     });
-    if(cleared){
-      h+='<div style="margin-top:24px;color:#e8c96b;font-weight:900;">👑 '+(kids?'このボスは すでにたおした！':'このボスは既に撃破済みだ。')+'</div>'+
-        '<div style="margin-top:10px;color:#ff9d8a;font-weight:700;font-size:.95rem;line-height:2;">「'+(kids
-          ?'またきたか。おれは まえより つよくなったぞ……'
-          :'また来たか。言ったはずだ──俺は前より強くなっている。')+'」</div>'+
-        '<div><button class="bb-fight" id="bbStart" type="button" '+
-          'style="background:linear-gradient(135deg,#2a0a30,#ff5078);border-color:#ff5078;">⚔️ '+(kids
-          ?'さいしゅうけいたいに さいちょうせん！'
-          :'最終形態に再挑戦する')+'</button></div>'+
-        '<div class="bb-cta-note">'+(kids
-          ?'もんだいは まいかい かわるよ（かてば +30XP）'
-          :'問題は毎回ランダムに変わる・勝てば +30XP')+'</div>'+
+    if(again){
+      var flabel=(cf===3)?(kids?'さいしゅうけいたい':'最終形態'):fd.label;
+      h+='<div style="margin-top:22px;color:#e8c96b;font-weight:900;">👑 '+(kids?'このボスは すでにたおした！':'このボスは撃破済みだ。')+'</div>'+
+        '<div style="margin-top:8px;color:'+fd.auraC+';font-weight:900;font-size:1.05rem;letter-spacing:.08em;">'+
+          (kids?'こんかいは ':'今回は ')+flabel+(kids?' との しょうぶ だ！':' との勝負だ。')+'</div>'+
+        '<div style="margin-top:8px;color:#ff9d8a;font-weight:700;font-size:.92rem;line-height:1.9;">「'+(kids
+          ?'まえより つよくなって いるぞ……'
+          :'前より強くなっている。受けてみよ。')+'」</div>'+
+        '<div><button class="bb-fight" id="bbStart" type="button" style="background:linear-gradient(135deg,#2a0a30,'+fd.auraC+');border-color:'+fd.auraC+';">⚔️ '+
+          (kids?'たたかう':'挑む')+'</button></div>'+
+        '<div class="bb-cta-note">'+(kids?'もんだいは まいかい かわるよ（かてば +30XP）':'問題は毎回ランダムに変わる・勝てば +30XP')+'</div>'+
         '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.fleeHref+'?from=boss">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>';
     }else{
       h+='<button class="bb-fight" id="bbStart" type="button">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
@@ -648,11 +590,10 @@ function BossBattle(cfg){
         setTimeout(function(){ ov.remove(); },500);
         lockBg(false);
         try{
-          /* 撃破済みなら、復活した最終形態との再戦から始まる */
-          resetBattle(cleared?3:1);
-          if(cleared) SfxRoar();
+          /* 挑戦回数に応じた「1形態だけ」を戦う（連戦しない） */
+          resetBattle(currentForm());
+          if(again) SfxRoar();
         }catch(e){
-          /* 万一最終形態の初期化に失敗しても、第一形態から確実に始める */
           resetBattle(1);
         }
         renderHud();
@@ -661,7 +602,7 @@ function BossBattle(cfg){
     }
   }
 
-  resetBattle(1);
+  resetBattle(currentForm());
   renderHud();
   panel.innerHTML='<div style="color:#8899aa;font-size:.9rem;">…</div>';
   intro();
