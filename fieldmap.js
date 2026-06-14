@@ -140,11 +140,11 @@ sho:{
     'T.................T',
     'T..C..T..E..C..T..T',
     'T.................T',
-    'T..E..T..C..E..T..T',
-    'T.................T',
-    'T.....C..C..E..C..T',
-    'T.................T',
-    'TSB...............T',
+    'T..E..T..C..E..C..T',
+    'TbT...............T',
+    'TBT......C..C..E..T',
+    'TgT...............T',
+    'TST...............T',
     'TTTTTTTTTTTTTTTTTTT'
   ],
   enemies:[
@@ -226,10 +226,10 @@ chu:{
     '#..C..R..E..C..R..#',
     '#.................#',
     '#..E..R..C..E..R..#',
-    '#.................#',
-    '#........R..E..C..#',
-    '#.................#',
-    '#SB...............#',
+    '#bR...............#',
+    '#BR.........E..C..#',
+    '#gR...............#',
+    '#SR...............#',
     '###################'
   ],
   enemies:[
@@ -292,10 +292,10 @@ ko:{
     '#..C..R..E..C..R..#',
     '#.................#',
     '#..E..R..C..E..R..#',
-    '#.................#',
-    '#...........R..E..#',
-    '#.................#',
-    '#SB...............#',
+    '#bR...............#',
+    '#BR............E..#',
+    '#gR...............#',
+    '#SR...............#',
     '###################'
   ],
   enemies:[
@@ -356,10 +356,10 @@ dai:{
     'R..C..R..E..C..R..R',
     'R.................R',
     'R..E..R..C..E..R..R',
-    'R.................R',
-    'R........R..E..C..R',
-    'R.................R',
-    'RSB...............R',
+    'RbR...............R',
+    'RBR.........E..C..R',
+    'RgR...............R',
+    'RSR...............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -427,10 +427,10 @@ in:{
     'R..C..R..E..C..R..R',
     'R.................R',
     'R..E..R..C..E..R..R',
-    'R.................R',
-    'R..............R..R',
-    'R.................R',
-    'RSB...............R',
+    'RbR...............R',
+    'RBR...............R',
+    'RgR...............R',
+    'RSR...............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -639,6 +639,17 @@ window.FieldMap=function(zoneId){
   /* 撃破済みのボスはいつでも再戦可。未撃破なら規定数の撃破で解錠 */
   function bossUnlocked(){ return (window.RPG&&RPG.bossCleared(CFG.boss))||zoneKills()>=KILLS_NEEDED; }
 
+  /* ── フィールド上の一時ヒント（封印の壁に近づいた時など） ── */
+  var hintEl=null, hintUntil=0;
+  function fieldHint(msg){
+    var now=performance.now();
+    if(now<hintUntil) return;           /* 連発防止 */
+    hintUntil=now+2200;
+    if(!hintEl){ hintEl=document.createElement('div'); hintEl.className='fm-hint'; document.body.appendChild(hintEl); }
+    hintEl.textContent=msg;
+    hintEl.classList.remove('show'); void hintEl.offsetWidth; hintEl.classList.add('show');
+  }
+
   /* ── マップ整形：最大幅にパディングし、外周を border で囲う ── */
   var rows=CFG.map.slice();
   var W=0; rows.forEach(function(r){ if(r.length>W) W=r.length; });
@@ -708,7 +719,10 @@ window.FieldMap=function(zoneId){
   function solidAt(wx,wy){
     var tx=Math.floor(wx/TILE), ty=Math.floor(wy/TILE);
     if(tx<0||ty<0||tx>=W||ty>=H) return true;
-    return !!BLOCK[grid[ty][tx]];
+    var ch=grid[ty][tx];
+    if(ch==='b') return !bossUnlocked();                            /* ボス封印壁：このフィールドで3体撃破すると消える */
+    if(ch==='g') return !(window.RPG&&RPG.bossCleared(CFG.boss));   /* 階段封印壁：ボス撃破で消える */
+    return !!BLOCK[ch];
   }
   var RAD=TILE*0.30;
   function canBe(px,py){
@@ -780,6 +794,17 @@ window.FieldMap=function(zoneId){
         if(lx!==ptx||ly!==pty) lastSpecial=null;
       }
     }
+    /* 封印の壁へ向かって進もうとしたら、解錠条件をヒント表示する */
+    if(vx||vy){
+      var ah=[];
+      if(vx>0) ah.push([ptx+1,pty]); else if(vx<0) ah.push([ptx-1,pty]);
+      if(vy>0) ah.push([ptx,pty+1]); else if(vy<0) ah.push([ptx,pty-1]);
+      for(var ai=0;ai<ah.length;ai++){
+        var ac=grid[ah[ai][1]]&&grid[ah[ai][1]][ah[ai][0]];
+        if(ac==='b'&&!bossUnlocked()){ fieldHint((KIDS?'あと ':'あと ')+killsLeft()+(KIDS?'たい たおそう！':'体 たおそう！')); break; }
+        if(ac==='g'&&!(window.RPG&&RPG.bossCleared(CFG.boss))){ fieldHint(KIDS?'ボスを たおすと ひらく！':'ボスを倒すと道が開く！'); break; }
+      }
+    }
   }
   function findChest(tx,ty){
     for(var i=0;i<chestTiles.length;i++){ if(chestTiles[i].tx===tx&&chestTiles[i].ty===ty) return chestTiles[i]; }
@@ -845,6 +870,8 @@ window.FieldMap=function(zoneId){
     if(ch==='S') drawStairs(sx,sy,t,true);
     else if(ch==='U') drawStairs(sx,sy,t,false);
     else if(ch==='B') drawBossDoor(sx,sy,t);
+    else if(ch==='b'){ if(!bossUnlocked()) drawSeal(sx,sy,t,false); }
+    else if(ch==='g'){ if(!(window.RPG&&RPG.bossCleared(CFG.boss))) drawSeal(sx,sy,t,true); }
     else if(ch==='c'){ var ct=findChest(tx,ty); drawChest(sx,sy,ct&&hasCard(ct.card.id),t); }
     else if(BLOCK[ch]) drawBlock(ch,tx,ty,sx,sy,t);
   }
@@ -980,6 +1007,26 @@ window.FieldMap=function(zoneId){
       ctx.font='bold 10px sans-serif'; ctx.fillStyle='#aab3cd';
       ctx.fillText(zoneKills()+'/'+KILLS_NEEDED,cx,sy+TILE-6);
     }
+  }
+  /* 封印の壁（ボス前＝赤／階段前＝金）。解錠条件を満たすと drawTile 側で描かれず通行可になる */
+  function drawSeal(sx,sy,t,isStairs){
+    var pul=0.5+0.5*Math.sin(t*3);
+    var rgb=isStairs?'210,175,90':'210,70,60';
+    ctx.save();
+    ctx.fillStyle='rgba(16,14,26,.92)';
+    roundPath(sx+3,sy+3,TILE-6,TILE-6,5); ctx.fill();
+    ctx.shadowColor='rgba('+rgb+','+pul+')'; ctx.shadowBlur=12;
+    ctx.strokeStyle='rgba('+rgb+','+(0.55+0.4*pul)+')'; ctx.lineWidth=2.5;
+    roundPath(sx+3,sy+3,TILE-6,TILE-6,5); ctx.stroke();
+    /* 結界の格子 */
+    ctx.globalAlpha=0.45+0.3*pul; ctx.lineWidth=1.4; ctx.beginPath();
+    for(var i=1;i<3;i++){ var o=i*(TILE-6)/3;
+      ctx.moveTo(sx+3,sy+3+o); ctx.lineTo(sx+TILE-3,sy+3+o);
+      ctx.moveTo(sx+3+o,sy+3); ctx.lineTo(sx+3+o,sy+TILE-3); }
+    ctx.stroke();
+    ctx.restore();
+    ctx.font='15px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🔒',sx+TILE/2,sy+TILE/2);
   }
   function drawChest(sx,sy,opened,t){
     var cx=sx+TILE/2, cy=sy+TILE/2;
@@ -1564,6 +1611,7 @@ function injectCSS(){
   '@keyframes fmFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}',
   '@keyframes fmShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(4px);}}',
   '@keyframes fmWarn{0%{transform:translate(-50%,-50%) scale(.6);opacity:0;}25%{transform:translate(-50%,-50%) scale(1.05);opacity:1;}80%{opacity:1;}100%{opacity:0;}}',
+  '@keyframes fmHint{0%{opacity:0;transform:translate(-50%,-10px);}15%{opacity:1;transform:translate(-50%,0);}80%{opacity:1;transform:translate(-50%,0);}100%{opacity:0;transform:translate(-50%,-8px);}}',
   '@keyframes fmDie{0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3) rotate(12deg);}100%{transform:scale(.1) rotate(160deg);opacity:0;}}',
   '.fm-ov{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;font-family:"Noto Sans JP",sans-serif;text-align:center;animation:fmIn .3s ease;overflow-y:auto;}',
   '.fm-battle{background:radial-gradient(circle at 50% 32%,rgba(40,12,18,.96),rgba(6,4,12,.98));}',
@@ -1601,6 +1649,8 @@ function injectCSS(){
   '.fm-flee{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);font-family:inherit;font-size:.8rem;color:#99a;background:none;border:none;text-decoration:underline;cursor:pointer;z-index:1;}',
   '.fm-flee:hover{color:#cfd8ff;}',
   '.fm-warn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;font-weight:900;font-size:clamp(1.1rem,4.5vw,1.6rem);color:#fff;background:rgba(3,2,10,.94);border:2px solid #e8c96b;border-radius:999px;padding:13px 30px;box-shadow:0 0 26px rgba(200,168,75,.45);animation:fmWarn 1s ease forwards;pointer-events:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;}',
+  '.fm-hint{position:fixed;top:13%;left:50%;transform:translateX(-50%);z-index:90;font-weight:900;font-size:clamp(1rem,4.2vw,1.4rem);color:#fff;background:rgba(48,10,14,.95);border:2px solid #ff7a5a;border-radius:999px;padding:11px 26px;box-shadow:0 0 24px rgba(255,90,60,.5);pointer-events:none;white-space:nowrap;max-width:92vw;opacity:0;}',
+  '.fm-hint.show{animation:fmHint 2.2s ease forwards;}',
   '/* card */',
   '.fm-card{background:rgba(6,8,18,.9);}',
   '.fm-cardbox{max-width:400px;width:100%;background:linear-gradient(135deg,#1a1040,#241a52 55%,#0f1f4a);border:2px solid #c8a84b;border-radius:20px;padding:26px 22px;box-shadow:0 0 44px rgba(200,168,75,.4);animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
