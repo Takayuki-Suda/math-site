@@ -557,7 +557,7 @@ function BossBattle(cfg){
           '<div class="bb-door-l"></div><div class="bb-door-r"></div>'+
           '<div class="bb-door-frame"></div>'+
         '</div>'+
-        '<a class="bb-door-go" href="'+cfg.fleeHref+'">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>'+
+        '<a class="bb-door-go" href="'+cfg.fleeHref+'?from=boss">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>'+
       '</div>'+
       /* 最終形態は何度でも蘇る */
       '<div class="bb-rematch">'+
@@ -631,7 +631,7 @@ function BossBattle(cfg){
         '<div class="bb-cta-note">'+(kids
           ?'もんだいは まいかい かわるよ（かてば +30XP）'
           :'問題は毎回ランダムに変わる・勝てば +30XP')+'</div>'+
-        '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.fleeHref+'">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>';
+        '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.fleeHref+'?from=boss">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>';
     }else{
       h+='<button class="bb-fight" id="bbStart" type="button">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
         '<a class="bb-sub-link" href="'+cfg.fleeHref+'">'+(kids?'まだ こころのじゅんびが…（もどる）':'まだ心の準備が…（戻る）')+'</a>';

@@ -949,7 +949,23 @@ window.FieldMap=function(zoneId){
   window.addEventListener('keydown',function(e){ if(mode==='field') setKey(e,true); });
   window.addEventListener('keyup',function(e){ setKey(e,false); });
 
-  /* ── プレイヤー ── */
+  /* ── プレイヤー ──
+     通常入場は P（左上）スポーン。ボス撃破後の復帰（?from=boss）だけは、
+     ボス／階段エリアの入口付近（左下＝階段のすぐ上）にスポーンさせ、
+     そのまま開いた階段へ歩いて行けるようにする。 */
+  (function(){
+    if(location.search.indexOf('from=boss')<0) return;
+    var sx=-1, sy=-1, x, y;
+    for(y=0;y<H&&sy<0;y++) for(x=0;x<W;x++){ if(grid[y][x]==='S'){ sx=x; sy=y; break; } }
+    if(sx<0) return;
+    /* 階段Sの上（フィールド側）の通行可能（床）マスを優先的に探す */
+    var cands=[[sx,sy-2],[sx,sy-3],[sx-1,sy-2],[sx+1,sy-2],[sx,sy-4]];
+    for(var i=0;i<cands.length;i++){ var cx=cands[i][0], cy=cands[i][1];
+      if(cy>=0&&cx>=0&&cy<H&&cx<W&&grid[cy][cx]==='.'){ spawn={x:cx,y:cy}; break; }
+    }
+    /* 再読み込み時は通常スポーンに戻るよう URL を掃除 */
+    try{ if(window.history&&history.replaceState) history.replaceState(null,'',location.pathname); }catch(e){}
+  })();
   var player={px:(spawn.x+0.5)*TILE, py:(spawn.y+0.5)*TILE, dir:0};
   var cam={x:0,y:0};
   var lastSpecial=null; /* "tx,ty" 直近に発動した特殊タイル */
