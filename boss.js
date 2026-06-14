@@ -198,7 +198,7 @@ function BossBattle(cfg){
   /* ── 状態 ── */
   var S={hp:HPcur,hearts:HEARTS,phase:'intro',hurtT:0,deadT:-1,t0:performance.now()};
   var particles=[];
-  var pool=[],queue=[],qIdx=0,current=null;
+  var pool=[],queue=[],qIdx=0,current=null,lastSig=null;
 
   function shuffle(a){
     for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),tmp=a[i];a[i]=a[j];a[j]=tmp; }
@@ -369,8 +369,20 @@ function BossBattle(cfg){
   loop();
 
   /* ── クイズ進行 ── */
+  /* 問題は固定オブジェクト or「呼ぶたびに数値を生成する関数」のどちらでもよい */
+  function materialize(e){ return (typeof e==='function')?e():e; }
   function showQuestion(){
-    current=queue[qIdx];
+    var entry=queue[qIdx];
+    current=materialize(entry);
+    /* 直前と同じ問題は出さない：生成問題は数値を引き直し、固定問題はプールから差し替える */
+    var guard=0;
+    while(lastSig!==null&&current&&current.q===lastSig&&guard<16){
+      if(typeof entry==='function'){ current=entry(); }
+      else if(pool.length>0){ entry=queue[qIdx]=pool.shift(); current=materialize(entry); }
+      else break;
+      guard++;
+    }
+    lastSig=current.q;
     var choices=current.c.map(function(c,i){ return {c:c,i:i}; });
     shuffle(choices);
     var h='<div class="bb-qno">'+(kids?'もんだい ':'QUESTION ')+(HPcur-S.hp+1)+' / '+HPcur+
@@ -625,3 +637,16 @@ function BossBattle(cfg){
   panel.innerHTML='<div style="color:#8899aa;font-size:.9rem;">…</div>';
   intro();
 }
+
+/* ── 出題ヘルパー（各ボスの問題プール／ジェネレータから利用）── */
+BossBattle.ri=function(a,b){ return a+Math.floor(Math.random()*(b-a+1)); };
+BossBattle.pick=function(arr){ return arr[Math.floor(Math.random()*arr.length)]; };
+BossBattle.shuf=function(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t; } return a; };
+/* 正解を先頭(a:0)に置いた重複なし4択を返す（表示順はエンジン側でシャッフルされる）*/
+BossBattle.opts=function(correct,distractors){
+  var c=[String(correct)],seen={}; seen[String(correct)]=1;
+  for(var i=0;i<distractors.length;i++){ var s=String(distractors[i]); if(!seen[s]){ c.push(s); seen[s]=1; if(c.length>=4) break; } }
+  var k=1, base=(typeof correct==='number'?correct:0);
+  while(c.length<4){ var s2=String(base+k); k++; if(!seen[s2]){ c.push(s2); seen[s2]=1; } if(k>200) break; }
+  return c.slice(0,4);
+};

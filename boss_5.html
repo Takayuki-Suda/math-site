@@ -72,6 +72,7 @@ body{background:#020108;color:#f0f4ff;line-height:1.8;
 <body>
 <script src="/math-site/rpg.js"></script>
 <script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
 <canvas id="sky"></canvas>
 <a class="flee" href="/math-site/in/map.html">← 大学院フィールドに戻る</a>
 
@@ -131,27 +132,7 @@ body{background:#020108;color:#f0f4ff;line-height:1.8;
       フェルマーを倒した楕円曲線の、さらに深い深淵。<br>
       <span style="color:#8a9cff;">そしてこれは、須田先生が今も研究を続けている世界だ。</span>
     </div>
-    <button class="go-btn" id="btn3">壁の答えを聞く →</button>
-  </div>
-
-  <!-- 最終メッセージ -->
-  <div class="scene" id="sc4">
-    <div style="font-size:3rem;margin-bottom:14px;">🌌</div>
-    <div class="boss-name" style="font-size:clamp(1.5rem,7vw,2.2rem);margin-bottom:22px;">壁は、扉だった。</div>
-    <div class="t-msg">
-      ここから先に答えはない。<br>
-      でも問い続ける人間だけが数学を動かしてきた。<br>
-      君もその一人かもしれない。— 須田先生
-    </div>
-    <div class="door-zone">
-      <div class="door-note">最後の扉が開く──未解決問題の世界へ</div>
-      <div class="door">
-        <div class="door-light"></div>
-        <div class="door-l"></div><div class="door-r"></div>
-        <div class="door-frame"></div>
-      </div>
-      <a class="go-btn gold" style="margin-top:22px;text-decoration:none;" href="/math-site/mikaiketsu.html">⛩ 未解決問題の世界へ →</a>
-    </div>
+    <button class="go-btn" id="btn3">⚔️ 最後の壁と対峙する →</button>
   </div>
 
 </div>
@@ -199,7 +180,7 @@ var t0=performance.now();
 
 /* ── シーン進行 ── */
 function show(id){
-  ['sc0','sc1','sc2','sc3','sc4'].forEach(function(s){
+  ['sc0','sc1','sc2','sc3'].forEach(function(s){
     document.getElementById(s).classList.remove('on');
   });
   document.getElementById(id).classList.add('on');
@@ -209,17 +190,166 @@ function show(id){
 document.getElementById('btn0').addEventListener('click',function(){ show('sc1'); });
 document.getElementById('btn1').addEventListener('click',function(){ show('sc2'); });
 document.getElementById('btn2').addEventListener('click',function(){ show('sc3'); });
+
+/* 3つのフロンティアを見せたあと、最後のボス戦へ。勝利で未解決問題の世界への扉が開く */
+var battleStarted=false;
 document.getElementById('btn3').addEventListener('click',function(){
-  show('sc4');
-  if(window.SND) setTimeout(SND.fanfare,600);
-  if(window.RPG){
-    RPG.clearBoss(5);
-    if(!localStorage.getItem('rpg_bossxp_5')){
-      localStorage.setItem('rpg_bossxp_5','1');
-      setTimeout(function(){ RPG.addXP(600,'研究の壁を越えた！'); },1500);
-    }
-  }
+  if(battleStarted) return;
+  battleStarted=true;
+  if(window.SND) SND.click();
+  var stg=document.querySelector('.stage'); if(stg) stg.style.display='none';
+  var fl=document.querySelector('.flee'); if(fl) fl.style.display='none';
+  startBattle();
 });
+
+function startBattle(){
+  BossBattle({
+    no:5,
+    name:'研究の壁',
+    sub:'大学院と研究者の境界',
+    kids:false,
+    intro:[
+      '正解のない問いの、ほんの入り口に立った。',
+      'だが、ここまで来た君になら――問える。',
+      '──最後の壁。構造の深淵が、こちらを見ている。'
+    ],
+    theme:{main:'#8a9cff',glow:'rgba(138,156,255,.45)',dark:'#0a0820',icon:'🌌'},
+    fleeHref:'/math-site/in/map.html',
+    enterFlag:null,
+    /* 第一形態：楕円曲線・ガロア理論・位相幾何の入口 */
+    questions:[
+      {q:'楕円曲線 y² ＝ x³ ＋ ax ＋ b 上の有理点全体は、どんな構造をもつ？',
+       c:['アーベル群','体','非可換群','順序集合'], a:0,
+       exp:'2点を結ぶ直線の第3交点をとる加法で、有理点全体はアーベル群になる。これが楕円曲線の心臓だ。'},
+      {q:'【○×】楕円曲線が非特異であるための条件は、判別式 Δ ≠ 0 である。',
+       c:['○ 正しい','× 誤り'], a:0,
+       exp:'Δ ＝ 0 だと尖点や結節点ができて、なめらかな「曲線」が壊れる。'},
+      {q:'ガロア理論が示したのは、5次以上の一般方程式が…',
+       c:['冪根では解けない','解をもたない','必ず解ける','複素数では解けない'], a:0,
+       exp:'対称群 S₅ が可解でないため、一般5次方程式は四則と冪根だけでは解けない。'},
+      {q:'球面 S² のオイラー標数 χ ＝ V − E ＋ F は？',
+       c:['2','0','1','−2'], a:0,
+       exp:'正多面体で V−E＋F＝2。球面と同相な曲面はすべて 2 になる。'},
+      {q:'円周 S¹ の基本群 π₁(S¹) は？',
+       c:['ℤ','0（自明）','ℤ/2ℤ','ℝ'], a:0,
+       exp:'ループが何回巻きついたか＝巻き数。整数全体 ℤ と同型になる。'},
+      {q:'【○×】トーラス T² のオイラー標数は 0 である。',
+       c:['○ 正しい','× 誤り'], a:0,
+       exp:'種数 g の閉曲面の χ ＝ 2 − 2g。トーラスは g＝1 なので χ＝0。'}
+    ],
+    /* 第二形態：構造の対応・深化 */
+    questions2:[
+      {q:'ガロア対応が1対1に結びつけるのは？',
+       c:['中間体 と ガロア群の部分群','点 と 直線','整数 と 素数','開集合 と 閉集合'], a:0,
+       exp:'体の拡大の中間体と、ガロア群の部分群が、包含を逆にして対応する。'},
+      {q:'方程式が冪根で解ける ⇔ そのガロア群が…',
+       c:['可解群である','可換群である','単純群である','自明群である'], a:0,
+       exp:'「可解群」という名前は、まさにこの定理から来ている。'},
+      {q:'円分体 ℚ(ζₙ)/ℚ のガロア群は？',
+       c:['(ℤ/nℤ)ˣ に同型（アーベル）','非可換群','自明群','Sₙ'], a:0,
+       exp:'ζₙ をその原始根乗に写す操作で、(ℤ/nℤ)ˣ と同型。常にアーベルになる。'},
+      {q:'【○×】基本群が自明な空間を単連結という。S² は単連結である。',
+       c:['○ 正しい','× 誤り'], a:0,
+       exp:'S² 上のどんなループも1点に縮められる。π₁(S²)＝0。'},
+      {q:'種数 g の向き付け可能な閉曲面のオイラー標数 χ は？',
+       c:['2 − 2g','g','2g','g − 1'], a:0,
+       exp:'球面 g＝0 で 2、トーラス g＝1 で 0、…と 2 ずつ減っていく。'},
+      {q:'モーデル・ヴェイユの定理が主張するのは、楕円曲線の有理点群が…',
+       c:['有限生成アーベル群','有限群','自由群','つねに自明'], a:0,
+       exp:'E(ℚ) ≅ ℤ^r × (有限群)。この階数 r が「ランク」だ。'},
+      {q:'【○×】楕円曲線の点の加法では、無限遠点 O が単位元の役割をする。',
+       c:['○ 正しい','× 誤り'], a:0,
+       exp:'O が群の単位元。P ＋ O ＝ P。射影平面で考えると自然に現れる。'},
+      {q:'ガロア群がアーベル群になるような拡大を何と呼ぶ？',
+       c:['アーベル拡大','可解拡大','正規拡大','超越拡大'], a:0,
+       exp:'ガロア群が可換な拡大。円分体はその代表例だ。'}
+    ],
+    /* 最終形態：最前線・未解決問題 */
+    questions3:[
+      {q:'BSD予想が結びつけようとしているのは、楕円曲線の…',
+       c:['ランク と L関数の零点の位数','判別式 と 種数','点の個数 と 体積','係数 と 次数'], a:0,
+       exp:'L(E,s) の s＝1 での零点の位数が、有理点群のランクに等しい──ミレニアム懸賞問題。'},
+      {q:'【○×】フェルマーの最終定理の証明の核心には、楕円曲線（の保型性）があった。',
+       c:['○ 正しい','× 誤り'], a:0,
+       exp:'谷山・志村予想（モジュラー性定理）を経由して、ワイルズが証明した。'},
+      {q:'リーマン予想が主張する、ζ(s) の非自明な零点の位置は？',
+       c:['実部が 1/2 の直線上','実部が 1 の直線上','すべて実数','原点のみ'], a:0,
+       exp:'Re(s) ＝ 1/2 の臨界線上にすべて並ぶ、という未解決予想。素数分布を支配する。'},
+      {q:'【○×】「すべての連続関数は微分可能である」は正しい。',
+       c:['× 誤り','○ 正しい'], a:0,
+       exp:'ワイエルシュトラス関数は至るところ連続だが、どこでも微分不可能。直感を裏切る反例。'},
+      {q:'2つの空間が「ホモトピー同値」とは、大まかに言うと？',
+       c:['連続変形で互いに移り合える','同じ点の個数をもつ','同じ次元をもつ','全単射が存在する'], a:0,
+       exp:'円板は1点に縮む＝1点とホモトピー同値。穴の有無など本質的な形を捉える。'},
+      {q:'圏論で、対象間の「射」と合成が満たすべき基本性質は？',
+       c:['結合律と恒等射の存在','可換律','逆射の存在','有限性'], a:0,
+       exp:'圏は対象・射・合成からなり、結合律と各対象の恒等射をもつ。分野を横断する言語だ。'}
+    ],
+    draw:function(ctx,W,H,t,S){
+      var cx=W/2, cy=H/2+6, dmg=1-S.hpRatio, hurtC=S.hurt>0.3;
+      /* 臨界線 Re(s)=1/2 と零点 */
+      ctx.save();
+      ctx.strokeStyle=hurtC?'rgba(255,140,140,.7)':'rgba(160,180,255,.5)';
+      ctx.lineWidth=2; ctx.shadowColor='rgba(140,160,255,.8)'; ctx.shadowBlur=16;
+      ctx.beginPath(); ctx.moveTo(cx,18); ctx.lineTo(cx,H-18); ctx.stroke();
+      for(var i=0;i<6;i++){
+        var zy=40+i*((H-80)/5)+Math.sin(t*1.3+i)*4, pz=0.5+0.5*Math.sin(t*2+i*1.2);
+        ctx.fillStyle=hurtC?'#ffb3a8':'#cdd9ff'; ctx.shadowBlur=10+10*pz;
+        ctx.beginPath(); ctx.arc(cx,zy,3+2*pz,0,Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+      /* 中央コア（壁＝特異点）*/
+      var pulse=0.6+0.4*Math.sin(t*2.4);
+      ctx.save();
+      var cg=ctx.createRadialGradient(cx,cy,4,cx,cy,72+14*pulse);
+      cg.addColorStop(0,hurtC?'#fff':'#eaf0ff');
+      cg.addColorStop(0.35,hurtC?'#ff9a8a':'#8a9cff');
+      cg.addColorStop(1,'rgba(60,50,140,0)');
+      ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(cx,cy,72+14*pulse,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      /* 軌道を巡る記号 */
+      var syms=['ζ','𝔼','Gal','π₁','∮','∞'];
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      syms.forEach(function(s,i){
+        var ang=t*(0.5+0.05*i)+i*Math.PI*2/syms.length;
+        var rx=200-((i%3)*26), ry=104-((i%3)*14);
+        var ox=cx+Math.cos(ang)*rx, oy=cy+Math.sin(ang)*ry, front=Math.sin(ang)>0;
+        ctx.save();
+        ctx.globalAlpha=front?0.95:0.4;
+        ctx.shadowColor='rgba(160,180,255,.85)'; ctx.shadowBlur=14;
+        ctx.fillStyle=hurtC?'#ffc4b8':'#cdd9ff';
+        ctx.font=(front?'900 30px':'700 22px')+' Georgia,serif';
+        ctx.fillText(s,ox,oy);
+        ctx.restore();
+      });
+      /* ダメージ：時空のグリッチ */
+      if(dmg>0.2){
+        ctx.save();
+        for(var g=0;g<Math.floor(dmg*5);g++){
+          var gy=(Math.sin(t*9+g*37)*0.5+0.5)*H;
+          ctx.strokeStyle='rgba(255,255,255,'+(0.08+0.18*Math.random()*dmg)+')';
+          ctx.lineWidth=1+Math.random()*2;
+          ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+        }
+        ctx.restore();
+      }
+      /* 下部の式 */
+      ctx.save();
+      ctx.fillStyle='rgba(160,180,255,'+(0.3+0.2*Math.sin(t*1.3))+')';
+      ctx.font='italic 700 18px Georgia,serif';
+      ctx.fillText('ζ(s)=0 ⇒ Re(s)=½ 　 y²=x³+ax+b', cx, H-22);
+      ctx.restore();
+    },
+    victory:{
+      xp:600,
+      msg:'ここから先に答えはない。<br>でも、問い続ける人間だけが数学を動かしてきた。<br>君もその一人かもしれない。— 須田先生',
+      cta:null,
+      doorHref:'/math-site/mikaiketsu.html',
+      doorName:'未解決問題の世界',
+      note:'最後の扉が開く──未解決問題の世界へ'
+    }
+  });
+}
 
 /* 既に通過済みなら、導入にショートカットを出す */
 if(window.RPG&&RPG.bossCleared(5)){
