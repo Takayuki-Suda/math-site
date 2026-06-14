@@ -629,6 +629,16 @@ window.FieldMap=function(zoneId){
   var BLOCK={'#':1,'T':1,'R':1,'~':1,' ':1};
   var TILE=46;
 
+  /* ── ボス扉の解錠条件：このフィールドで敵を一定数倒すと扉が開く ──
+     撃破数は localStorage 'rpg_kills_<zone>' に保存。リセット時は rpg_ 一括削除でクリアされる。 */
+  var KILLS_NEEDED=3;
+  function killsKey(){ return 'rpg_kills_'+CFG.zone; }
+  function zoneKills(){ try{ return parseInt(localStorage.getItem(killsKey())||'0',10)||0; }catch(e){ return 0; } }
+  function addZoneKill(){ try{ localStorage.setItem(killsKey(),String(zoneKills()+1)); }catch(e){} }
+  function killsLeft(){ return Math.max(0,KILLS_NEEDED-zoneKills()); }
+  /* 撃破済みのボスはいつでも再戦可。未撃破なら規定数の撃破で解錠 */
+  function bossUnlocked(){ return (window.RPG&&RPG.bossCleared(CFG.boss))||zoneKills()>=KILLS_NEEDED; }
+
   /* ── マップ整形：最大幅にパディングし、外周を border で囲う ── */
   var rows=CFG.map.slice();
   var W=0; rows.forEach(function(r){ if(r.length>W) W=r.length; });
@@ -920,23 +930,37 @@ window.FieldMap=function(zoneId){
   }
   function drawBossDoor(sx,sy,t){
     var cleared=window.RPG&&RPG.bossCleared(CFG.boss);
+    var open=cleared||bossUnlocked();   /* 解錠＝撃破済み or このフィールドで規定数撃破 */
     var pul=0.55+0.45*Math.sin(t*3);
+    /* 扉本体（解錠時は強く発光して「開く」演出、封印時は暗く沈む） */
     ctx.save();
-    ctx.shadowColor=cleared?'rgba(232,201,107,'+pul+')':'rgba(200,40,40,'+pul+')';
-    ctx.shadowBlur=18;
-    ctx.fillStyle=cleared?'#2a2418':'#1c0c10';
+    if(open){ ctx.shadowColor=cleared?'rgba(232,201,107,'+pul+')':'rgba(232,150,60,'+pul+')'; ctx.shadowBlur=22; }
+    else{ ctx.shadowColor='rgba(90,100,130,'+(0.25+0.2*pul)+')'; ctx.shadowBlur=7; }
+    ctx.fillStyle=cleared?'#2a2418':(open?'#241510':'#14121c');
     roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.fill();
     ctx.restore();
-    ctx.strokeStyle=cleared?'#c8a84b':'#c0392b'; ctx.lineWidth=2.5;
+    ctx.strokeStyle=cleared?'#c8a84b':(open?'#e0883c':'#4a4f63'); ctx.lineWidth=2.5;
     roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.stroke();
     /* 鳥居 */
-    ctx.strokeStyle=cleared?'#e8c96b':'#e05a3a'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.strokeStyle=cleared?'#e8c96b':(open?'#ffae6a':'#5a6075'); ctx.lineWidth=3; ctx.lineCap='round';
     ctx.beginPath(); ctx.moveTo(sx+11,sy+15); ctx.lineTo(sx+TILE-11,sy+15);
     ctx.moveTo(sx+13,sy+20); ctx.lineTo(sx+TILE-13,sy+20);
     ctx.moveTo(sx+15,sy+15); ctx.lineTo(sx+15,sy+TILE-8);
     ctx.moveTo(sx+TILE-15,sy+15); ctx.lineTo(sx+TILE-15,sy+TILE-8); ctx.stroke();
     ctx.font='16px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(cleared?'👑':CFG.bossEmoji,sx+TILE/2,sy+TILE/2+4);
+    if(open){
+      ctx.fillText(cleared?'👑':CFG.bossEmoji,sx+TILE/2,sy+TILE/2+4);
+      if(!cleared){
+        /* 解錠の光の筋（開門演出） */
+        ctx.save(); ctx.globalAlpha=0.25+0.4*pul; ctx.fillStyle='#ffe6b0';
+        ctx.fillRect(sx+TILE/2-3,sy+16,6,TILE-24); ctx.restore();
+      }
+    }else{
+      /* 封印中：南京錠＋進捗 */
+      ctx.fillText('🔒',sx+TILE/2,sy+TILE/2+1);
+      ctx.font='bold 10px sans-serif'; ctx.fillStyle='#9aa3bd';
+      ctx.fillText(zoneKills()+'/'+KILLS_NEEDED,sx+TILE/2,sy+TILE-6);
+    }
   }
   function drawChest(sx,sy,opened,t){
     var cx=sx+TILE/2, cy=sy+TILE/2;
@@ -1124,9 +1148,19 @@ window.FieldMap=function(zoneId){
     function victory(){
       if(window.SND) SND.clear();
       en.alive=false;
+      addZoneKill();
+      /* ボス扉の解錠状況をフィードバック（撃破済みなら不要） */
+      var doorMsg='';
+      if(!(window.RPG&&RPG.bossCleared(CFG.boss))){
+        if(zoneKills()>=KILLS_NEEDED)
+          doorMsg='<div class="fm-win-l" style="color:#ffd96b;">🔓 '+(KIDS?'ボスの とびらの ふういんが とけた！':'ボスの扉の封印が解けた！')+'</div>';
+        else
+          doorMsg='<div class="fm-win-l" style="color:#9fe0ff;">'+(KIDS?'ボスの とびらまで あと '+killsLeft()+'体！':'ボスの扉まで あと '+killsLeft()+'体！')+'</div>';
+      }
       area.innerHTML='<div class="fm-win">'+
         '<div class="fm-win-t">🎉 '+(KIDS?'やっつけた！':'撃破！')+'</div>'+
         '<div class="fm-win-l">'+en.name+'を '+(KIDS?'たおした！':'打ち破った！')+'</div>'+
+        doorMsg+
         '<button class="fm-go" id="fmClose">'+(KIDS?'フィールドに もどる':'フィールドへ戻る')+'</button></div>';
       area.querySelector('#fmClose').addEventListener('click',function(){ closeOv(ov); mode='field'; });
       if(window.RPG) setTimeout(function(){ RPG.addXP(en.def.xp,(KIDS?en.name+'げきは！':en.name+'撃破！')); },350);
@@ -1256,9 +1290,28 @@ window.FieldMap=function(zoneId){
     ov.querySelector('#fmLx').addEventListener('click',function(){ closeOv(ov); mode='field'; nudgeOff(); });
     ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; nudgeOff(); } });
   }
+  /* このフィールドの敵を規定数倒すまで、ボス扉は封印されている */
+  function bossSealed(){
+    mode='menu';
+    if(window.SND) SND.wrong();
+    var ov=el('div','fm-ov fm-locked');
+    ov.innerHTML='<div class="fm-locked-in">'+
+      '<div class="fm-locked-ic">🔒</div>'+
+      '<div class="fm-locked-t">'+(KIDS?'ボスの とびらは ふういんされている！':'ボスの扉は封印されている')+'</div>'+
+      '<div class="fm-locked-d">'+(KIDS
+        ?'このフィールドの てきを たおすと ふういんが ゆるむ。<br><strong style="color:#ffd9c8;font-size:1.15em;">あと '+killsLeft()+'体 たおそう！</strong>'
+        :'このフィールドの敵を倒すと封印が緩む。<br><strong style="color:#ffd9c8;font-size:1.15em;">あと '+killsLeft()+'体 たおそう！</strong>')+
+        '<div style="margin-top:8px;color:#9aa3bd;font-size:.85rem;">'+(KIDS?'げきは':'撃破')+' '+zoneKills()+' / '+KILLS_NEEDED+'</div></div>'+
+      '<button class="fm-go ghost" id="fmSx">'+(KIDS?'てきを さがしに いく':'敵を探しに行く')+'</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.querySelector('#fmSx').addEventListener('click',function(){ closeOv(ov); mode='field'; nudgeOff(); });
+    ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; nudgeOff(); } });
+  }
   function confirmBoss(){
     mode='menu';
     var cleared=window.RPG&&RPG.bossCleared(CFG.boss);
+    if(!cleared&&!bossUnlocked()){ bossSealed(); return; }
     if(window.SND) SND.stamp();
     var ov=el('div','fm-ov fm-locked');
     ov.innerHTML='<div class="fm-locked-in">'+

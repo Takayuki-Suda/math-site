@@ -80,7 +80,7 @@ function BossBattle(cfg){
     /* justify-content:center + overflow だと縦に長い勝利画面の上部が切れて届かなくなるため、
        中央寄せは .bb-ov-inner の margin:auto で行う（はみ出す時は上端から全部スクロールできる）*/
     '.bb-ov{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:flex-start;'+
-      'flex-direction:column;background:rgba(5,4,14,.94);padding:24px;text-align:center;'+
+      'flex-direction:column;background:#05040e;padding:24px;text-align:center;'+
       'overflow-y:auto;-webkit-overflow-scrolling:touch;}'+
     '.bb-ov-inner{max-width:560px;width:100%;margin:auto;animation:bbPop .55s cubic-bezier(.34,1.56,.64,1);}'+
     '.bb-intro-no{font-size:.75rem;font-weight:700;letter-spacing:.35em;color:'+th.main+';margin-bottom:10px;}'+
@@ -218,6 +218,12 @@ function BossBattle(cfg){
   function shuffle(a){
     for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),tmp=a[i];a[i]=a[j];a[j]=tmp; }
     return a;
+  }
+  /* オーバーレイ表示中は背面（戦闘画面）のスクロールを止め、勝利画面だけを見せる */
+  function lockBg(on){
+    var v=on?'hidden':'';
+    document.documentElement.style.overflow=v;
+    document.body.style.overflow=v;
   }
   function resetBattle(f){
     form=f||1;
@@ -491,12 +497,13 @@ function BossBattle(cfg){
       h+='<div><button class="bb-fight" id="bbPhaseGo" style="background:linear-gradient(135deg,#2a0a30,'+fd.auraC+');border-color:'+fd.auraC+';">'+
         '⚔️ '+(kids?'うけて たつ！':'受けて立つ')+'</button></div></div>';
       ov.innerHTML=h;
-      document.body.appendChild(ov);
+      document.body.appendChild(ov); lockBg(true);
       SfxRoar(); setTimeout(SfxRoar,650);
       document.getElementById('bbPhaseGo').addEventListener('click',function(){
         if(window.SND) SND.click();
         ov.style.transition='opacity .5s'; ov.style.opacity='0';
         setTimeout(function(){ ov.remove(); },500);
+        lockBg(false);
         resetBattle(nf);          /* HP増加＋難問プール＋ビジュアル変化 */
         burst(70,5,[FORM_DEFS[nf-1].auraC,'#fff']);
         SfxRoar();
@@ -559,11 +566,12 @@ function BossBattle(cfg){
         '<div class="bb-cta-note">'+(kids?'もんだいは まいかい かわるよ':'問題は毎回ランダムに変わる')+'</div>'+
       '</div></div>';
     ov.innerHTML=h;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov); lockBg(true);
     document.getElementById('bbRematch').addEventListener('click',function(){
       if(window.SND) SND.click();
       ov.style.transition='opacity .5s'; ov.style.opacity='0';
       setTimeout(function(){ ov.remove(); },500);
+      lockBg(false);
       resetBattle(3);
       SfxRoar();
       renderHud();
@@ -585,9 +593,10 @@ function BossBattle(cfg){
       '<button class="bb-fight" id="bbRetry">🔥 '+(kids?'もういちど いどむ':'もう一度挑む')+'</button>'+
       '<a class="bb-sub-link" href="'+cfg.fleeHref+'">'+(kids?'しゅぎょうしてから またくる':'修行してから出直す')+'</a>'+
       '</div>';
-    document.body.appendChild(ov);
+    document.body.appendChild(ov); lockBg(true);
     document.getElementById('bbRetry').addEventListener('click',function(){
       ov.remove();
+      lockBg(false);
       resetBattle(form); /* 倒された形態から再開（第一形態には戻さない） */
       renderHud();
       showQuestion();
@@ -625,7 +634,7 @@ function BossBattle(cfg){
     }
     h+='</div>';
     ov.innerHTML=h;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov); lockBg(true);
     /* overlay 内から確実に取得（重複IDや他要素の影響を受けない） */
     var startBtn=ov.querySelector('#bbStart');
     if(startBtn){
@@ -633,6 +642,7 @@ function BossBattle(cfg){
         if(window.SND){ try{ SND.click(); }catch(e){} }
         ov.style.transition='opacity .5s'; ov.style.opacity='0';
         setTimeout(function(){ ov.remove(); },500);
+        lockBg(false);
         try{
           /* 撃破済みなら、復活した最終形態との再戦から始まる */
           resetBattle(cleared?3:1);
