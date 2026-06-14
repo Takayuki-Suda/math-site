@@ -546,14 +546,18 @@ function BossBattle(cfg){
       h+='<div><a class="bb-cta" href="'+v.cta.href+'" target="_blank" rel="noopener">'+v.cta.label+'</a>'+
          '<div class="bb-cta-note">'+v.cta.note+'</div></div>';
     }
+    /* 自動で次フィールドへは進まない：撃破後はマップ（来たフィールド）に戻り、
+       封印の解けた階段まで自分で歩いて降りる流れにする */
     h+='<div class="bb-doorzone">'+
-        '<div class="bb-door-note">'+v.note+'</div>'+
+        '<div class="bb-door-note">'+(kids
+          ?'ふういんが とけた！ フィールドに もどって、おくの かいだんを おりよう。'
+          :'封印が解けた──フィールドに戻り、開いた階段を降りて先へ進もう。')+'</div>'+
         '<div class="bb-door">'+
           '<div class="bb-door-light"></div>'+
           '<div class="bb-door-l"></div><div class="bb-door-r"></div>'+
           '<div class="bb-door-frame"></div>'+
         '</div>'+
-        '<a class="bb-door-go" href="'+v.doorHref+'">⛩ '+v.doorName+'へ →</a>'+
+        '<a class="bb-door-go" href="'+cfg.fleeHref+'">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>'+
       '</div>'+
       /* 最終形態は何度でも蘇る */
       '<div class="bb-rematch">'+
@@ -627,7 +631,7 @@ function BossBattle(cfg){
         '<div class="bb-cta-note">'+(kids
           ?'もんだいは まいかい かわるよ（かてば +30XP）'
           :'問題は毎回ランダムに変わる・勝てば +30XP')+'</div>'+
-        '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.victory.doorHref+'">⛩ '+cfg.victory.doorName+'へ →</a>';
+        '<a class="bb-door-go" style="margin-top:16px;" href="'+cfg.fleeHref+'">⛩ '+(kids?'フィールドに もどる':'フィールドに戻る')+'</a>';
     }else{
       h+='<button class="bb-fight" id="bbStart" type="button">⚔️ '+(kids?'たたかう':'立ち向かう')+'</button>'+
         '<a class="bb-sub-link" href="'+cfg.fleeHref+'">'+(kids?'まだ こころのじゅんびが…（もどる）':'まだ心の準備が…（戻る）')+'</a>';

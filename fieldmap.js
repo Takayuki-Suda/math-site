@@ -140,11 +140,11 @@ sho:{
     'T.................T',
     'T..C..T..E..C..T..T',
     'T.................T',
-    'T..E..T..C..E..C..T',
-    'TbT...............T',
-    'TBT......C..C..E..T',
-    'TgT...............T',
-    'TST...............T',
+    'T..E..C..E..C..E..T',
+    'T...........C..C..T',
+    'T.................T',
+    'TbTgT.............T',
+    'TBTST.............T',
     'TTTTTTTTTTTTTTTTTTT'
   ],
   enemies:[
@@ -225,11 +225,11 @@ chu:{
     '#.................#',
     '#..C..R..E..C..R..#',
     '#.................#',
-    '#..E..R..C..E..R..#',
-    '#bR...............#',
-    '#BR.........E..C..#',
-    '#gR...............#',
-    '#SR...............#',
+    '#..E..R..C..E..C..#',
+    '#..............E..#',
+    '#.................#',
+    '#bRgR.............#',
+    '#BRSR.............#',
     '###################'
   ],
   enemies:[
@@ -291,11 +291,11 @@ ko:{
     '#.................#',
     '#..C..R..E..C..R..#',
     '#.................#',
-    '#..E..R..C..E..R..#',
-    '#bR...............#',
-    '#BR............E..#',
-    '#gR...............#',
-    '#SR...............#',
+    '#..E..R..C..E..E..#',
+    '#.................#',
+    '#.................#',
+    '#bRgR.............#',
+    '#BRSR.............#',
     '###################'
   ],
   enemies:[
@@ -355,11 +355,11 @@ dai:{
     'R.................R',
     'R..C..R..E..C..R..R',
     'R.................R',
-    'R..E..R..C..E..R..R',
-    'RbR...............R',
-    'RBR.........E..C..R',
-    'RgR...............R',
-    'RSR...............R',
+    'R..E..R..C..E..C..R',
+    'R..............E..R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -426,11 +426,11 @@ in:{
     'R.................R',
     'R..C..R..E..C..R..R',
     'R.................R',
-    'R..E..R..C..E..R..R',
-    'RbR...............R',
-    'RBR...............R',
-    'RgR...............R',
-    'RSR...............R',
+    'R..E..R..C..E.....R',
+    'R.................R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -644,7 +644,7 @@ window.FieldMap=function(zoneId){
   function fieldHint(msg){
     var now=performance.now();
     if(now<hintUntil) return;           /* 連発防止 */
-    hintUntil=now+2200;
+    hintUntil=now+1500;
     if(!hintEl){ hintEl=document.createElement('div'); hintEl.className='fm-hint'; document.body.appendChild(hintEl); }
     hintEl.textContent=msg;
     hintEl.classList.remove('show'); void hintEl.offsetWidth; hintEl.classList.add('show');
@@ -1611,7 +1611,7 @@ function injectCSS(){
   '@keyframes fmFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}',
   '@keyframes fmShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(4px);}}',
   '@keyframes fmWarn{0%{transform:translate(-50%,-50%) scale(.6);opacity:0;}25%{transform:translate(-50%,-50%) scale(1.05);opacity:1;}80%{opacity:1;}100%{opacity:0;}}',
-  '@keyframes fmHint{0%{opacity:0;transform:translate(-50%,-10px);}15%{opacity:1;transform:translate(-50%,0);}80%{opacity:1;transform:translate(-50%,0);}100%{opacity:0;transform:translate(-50%,-8px);}}',
+  '@keyframes fmHint{0%{opacity:0;transform:translate(-50%,8px);}15%{opacity:1;transform:translate(-50%,0);}75%{opacity:1;transform:translate(-50%,0);}100%{opacity:0;transform:translate(-50%,-4px);}}',
   '@keyframes fmDie{0%{transform:scale(1);opacity:1;}50%{transform:scale(1.3) rotate(12deg);}100%{transform:scale(.1) rotate(160deg);opacity:0;}}',
   '.fm-ov{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;font-family:"Noto Sans JP",sans-serif;text-align:center;animation:fmIn .3s ease;overflow-y:auto;}',
   '.fm-battle{background:radial-gradient(circle at 50% 32%,rgba(40,12,18,.96),rgba(6,4,12,.98));}',
@@ -1649,8 +1649,8 @@ function injectCSS(){
   '.fm-flee{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);font-family:inherit;font-size:.8rem;color:#99a;background:none;border:none;text-decoration:underline;cursor:pointer;z-index:1;}',
   '.fm-flee:hover{color:#cfd8ff;}',
   '.fm-warn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;font-weight:900;font-size:clamp(1.1rem,4.5vw,1.6rem);color:#fff;background:rgba(3,2,10,.94);border:2px solid #e8c96b;border-radius:999px;padding:13px 30px;box-shadow:0 0 26px rgba(200,168,75,.45);animation:fmWarn 1s ease forwards;pointer-events:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;}',
-  '.fm-hint{position:fixed;top:13%;left:50%;transform:translateX(-50%);z-index:90;font-weight:900;font-size:clamp(1rem,4.2vw,1.4rem);color:#fff;background:rgba(48,10,14,.95);border:2px solid #ff7a5a;border-radius:999px;padding:11px 26px;box-shadow:0 0 24px rgba(255,90,60,.5);pointer-events:none;white-space:nowrap;max-width:92vw;opacity:0;}',
-  '.fm-hint.show{animation:fmHint 2.2s ease forwards;}',
+  '.fm-hint{position:fixed;bottom:7%;left:50%;transform:translateX(-50%);z-index:90;font-weight:700;font-size:.82rem;color:#fff;background:rgba(8,7,14,.74);border-radius:7px;padding:5px 13px;pointer-events:none;white-space:nowrap;max-width:92vw;opacity:0;letter-spacing:.04em;}',
+  '.fm-hint.show{animation:fmHint 1.3s ease forwards;}',
   '/* card */',
   '.fm-card{background:rgba(6,8,18,.9);}',
   '.fm-cardbox{max-width:400px;width:100%;background:linear-gradient(135deg,#1a1040,#241a52 55%,#0f1f4a);border:2px solid #c8a84b;border-radius:20px;padding:26px 22px;box-shadow:0 0 44px rgba(200,168,75,.4);animation:fmPop .5s cubic-bezier(.34,1.56,.64,1);}',
