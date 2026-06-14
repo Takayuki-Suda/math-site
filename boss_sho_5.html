@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-5 とけいまじん | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gClockMin(){ var k=ri(1,11), m=k*5;
+  return {q:'とけいの 長いはりが '+k+' を さしています。何分？', c:opts(m+'分',[(m+5)+'分',(m-5<0?55:m-5)+'分',k+'分']), a:0, exp:'長いはりは 1で 5分。'+k+'×5＝'+m+'分。'}; }
+function gTimeAdd(){ var h=ri(1,11), m=pick([5,10,15,20]), add=pick([15,20,25,30]); while(m+add>=60){ add-=5; } var nm=m+add;
+  return {q:h+'時'+m+'分から '+add+'分 たつと？', c:opts(h+'時'+nm+'分',[(h===12?1:h+1)+'時'+nm+'分',h+'時'+(nm+5)+'分',(h===1?12:h-1)+'時'+nm+'分']), a:0, exp:'時は そのまま、分だけ '+add+'分 すすむ → '+nm+'分。'}; }
+function gTimeOver(){ var h=ri(1,11), m=pick([40,45,50]), add=pick([20,25,30]), tot=m+add, nh=h+Math.floor(tot/60), nm=tot%60; if(nh>12)nh-=12;
+  return {q:h+'時'+m+'分から '+add+'分 たつと？', c:opts(nh+'時'+nm+'分',[h+'時'+nm+'分',(nh===12?1:nh+1)+'時'+nm+'分',h+'時'+tot+'分']), a:0, exp:m+'＋'+add+'＝'+tot+'分。60分で 1時間 くりあがり → '+nh+'時'+nm+'分。'}; }
+function gCmMm(){ var x=ri(2,20); return {q:x+' cm は 何 mm？', c:opts((x*10)+' mm',[(x*100)+' mm',(x+10)+' mm',(x*5)+' mm']), a:0, exp:'1cm＝10mm。'+x+'×10＝'+(x*10)+'。'}; }
+function gMCm(){ var x=ri(2,9); return {q:x+' m は 何 cm？', c:opts((x*100)+' cm',[(x*10)+' cm',(x*1000)+' cm',(x+100)+' cm']), a:0, exp:'1m＝100cm。'}; }
+function gKgG(){ var x=ri(2,9); return {q:x+' kg は 何 g？', c:opts((x*1000)+' g',[(x*100)+' g',(x*10)+' g',(x+1000)+' g']), a:0, exp:'1kg＝1000g。'}; }
+function gLmL(){ var x=ri(2,9); return {q:x+' L は 何 mL？', c:opts((x*1000)+' mL',[(x*100)+' mL',(x*500)+' mL',(x+1000)+' mL']), a:0, exp:'1L＝1000mL。'}; }
+function gHrMin(){ var x=ri(2,6); return {q:x+' 時間は 何分？', c:opts((x*60)+'分',[(x*100)+'分',(x*6)+'分',(x*30)+'分']), a:0, exp:'1時間＝60分。'+x+'×60＝'+(x*60)+'。'}; }
+function gMinSec(){ var x=ri(2,6); return {q:x+' 分は 何秒？', c:opts((x*60)+'秒',[(x*100)+'秒',(x*6)+'秒',(x*30)+'秒']), a:0, exp:'1分＝60秒。'}; }
+
+BossBattle({
+  no:'1-5',
+  name:'とけいまじん',
+  sub:'時計・単位の まじん',
+  kids:true,
+  intro:['とけいとうに すむ きかいじかけの まじん。','時間と 単位を つかさどる。','「とき を よみとけるか？」'],
+  theme:{main:'#d9a441',glow:'rgba(217,164,65,.45)',dark:'#241a0a',icon:'⏰'},
+  fleeHref:'/math-site/sho/map_5.html',
+  enterFlag:null,
+  questions:[ gClockMin, gCmMm, gHrMin, gTimeAdd, gMCm, gLmL ],
+  questions2:[ gTimeAdd, gTimeOver, gKgG, gLmL, gHrMin, gMinSec, gCmMm, gMCm ],
+  questions3:[ gTimeOver, gTimeAdd, gHrMin, gMinSec, gKgG, gClockMin ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+16, hurt=S.hurt>0.3, bob=Math.sin(t*1.6)*5, pulse=0.5+0.5*Math.sin(t*2);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,160);
+    ag.addColorStop(0,'rgba(217,164,65,'+(0.24*pulse)+')'); ag.addColorStop(1,'rgba(217,164,65,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    ctx.fillStyle='rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(0,108,82,15,0,0,7); ctx.fill();
+    /* 時計の枠 */
+    ctx.fillStyle=hurt?'#ff9a8a':'#caa24a'; ctx.beginPath(); ctx.arc(0,0,80,0,7); ctx.fill();
+    ctx.fillStyle='#2a2010'; ctx.beginPath(); ctx.arc(0,0,68,0,7); ctx.fill();
+    /* 目もり */
+    ctx.strokeStyle='#ffe09a'; ctx.lineWidth=3;
+    for(var i=0;i<12;i++){ var a=i*Math.PI/6; ctx.beginPath(); ctx.moveTo(Math.cos(a)*60,Math.sin(a)*60); ctx.lineTo(Math.cos(a)*66,Math.sin(a)*66); ctx.stroke(); }
+    /* はり */
+    ctx.strokeStyle='#fff'; ctx.lineWidth=5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(t*0.6-Math.PI/2)*34,Math.sin(t*0.6-Math.PI/2)*34); ctx.stroke();
+    ctx.strokeStyle='#ffd54f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(t*2-Math.PI/2)*52,Math.sin(t*2-Math.PI/2)*52); ctx.stroke();
+    ctx.fillStyle='#ffe09a'; ctx.beginPath(); ctx.arc(0,0,5,0,7); ctx.fill();
+    /* 目（枠の上） */
+    var blink=(Math.sin(t*0.9)>0.95)?0.15:1;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(-26,-52,9,9*blink,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(26,-52,9,9*blink,0,0,7); ctx.fill();
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(-25,-51,4*blink,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(27,-51,4*blink,0,7); ctx.fill();
+    ctx.restore();
+    var syms=['⏰','60','cm','kg','L'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.7+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*152, oy=cy+Math.sin(a)*66, fr=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr?0.95:0.4; ctx.shadowColor='#ffd98a'; ctx.shadowBlur=12; ctx.fillStyle=hurt?'#ffd0c8':'#ffe09a'; ctx.font='900 '+(fr?26:19)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:120,
+    msg:'とき も 単位も きみの ものだ！<br>「1時間＝60分」「1m＝100cm」、かんけいを おぼえれば かんたん。<br>いよいよ さいごの ボスだ。— 須田先生',
+    cta:null
+  }
+});
+})();
+</script>
+</body>
+</html>

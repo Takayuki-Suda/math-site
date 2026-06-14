@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-3 ぶんすうまじん | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gcd(a,b){ a=Math.abs(a);b=Math.abs(b); while(b){ var t=b; b=a%b; a=t; } return a||1; }
+function fr(n,d){ var g=gcd(n,d); n/=g; d/=g; return d===1?(''+n):(n+'/'+d); }
+function dec(x){ return (Math.round(x*10)/10).toFixed(1); }
+function gFracAdd(){ var d=ri(4,9), p=ri(1,d-2), q=ri(1,d-1-p), s=p+q;
+  return {q:p+'/'+d+' ＋ '+q+'/'+d+' ＝ ？', c:opts(fr(s,d),[s+'/'+(2*d),(s+1)+'/'+d,(p*q)+'/'+d]), a:0, exp:'分母は そのまま、分子を たす。'+p+'＋'+q+'＝'+s+'。'}; }
+function gFracSub(){ var d=ri(5,9), p=ri(2,d-1), q=ri(1,p-1), s=p-q;
+  return {q:p+'/'+d+' − '+q+'/'+d+' ＝ ？', c:opts(fr(s,d),[s+'/'+(2*d),(s+1)+'/'+d,(p+q)+'/'+d]), a:0, exp:'分子を ひく。'+p+'−'+q+'＝'+s+'。'}; }
+function gReduce(){ var pr=pick([[2,4],[3,6],[2,6],[4,8],[3,9],[5,10],[4,6],[6,8],[6,9]]), n=pr[0], d=pr[1];
+  return {q:n+'/'+d+' を やくぶんすると？', c:opts(fr(n,d),[n+'/'+d,n+'/'+(d+1),(n+1)+'/'+d]), a:0, exp:'上も下も '+gcd(n,d)+' でわる。'+fr(n,d)+'。'}; }
+function gDecAdd(){ var a=ri(3,18), b=ri(3,18), s=a+b;
+  return {q:dec(a/10)+' ＋ '+dec(b/10)+' ＝ ？', c:opts(dec(s/10),[dec((s+1)/10),dec((s-1)/10),dec((s+10)/10)]), a:0, exp:'0.1 が ('+a+'＋'+b+') こで '+dec(s/10)+'。'}; }
+function gDecSub(){ var a=ri(7,20), b=ri(2,a-1), s=a-b;
+  return {q:dec(a/10)+' − '+dec(b/10)+' ＝ ？', c:opts(dec(s/10),[dec((s+1)/10),dec((s-1)/10),dec((a+b)/10)]), a:0, exp:'0.1 が ('+a+'−'+b+') こで '+dec(s/10)+'。'}; }
+function gDecMul(){ var a=ri(2,9), b=ri(2,9), p=a*b;
+  return {q:dec(a/10)+' × '+b+' ＝ ？', c:opts(dec(p/10),[dec(p/100),dec((p+1)/10),''+p]), a:0, exp:'0.'+a+'×'+b+'＝'+dec(p/10)+'。'}; }
+
+BossBattle({
+  no:'1-3',
+  name:'ぶんすうまじん',
+  sub:'分数・小数の まじん',
+  kids:true,
+  intro:['ランプから あらわれた まじん。','分数と 小数を あやつる。','「ねがいは かなえぬ。けいさんで しょうぶだ！」'],
+  theme:{main:'#b06aff',glow:'rgba(176,106,255,.45)',dark:'#1a0a2e',icon:'🧞'},
+  fleeHref:'/math-site/sho/map_3.html',
+  enterFlag:null,
+  questions:[ gFracAdd, gDecAdd, gReduce, gFracSub, gDecSub, gFracAdd ],
+  questions2:[ gFracAdd, gFracSub, gDecAdd, gDecSub, gReduce, gDecMul, gFracAdd, gDecSub ],
+  questions3:[ gFracSub, gDecMul, gReduce, gFracAdd, gDecSub, gFracSub ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+18, hurt=S.hurt>0.3, bob=Math.sin(t*1.7)*6, pulse=0.5+0.5*Math.sin(t*2);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,160);
+    ag.addColorStop(0,'rgba(176,106,255,'+(0.24*pulse)+')'); ag.addColorStop(1,'rgba(176,106,255,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    /* けむりの しっぽ */
+    ctx.fillStyle='rgba(176,106,255,.25)';
+    ctx.beginPath(); ctx.moveTo(-30,70); ctx.quadraticCurveTo(-70,110,0,128); ctx.quadraticCurveTo(70,110,30,70); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=hurt?'#ff9a8a':'#9b59e8'; ctx.beginPath(); ctx.arc(0,0,76,0,7); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.16)'; ctx.beginPath(); ctx.ellipse(0,22,44,36,0,0,7); ctx.fill();
+    var blink=(Math.sin(t*0.9)>0.95)?0.15:1;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(-25,-10,14,14*blink,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(25,-10,14,14*blink,0,0,7); ctx.fill();
+    ctx.fillStyle='#2a0f3a'; ctx.beginPath(); ctx.arc(-23,-8,6*blink,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(27,-8,6*blink,0,7); ctx.fill();
+    ctx.strokeStyle='#3a1430'; ctx.lineWidth=4; ctx.lineCap='round';
+    ctx.beginPath(); if(hurt){ ctx.arc(0,32,14,1.15*Math.PI,1.85*Math.PI); } else { ctx.arc(0,16,18,0.12*Math.PI,0.88*Math.PI); } ctx.stroke();
+    /* ターバンと宝石 */
+    ctx.fillStyle='#7a3fb0'; ctx.beginPath(); ctx.ellipse(0,-58,52,26,0,Math.PI,2*Math.PI); ctx.fill();
+    ctx.fillStyle='#ffd54f'; ctx.beginPath(); ctx.arc(0,-66,7,0,7); ctx.fill();
+    ctx.restore();
+    var syms=['½','⅓','¾','0.5','¼'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.7+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*150, oy=cy+Math.sin(a)*66, fr2=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr2?0.95:0.4; ctx.shadowColor='#d59bf0'; ctx.shadowBlur=12; ctx.fillStyle=hurt?'#ffd0c8':'#e0c0ff'; ctx.font='900 '+(fr2?28:20)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:100,
+    msg:'分数も 小数も こわくない！<br>「いくつ分か」を かんがえれば、ぜんぶ おなじ なかま。<br>つぎは 図形の せかいだ。— 須田先生',
+    cta:null
+  }
+});
+})();
+</script>
+</body>
+</html>

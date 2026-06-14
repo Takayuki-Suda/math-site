@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-6 算数の番人 | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gcd(a,b){ a=Math.abs(a);b=Math.abs(b); while(b){ var t=b; b=a%b; a=t; } return a||1; }
+function fr(n,d){ var g=gcd(n,d); n/=g; d/=g; return d===1?(''+n):(n+'/'+d); }
+function dec(x){ return (Math.round(x*10)/10).toFixed(1); }
+function gAdd(){ var a=ri(120,680), b=ri(120,680), s=a+b;
+  return {q:a+' ＋ '+b+' ＝ ？', c:opts(s,[s+10,s-10,s+1,s-100]), a:0, exp:'3けたの たしざん。'+s+'。'}; }
+function gSub(){ var a=ri(420,990), b=ri(120,390), d=a-b;
+  return {q:a+' − '+b+' ＝ ？', c:opts(d,[d+10,d-10,d+1,d-100]), a:0, exp:'3けたの ひきざん。'+d+'。'}; }
+function gMul(){ var a=ri(12,29), b=ri(3,9), p=a*b;
+  return {q:a+' × '+b+' ＝ ？', c:opts(p,[p+b,p-a,p+10,p-10]), a:0, exp:'(10＋□)×'+b+' に わける。'+p+'。'}; }
+function gRem(){ var b=ri(4,9), q=ri(3,9), r=ri(1,b-1), a=b*q+r;
+  return {q:a+' ÷ '+b+' の あまりは？', c:opts(r,[r+1,(r+2)%b===r?(r+3)%b:(r+2)%b,q,0]), a:0, exp:a+'＝'+b+'×'+q+'＋'+r+'。あまり '+r+'。'}; }
+function gFrac(){ var d=ri(5,9), p=ri(1,d-2), q=ri(1,d-1-p), s=p+q;
+  return {q:p+'/'+d+' ＋ '+q+'/'+d+' ＝ ？', c:opts(fr(s,d),[s+'/'+(2*d),(s+1)+'/'+d,(p*q)+'/'+d]), a:0, exp:'分子を たす。'+fr(s,d)+'。'}; }
+function gDec(){ var a=ri(7,20), b=ri(2,a-1), s=a-b;
+  return {q:dec(a/10)+' − '+dec(b/10)+' ＝ ？', c:opts(dec(s/10),[dec((s+1)/10),dec((s-1)/10),dec((a+b)/10)]), a:0, exp:'0.1 が '+(a-b)+' こで '+dec(s/10)+'。'}; }
+function gTri(){ var b=ri(4,12), h=2*ri(2,6), A=b*h/2;
+  return {q:'底辺 '+b+'cm・高さ '+h+'cm の 三角形の めんせきは？', c:opts(A+' cm²',[(b*h)+' cm²',(b+h)+' cm²',(A+b)+' cm²']), a:0, exp:b+'×'+h+'÷2＝'+A+' cm²。'}; }
+function gRect(){ var w=ri(4,12), h=ri(3,9), A=w*h;
+  return {q:'たて '+h+'cm・よこ '+w+'cm の 長方形の めんせきは？', c:opts(A+' cm²',[(2*(w+h))+' cm²',(A+w)+' cm²',(w+h)+' cm²']), a:0, exp:h+'×'+w+'＝'+A+' cm²。'}; }
+function gHrMin(){ var x=ri(2,8); return {q:x+' 時間は 何分？', c:opts((x*60)+'分',[(x*100)+'分',(x*6)+'分',(x*30)+'分']), a:0, exp:'1時間＝60分。'+(x*60)+'。'}; }
+function gKgG(){ var x=ri(2,9); return {q:x+' kg は 何 g？', c:opts((x*1000)+' g',[(x*100)+' g',(x*10)+' g',(x+1000)+' g']), a:0, exp:'1kg＝1000g。'}; }
+function gMiss(){ var x=ri(11,49), b=ri(12,60), s=x+b;
+  return {q:'□ ＋ '+b+' ＝ '+s+'。□は？', c:opts(x,[x+1,x-1,s,b]), a:0, exp:s+' − '+b+' ＝ '+x+'。'}; }
+
+BossBattle({
+  no:'1-6',
+  name:'算数の番人',
+  sub:'小学さんすうの さいごのかべ',
+  kids:true,
+  intro:['しろの おくに たつ さいごの まもりて。','たしざんから 単位まで、すべてを とう。','「ここまでの すべてを みせてみよ……！」'],
+  theme:{main:'#b06aff',glow:'rgba(176,106,255,.5)',dark:'#160a28',icon:'🛡️'},
+  fleeHref:'/math-site/sho/map_6.html',
+  enterFlag:null,
+  questions:[ gAdd, gMul, gFrac, gTri, gHrMin, gRem ],
+  questions2:[ gSub, gMul, gRem, gDec, gRect, gKgG, gFrac, gMiss ],
+  questions3:[ gAdd, gSub, gMul, gRem, gFrac, gTri, gDec, gHrMin ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+14, hurt=S.hurt>0.3, bob=Math.sin(t*1.5)*5, pulse=0.5+0.5*Math.sin(t*2.4);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,170);
+    ag.addColorStop(0,'rgba(176,106,255,'+(0.26*pulse)+')'); ag.addColorStop(1,'rgba(176,106,255,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    ctx.fillStyle='rgba(0,0,0,.45)'; ctx.beginPath(); ctx.ellipse(0,112,96,18,0,0,7); ctx.fill();
+    /* よろいの体 */
+    ctx.fillStyle=hurt?'#ff9a8a':'#3a2f5a';
+    ctx.beginPath(); ctx.moveTo(-86,82); ctx.lineTo(-70,-50); ctx.quadraticCurveTo(0,-86,70,-50); ctx.lineTo(86,82); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#b06aff'; ctx.lineWidth=3; ctx.stroke();
+    /* むねの紋章（盾） */
+    ctx.fillStyle='#241a40'; ctx.beginPath(); ctx.moveTo(0,-30); ctx.lineTo(34,-14); ctx.lineTo(28,30); ctx.lineTo(0,46); ctx.lineTo(-28,30); ctx.lineTo(-34,-14); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#e8c96b'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.fillStyle='#ffe09a'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.font='900 30px Georgia,serif'; ctx.fillText('数',0,8);
+    /* かぶと */
+    ctx.fillStyle=hurt?'#ffb0a0':'#4a3f72'; ctx.beginPath(); ctx.arc(0,-58,34,Math.PI,2*Math.PI); ctx.fill();
+    ctx.fillRect(-34,-58,68,16);
+    /* 光る目 */
+    var eg=0.6+0.4*pulse;
+    ctx.fillStyle='rgba(255,'+(hurt?120:90)+','+(hurt?100:200)+','+eg+')'; ctx.shadowColor='#ff5078'; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.ellipse(-15,-50,6,4,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(15,-50,6,4,0,0,7); ctx.fill();
+    ctx.restore();
+    var syms=['＋','−','×','÷','＝','½'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.6+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*162, oy=cy+Math.sin(a)*72, fr2=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr2?0.95:0.4; ctx.shadowColor='#c9a6ff'; ctx.shadowBlur=14; ctx.fillStyle=hurt?'#ffd0c8':'#d9c4ff'; ctx.font='900 '+(fr2?32:22)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:200,
+    msg:'……みごと。算数の すべてを こえたな。<br>たしざんから 単位まで、きみは もう しっかりした 土台を もっている。<br>この先の 中学数学も、きっと だいじょうぶだ。— 須田先生',
+    cta:{
+      label:'⛩ 会津稽古堂・無料指導はこちら',
+      href:'https://www.city.aizuwakamatsu.fukushima.jp/docs/2007080702723/',
+      note:'「須田貴之」を指名して申し込めます。話を聞くだけでも大丈夫。'
+    }
+  }
+});
+})();
+</script>
+</body>
+</html>

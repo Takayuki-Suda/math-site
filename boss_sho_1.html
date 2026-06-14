@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-1 たしざんキング | 数学の教室</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+</head>
+<body>
+<script src="/math-site/rpg.js"></script>
+<script src="/math-site/sound.js"></script>
+<script src="/math-site/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gAdd2(){ var a=ri(15,49), b=ri(15,49), s=a+b;
+  return {q:a+' ＋ '+b+' ＝ ？', c:opts(s,[s+1,s-1,s+10,s-10]), a:0, exp:'くらいを そろえて たそう。'+a+'＋'+b+'＝'+s+'。'}; }
+function gSub2(){ var a=ri(42,89), b=ri(11,38), d=a-b;
+  return {q:a+' − '+b+' ＝ ？', c:opts(d,[d+1,d-1,d+10,a+b]), a:0, exp:a+' から '+b+' を ひくと '+d+'。'}; }
+function gAdd3(){ var a=ri(120,480), b=ri(120,480), s=a+b;
+  return {q:a+' ＋ '+b+' ＝ ？', c:opts(s,[s+10,s-10,s+1,s-100]), a:0, exp:'3けたの たしざん。こたえは '+s+'。'}; }
+function gSub3(){ var a=ri(350,950), b=ri(110,330), d=a-b;
+  return {q:a+' − '+b+' ＝ ？', c:opts(d,[d+10,d-10,d+1,d-100]), a:0, exp:'3けたの ひきざん。こたえは '+d+'。'}; }
+function gMiss(){ var x=ri(7,39), b=ri(11,49), s=x+b;
+  return {q:'□ ＋ '+b+' ＝ '+s+'。□は？', c:opts(x,[x+1,x-1,s,b]), a:0, exp:s+' − '+b+' ＝ '+x+'。たしざんの ぎゃくは ひきざん。'}; }
+function g3add(){ var a=ri(7,19), b=ri(7,19), c=ri(7,19), s=a+b+c;
+  return {q:a+' ＋ '+b+' ＋ '+c+' ＝ ？', c:opts(s,[s+1,s-1,s+10,a+b]), a:0, exp:'まえから じゅんに たそう。'+s+'。'}; }
+
+BossBattle({
+  no:'1-1',
+  name:'たしざんキング',
+  sub:'たしざん・ひきざんの ぬし',
+  kids:true,
+  intro:['すうじの くにの おうさま、','たしざんキングが たちふさがる。','「わがはいを たしざんで こえてみよ！」'],
+  theme:{main:'#e8a44b',glow:'rgba(232,164,75,.45)',dark:'#2a1a08',icon:'👑'},
+  fleeHref:'/math-site/sho/map_1.html',
+  enterFlag:null,
+  questions:[ gAdd2, gSub2, gMiss, g3add, gAdd2, gSub2 ],
+  questions2:[ gAdd3, gSub3, gAdd2, gSub2, gMiss, g3add, gAdd3, gSub3 ],
+  questions3:[ gAdd3, gSub3, gMiss, g3add, gAdd3, gSub3 ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+16, hurt=S.hurt>0.3, bob=Math.sin(t*1.8)*6, pulse=0.5+0.5*Math.sin(t*2);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,150);
+    ag.addColorStop(0,'rgba(232,164,75,'+(0.22*pulse)+')'); ag.addColorStop(1,'rgba(232,164,75,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    ctx.fillStyle='rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(0,108,86,16,0,0,7); ctx.fill();
+    ctx.fillStyle=hurt?'#ff9a8a':'#e8a44b'; ctx.beginPath(); ctx.arc(0,0,78,0,7); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.16)'; ctx.beginPath(); ctx.ellipse(0,24,46,38,0,0,7); ctx.fill();
+    var blink=(Math.sin(t*0.9)>0.95)?0.15:1;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(-26,-10,15,15*blink,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(26,-10,15,15*blink,0,0,7); ctx.fill();
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(-24,-8,7*blink,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(28,-8,7*blink,0,7); ctx.fill();
+    ctx.strokeStyle='#3a1414'; ctx.lineWidth=4; ctx.lineCap='round';
+    ctx.beginPath(); if(hurt){ ctx.arc(0,34,15,1.15*Math.PI,1.85*Math.PI); } else { ctx.arc(0,18,20,0.12*Math.PI,0.88*Math.PI); } ctx.stroke();
+    /* 王冠 */
+    ctx.fillStyle='#ffd54f';
+    ctx.beginPath(); ctx.moveTo(-42,-64); ctx.lineTo(-30,-94); ctx.lineTo(-15,-70); ctx.lineTo(0,-100); ctx.lineTo(15,-70); ctx.lineTo(30,-94); ctx.lineTo(42,-64); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#fff3b0'; ctx.fillRect(-42,-64,84,8);
+    ctx.restore();
+    var syms=['＋','−','＝','＋','−'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.7+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*150, oy=cy+Math.sin(a)*66, fr=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr?0.95:0.4; ctx.shadowColor='#ffd98a'; ctx.shadowBlur=12; ctx.fillStyle=hurt?'#ffd0c8':'#ffe09a'; ctx.font='900 '+(fr?32:22)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:80,
+    msg:'みごとな たしざん・ひきざんだ！<br>つぎは かけざん・わりざんの りゅうが まっているぞ。<br>その ちょうしで すすもう。— 須田先生',
+    cta:null
+  }
+});
+})();
+</script>
+</body>
+</html>

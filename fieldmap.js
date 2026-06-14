@@ -124,7 +124,189 @@ function heroImage(id){
    ════════════════════════════════════════════════════════ */
 var LAYERS={
 
-/* ───────────────────────── 地上：小学生（森・草原） ───────────────────────── */
+/* ═══════════════ 小学生フィールド 1-1〜1-6（6分割） ═══════════════ */
+/* 1-1 たしざん・ひきざん（明るい森・草原） */
+sho1:{
+  zone:'sho1', kids:true, border:'T', decor:'forest',
+  title:'たしざんの森', depth:'1-1 ─ たしざん・ひきざん',
+  theme:{bg:'#16361f', floorA:'#2f7d3f', floorB:'#2b7339', accent:'#ffe08a', wall:'#5a3a22'},
+  boss:'1-1', bossName:'たしざんキング', bossEmoji:'👑', bossPage:'/math-site/boss_sho_1.html',
+  requireBoss:null, requireBossPage:null, requireBossName:null,
+  up:{href:'/math-site/', name:'入口にもどる'},
+  next:{href:'/math-site/sho/map_2.html', name:'1-2 かけざんの火山'},
+  map:[
+    'TTTTTTTTTTTTTTTTTTT',
+    'TU.P..............T',
+    'T..E..C..T..E..C..T',
+    'T.................T',
+    'T..E..T..C..E..T..T',
+    'T.................T',
+    'T..E..............T',
+    'T.................T',
+    'T.................T',
+    'TbTgT.............T',
+    'TBTST.............T',
+    'TTTTTTTTTTTTTTTTTTT'
+  ],
+  enemies:[ E('🟢','プラスライム',24,'#4fc3f7',[]), E('🦇','マイナスコウモリ',26,'#9575cd',[]), E('🐛','かぞえムシ',22,'#9ccc65',[]) ],
+  cards:[
+    {id:'sho1-tashi',e:'➕',t:'たしざんのコツ',b:'8＋5は 8に2で10、のこり3で13。「10を つくってから たす」と はやい！',svg:F('8 ＋ 5 ＝ 13','10を つくってから たす')},
+    {id:'sho1-hiki',e:'➖',t:'ひきざんのコツ',b:'13−5は 13を10と3に わけて 10−5＝5、5と3で8。「10から ひく」が ポイント。',svg:F('13 − 5 ＝ 8','10から ひいて かんがえる')},
+    {id:'sho1-kurai',e:'🔢',t:'くらいの しくみ',b:'28は 10が2つと ばらが8つ。位を そろえて 計算すれば まちがえない。',svg:F('28 ＝ 20 ＋ 8','十の位と 一の位')}
+  ]
+},
+/* 1-2 かけざん・わりざん（火山・溶岩） */
+sho2:{
+  zone:'sho2', kids:true, border:'R', decor:'cave',
+  title:'かけざんの火山', depth:'1-2 ─ かけざん・わりざん',
+  theme:{bg:'#2a0e08', floorA:'#5a241a', floorB:'#4d1f16', accent:'#ff9a3c', wall:'#7a2f1a'},
+  boss:'1-2', bossName:'九九ドラゴン', bossEmoji:'🐲', bossPage:'/math-site/boss_sho_2.html',
+  requireBoss:'1-1', requireBossPage:'/math-site/boss_sho_1.html', requireBossName:'たしざんキング',
+  up:{href:'/math-site/sho/map_1.html', name:'1-1 たしざんの森'},
+  next:{href:'/math-site/sho/map_3.html', name:'1-3 分数の湖'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RU.P..............R',
+    'R..E..C..R..E..C..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R..E..............R',
+    'R.................R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[ E('🐍','くくスネーク',30,'#66bb6a',[]), E('🦀','わりざんガニ',32,'#ef5350',[]), E('🐲','こドラゴン',34,'#42a5f5',[]) ],
+  cards:[
+    {id:'sho2-kuku',e:'✖️',t:'九九のひみつ',b:'7×6は 7×5＝35に 7を たして42。かけざんは じゅんばんを かえても こたえは おなじ！',svg:F('7 × 6 ＝ 42','九九を おぼえよう')},
+    {id:'sho2-wari',e:'➗',t:'わりざん',b:'24÷6は「6×?＝24」を かんがえて4。わりざんは かけざんの ぎゃく。',svg:F('24 ÷ 6 ＝ 4','6 × 4 ＝ 24')},
+    {id:'sho2-amari',e:'🔁',t:'あまりの ある わりざん',b:'14÷4は 4×3＝12 で あまり2。14＝4×3＋2 と かくよ。',svg:F('14 ÷ 4 ＝ 3 …2','あまりに 注意')}
+  ]
+},
+/* 1-3 分数・小数（水辺・湖） */
+sho3:{
+  zone:'sho3', kids:true, border:'R', decor:'island',
+  title:'分数の湖', depth:'1-3 ─ 分数・小数',
+  theme:{bg:'#07203a', floorA:'#16557d', floorB:'#134a6e', accent:'#8be0ff', wall:'#2a5f7a'},
+  boss:'1-3', bossName:'ぶんすうまじん', bossEmoji:'🧞', bossPage:'/math-site/boss_sho_3.html',
+  requireBoss:'1-2', requireBossPage:'/math-site/boss_sho_2.html', requireBossName:'九九ドラゴン',
+  up:{href:'/math-site/sho/map_2.html', name:'1-2 かけざんの火山'},
+  next:{href:'/math-site/sho/map_4.html', name:'1-4 面積の神殿'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RU.P..............R',
+    'R..E..C..R..E..C..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R..E..............R',
+    'R.................R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[ E('🪼','ぶんすうクラゲ',30,'#ba68c8',[]), E('🦑','しょうすうイカ',32,'#7e57c2',[]), E('👻','はんぶんゴースト',28,'#b0bec5',[]) ],
+  cards:[
+    {id:'sho3-bun',e:'🍕',t:'分数のたしざん',b:'分母が おなじなら 分子だけ たす。1/4＋2/4＝3/4。',svg:F('1/4 ＋ 2/4 ＝ 3/4','分母は そのまま')},
+    {id:'sho3-yaku',e:'✂️',t:'やくぶん',b:'2/4は 上も下も 2でわって 1/2。同じ 大きさの 分数だよ。',svg:F('2/4 ＝ 1/2','上下を 同じ数で わる')},
+    {id:'sho3-sho',e:'🔟',t:'小数の しくみ',b:'0.1が いくつ分か で考える。0.3＋0.4は 0.1が7こで 0.7。',svg:F('0.3 ＋ 0.4 ＝ 0.7','0.1の いくつ分')}
+  ]
+},
+/* 1-4 図形・面積（神殿・石造り） */
+sho4:{
+  zone:'sho4', kids:true, border:'#', decor:'ruins',
+  title:'面積の神殿', depth:'1-4 ─ 図形・面積',
+  theme:{bg:'#1c1a14', floorA:'#5a5440', floorB:'#514b39', accent:'#ffe08a', wall:'#7b7460'},
+  boss:'1-4', bossName:'めんせきモンスター', bossEmoji:'📐', bossPage:'/math-site/boss_sho_4.html',
+  requireBoss:'1-3', requireBossPage:'/math-site/boss_sho_3.html', requireBossName:'ぶんすうまじん',
+  up:{href:'/math-site/sho/map_3.html', name:'1-3 分数の湖'},
+  next:{href:'/math-site/sho/map_5.html', name:'1-5 時計塔'},
+  map:[
+    '###################',
+    '#U.P..............#',
+    '#..E..C..#..E..C..#',
+    '#.................#',
+    '#..E..#..C..E..#..#',
+    '#.................#',
+    '#..E..............#',
+    '#.................#',
+    '#.................#',
+    '#b#g#.............#',
+    '#B#S#.............#',
+    '###################'
+  ],
+  enemies:[ E('🔺','さんかくゴーレム',34,'#26a69a',[]), E('🟦','しかくゴーレム',34,'#5c6bc0',[]), E('📐','めんせきバット',32,'#26c6da',[]) ],
+  cards:[
+    {id:'sho4-cho',e:'▭',t:'長方形の面積',b:'たて×よこ。たて3・よこ5なら 15cm²。まわりの長さと まちがえないでね。',svg:F('たて × よこ','長方形の面積')},
+    {id:'sho4-sei',e:'□',t:'正方形の面積',b:'1辺×1辺。1辺が 4cmなら 16cm²。',svg:F('1辺 × 1辺','正方形の面積')},
+    {id:'sho4-san',e:'📐',t:'三角形の面積',b:'底辺×高さ÷2。長方形の はんぶん だから ÷2を わすれずに。',svg:F('底辺 × 高さ ÷ 2','三角形の面積')}
+  ]
+},
+/* 1-5 時計・単位（時計塔・機械） */
+sho5:{
+  zone:'sho5', kids:true, border:'R', decor:'void',
+  title:'時計塔', depth:'1-5 ─ 時計・単位',
+  theme:{bg:'#241a0e', floorA:'#5a4524', floorB:'#4d3b1f', accent:'#ffd54f', wall:'#7a5e2a'},
+  boss:'1-5', bossName:'とけいまじん', bossEmoji:'⏰', bossPage:'/math-site/boss_sho_5.html',
+  requireBoss:'1-4', requireBossPage:'/math-site/boss_sho_4.html', requireBossName:'めんせきモンスター',
+  up:{href:'/math-site/sho/map_4.html', name:'1-4 面積の神殿'},
+  next:{href:'/math-site/sho/map_6.html', name:'1-6 さんすうの城'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RU.P..............R',
+    'R..E..C..R..E..C..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R..E..............R',
+    'R.................R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[ E('🦉','とけいフクロウ',34,'#ffb74d',[]), E('🐰','たんいウサギ',32,'#f06292',[]), E('🐭','じかんネズミ',30,'#bdbdbd',[]) ],
+  cards:[
+    {id:'sho5-tokei',e:'🕐',t:'とけいの よみかた',b:'長いはりは 1で 5分。3を さしたら 15分。5分ずつ かぞえよう。',svg:F('長いはり 3 ＝ 15分','1で 5分')},
+    {id:'sho5-jikan',e:'⏳',t:'時間の たんい',b:'1時間＝60分、1分＝60秒。60で くりあがる ことに 注意。',svg:F('1時間 ＝ 60分','60で くりあがり')},
+    {id:'sho5-tani',e:'📏',t:'長さ・重さ・かさ',b:'1cm＝10mm、1m＝100cm、1kg＝1000g、1L＝1000mL。',svg:F('1m ＝ 100cm','たんいの かんけい')}
+  ]
+},
+/* 1-6 小学生 総まとめ（城・最終エリア） */
+sho6:{
+  zone:'sho6', kids:true, border:'R', decor:'void',
+  title:'さんすうの城', depth:'1-6 ─ 小学生 総まとめ',
+  theme:{bg:'#0e0820', floorA:'#2a2348', floorB:'#251f40', accent:'#e8c96b', wall:'#3a3460'},
+  boss:'1-6', bossName:'算数の番人', bossEmoji:'🛡️', bossPage:'/math-site/boss_sho_6.html',
+  requireBoss:'1-5', requireBossPage:'/math-site/boss_sho_5.html', requireBossName:'とけいまじん',
+  up:{href:'/math-site/sho/map_5.html', name:'1-5 時計塔'},
+  next:{href:'/math-site/chu/map.html', name:'中学フィールド（洞窟）'},
+  map:[
+    'RRRRRRRRRRRRRRRRRRR',
+    'RU.P..............R',
+    'R..E..C..R..E..C..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R..E..............R',
+    'R.................R',
+    'R.................R',
+    'RbRgR.............R',
+    'RBRSR.............R',
+    'RRRRRRRRRRRRRRRRRRR'
+  ],
+  enemies:[ E('🟣','まとめスライム',38,'#ab47bc',[]), E('🤖','けいさんロボ',40,'#78909c',[]), E('🐉','さんすうリュウ',42,'#7e57c2',[]) ],
+  cards:[
+    {id:'sho6-fukushu',e:'📚',t:'ふくしゅうが ちから',b:'たしざんから 単位まで、ぜんぶ つながっている。まいにち すこしずつ つづけよう。',svg:F('1-1 〜 1-5','ぜんぶ つながる')},
+    {id:'sho6-mistake',e:'💡',t:'まちがいは たからもの',b:'まちがえた ところが いちばん のびる。なぜ そう なるのか かんがえよう。',svg:F('まちがい → せいちょう','「なぜ？」を 大切に')},
+    {id:'sho6-next',e:'🚪',t:'中学への とびら',b:'ここを こえれば 中学数学。文字式や 方程式が きみを まっている。',svg:F('小学 → 中学','つぎの せかいへ')}
+  ]
+},
+
+/* ───────────────────────── 地上：小学生（森・草原・旧 / フォールバック） ───────────────────────── */
 sho:{
   zone:'sho', kids:true, border:'T', decor:'forest',
   title:'はじまりの森', depth:'地上 ─ 小学生フィールド',
@@ -215,8 +397,8 @@ chu:{
   title:'文字の洞窟', depth:'B1 ─ 中学生フィールド',
   theme:{bg:'#0c0a14', floorA:'#2c2636', floorB:'#272031', accent:'#8be0ff', wall:'#3a3346'},
   boss:2, bossName:'関数の壁', bossEmoji:'🐲', bossPage:'/math-site/boss_2.html',
-  requireBoss:1, requireBossPage:'/math-site/boss_1.html', requireBossName:'文字式の壁',
-  up:{href:'/math-site/sho/map.html', name:'地上（森）にもどる'},
+  requireBoss:'1-6', requireBossPage:'/math-site/boss_sho_6.html', requireBossName:'算数の番人',
+  up:{href:'/math-site/sho/map_6.html', name:'1-6 さんすうの城にもどる'},
   next:{href:'/math-site/ko/map.html', name:'高校フィールド（遺跡）'},
   map:[
     '###################',
@@ -529,6 +711,64 @@ var QUIZGEN={
     function(){ var x=qrand(2,9); return Qn(x+' kg は 何 g？',x*1000,[x*100,x*10],'1kg＝1000g。'); },
     function(){ var x=qrand(2,9); return Qn(x+' L は 何 mL？',x*1000,[x*100,x*500],'1L＝1000mL。'); },
     function(){ var x=qrand(2,6); return Qn(x+' 時間は 何分？',x*60,[x*100,x*6],'1時間＝60分。'); }
+  ],
+  /* ── 1-1：たしざん・ひきざん ── */
+  sho1:[
+    function(){ var a=qrand(6,9),b=qrand(5,9),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-1,s+2],'10を つくると はやい。'); },
+    function(){ var a=qrand(13,49),b=qrand(13,49),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-10,s+1],'十の位・一の位を たそう。'); },
+    function(){ var a=qrand(120,480),b=qrand(120,480),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-10,s+1],'3けたの たしざん。'); },
+    function(){ var m=qrand(11,18),n=qrand(3,9),s=m-n; return Qn(m+' − '+n+' ＝ ？',s,[s+1,s-2],'10から ひいて、のこりを たす。'); },
+    function(){ var a=qrand(40,99),b=qrand(11,39),s=a-b; return Qn(a+' − '+b+' ＝ ？',s,[s+10,s-1],'位ごとに ひこう。'); },
+    function(){ var x=qrand(6,29),b=qrand(11,49),s=x+b; return Qn('□ ＋ '+b+' ＝ '+s+'。□は？',x,[x+1,s],'たしざんの ぎゃくは ひきざん。'); }
+  ],
+  /* ── 1-2：かけざん・わりざん ── */
+  sho2:[
+    function(){ var a=qrand(2,9),b=qrand(2,9),s=a*b; return Qn(a+' × '+b+' ＝ ？',s,[s+a,s-b],'九九を おもいだそう。'); },
+    function(){ var a=qrand(11,19),b=qrand(2,9),s=a*b; return Qn(a+' × '+b+' ＝ ？',s,[s+b,s-a],'(10＋□)×'+b+' に分けて計算。'); },
+    function(){ var b=qrand(2,9),ans=qrand(2,9),a=b*ans; return Qn(a+' ÷ '+b+' ＝ ？',ans,[ans+1,ans-1],b+'×?＝'+a+'。'); },
+    function(){ var b=qrand(3,9),ans=qrand(2,8),r=qrand(1,b-1),a=b*ans+r; return Qn(a+' ÷ '+b+' の あまりは？',r,[r+1,(r+2)%b],a+'＝'+b+'×'+ans+'＋'+r+'。'); },
+    function(){ var b=qrand(3,9),ans=qrand(2,8),r=qrand(1,b-1),a=b*ans+r; return Qn(a+' ÷ '+b+' の しょうは？',ans,[ans+1,ans-1],a+'＝'+b+'×'+ans+'＋'+r+'。しょうは '+ans+'。'); },
+    function(){ var a=qrand(2,9),b=qrand(2,9),c=qrand(2,5),p=a*b*c; return Qn(a+' × '+b+' × '+c+' ＝ ？',p,[p+c,a*b+c],'まえから じゅんに かける。'); }
+  ],
+  /* ── 1-3：分数・小数 ── */
+  sho3:[
+    function(){ var d=qrand(4,8),p=qrand(1,d-2),q=qrand(1,d-p-1); return Qn(p+'/'+d+' ＋ '+q+'/'+d+' は？',(p+q)+'/'+d,[(p+q)+'/'+(2*d),(p+q+1)+'/'+d],'分母はそのまま、分子だけ たす。'); },
+    function(){ var d=qrand(5,9),p=qrand(2,d-1),q=qrand(1,p-1); return Qn(p+'/'+d+' − '+q+'/'+d+' は？',(p-q)+'/'+d,[(p-q)+'/'+(2*d),(p-q+1)+'/'+d],'分子だけ ひく。'); },
+    function(){ return Qn('2/4 を やくぶんすると？','1/2',['1/4','2/2'],'上も下も 2でわる。'); },
+    function(){ var a=qrand(1,8),b=qrand(1,8),s=a+b; return Qn(dec1(a/10)+' ＋ '+dec1(b/10)+' は？',dec1(s/10),[dec1((s+1)/10),dec1((s-1)/10)],'0.1が ('+a+'＋'+b+') こ。'); },
+    function(){ var a=qrand(3,9),b=qrand(1,a-1),s=a-b; return Qn(dec1(a/10)+' − '+dec1(b/10)+' は？',dec1(s/10),[dec1((s+1)/10),dec1((s+2)/10)],'0.1が ('+a+'−'+b+') こ。'); },
+    function(){ var a=qrand(2,9),b=qrand(2,9),p=a*b; return Qn(dec1(a/10)+' × '+b+' は？',dec1(p/10),[dec1(p/100),''+p],'0.'+a+'×'+b+'＝'+dec1(p/10)+'。'); }
+  ],
+  /* ── 1-4：図形・面積 ── */
+  sho4:[
+    function(){ var w=qrand(3,12),h=qrand(2,9),A=w*h; return Qn('たて '+h+'cm、よこ '+w+'cm の 長方形の 面積は？（cm²）',A,[2*(w+h),A+h],'たて×よこ＝'+A+'。'); },
+    function(){ var s=qrand(2,12),A=s*s; return Qn('1辺 '+s+'cm の 正方形の 面積は？（cm²）',A,[4*s,2*s],'1辺×1辺＝'+A+'。'); },
+    function(){ var b=qrand(2,12),h=qrand(1,5)*2,A=b*h/2; return Qn('底辺 '+b+'cm、高さ '+h+'cm の 三角形の 面積は？（cm²）',A,[b*h,A+b],'底辺×高さ÷2＝'+A+'。'); },
+    function(){ var w=qrand(3,12),h=qrand(2,9),P=2*(w+h); return Qn('たて '+h+'cm、よこ '+w+'cm の 長方形の まわりの長さは？（cm）',P,[w*h,w+h],'(たて＋よこ)×2＝'+P+'。'); },
+    function(){ var s=qrand(2,12),P=4*s; return Qn('1辺 '+s+'cm の 正方形の まわりの長さは？（cm）',P,[s*s,2*s],'1辺×4＝'+P+'。'); }
+  ],
+  /* ── 1-5：時計・単位 ── */
+  sho5:[
+    function(){ var k=qrand(1,11),m=k*5; return Qn('とけいの 長いはりが '+k+' を さしています。何分？',m,[m+5,k],'長いはりは 1で5分。'); },
+    function(){ var h=qrand(1,11),ms=[15,30,45],m=ms[qrand(0,2)]; return Qn(h+'時ちょうどから '+m+'分 たつと？',h+'時'+m+'分',[(h===12?1:h+1)+'時'+m+'分',(h===1?12:h-1)+'時'+m+'分'],'時はそのまま、分だけ すすむ。'); },
+    function(){ var x=qrand(2,20); return Qn(x+' cm は 何 mm？',x*10,[x*100,x+10],'1cm＝10mm。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' m は 何 cm？',x*100,[x*10,x*1000],'1m＝100cm。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' kg は 何 g？',x*1000,[x*100,x*10],'1kg＝1000g。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' L は 何 mL？',x*1000,[x*100,x*500],'1L＝1000mL。'); },
+    function(){ var x=qrand(2,6); return Qn(x+' 時間は 何分？',x*60,[x*100,x*6],'1時間＝60分。'); }
+  ],
+  /* ── 1-6：小学生 総まとめ（混合） ── */
+  sho6:[
+    function(){ var a=qrand(120,680),b=qrand(120,680),s=a+b; return Qn(a+' ＋ '+b+' ＝ ？',s,[s-10,s+1],'3けたの たしざん。'); },
+    function(){ var a=qrand(400,990),b=qrand(120,390),s=a-b; return Qn(a+' − '+b+' ＝ ？',s,[s+10,s-1],'3けたの ひきざん。'); },
+    function(){ var a=qrand(11,19),b=qrand(2,9),s=a*b; return Qn(a+' × '+b+' ＝ ？',s,[s+b,s-a],'(10＋□)×'+b+'。'); },
+    function(){ var b=qrand(3,9),ans=qrand(2,8),r=qrand(1,b-1),a=b*ans+r; return Qn(a+' ÷ '+b+' の あまりは？',r,[r+1,(r+2)%b],a+'＝'+b+'×'+ans+'＋'+r+'。'); },
+    function(){ var d=qrand(4,8),p=qrand(1,d-2),q=qrand(1,d-p-1); return Qn(p+'/'+d+' ＋ '+q+'/'+d+' は？',(p+q)+'/'+d,[(p+q)+'/'+(2*d),(p+q+1)+'/'+d],'分子だけ たす。'); },
+    function(){ var a=qrand(1,8),b=qrand(1,8),s=a+b; return Qn(dec1(a/10)+' ＋ '+dec1(b/10)+' は？',dec1(s/10),[dec1((s+1)/10),dec1((s-1)/10)],'0.1が ('+a+'＋'+b+') こ。'); },
+    function(){ var b=qrand(2,12),h=qrand(1,5)*2,A=b*h/2; return Qn('底辺 '+b+'cm、高さ '+h+'cm の 三角形の 面積は？（cm²）',A,[b*h,A+b],'底辺×高さ÷2＝'+A+'。'); },
+    function(){ var w=qrand(3,12),h=qrand(2,9),A=w*h; return Qn('たて '+h+'cm、よこ '+w+'cm の 長方形の 面積は？（cm²）',A,[2*(w+h),A+h],'たて×よこ＝'+A+'。'); },
+    function(){ var x=qrand(2,6); return Qn(x+' 時間は 何分？',x*60,[x*100,x*6],'1時間＝60分。'); },
+    function(){ var x=qrand(2,9); return Qn(x+' kg は 何 g？',x*1000,[x*100,x*10],'1kg＝1000g。'); }
   ],
   /* ── 中学生：正負の数・文字式・一次方程式・比例反比例・平行と合同・確率 ── */
   chu:[
@@ -1438,7 +1678,7 @@ window.FieldMap=function(zoneId){
       else { try{ var d=[],i,k; for(i=0;i<localStorage.length;i++){ k=localStorage.key(i); if(/^rpg_/.test(k)) d.push(k); } d.forEach(function(x){ localStorage.removeItem(x); }); }catch(e){} }
       try{ sessionStorage.removeItem('rpg_started'); }catch(e){}
       if(window.SND) SND.clear();
-      location.href='/math-site/sho/map.html';
+      location.href='/math-site/sho/map_1.html';
     });
     ov.querySelector('#fmRsNo').addEventListener('click',function(){ closeOv(ov); mode='field'; });
     ov.addEventListener('click',function(e){ if(e.target===ov){ closeOv(ov); mode='field'; } });
@@ -1559,8 +1799,8 @@ window.FieldMap=function(zoneId){
   /* ── 起動 ── */
   if(window.SND){} /* sound.js は自動でアンロック */
   var freshSession=(function(){ try{ return sessionStorage.getItem('rpg_started')!=='1'; }catch(e){ return true; } })();
-  if(zoneId==='sho' && freshSession){
-    showTitle();          /* 入口（小学生フィールド）ではまずタイトル → キャラ選択 */
+  if(zoneId==='sho1' && freshSession){
+    showTitle();          /* 入口（小学生フィールド 1-1）ではまずタイトル → キャラ選択 */
   } else {
     maybeGate();
   }
