@@ -135,17 +135,16 @@ sho:{
   next:{href:'/math-site/chu/map.html', name:'中学フィールド（洞窟）'},
   map:[
     'TTTTTTTTTTTTTTTTTTT',
-    'TP...C....T....E..T',
-    'T...TT.......TT..CT',
-    'T.E.....C.......T.T',
-    'T....TT.....E....T.T',
-    'T.C.......TT.....ET',
-    'T....E.......C..T.T',
-    'T.TT......E.....T.T',
-    'T...C....T....TT.CT',
-    'T.U....TT.....E...T',
-    'TB...E......C....ST',
-    'T....TT.......T...T',
+    'TU.P..............T',
+    'T..C..E..T..C..E..T',
+    'T.................T',
+    'T..C..T..E..C..T..T',
+    'T.................T',
+    'T..E..T..C..E..T..T',
+    'T.................T',
+    'T.....C..C..E..C..T',
+    'T.................T',
+    'TSB...............T',
     'TTTTTTTTTTTTTTTTTTT'
   ],
   enemies:[
@@ -221,16 +220,16 @@ chu:{
   next:{href:'/math-site/ko/map.html', name:'高校フィールド（遺跡）'},
   map:[
     '###################',
-    '#P..R....RR....E..#',
-    '#..RR.......C....R#',
-    '#.E....C......RR..#',
-    '#...RR....E......C#',
-    '#.C.....RR.....E..#',
-    '#....E......C..R..#',
-    '#.RR.....C.....R..#',
-    '#U..C...RR....E...#',
-    '#B...E.....C....S.#',
-    '#...RR.......R....#',
+    '#U.P..............#',
+    '#..C..E..R..C..E..#',
+    '#.................#',
+    '#..C..R..E..C..R..#',
+    '#.................#',
+    '#..E..R..C..E..R..#',
+    '#.................#',
+    '#........R..E..C..#',
+    '#.................#',
+    '#SB...............#',
     '###################'
   ],
   enemies:[
@@ -287,16 +286,16 @@ ko:{
   next:{href:'/math-site/dai/map.html', name:'大学フィールド（浮遊島）'},
   map:[
     '###################',
-    '#P..C...R....E...C#',
-    '#..RR.......R.....#',
-    '#.E.....C......RR.#',
-    '#...R.....E.....C.#',
-    '#.C....RR.....E...#',
-    '#....E.....C...R..#',
-    '#.RR....C......R..#',
-    '#U...E....RR.....C#',
-    '#B....C....E....S.#',
-    '#..R......R.......#',
+    '#U.P..............#',
+    '#..C..E..R..C..E..#',
+    '#.................#',
+    '#..C..R..E..C..R..#',
+    '#.................#',
+    '#..E..R..C..E..R..#',
+    '#.................#',
+    '#...........R..E..#',
+    '#.................#',
+    '#SB...............#',
     '###################'
   ],
   enemies:[
@@ -351,16 +350,16 @@ dai:{
   next:{href:'/math-site/in/map.html', name:'大学院フィールド（虚空）'},
   map:[
     'RRRRRRRRRRRRRRRRRRR',
-    'RP..C...R....E...CR',
-    'R..RR.......R.....R',
-    'R.E.....C......RR.R',
-    'R...R.....E.....C.R',
-    'R.C....RR.....E...R',
-    'R....E.....C...R..R',
-    'R.RR....C......E..R',
-    'RU...C....RR....CR',
-    'RB....E....C....SR',
-    'R..R......R.......R',
+    'RU.P..............R',
+    'R..C..E..R..C..E..R',
+    'R.................R',
+    'R..C..R..E..C..R..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R........R..E..C..R',
+    'R.................R',
+    'RSB...............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -422,15 +421,16 @@ in:{
   next:{href:'/math-site/mikaiketsu.html', name:'未解決問題の世界'},
   map:[
     'RRRRRRRRRRRRRRRRRRR',
-    'RP....C......E....R',
-    'R....RR.........C.R',
-    'R..E......C.......R',
-    'R......RR......E..R',
-    'R.C........E......R',
-    'R....RR.......C...R',
-    'RU......C....R....R',
-    'RB....E.........SR',
-    'R...RR.......R....R',
+    'RU.P..............R',
+    'R..C..E..R..C..E..R',
+    'R.................R',
+    'R..C..R..E..C..R..R',
+    'R.................R',
+    'R..E..R..C..E..R..R',
+    'R.................R',
+    'R..............R..R',
+    'R.................R',
+    'RSB...............R',
     'RRRRRRRRRRRRRRRRRRR'
   ],
   enemies:[
@@ -926,40 +926,59 @@ window.FieldMap=function(zoneId){
       ctx.save(); ctx.shadowColor='rgba(255,80,60,'+pul+')'; ctx.shadowBlur=10;
       ctx.font='20px sans-serif'; ctx.fillText('🔒',sx+TILE/2,sy+TILE/2);
       ctx.restore();
+    } else if(down){
+      /* ボス撃破後：奥の階段が光って次のフィールドへ */
+      var gp=0.5+0.5*Math.sin(t*3);
+      ctx.save(); ctx.shadowColor='rgba(255,220,120,'+gp+')'; ctx.shadowBlur=16;
+      ctx.strokeStyle='rgba(255,225,140,'+(0.5+0.4*gp)+')'; ctx.lineWidth=2;
+      roundPath(sx+4,sy+4,TILE-8,TILE-8,6); ctx.stroke();
+      ctx.restore();
     }
   }
+  /* ボスキャラを描く（鳥居の扉ではなく、各フィールドのボスの姿そのもの）
+     封印中＝暗く沈み🔒＋撃破進捗 / 解錠＝発光して浮遊（近づくとボス戦） / 撃破済＝👑 */
   function drawBossDoor(sx,sy,t){
     var cleared=window.RPG&&RPG.bossCleared(CFG.boss);
-    var open=cleared||bossUnlocked();   /* 解錠＝撃破済み or このフィールドで規定数撃破 */
+    var open=cleared||bossUnlocked();
+    var cx=sx+TILE/2, cy=sy+TILE/2+1;
     var pul=0.55+0.45*Math.sin(t*3);
-    /* 扉本体（解錠時は強く発光して「開く」演出、封印時は暗く沈む） */
-    ctx.save();
-    if(open){ ctx.shadowColor=cleared?'rgba(232,201,107,'+pul+')':'rgba(232,150,60,'+pul+')'; ctx.shadowBlur=22; }
-    else{ ctx.shadowColor='rgba(90,100,130,'+(0.25+0.2*pul)+')'; ctx.shadowBlur=7; }
-    ctx.fillStyle=cleared?'#2a2418':(open?'#241510':'#14121c');
-    roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle=cleared?'#c8a84b':(open?'#e0883c':'#4a4f63'); ctx.lineWidth=2.5;
-    roundPath(sx+3,sy+2,TILE-6,TILE-4,5); ctx.stroke();
-    /* 鳥居 */
-    ctx.strokeStyle=cleared?'#e8c96b':(open?'#ffae6a':'#5a6075'); ctx.lineWidth=3; ctx.lineCap='round';
-    ctx.beginPath(); ctx.moveTo(sx+11,sy+15); ctx.lineTo(sx+TILE-11,sy+15);
-    ctx.moveTo(sx+13,sy+20); ctx.lineTo(sx+TILE-13,sy+20);
-    ctx.moveTo(sx+15,sy+15); ctx.lineTo(sx+15,sy+TILE-8);
-    ctx.moveTo(sx+TILE-15,sy+15); ctx.lineTo(sx+TILE-15,sy+TILE-8); ctx.stroke();
-    ctx.font='16px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    var bob=open?Math.sin(t*2.2)*3:0;
+    /* 影 */
+    ctx.fillStyle='rgba(0,0,0,.3)';
+    ctx.beginPath(); ctx.ellipse(cx,sy+TILE-6,13,4,0,0,7); ctx.fill();
     if(open){
-      ctx.fillText(cleared?'👑':CFG.bossEmoji,sx+TILE/2,sy+TILE/2+4);
-      if(!cleared){
-        /* 解錠の光の筋（開門演出） */
-        ctx.save(); ctx.globalAlpha=0.25+0.4*pul; ctx.fillStyle='#ffe6b0';
-        ctx.fillRect(sx+TILE/2-3,sy+16,6,TILE-24); ctx.restore();
-      }
+      /* 発光オーラ */
+      ctx.save();
+      var col=cleared?'rgba(232,201,107,':'rgba(255,150,60,';
+      ctx.shadowColor=col+pul+')'; ctx.shadowBlur=22;
+      var ag=ctx.createRadialGradient(cx,cy+bob,2,cx,cy+bob,19);
+      ag.addColorStop(0,col+(0.55*pul)+')'); ag.addColorStop(1,col+'0)');
+      ctx.fillStyle=ag; ctx.beginPath(); ctx.arc(cx,cy+bob,19,0,7); ctx.fill();
+      ctx.restore();
     }else{
-      /* 封印中：南京錠＋進捗 */
-      ctx.fillText('🔒',sx+TILE/2,sy+TILE/2+1);
-      ctx.font='bold 10px sans-serif'; ctx.fillStyle='#9aa3bd';
-      ctx.fillText(zoneKills()+'/'+KILLS_NEEDED,sx+TILE/2,sy+TILE-6);
+      /* 封印の暗い台座 */
+      ctx.save();
+      ctx.fillStyle='rgba(18,16,26,.85)'; ctx.beginPath(); ctx.arc(cx,cy,16,0,7); ctx.fill();
+      ctx.strokeStyle='rgba(90,100,130,'+(0.35+0.3*pul)+')'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,15,0,7); ctx.stroke();
+      ctx.restore();
+    }
+    /* ボスキャラ本体（各フィールド固有の絵）。封印中は暗く沈める */
+    ctx.save();
+    ctx.font='27px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(!open) ctx.globalAlpha=0.45;
+    ctx.fillText(CFG.bossEmoji,cx,cy+bob);
+    ctx.restore();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(open){
+      if(cleared){ ctx.font='13px sans-serif'; ctx.fillText('👑',cx,sy+8); }
+    }else{
+      ctx.save();
+      ctx.font='15px sans-serif'; ctx.shadowColor='rgba(255,80,60,'+pul+')'; ctx.shadowBlur=8; ctx.fillStyle='#fff';
+      ctx.fillText('🔒',cx,cy);
+      ctx.restore();
+      ctx.font='bold 10px sans-serif'; ctx.fillStyle='#aab3cd';
+      ctx.fillText(zoneKills()+'/'+KILLS_NEEDED,cx,sy+TILE-6);
     }
   }
   function drawChest(sx,sy,opened,t){
@@ -1297,7 +1316,7 @@ window.FieldMap=function(zoneId){
     var ov=el('div','fm-ov fm-locked');
     ov.innerHTML='<div class="fm-locked-in">'+
       '<div class="fm-locked-ic">🔒</div>'+
-      '<div class="fm-locked-t">'+(KIDS?'ボスの とびらは ふういんされている！':'ボスの扉は封印されている')+'</div>'+
+      '<div class="fm-locked-t">'+(KIDS?'ボスは ふういんされている！':'ボスは封印されている')+'</div>'+
       '<div class="fm-locked-d">'+(KIDS
         ?'このフィールドの てきを たおすと ふういんが ゆるむ。<br><strong style="color:#ffd9c8;font-size:1.15em;">あと '+killsLeft()+'体 たおそう！</strong>'
         :'このフィールドの敵を倒すと封印が緩む。<br><strong style="color:#ffd9c8;font-size:1.15em;">あと '+killsLeft()+'体 たおそう！</strong>')+
@@ -1319,7 +1338,7 @@ window.FieldMap=function(zoneId){
       '<div class="fm-locked-t" style="color:#ffd9c8;">'+(cleared?(KIDS?'げきは ずみの ボス':'撃破済みのボス'):'BOSS ─ '+CFG.bossName)+'</div>'+
       '<div class="fm-locked-d">'+(cleared
         ?(KIDS?'もういちど たたかう？ たたかうたびに つよく なるぞ。':'再戦するか？ 来るたびに、奴は強くなる。')
-        :(KIDS?'この とびらの おくに ボスが いる。じゅんびは いい？':'この扉の奥にボスがいる。挑むか？'))+'</div>'+
+        :(KIDS?'めの まえに ボスが いる。じゅんびは いい？':'目の前にボスがいる。挑むか？'))+'</div>'+
       '<a class="fm-go boss" href="'+CFG.bossPage+'">⚔️ '+(cleared?(KIDS?'さいせん する':'再戦する'):(KIDS?'ボスに いどむ':'ボスに挑む'))+'</a>'+
       '<button class="fm-go ghost" id="fmBx">'+(KIDS?'やめておく':'やめておく')+'</button>'+
       '</div>';
