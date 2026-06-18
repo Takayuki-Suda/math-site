@@ -61,7 +61,8 @@
       "Bash(taskkill //IM python.exe //F)",
       "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --window-size=900,640 --virtual-time-budget=7000 '--screenshot=C:\\\\Users\\\\s_t24\\\\AppData\\\\Local\\\\Temp\\\\_battle2.png' http://127.0.0.1:8772/math-site/_battletest.html)",
       "Bash(git -C \"C:/Users/s_t24/math-site\" status --short)",
-      "Bash(git -C \"C:/Users/s_t24/math-site\" diff --stat)"
+      "Bash(git -C \"C:/Users/s_t24/math-site\" diff --stat)",
+      "Bash(grep -v ':1$')"
     ]
   }
 }
