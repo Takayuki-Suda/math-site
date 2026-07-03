@@ -503,7 +503,8 @@ function BossBattle(cfg){
       '<div class="bb-win-title">'+(kids?'ボスをたおした！！':'ボス撃破！！')+'</div>'+
       '<div class="bb-win-msg">'+v.msg+'</div>';
     if(v.cta){
-      h+='<div><a class="bb-cta" href="'+v.cta.href+'" target="_blank" rel="noopener">'+v.cta.label+'</a>'+
+      var ctaTarget=/^mailto:/i.test(v.cta.href)?'':' target="_blank" rel="noopener"';
+      h+='<div><a class="bb-cta" href="'+v.cta.href+'"'+ctaTarget+'>'+v.cta.label+'</a>'+
          '<div class="bb-cta-note">'+v.cta.note+'</div></div>';
     }
     /* 自動で次フィールドへは進まない：撃破後はマップ（来たフィールド）に戻り、
