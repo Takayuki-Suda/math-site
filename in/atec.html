@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>その先へ ─ Advanced Topics への招待 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'q'; position:absolute; right:10px; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+  .refchip.adv { color:var(--purple); border-color:rgba(176,138,224,.4); }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .iou { border:1px dashed rgba(232,197,71,.55); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(232,197,71,.04); }
+  .iou .i-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--gold); margin-bottom:8px; }
+  .iou p { font-size:0.9rem; color:#e8dcae; margin-bottom:0; line-height:1.95; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 終章</div>
+    <h1>山頂で受け取る、次の招待状<br><span class="en">Advanced Topics in the Arithmetic of Elliptic Curves</span></h1>
+    <p class="hero-sub">
+      Mordell–Weil 定理を証明し、Selmer 群と Ш 群で「計算可能性の境界線」まで見た。
+      では、この物語はここで終わりなのか。──終わらない。
+      本シリーズが「一旦認めて」通過した箇所の一つ一つが、
+      続巻 <strong>GTM 151</strong> では章ひとつ分の風景に変わる。
+      この終章は、山頂から見えるその風景の地図であり、次の登山への招待状である。
+    </p>
+    <p class="hero-book">TEXT: Silverman, Advanced Topics in the Arithmetic of Elliptic Curves, GTM 151（以下 ATAEC）─ 全章展望</p>
+    <div class="series-nav">
+      <a href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+      <a class="cur" href="/math-site/in/atec.html">終 その先へ</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>到達点の棚卸し ─ そして、白状すべきこと</h2>
+    <p>
+      第1部から第5部までで手に入れたものを一行ずつで振り返ります。
+    </p>
+    <ul>
+      <li><strong>E(K) は有限生成</strong>（弱MW＋高さと降下）<span class="refchip">AEC VIII</span></li>
+      <li>その証明の非有効性は <strong>E(K)/mE(K) の決定という一点に集中</strong>する<span class="refchip">AEC VIII.1.8</span></li>
+      <li>その一点を挟み撃つ装置が <strong>Selmer 群（計算可能）と Ш 群（Hasse原理の破れ）</strong><span class="refchip">AEC X §4</span></li>
+      <li>実際に1本の曲線で E(ℚ) ≅ ℤ × ℤ/2ℤ を計算しきった<span class="refchip">AEC X.4.10</span></li>
+    </ul>
+    <p>
+      堂々たる到達点です。しかし正直に白状すると、この5部の道中でわれわれは
+      何枚もの<strong>借用証（IOU）</strong>を書いてきました。
+      「⏩ ここで止まらない」の緑の枠で「一旦認めて先へ進む」と宣言した箇所、
+      「名前だけで可」と言って通過した定理、「予想」とだけ書いて閉じた問い──それらは全部、
+      返済されないまま残っています。
+    </p>
+    <p>
+      Silverman 自身、AEC の初版の序文で「多くの重要な話題を割愛せざるを得なかった」と書き、
+      巻末の付録でその話題たちを予告しました。その予告を回収するために書かれた本が、続巻
+      <strong>『Advanced Topics in the Arithmetic of Elliptic Curves』（GTM 151、1994）</strong>です。
+      つまりこの本は「もっと難しい別の本」ではなく、<strong>われわれの借用証の返済窓口</strong>なのです。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>借用証の一覧表</h2>
+    <p>
+      本シリーズで実際に書いた借用証を、返済場所と対応させて一覧にします。
+      <strong>自分がどこで「認めて」進んだか</strong>を思い出しながら眺めてください。
+      金のチップが AEC、紫のチップが ATAEC の参照です。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>シリーズで認めたこと</th><th>どこで</th><th>返済窓口</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>「[E(K) : E₀(K)] は有限（Kodaira–Néron）。<strong>名前だけで可</strong>」</td>
+          <td>第1部 Ch.VII の節</td>
+          <td class="m">ATAEC IV（Néronモデル）</td>
+        </tr>
+        <tr>
+          <td>悪い還元の「型」の分類と、導手・玉川数の計算法</td>
+          <td>第1部・第5部で素通り</td>
+          <td class="m">ATAEC IV §8–§11（Tateのアルゴリズム・Ogg公式）</td>
+        </tr>
+        <tr>
+          <td>局所体上の WC(E/K<sub>v</sub>) は「Henselで判定できる」どまり。<strong>構造</strong>は不明のまま</td>
+          <td>第5部 Section 04</td>
+          <td class="m">ATAEC V（Tate曲線・局所双対性）</td>
+        </tr>
+        <tr>
+          <td>標準高さ ĥ は極限としてしか定義されていない。実際の計算法は？</td>
+          <td>第4部 §9（望遠鏡トリック）</td>
+          <td class="m">ATAEC VI（局所高さの明示式）</td>
+        </tr>
+        <tr>
+          <td>「階数は非有界か」──予想と書いて閉じた</td>
+          <td>第4部 §10–11 の節</td>
+          <td class="m">ATAEC III（楕円曲面と特殊化定理）</td>
+        </tr>
+        <tr>
+          <td>BSD 予想を語ったが、<strong>L(E,s) の解析接続は未証明のまま</strong></td>
+          <td>第5部 出口</td>
+          <td class="m">ATAEC I・II（Hecke理論／CM）</td>
+        </tr>
+        <tr>
+          <td>E : y² = x³ − x の計算が「異様にきれい」だった理由（L = ℚ(ζ₈)！）</td>
+          <td>第2部・第3部の実例</td>
+          <td class="m">ATAEC II（虚数乗法）</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 470" role="img" aria-label="AECの山頂からATAECの6つの扉への地図">
+        <defs>
+          <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .ab { fill:#171a29; stroke:#3a4160; stroke-width:1; }
+          .abg { fill:rgba(232,197,71,0.10); stroke:#E8C547; stroke-width:1.6; }
+          .at1 { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#b08ae0; }
+          .at2 { font-family:'Noto Serif JP',serif; font-size:13.5px; font-weight:700; fill:#e8eaf4; }
+          .at3 { font-family:'Noto Serif JP',serif; font-size:11px; fill:#9aa1bd; }
+          .ae { stroke:#E8C547; stroke-width:1.5; fill:none; marker-end:url(#arrA); opacity:.8; }
+        </style>
+
+        <!-- summit -->
+        <rect class="abg" x="255" y="196" width="250" height="76" rx="10"/>
+        <text class="at1" x="273" y="222" fill="#E8C547">SUMMIT ─ 本シリーズ</text>
+        <text class="at2" x="273" y="243">AEC Ch.VIII ＋ X §4</text>
+        <text class="at3" x="273" y="262">Mordell–Weil／Selmer／Ш</text>
+
+        <!-- I -->
+        <rect class="ab" x="30" y="30" width="220" height="66" rx="8"/>
+        <text class="at1" x="44" y="53">ATAEC I</text>
+        <text class="at2" x="44" y="72">保型関数と Hecke 作用素</text>
+        <text class="at3" x="44" y="88">L(E,s) はそもそも存在するか</text>
+        <!-- II -->
+        <rect class="ab" x="510" y="30" width="220" height="66" rx="8"/>
+        <text class="at1" x="524" y="53">ATAEC II</text>
+        <text class="at2" x="524" y="72">虚数乗法（CM）</text>
+        <text class="at3" x="524" y="88">y²=x³−x の種明かし／類体論</text>
+        <!-- III -->
+        <rect class="ab" x="16" y="200" width="200" height="66" rx="8"/>
+        <text class="at1" x="30" y="223">ATAEC III</text>
+        <text class="at2" x="30" y="242">楕円曲面と特殊化</text>
+        <text class="at3" x="30" y="258">階数の狩り場</text>
+        <!-- IV -->
+        <rect class="ab" x="544" y="200" width="200" height="66" rx="8"/>
+        <text class="at1" x="558" y="223">ATAEC IV</text>
+        <text class="at2" x="558" y="242">Néron モデル</text>
+        <text class="at3" x="558" y="258">「名前だけ」の定理の証明書</text>
+        <!-- V -->
+        <rect class="ab" x="30" y="374" width="220" height="66" rx="8"/>
+        <text class="at1" x="44" y="397">ATAEC V</text>
+        <text class="at2" x="44" y="416">Tate 曲線</text>
+        <text class="at3" x="44" y="432">Hilbert 90 の復活・局所双対性</text>
+        <!-- VI -->
+        <rect class="ab" x="510" y="374" width="220" height="66" rx="8"/>
+        <text class="at1" x="524" y="397">ATAEC VI</text>
+        <text class="at2" x="524" y="416">局所高さ関数</text>
+        <text class="at3" x="524" y="432">ĥ を「本当に」計算する</text>
+
+        <!-- edges -->
+        <path class="ae" d="M310,196 L190,100"/>
+        <path class="ae" d="M450,196 L570,100"/>
+        <path class="ae" d="M255,232 L220,232"/>
+        <path class="ae" d="M505,232 L540,232"/>
+        <path class="ae" d="M310,272 L190,372"/>
+        <path class="ae" d="M450,272 L570,372"/>
+      </svg>
+      <div class="svg-cap">
+        図1：山頂から開く6つの扉。ATAEC の各章はほぼ独立に読める（序文の依存図参照）。
+        どの扉から入っても、AEC VIII・X で身につけた足腰がそのまま通用する。
+      </div>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">⏩ 番号対応の注意（1分で済む話）</div>
+      <p>
+        ATAEC（1994）が引用する [AEC …] は<strong>初版（1986）の番号</strong>です。第2版（本シリーズの底本）とは
+        ごく一部で番号がずれます（例：E(K)/E₀(K) の有限性は ATAEC では [AEC VII.5.1] と引かれるが、
+        第2版では VII.6.1）。ずれても節のタイトルで探せばすぐ見つかるので、怖がる必要はありません。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3. 扉IV ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Gate 1 ─ ATAEC Ch. IV</div>
+    <h2>Néron モデル ─ 「名前だけで可」と言った定理の証明書</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 返済される借用証</div>
+      <p>
+        第1部でわれわれはこう書きました──「[E(K) : E₀(K)] は有限（Kodaira–Néron。<strong>名前だけで可</strong>）」。
+        そしてこの事実は、Néron–Ogg–Shafarevich 判定法<span class="refchip">AEC VII.7.1</span>の証明の中で
+        実際に使われています。つまり<strong>本シリーズの理論体系は、証明していない定理の上に建っている</strong>。
+      </p>
+    </div>
+
+    <p>
+      ATAEC IV はこの負債を正面から返済します。しかも返済のしかたが豪華です。
+      局所体の整数環 R 上に、楕円曲線 E/K の「最良の整モデル」──<strong>Néron モデル</strong>──を建設し、
+      その普遍性から一気にすべてを引き出します。
+    </p>
+    <div class="formula">
+      <div class="fline">E(K) ≅ 𝓔(R)　（Néron の普遍写像性質：有理点は必ず整モデルの点に延びる）</div>
+      <div class="fline fc">𝓔 = 極小正則モデルの滑らかな部分。ATAEC IV §5–§6</div>
+    </div>
+    <p>
+      特殊ファイバー（還元先）の可能な形は <strong>Kodaira–Néron 分類</strong>で完全に列挙されます：
+      I<sub>n</sub>（n角形）、II（尖点）、III、IV、I<sub>n</sub><sup>*</sup>、IV<sup>*</sup>、III<sup>*</sup>、II<sup>*</sup>
+      <span class="refchip adv">ATAEC IV §8</span>。
+      そして Silverman は ATAEC IV.9.2.1 で明言します──
+      「これはまさに AEC で<strong>証明なしに残された</strong>結果である」。
+      借用証の回収現場を、原文で見ることができます。
+    </p>
+
+    <h3>Tate のアルゴリズム ─ 分類が「手順」になる</h3>
+    <p>
+      分類定理だけなら鑑賞品ですが、ATAEC IV §9 の <strong>Tate のアルゴリズム</strong>は実用品です。
+      Weierstrass 方程式を入れると、有限回の合同式チェックで
+      還元型・極小方程式・導手の指数 f・そして玉川数 c<sub>v</sub> = [E(K<sub>v</sub>) : E₀(K<sub>v</sub>)]
+      が機械的に出てきます。第5部で「S の各素点で局所条件をチェック」と言ったとき、
+      悪い素点の中で何が起きているかを見る顕微鏡がこれです。
+    </p>
+    <div class="box thm">
+      <div class="box-label">Ogg の公式 <span class="refchip adv">ATAEC IV.11.1</span></div>
+      <p>局所体 K 上の楕円曲線 E/K について、極小判別式・導手・特殊ファイバーの既約成分の個数 m(E/K) の間に</p>
+      <div class="formula"><div class="fline">v<sub>K</sub>(𝔇<sub>E/K</sub>) = f(E/K) + m(E/K) − 1</div></div>
+      <p>が成り立つ。</p>
+    </div>
+    <p>
+      判別式（解析的な量）＝導手（Galois表現の分岐の量）＋成分数（幾何の量）−1。
+      三つの世界の量が一本の等式で釣り合う──Ch.VII で学んだ「還元」の理論の、これが完成形です。
+      そして BSD 予想の精密公式<span class="refchip">AEC C.16.5</span>に現れる玉川数 c<sub>v</sub> は、
+      この章の道具立てなしには<strong>定義すら書き下せない</strong>のでした。
+    </p>
+    <div class="why">
+      <div class="w-label">? スキーム論との最初の本気の出会い</div>
+      <p>
+        ATAEC IV は本書中で最も技術的な章で、スキームと群スキームの言葉を使います（序文も予告しています）。
+        しかし目的地は明確です：「AEC Ch.VII で認めたことを全部証明する」。
+        動機が具体的なぶん、抽象的な一般論を学ぶ足場としては最高の場所です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 4. 扉V ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Gate 2 ─ ATAEC Ch. V</div>
+    <h2>Tate 曲線 ─ Hilbert 90 の復活</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 返済される借用証</div>
+      <p>
+        第3部の対比表を思い出してください。乗法群では H¹(G, <span class="ov">K</span><sup>×</sup>) = 0（Hilbert 90）で理論が完結し、
+        楕円曲線では H¹(G, E) ≠ 0 が残って Ш が生まれた。あの「≠ 0」の群 WC(E/K<sub>v</sub>) について、
+        第5部では「Hensel の補題で元ごとに判定できる」としか言えませんでした。<strong>群としての正体</strong>は宿題のままです。
+      </p>
+    </div>
+
+    <p>
+      ATAEC V の主役は、Tate による驚くべき発見です。ℂ 上では E(ℂ) ≅ ℂ/Λ という一意化がありました
+      （第1部 Ch.VI の節）。指数関数で書き直せば E(ℂ) ≅ ℂ<sup>×</sup>/q<sup>ℤ</sup>（q = e<sup>2πiτ</sup>）。
+      Tate は、この乗法的な形の一意化が <strong>p進体でもそのまま成り立つ</strong>ことを示しました。
+    </p>
+    <div class="box thm">
+      <div class="box-label">定理（Tate 曲線） <span class="refchip adv">ATAEC V.3.1 / V.5.3</span></div>
+      <p>K を p進体、q ∈ K<sup>×</sup>、|q| &lt; 1 とする。q 展開係数で定まる楕円曲線 E<sub>q</sub>（Tate曲線）があり、</p>
+      <div class="formula">
+        <div class="fline"><span class="ov">K</span><sup>×</sup>/q<sup>ℤ</sup> ≅ E<sub>q</sub>(<span class="ov">K</span>)　（<strong>Galois 作用と両立する</strong>解析的同型）</div>
+        <div class="fline fc">Δ(E<sub>q</sub>) = q∏(1−qⁿ)²⁴,　j(E<sub>q</sub>) = 1/q + 744 + 196884q + ⋯</div>
+      </div>
+      <p>
+        逆に、j-不変量が非整（|j(E)| &gt; 1）な任意の E/K は、ある E<sub>q</sub> と K 上同型（分裂乗法的還元のとき）、
+        そうでなくても高々2次拡大の上で同型になる。
+      </p>
+    </div>
+    <p>
+      重要なのは太字の一句です。ℂ 上の一意化は Galois と両立しません（収束級数に σ を項別適用できない）が、
+      p進の一意化は両立する<span class="refchip adv">ATAEC V.3.1.1</span>。したがって<strong>数論に使えます</strong>。
+      楕円曲線 E の Galois 加群としての構造が、乗法群 <span class="ov">K</span><sup>×</sup> と
+      「格子」q<sup>ℤ</sup> に分解されるのです。すると：
+    </p>
+    <div class="formula">
+      <div class="fline">H¹(G<sub>v</sub>, E) の計算　⟶　Hilbert 90 ＋ H²(G<sub>v</sub>, q<sup>ℤ</sup>) の計算（局所類体論）</div>
+    </div>
+    <p>
+      ──楕円曲線で「消えなかった」障害群が、Tate 曲線を通すと、
+      <strong>Hilbert 90 と局所類体論の演習問題に変わる</strong>。
+      第3部で失われた武器が、p進世界で復活する瞬間です。その帰結が：
+    </p>
+    <div class="box thm">
+      <div class="box-label">局所双対性（Tate） <span class="refchip adv">ATAEC V 演習5.14</span></div>
+      <div class="formula">
+        <div class="fline">WC(E/K<sub>v</sub>) ≅ Hom( E(K<sub>v</sub>), ℚ/ℤ )</div>
+      </div>
+      <p>
+        局所 Weil–Châtelet 群は、有理点の群の双対にほかならない
+        （演習では非整 j の場合。一般の場合も Tate による。実数体では WC(E/ℝ) は 0 か ℤ/2ℤ）。
+      </p>
+    </div>
+    <p>
+      第5部で C<sub>17</sub>(ℚ<sub>17</sub>) = ∅ を合同式でゴリゴリ確かめたことを思い出してください。
+      あの計算の背後には、こんなに整った双対性が立っていました。
+      Cassels の対<span class="refchip">AEC X.4.14</span>が Ш の上に存在する理由も、
+      源流はこの局所双対性にあります。第5部の景色が、一段高い所から見直せる章です。
+    </p>
+  </div>
+
+  <!-- ════════ 5. 扉VI ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Gate 3 ─ ATAEC Ch. VI</div>
+    <h2>局所高さ ─ ĥ を「本当に」計算する</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 返済される借用証</div>
+      <p>
+        第4部 §9 で標準高さ ĥ を lim 4⁻ⁿh<sub>x</sub>(2ⁿP) として定義し、
+        E : y² = x³ + 3, P = (1,2) で「lim ≈ 0.9 が読み取れる」と数値実験しました。
+        しかし極限による定義は、収束の遅い近似計算しかくれません。
+        <strong>ĥ を有限の手続きで正確に計算する方法</strong>は宿題のままです。
+      </p>
+    </div>
+
+    <p>
+      ATAEC VI の答えは「<strong>大域の高さを、素点ごとの局所高さに分解せよ</strong>」です。
+    </p>
+    <div class="formula">
+      <div class="fline">ĥ(P) = Σ<sub>v</sub> n<sub>v</sub> λ̂<sub>v</sub>(P)　（局所分解。<span class="refchip adv">ATAEC VI §2</span>）</div>
+      <div class="fline fc">λ̂<sub>v</sub> = 素点 v ごとの標準局所高さ。存在は VI §1、明示式は VI §3–§4</div>
+    </div>
+    <p>
+      そして各 λ̂<sub>v</sub> には<strong>閉じた明示式</strong>があります。
+      良い還元の有限素点では λ̂<sub>v</sub>(P) = ½·max{ v(x(P)⁻¹), 0 }·log q<sub>v</sub> という初等式。
+      乗法的還元（I<sub>n</sub> 型）では、Tate 曲線のパラメータで書いた
+      第2 Bernoulli 多項式 B₂(t) = t² − t + 1/6 が現れる式<span class="refchip adv">ATAEC VI §4</span>。
+      アルキメデス素点では σ 関数と q 展開による急速収束級数<span class="refchip adv">ATAEC VI §3</span>。
+      つまり<strong>扉2（Tate曲線）で開けた p進一意化が、ここで高さの計算式に化けます</strong>。章同士が噛み合う音が聞こえる場所です。
+    </p>
+    <ul>
+      <li><strong>生成元探しが実用になる</strong>：降下定理の「床以下の点の列挙」（第4部）には
+        |ĥ − h<sub>x</sub>| の明示的な評価が必要でした。局所分解はそれを素点ごとの有限計算に落とします。
+        現代の計算機代数システム（PARI、Sage、Magma）の height 計算はまさにこの章の公式で動いています。</li>
+      <li><strong>BSD の実験ができる</strong>：レギュレータ<span class="refchip">AEC VIII.9.7</span>を数値計算し、
+        L関数側と突き合わせる──BSD 予想の数値検証は、この章の技術で初めて可能になります。</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ この章は「ご褒美」枠</div>
+      <p>
+        ATAEC VI は本書の中で最も自己完結的で、AEC VIII §9 の直後に接ぎ木できます。
+        第4部を面白いと思った人は、ATAEC の他の章を飛ばしてここから読み始めても構いません。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. 扉III ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Gate 4 ─ ATAEC Ch. III</div>
+    <h2>楕円曲面 ─ 階数の狩り場</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 返済される借用証</div>
+      <p>
+        第4部の終わりに「階数は非有界か<span class="refchip">AEC VIII.10.1</span>」という予想を掲げたまま閉じました。
+        では、階数の大きい曲線は<strong>どうやって作る</strong>のか。闇雲に係数を探すのではない、
+        体系的な狩りの方法があるのか。
+      </p>
+    </div>
+
+    <p>
+      あります。舞台を一段上げるのです。係数を数ではなく<strong>変数 t の関数</strong>にした曲線
+      E/ℚ(t)──これは幾何的には曲面（<strong>楕円曲面</strong>）であり、
+      ATAEC III はその上で Mordell–Weil 理論を<strong>まるごと再演</strong>します。
+      弱MW定理、高さ、降下……第2部〜第4部で登った山と同じ形の山が、関数体の世界にもう一つ建っている
+      <span class="refchip adv">ATAEC III §2–§6</span>。一度登った山なので、二度目は速く登れます。
+    </p>
+    <p>
+      そして二つの世界を繋ぐのが<strong>特殊化</strong>です。t に有理数を代入すると、
+      ℚ(t) 上の曲線から ℚ 上の曲線の族が生まれます。このとき：
+    </p>
+    <div class="box thm">
+      <div class="box-label">特殊化定理（Silverman） <span class="refchip adv">ATAEC III.11.4</span></div>
+      <p>
+        非分裂な楕円曲面 𝓔 → C について、特殊化準同型 σ<sub>t</sub> : E(K) → 𝓔<sub>t</sub>(k) は、
+        高さの十分大きいすべての t で単射。とくに<strong>有限個の例外を除くすべての t で単射</strong>である。
+      </p>
+    </div>
+    <p>
+      背後には Tate の定理<span class="refchip adv">ATAEC III.11.1</span>
+      「t ↦ ĥ<sub>𝓔ₜ</sub>(P<sub>t</sub>) は基底曲線上の高さ関数＋O(1)」があり、
+      第4部で学んだ高さ理論がそのまま証明のエンジンになります。帰結は劇的です：
+    </p>
+    <div class="formula">
+      <div class="fline">ℚ(t) 上で階数 r の曲線を1本作る　⟹　ℚ 上で階数 ≥ r の曲線が（ほぼ）無限に手に入る</div>
+    </div>
+    <p>
+      Néron はこの方法で「階数 ≥ 10 の E/ℚ が無限個ある」ことを示し<span class="refchip adv">ATAEC III.11.4.2</span>、
+      Mestre は E(ℚ(t)) の階数 ≥ 12 の曲面を、Nagao は ≥ 13 を構成。特殊化で階数 19、20、21 の個別曲線が
+      次々と見つかった──ここまでが1994年、ATAEC 執筆時点のスコアボードで、Silverman は
+      その報告を <em>“And the quest continues!”</em>（そして探索は続く！）と締めています。
+    </p>
+    <p>
+      実際、探索は続きました。現在の記録は Elkies–Klagsbrun による<strong>階数 ≥ 29</strong>（2024年）。
+      その一方で「階数は実は有界（21程度）ではないか」という確率的ヒューリスティクス
+      （Park–Poonen–Voight–Wood, 2019）も現れ、専門家の意見が割れる<strong>現在進行形の戦場</strong>になっています。
+      30年前の教科書の "quest" が、いままさに続いている──その最前線への入口がこの章です。
+    </p>
+    <div class="why">
+      <div class="w-label">? 幾何との合流点</div>
+      <p>
+        ATAEC III 後半（§7–§10）は代数曲面の交叉理論を導入し、E(K) の高さ対と曲面の Néron–Severi 群の
+        交叉形式を結びつけます（Shioda–Tate の理論への入口<span class="refchip adv">ATAEC III.9.7</span>）。
+        「数論の高さ＝幾何の交叉数」という等式は、Arakelov 幾何や Faltings の仕事へ続く大街道の入口でもあります。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. 扉II ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Gate 5 ─ ATAEC Ch. II</div>
+    <h2>虚数乗法 ─ y² = x³ − x の種明かし</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 返済される借用証</div>
+      <p>
+        本シリーズの看板曲線 E : y² = x³ − x。第2部で L = ℚ([2]⁻¹E(ℚ)) を計算したら、
+        円分体 ℚ(ζ₈) という「異様にきれいな体」が出てきて、われわれは驚いてみせました。
+        あれは偶然ではありません。<strong>種も仕掛けもある手品</strong>でした。
+      </p>
+    </div>
+
+    <p>
+      種明かし：E : y² = x³ − x には (x, y) ↦ (−x, iy) という自己準同型があり、
+      End(E) = ℤ[i] ⊋ ℤ。これが<strong>虚数乗法（CM）</strong>です。
+      ATAEC II は、CM を持つ曲線の数論が<strong>類体論と完全に融合する</strong>ことを示します。
+    </p>
+    <div class="box thm">
+      <div class="box-label">CM理論の主定理群 <span class="refchip adv">ATAEC II.4.3 / II.5.6–5.7 / II.6.1</span></div>
+      <p>K を虚2次体、E を End(E) ≅ R<sub>K</sub>（整数環）なる楕円曲線とすると：</p>
+      <div class="formula">
+        <div class="fline">K( j(E) ) = K の Hilbert 類体　（最大不分岐アーベル拡大）</div>
+        <div class="fline">K( j(E), h(E<sub>tors</sub>) ) = K の最大アーベル拡大　（h は Weber 関数）</div>
+        <div class="fline">j(E) は代数的整数</div>
+      </div>
+    </div>
+    <p>
+      「1のべき根が ℚ の最大アーベル拡大を生成する」という Kronecker–Weber の定理の、これが虚2次体版です。
+      円分理論で ℂ<sup>×</sup> の等分点が果たした役割を、<strong>楕円曲線の等分点</strong>が引き継ぐ──
+      Kronecker が「青春の夢」と呼んだ構想の実現です。
+      第2部で E[2] の座標を添加したら円分体 ℚ(ζ₈) が出てきたのは、
+      E が ℤ[i] の CM を持ち、そのねじれ点が ℚ(i) のアーベル拡大を生成していたからでした。
+    </p>
+    <h3>CM が BSD に贈るもの ─ L関数の解析接続</h3>
+    <p>
+      さらに深い贈り物があります。CM曲線の Galois 表現はアーベルなので、
+      E に <strong>Grössencharacter</strong>（ヘッケ指標）ψ<sub>E/L</sub> が付随し
+      <span class="refchip adv">ATAEC II §9</span>、Deuring の定理<span class="refchip adv">ATAEC II.10.5</span>により
+    </p>
+    <div class="formula">
+      <div class="fline">L(E/L, s) = L(s, ψ) · L(s, ψ̄)　（Hecke L関数の積）</div>
+    </div>
+    <p>
+      と分解します。Hecke L関数の解析接続と関数等式は古典的に証明済み<span class="refchip adv">ATAEC II.10.3</span>なので、
+      <strong>CM曲線では L(E,s) の解析接続が定理になります</strong>。
+      第5部の出口で掲げた BSD 予想が、少なくとも「主張として完全に意味を持つ」最初の地帯がここです。
+      実際、歴史もここから動きました：Coates–Wiles（1977）が BSD の最初の大きな部分的解決を、
+      Rubin（1987）が <strong>Ш の有限性の最初の証明</strong>（X.4.13 の予想が定理になった瞬間！）を、
+      いずれも CM 曲線で達成しています。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ 前提は類体論だけ、しかも復習付き</div>
+      <p>
+        ATAEC II は類体論を使いますが、必要な事実の要約が II §3 に丸ごと用意されています。
+        類体論を「主張は知っているが運用経験がない」人にとって、CM理論は最高の演習場です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8. 扉I ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Gate 6 ─ ATAEC Ch. I</div>
+    <h2>保型形式 ─ L(E,s) はそもそも「存在」するのか</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ 最大の借用証</div>
+      <p>
+        第5部の最後で BSD 予想──「ord<sub>s=1</sub> L(E,s) = rank E(ℚ)」──を掲げました。
+        しかし E の L関数の Euler 積は、Hasse の評価 |a<sub>p</sub>| ≤ 2√p（第1部 Ch.V の節！）から
+        <strong>Re(s) &gt; 3/2 でしか収束しません</strong>。s = 1 はその外側です。
+        つまり AEC の道具立てだけでは、BSD は「まだ意味を持たない文章」なのです。
+        これが本シリーズが残した、いちばん大きな借用証です。
+      </p>
+    </div>
+
+    <p>
+      L(E,s) を s = 1 まで延ばす既知の道は、本質的に一つしかありません：
+      <strong>L(E,s) が保型形式の L関数であることを示す</strong>ことです。
+      ATAEC I はその「保型形式の側」を整備します。モジュラー群 SL₂(ℤ)、モジュラー曲線 X(1)、
+      j-関数の q 展開、Δ(τ) の無限積（Jacobi の公式<span class="refchip adv">ATAEC I §8</span>）、
+      そして <strong>Hecke 作用素</strong><span class="refchip adv">ATAEC I §9–§10</span>。頂点に立つのが Hecke の定理です。
+    </p>
+    <div class="box thm">
+      <div class="box-label">定理（Hecke） <span class="refchip adv">ATAEC I.11.4</span></div>
+      <p>
+        重さ 2k のカスプ形式 f の L級数 L(f, s) は全平面に解析接続され、
+        s ↔ 2k − s の関数等式を満たす。f が Hecke 作用素の同時固有形式なら L(f,s) は Euler 積を持つ。
+      </p>
+    </div>
+    <p>
+      Mellin 変換ひとつで、q 展開の対称性（保型性）が L関数の関数等式に翻訳される──
+      解析接続がこれほど鮮やかに出る仕組みは、一度は手を動かして見る価値があります。
+      楕円曲線の L関数がこの理論に乗るには「レベル N（合同部分群 Γ₀(N)）の保型形式」まで拡張し、
+      E がモジュラーであること──つまり、ある重さ2のカスプ形式 f について L(E,s) = L(f,s) となること──を
+      示す必要があります。ATAEC の序文（1994）はこの話題を
+      「<em>現在この分野で最もホットなトピックであることに疑問の余地はない</em>」と書いて、続巻に委ねました。
+    </p>
+    <p>
+      その直後に何が起きたかを、いまのわれわれは知っています。
+      <strong>Wiles と Taylor–Wiles（1995）</strong>が半安定な場合のモジュラー性を証明して Fermat の最終定理を導き、
+      <strong>Breuil–Conrad–Diamond–Taylor（2001）</strong>が ℚ 上のすべての楕円曲線のモジュラー性を完成させました。
+      いまや L(E,s) の解析接続は（ℚ 上では）<strong>定理</strong>です。
+      さらに Gross–Zagier と Kolyvagin は、モジュラー性を足場に
+      「解析階数 ≤ 1 なら BSD の階数等式が成立し、Ш は有限」を証明しました。
+      第5部で「Kolyvagin・Rubin により特定の場合には証明済み」と一行で書いたことの中身が、まさにこの物語です。
+    </p>
+    <div class="why">
+      <div class="w-label">? 1994年の教科書を2020年代に読むということ</div>
+      <p>
+        ATAEC は「モジュラー性が証明される直前」に書かれた本です。序文の「hottest topic」の一文は、
+        数学史上有数のドラマの<strong>開幕直前の静けさ</strong>を記録しています。
+        本書で Γ(1) の Hecke 理論を学び、Knapp や Diamond–Shurman でレベル N に進み、
+        Wiles の論文の入口に立つ──AEC から始まった登山道は、現代数論の最高峰まで実際に繋がっています。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 歩き方 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09</div>
+    <h2>歩き方 ─ 目的別ルートと最初の一歩</h2>
+    <p>
+      ATAEC の6章は相互依存が薄く（序文の依存図でも I → II、III ⇢ IV 程度）、
+      <strong>どの扉からでも入れます</strong>。本シリーズからの接続を考えると、お勧めルートは3本です。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>目的</th><th>ルート</th><th>接続元</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Ш・BSD の計算を極めたい</strong>（本シリーズの直進方向）</td>
+          <td class="m">IV（Néronモデル）→ V（Tate曲線）→ VI（局所高さ）</td>
+          <td>第4部 §9・第5部</td>
+        </tr>
+        <tr>
+          <td><strong>L関数と保型形式へ</strong>（BSD の解析側）</td>
+          <td class="m">I（保型形式）→ II（CM）</td>
+          <td>第5部の出口</td>
+        </tr>
+        <tr>
+          <td><strong>階数と幾何へ</strong>（高さ理論の延長）</td>
+          <td class="m">III（楕円曲面）単独で読める</td>
+          <td>第4部</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>ATAEC を開いたら最初に読む3箇所</h3>
+    <ol>
+      <li><strong>ATAEC IV, Remark 9.2.1</strong> ── 「AEC で未証明のまま残した」と著者自身が借用証を回収する現場。
+        本シリーズの読者への、著者からの答え合わせです。</li>
+      <li><strong>ATAEC III, Remark 11.4.2</strong> ── 高階数曲線ハンティングの歴史と
+        “And the quest continues!”。2ページで読めて、確実に血が騒ぎます。</li>
+      <li><strong>ATAEC V §3 の冒頭</strong> ── Tate 曲線の定義。
+        「p進体上で楕円曲線が ℚ<sub>p</sub><sup>×</sup>/q<sup>ℤ</sup> になる」という主張の非常識さと、
+        それが正しいという事実に、まず驚いてください。驚けたら、もう読み始めています。</li>
+    </ol>
+    <div class="goon">
+      <div class="g-label">⏩ 完璧主義への、最後にもう一度の注意</div>
+      <p>
+        ATAEC も AEC と同じで、全章を順番に完読する本ではありません。
+        本シリーズで練習した読み方──山頂を決め、必要な装備だけ拾い、借用証は明示して先へ進む──は
+        そのまま通用します。今度は山頂を自分で選んでください。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 10. 結び ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Epilogue</div>
+    <h2>結び ─ 答えを一つ得るたび、問いは三つに増える</h2>
+    <p>
+      本シリーズの物語を一行で言えば「<strong>有限性の証明から、計算可能性の境界線へ</strong>」でした。
+      そして境界線の向こうに Ш が見えたところで、第5部は終わりました。
+    </p>
+    <p>
+      続巻で待っているのは、その境界線を三つの方向から攻める数学です。
+      <strong>幾何</strong>（Néron モデルと楕円曲面が、還元と階数に形を与える）、
+      <strong>解析</strong>（保型形式が L 関数に命を吹き込み、局所高さが ĥ を計算可能にする）、
+      <strong>代数</strong>（類体論が CM 曲線の数論を完全に解き明かす）。
+      三方向はばらばらの専門分野ではなく、BSD 予想という一つの焦点で再会します──
+      階数（第4部）、レギュレータ（ATAEC VI）、玉川数（ATAEC IV）、Ш（第5部）、
+      そして L(E,s)（ATAEC I・II）。<strong>この教材群で出会ったすべての登場人物が、一本の等式の中に揃う</strong>のです。
+    </p>
+    <p>
+      モジュラー性は証明されました。しかし BSD は開いたまま、Ш の有限性も一般には開いたまま、
+      階数の有界性は意見さえ割れたまま──つまり、<strong>この分野の一番いい問題は、まだ誰のものでもありません</strong>。
+      AEC の VIII 章と X 章を本当に理解したいま、あなたはその問いたちのすぐ手前に立っています。
+    </p>
+    <p style="font-family:var(--display); font-style:italic; font-size:1.15rem; color:var(--gold-soft);">
+      And the quest continues! ── J.H. Silverman, ATAEC III.11.4.2
+    </p>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/selmer.html">
+      <div class="p-dir">← PREV ─ 第5部</div>
+      <div class="p-title">Selmer群とTate–Shafarevich群（AEC X §4）</div>
+    </a>
+    <a class="next" href="/math-site/in/aec.html">
+      <div class="p-dir">SERIES TOP</div>
+      <div class="p-title">全体地図へ戻る →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 終章</p>
+    <p>底本：J.H. Silverman, Advanced Topics in the Arithmetic of Elliptic Curves, GTM 151, Springer (ATAEC) ─ 全章展望</p>
+    <p>前提：同シリーズ第1〜5部（J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106）</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

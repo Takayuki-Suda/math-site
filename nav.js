@@ -40,6 +40,7 @@
         '<a href="/math-site/in/kummer.html">Kummer対とコホモロジー</a>'+
         '<a href="/math-site/in/descent.html">降下法とMordell–Weil定理</a>'+
         '<a href="/math-site/in/selmer.html">Selmer群とШ群</a>'+
+        '<a href="/math-site/in/atec.html">その先へ ─ Advanced Topics</a>'+
       '</div>';
     var ref=null, ch=list.children;
     for(var i=0;i<ch.length;i++){
