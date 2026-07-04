@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代数的整数論の武器庫 ─ Neukirch 対応リファレンス | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'ζ'; position:absolute; right:20px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:250px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+  .refchip.adv { color:var(--purple); border-color:rgba(176,138,224,.4); }
+  .refchip.nk { color:var(--green); border-color:rgba(94,207,158,.4); }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .usage { border:1px solid rgba(122,168,240,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(122,168,240,.05); }
+  .usage .u-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--blue); margin-bottom:8px; }
+  .usage ul { margin-bottom:0; }
+  .usage li { font-size:0.9rem; color:#c3d4f0; }
+  .usage a { color:var(--gold-soft); text-decoration:none; border-bottom:1px dotted rgba(232,197,71,.5); }
+  .usage a:hover { color:var(--gold); border-bottom-style:solid; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  table.cmp td.g { font-family:var(--mono); font-size:0.84rem; color:var(--green); white-space:nowrap; }
+  table.cmp td a { color:inherit; text-decoration:none; border-bottom:1px dotted rgba(232,197,71,.5); }
+  table.cmp td a:hover { color:var(--gold); }
+  .table-wrap { overflow-x:auto; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 付録</div>
+    <h1>代数的整数論の武器庫<br><span class="en">A Neukirch Companion for the Series</span></h1>
+    <p class="hero-sub">
+      本シリーズ（第1部〜終章）は、代数的整数論の何本かの大定理を「使う側」として借りてきました。
+      この付録は、その借り物の<strong>正確な保管場所</strong>を記した目録です。
+      通読するページではありません。シリーズを読み返していて
+      「この道具、詳しくはどこで学べるのか」と思った瞬間に開き、
+      Neukirch の該当章節へ飛ぶ──そのための<strong>参照専用の武器庫</strong>です。
+    </p>
+    <p class="hero-book">TEXT: J. Neukirch, Algebraic Number Theory, Grundlehren 322, Springer（以下 ANT）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+      <a href="/math-site/in/atec.html">終 その先へ</a>
+      <a class="cur" href="/math-site/in/ant.html">付 数論の武器庫</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このページの使い方</h2>
+    <p>想定している使い方は3つです。</p>
+    <ol>
+      <li><strong>読み返し中に詰まったら</strong>：シリーズ本文で「類数の有限性」「Hensel の補題」などの外部定理に出会い、
+        中身を確かめたくなったら、次節の総合対応表から ANT の章節へ飛ぶ。</li>
+      <li><strong>棚を眺めて弱点を探す</strong>：Section 03 以降の7つの「棚」は、シリーズが実際に使った知識を
+        テーマ別に並べたもの。各棚の「シリーズでの使用箇所」から、その道具が働いた現場に戻れます。</li>
+      <li><strong>次の登山の装備調達</strong>：終章で予告した ATAEC（とくに CM と類体論）へ進む前に、
+        Section 10 の伴走ルートで足りない装備をまとめて仕入れる。</li>
+    </ol>
+    <div class="box rem">
+      <div class="box-label">チップの色分けと番号の読み方</div>
+      <p>
+        本ページでは3冊を色で区別します：
+        <span class="refchip">AEC VIII.1.6</span>＝Silverman GTM 106、
+        <span class="refchip adv">ATAEC II.10.5</span>＝Silverman GTM 151、
+        <span class="refchip nk">ANT I.6.3</span>＝Neukirch Grundlehren 322。
+        ANT の「I.6.3」は「第I章 §6 の (6.3)」の意味です。節までの指示（例：ANT II §7）は
+        「その節をまるごと読む」ことを勧める箇所です。
+      </p>
+    </div>
+    <div class="goon">
+      <div class="g-label">⏩ 完璧主義への注意（この付録でも有効）</div>
+      <p>
+        ANT は約570頁の大著で、Riemann–Roch 理論（III §3–§8）や抽象類体論の公理系（IV §4–§7）など、
+        本シリーズには不要な高地も含みます。<strong>この武器庫に載っていない節は、シリーズの理解には要りません</strong>。
+        必要になったときに必要な棚だけ開ける──シリーズ本編と同じ読み方で使ってください。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>総合対応表 ─ シリーズの現場 × Neukirch の章節</h2>
+    <p>
+      シリーズで外部知識を「使った・認めた」現場を時系列に並べ、ANT の保管場所と対応させます。
+      各行のリンクで該当箇所に直接戻れます。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>シリーズの現場</th><th>借りた知識</th><th>ANT の保管場所</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><a href="/math-site/in/aec.html#s10">第1部・チェックリスト #6</a></td>
+          <td>素点・完備化・分解群・惰性群・「v で不分岐」の意味</td>
+          <td class="g">I §8–§9／II §3–§9 → <a href="#bank-local">棚3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/aec.html#s10">第1部・チェックリスト #7</a></td>
+          <td>イデアル類群の有限性・Dirichlet の（S-）単数定理</td>
+          <td class="g">I.6.3／I.7.4／I.11.7 → <a href="#bank-finiteness">棚2</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/aec.html#s10">第1部・チェックリスト #8</a></td>
+          <td>無限次 Galois 理論（有限商で考えれば十分）</td>
+          <td class="g">IV.1.2／IV §2 → <a href="#bank-galois">棚4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/weakmw.html#s5">第2部・STEP 2（VIII.1.5b）</a></td>
+          <td>惰性群は剰余体に自明に作用する（不分岐性の急所）</td>
+          <td class="g">I §9／II §9 → <a href="#bank-local">棚3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/weakmw.html#s6">第2部・STEP 3（VIII.1.6）</a></td>
+          <td>S を広げて PID 化・S-単数の有限生成・Kummer理論・X<sup>m</sup>−a の分岐判定</td>
+          <td class="g">I.6.3／I.11.7／IV §3／III.2.12 → <a href="#bank-finiteness">棚2</a>・<a href="#bank-galois">棚4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/weakmw.html#s8">第2部・実例 L = ℚ(ζ₈)</a></td>
+          <td>円分体の整数環と分岐（判別式は 2 のべき）</td>
+          <td class="g">I.10.2–10.4 → <a href="#bank-dedekind">棚1</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/weakmw.html#s9">第2部・問6（VIII.1.7 別証明）</a></td>
+          <td>Hermite–Minkowski：次数有界・S外不分岐な拡大は有限個</td>
+          <td class="g">III.2.13／III.2.16 → <a href="#bank-finiteness">棚2</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/kummer.html#s2">第3部・コホモロジー速成</a></td>
+          <td>射有限群と連続コサイクルの規約</td>
+          <td class="g">IV §1–§2 → <a href="#bank-galois">棚4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/kummer.html#s4">第3部・Hilbert 90</a></td>
+          <td>H¹(G, <span class="ov">K</span><sup>×</sup>) = 0 と古典 Kummer 理論</td>
+          <td class="g">IV.3.5／IV §3 → <a href="#bank-galois">棚4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/descent.html#s6">第4部・§5–§6 の地図（高さ機械）</a></td>
+          <td>正規化絶対値と積公式（一般数体の高さの土台）</td>
+          <td class="g">II §3–§4／III.1.3 → <a href="#bank-local">棚3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/descent.html#s6">第4部・§9（レギュレータ）</a></td>
+          <td>単数基準（regulator）という量の原型</td>
+          <td class="g">I §7／VII §5 → <a href="#bank-zeta">棚7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/selmer.html#s4">第5部・X.4.3（有限性）と局所条件</a></td>
+          <td>Hensel の補題＝「局所は計算しやすい世界」の根拠</td>
+          <td class="g">II.4.6／II §6 → <a href="#bank-local">棚3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/selmer.html#s7">第5部・Hasse 原理の破れ</a></td>
+          <td>種数0（2次形式）では局所大域原理が成立する、という比較対象</td>
+          <td class="g">VI.4.5（Hasseノルム定理）／VI §5 冒頭 → <a href="#bank-gcft">棚6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/selmer.html#s9">第5部・問5（Lind–Reichardt）</a></td>
+          <td>平方剰余の相互法則（(p/17) = (17/p) の計算）</td>
+          <td class="g">I.8.6／VI §8 → <a href="#bank-gcft">棚6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/atec.html#s3">終章・扉1（Néronモデル・Ogg公式）</a></td>
+          <td>導手 f(E/K) の中身＝Artin 導手</td>
+          <td class="g">VII §11（11.9 導手判別式公式）→ <a href="#bank-zeta">棚7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/atec.html#s4">終章・扉2（Tate曲線・局所双対性）</a></td>
+          <td>局所類体論：Br(K) ≅ ℚ/ℤ、norm residue symbol</td>
+          <td class="g">V §1–§3 → <a href="#bank-lcft">棚5</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/atec.html#s7">終章・扉5（CM・Kroneckerの夢）</a></td>
+          <td>類体論の全体：Hilbert 類体・ray 類体・Artin 相互法則</td>
+          <td class="g">IV–VI（とくに VI §5–§6）→ <a href="#bank-gcft">棚6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/atec.html#s7">終章・扉5（Deuring の定理の背景）</a></td>
+          <td>Hecke 指標と Hecke L 関数の解析接続・関数等式</td>
+          <td class="g">VII §6／VII.8.5 → <a href="#bank-zeta">棚7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/in/atec.html#s8">終章・扉6（L関数とBSD）</a></td>
+          <td>ζ・L 関数の一般論、類数公式（BSD の原型）、密度定理</td>
+          <td class="g">VII §5／VII.13.4 → <a href="#bank-zeta">棚7</a></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      以下、この表の右列を7つの「棚」に整理し、各棚で<strong>何が主張されているか</strong>と
+      <strong>シリーズのどこで働いたか</strong>を短く記します。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 棚1 ════════ -->
+  <div class="section" id="bank-dedekind">
+    <div class="section-number">Shelf 01 ─ ANT I §2–§3, §8–§10 / III §2</div>
+    <h2>棚1：Dedekind 環・素イデアル分解・分岐</h2>
+    <p>
+      「悪い素点は有限個」「不分岐かどうかは判別式で見える」──シリーズの土台の土台です。
+      数体 K の整数環 O<sub>K</sub> は Dedekind 環であり、イデアルは素イデアルの積に一意分解します
+      <span class="refchip nk">ANT I §2–§3</span>。拡大 L/K での素イデアルの振る舞い
+      （分解・惰性・分岐、基本等式 Σe<sub>i</sub>f<sub>i</sub> = n）は
+      <span class="refchip nk">ANT I §8</span>、Galois 拡大での分解群・惰性群・Frobenius は
+      <span class="refchip nk">ANT I §9</span>。
+    </p>
+    <div class="box thm">
+      <div class="box-label">分岐は判別式で検出される <span class="refchip nk">ANT III.2.12</span></div>
+      <p>
+        K の素イデアル 𝔭 が L で分岐 ⟺ 𝔭 が判別式 𝔡<sub>L/K</sub> を割る。
+        とくに<strong>分岐する素点は有限個</strong>。
+      </p>
+    </div>
+    <p>
+      円分体は最重要の実例で、ℚ(ζ<sub>n</sub>) の整数環は ℤ[ζ<sub>n</sub>]
+      <span class="refchip nk">ANT I.10.2</span>、素数の分解法則は<span class="refchip nk">ANT I.10.3</span>、
+      分岐するのは本質的に n を割る素数だけ<span class="refchip nk">ANT I.10.4</span>です。
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/weakmw.html#s5">第2部 STEP 2</a>：S = {悪い還元}∪{v|m}∪∞ が<strong>有限集合</strong>であること、
+          「v で不分岐」という言葉の中身。</li>
+        <li><a href="/math-site/in/weakmw.html#s8">第2部 実例</a>：L = ℚ(i,√2) = ℚ(ζ₈) の判別式が 2 のべきで、
+          分岐が 2 のみ──理論の予言との照合は I.10.4 そのもの。</li>
+        <li><a href="/math-site/in/weakmw.html#s6">第2部 STEP 3(iii)</a>：X<sup>m</sup> − a の判別式 ±m<sup>m</sup>a<sup>m−1</sup> から
+          不分岐条件 ord<sub>v</sub>(a) ≡ 0 (mod m) を出す議論の一般論。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚2 ════════ -->
+  <div class="section" id="bank-finiteness">
+    <div class="section-number">Shelf 02 ─ ANT I §5–§7, §11 / III §2</div>
+    <h2>棚2：2大有限性定理と Hermite–Minkowski</h2>
+    <p>
+      弱 Mordell–Weil 定理の「数論の心臓部」（第2部 STEP 3）を支える棚です。
+      証明はどちらも Minkowski の格子点定理（数の幾何<span class="refchip nk">ANT I §4–§5</span>）から出ます。
+    </p>
+    <div class="box thm">
+      <div class="box-label">類数の有限性 <span class="refchip nk">ANT I.6.3</span>／単数定理 <span class="refchip nk">ANT I.7.4</span>／S-単数定理 <span class="refchip nk">ANT I.11.7</span></div>
+      <div class="formula">
+        <div class="fline">Cl<sub>K</sub> は有限群　／　O<sub>K</sub><sup>×</sup> ≅ μ(K) × ℤ<sup>r+s−1</sup>　／　O<sub>S</sub><sup>×</sup> ≅ μ(K) × ℤ<sup>#S−1</sup></div>
+        <div class="fc">r, s = 実・複素素点の個数。3本目が第2部で使った「R<sub>S</sub><sup>×</sup> は有限生成」の正確な形</div>
+      </div>
+    </div>
+    <div class="box thm">
+      <div class="box-label">Hermite–Minkowski 型有限性 <span class="refchip nk">ANT III.2.13 / III.2.16</span></div>
+      <p>
+        次数を固定し有限集合 S の外で不分岐な拡大 L/K は有限個しかない（III.2.13）。
+        より強く、判別式が有界な数体は有限個しかない（Hermite の定理 III.2.16）。
+      </p>
+    </div>
+    <p>
+      なお ANT はこの III.2.13 の直後に、「これの曲線類似が Shafarevich 予想であり、
+      Faltings による Mordell 予想の解決の基盤になった」という壮大な注釈を付けています。
+      AEC IX.6.1（Shafarevich の定理）で同じ思想に再会します。
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/weakmw.html#s6">第2部 STEP 3</a>：(ii) で類数有限性（S を広げて PID 化）、
+          (v) で S-単数定理。「2大有限性定理が別の役割で正確に一度ずつ使われる」現場。</li>
+        <li><a href="/math-site/in/weakmw.html#s9">第2部 問5・問6</a>：R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ≅ T<sub>S</sub> の同型と、
+          Hermite–Minkowski 経由の別証明（問6 で「認めた」定理の正体が III.2.13）。</li>
+        <li><a href="/math-site/in/selmer.html#s4">第5部 X.4.3</a>：S外不分岐コホモロジーの有限性＝STEP 3 の再演。
+          Selmer 群の有限性・計算可能性の最終的な供給源はこの棚。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚3 ════════ -->
+  <div class="section" id="bank-local">
+    <div class="section-number">Shelf 03 ─ ANT II §1–§9 / III §1</div>
+    <h2>棚3：局所の世界 ─ 完備化・Hensel・惰性</h2>
+    <p>
+      「局所で見る」というシリーズ全体の作法の辞書です。付値と完備化<span class="refchip nk">ANT II §3–§4</span>、
+      p進数<span class="refchip nk">ANT II §1–§2</span>、局所体の構造<span class="refchip nk">ANT II §5</span>。
+      そして2つの要の定理：
+    </p>
+    <div class="box thm">
+      <div class="box-label">Hensel の補題 <span class="refchip nk">ANT II.4.6（一般論は II §6）</span></div>
+      <p>
+        完備（より一般に Hensel 的）な付値環上では、剰余体での単純根は必ず持ち上がる。
+        「合同式が解ければ p進で解ける」──第5部で局所条件のチェックが<strong>有限回の計算</strong>で済んだ根拠。
+      </p>
+    </div>
+    <div class="box thm">
+      <div class="box-label">不分岐拡大と惰性 <span class="refchip nk">ANT II §7 / II §9・I §9</span></div>
+      <p>
+        局所体の不分岐拡大は剰余体の拡大と圏同値（次数ごとに一意で、Frobenius が生成）。
+        惰性群 I<sub>v</sub> は「剰余体に自明に作用する部分」として定義され、
+        L/K が v で不分岐 ⟺ I<sub>v</sub> が自明に作用。
+      </p>
+    </div>
+    <p>
+      正規化絶対値の族と積公式 Π<sub>v</sub>|a|<sub>v</sub> = 1<span class="refchip nk">ANT III.1.3</span>は、
+      一般数体上の高さ（AEC VIII §5 の H<sub>K</sub>）が座標の取り方に依らないことの根拠です。
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/weakmw.html#s5">第2部 STEP 2</a>：「惰性群の元 σ は剰余体に自明に作用する」──
+          不分岐性の証明の急所は、この棚の言葉がそのまま動いている。</li>
+        <li><a href="/math-site/in/selmer.html#s6">第5部 実戦計算</a>：C₁₇(ℚ₁₇) = ∅ や C′₂(ℚ₂) = ∅ の付値論法、
+          および「v ∉ S では自動的に局所点がある」（Hensel＋Hasse–Weil）の Hensel 側。</li>
+        <li><a href="/math-site/in/descent.html#s6">第4部 §5–§6 の地図</a>：積公式による高さの well-defined 性。</li>
+        <li>第1部 Ch.VII の節全体：還元・E₀・E₁ の言葉の下部構造。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚4 ════════ -->
+  <div class="section" id="bank-galois">
+    <div class="section-number">Shelf 04 ─ ANT IV §1–§3</div>
+    <h2>棚4：無限 Galois 理論・射有限群・Kummer 理論と Hilbert 90</h2>
+    <p>
+      G<sub><span class="ov">K</span>/K</sub> を扱うための文法です。無限次 Galois 拡大では
+      「閉部分群」だけが中間体と対応します（Krull 位相の主定理<span class="refchip nk">ANT IV.1.2</span>）。
+      射有限群＝有限群の射影極限<span class="refchip nk">ANT IV §2</span>という見方が、
+      第3部の「コサイクルは連続なものだけ＝有限次拡大を経由するものだけ」という規約の正体です。
+    </p>
+    <div class="box thm">
+      <div class="box-label">Hilbert 90 と Kummer 理論 <span class="refchip nk">ANT IV.3.5 / IV §3</span></div>
+      <div class="formula">
+        <div class="fline">H¹( G<sub>L/K</sub>, L<sup>×</sup> ) = 1　（巡回拡大では「ノルム1 ⟺ σ(β)/β 型」という古典形）</div>
+      </div>
+      <p>
+        帰結として、μ<sub>m</sub> ⊂ K のとき「指数 m のアーベル拡大 ⟷ K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> の部分群」
+        という Kummer 対応が完成する。ANT IV §3 はこれを「抽象 Kummer 理論」として、
+        後の類体論と同じ枠組みで扱う（Artin–Schreier 理論も同じ棚に並ぶ）。
+      </p>
+    </div>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/aec.html#s10">第1部 チェックリスト #8</a>：「G<sub><span class="ov">K</span>/K</sub> は有限商で考えれば十分」の正確な意味。</li>
+        <li><a href="/math-site/in/weakmw.html#s6">第2部 STEP 3(iii)</a>：「最大指数mアーベル拡大＝全元の m 乗根添加」は
+          Kummer 対応そのもの。</li>
+        <li><a href="/math-site/in/kummer.html#s4">第3部 Section 04</a>：Hilbert 90 による
+          δ : K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> ≅ H¹(G, μ<sub>m</sub>)。
+          「楕円曲線では H¹(G,E) が消えない」という対比の基準点。</li>
+        <li><a href="/math-site/in/kummer.html#s2">第3部 Section 02</a>：連続コホモロジーの規約。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚5 ════════ -->
+  <div class="section" id="bank-lcft">
+    <div class="section-number">Shelf 05 ─ ANT V §1–§5</div>
+    <h2>棚5：局所類体論 ─ 相互法則・Hilbert 記号・形式群</h2>
+    <p>
+      終章の扉2（Tate 曲線・局所双対性）と扉5（CM）の下支えです。中心は一本の同型：
+    </p>
+    <div class="box thm">
+      <div class="box-label">局所相互法則 <span class="refchip nk">ANT V.1.3</span></div>
+      <div class="formula">
+        <div class="fline">G(L/K)<sup>ab</sup> ≅ K<sup>×</sup>/N<sub>L/K</sub>L<sup>×</sup>　（局所体の有限 Galois 拡大 L/K）</div>
+        <div class="fc">norm residue symbol ( · , L/K)。導手の定義は ANT V.1.6</div>
+      </div>
+    </div>
+    <ul>
+      <li><strong>局所 Kronecker–Weber</strong><span class="refchip nk">ANT V.1.9</span>：
+        ℚ<sub>p</sub><sup>ab</sup> は1のべき根で生成される。大域版（アーベル拡大 ⊂ 円分体）は
+        その直後<span class="refchip nk">ANT V.1.10</span>で。終章で語った「Kronecker の青春の夢」の、これが ℚ での原型。</li>
+      <li><strong>Hilbert 記号</strong><span class="refchip nk">ANT V.3.1–3.2</span>：
+        非退化な双線形対 K<sup>×</sup>/(K<sup>×</sup>)<sup>n</sup> × K<sup>×</sup>/(K<sup>×</sup>)<sup>n</sup> → μ<sub>n</sub>。
+        「局所体上の非退化 pairing」の原器で、ATAEC 演習5.14 の
+        WC(E/K) ≅ Hom(E(K), ℚ/ℤ) や Cassels 対（AEC X.4.14）は、この型の親戚。</li>
+      <li><strong>形式群と Lubin–Tate 理論</strong><span class="refchip nk">ANT V §4–§5</span>：
+        AEC Ch.IV で楕円曲線の還元核 E₁ を制御した「形式群」が、
+        ここでは<strong>局所類体論そのものを構成する道具</strong>として再登場する。
+        円分体 = 乗法群 𝔾̂<sub>m</sub> の等分点、という視点は「CM = 楕円曲線の等分点で類体を作る」（ATAEC II）の局所版。</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/atec.html#s4">終章 扉2</a>：H²(G<sub>v</sub>, <span class="ov">K</span><sub>v</sub><sup>×</sup>) = Br(K<sub>v</sub>) ≅ ℚ/ℤ
+          （ATAEC 演習5.14(c) が「局所類体論より」と引く事実）の出所。</li>
+        <li><a href="/math-site/in/selmer.html#s7">第5部 Ш の非自明性</a>：Cassels 対の非退化性の源流にある局所双対性。</li>
+        <li>AEC Ch.IV（第1部で要約した形式群）との再会場所。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚6 ════════ -->
+  <div class="section" id="bank-gcft">
+    <div class="section-number">Shelf 06 ─ ANT VI §1–§8</div>
+    <h2>棚6：大域類体論 ─ Hilbert 類体・Hasse 原理・相互法則</h2>
+    <p>
+      ATAEC II（CM）が「II §3 の速習で足りる」と言っていた本体がここです。
+      イデール類群 C<sub>K</sub><span class="refchip nk">ANT VI §1</span>を主役に、大域相互法則
+      <span class="refchip nk">ANT VI §5</span>が「K のアーベル拡大 ⟷ C<sub>K</sub> の閉部分群」の辞書を与えます。
+    </p>
+    <div class="box thm">
+      <div class="box-label">ray 類体と Hilbert 類体 <span class="refchip nk">ANT VI.6.2–6.3 / VI.6.8</span></div>
+      <p>
+        任意の法 𝔪 に対し ray 類体 K<sup>𝔪</sup>/K が存在し、すべての有限アーベル拡大はある ray 類体に含まれる。
+        ℚ の ray 類体は円分体にほかならない<span class="refchip nk">ANT VI.6.7</span>。
+        法 𝔪 = 1 の ray 類体（big Hilbert 類体）は<strong>最大不分岐アーベル拡大</strong>であり、
+        その Galois 群は（狭義）イデアル類群と同型。ATAEC II.4.3 の「K(j(E)) = Hilbert 類体」の
+        Hilbert 類体とは、これのことである。
+      </p>
+    </div>
+    <ul>
+      <li><strong>Hasse ノルム定理</strong><span class="refchip nk">ANT VI.4.5</span>：巡回拡大では
+        「どこでも局所的にノルム ⟹ 大域的にノルム」。局所大域原理が<strong>成立する</strong>側の代表例で、
+        その直後に2次形式の Minkowski–Hasse 定理も言及される<span class="refchip nk">ANT VI §5 冒頭</span>。
+        第5部で見た Ш ≠ 0（種数1での破れ）が、いかに際どい現象かの比較対象。</li>
+      <li><strong>べき剰余の相互法則</strong><span class="refchip nk">ANT VI §8</span>：Hilbert 記号の積公式から
+        Gauss の平方剰余相互法則<span class="refchip nk">ANT I.8.6</span>とその n 乗版が一斉に出る。
+        類体論とは「相互法則の理論」だという歴史的出自が見える節。</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/atec.html#s7">終章 扉5</a>：CM 理論（Hilbert 類体・ray 類体・Artin 相互）の前提の全部。
+          ATAEC II を読む前の装備はこの棚で調達する。</li>
+        <li><a href="/math-site/in/selmer.html#s9">第5部 問5</a>：Lind–Reichardt の証明で使った平方剰余の相互法則
+          （(p/17) = (17/p)、17 ≡ 1 mod 4）。</li>
+        <li><a href="/math-site/in/selmer.html#s7">第5部 Section 07</a>：「種数0では Hasse 原理が成り立つ」の背景。</li>
+        <li><a href="/math-site/in/weakmw.html#s8">第2部 実例</a>：ℚ(ζ₈) が「2 の外で不分岐な指数2アーベル拡大」の
+          ほぼ全部である理由は、ℚ の ray 類体＝円分体（VI.6.7）から見通せる。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚7 ════════ -->
+  <div class="section" id="bank-zeta">
+    <div class="section-number">Shelf 07 ─ ANT VII §5–§8, §11, §13</div>
+    <h2>棚7：ζ と L ─ 類数公式・Hecke 指標・Artin 導手</h2>
+    <p>
+      終章の扉5・扉6（CM の L 関数、BSD）の解析側の武器です。
+    </p>
+    <ul>
+      <li><strong>Dedekind ζ と解析類数公式</strong><span class="refchip nk">ANT VII §5（系 5.11 とその直後）</span>：
+        ζ<sub>K</sub>(s) の留数に h・R・√|d<sub>K</sub>| が現れる。
+        「L 関数の特殊値 ＝ 数論的不変量の積」という<strong>BSD 予想の原型</strong>。
+        BSD の精密公式（#Ш・レギュレータ・玉川数）は、この類数公式の楕円曲線版として読むのが正しい姿勢です。</li>
+      <li><strong>Hecke 指標と Hecke L 関数</strong><span class="refchip nk">ANT VII §6 / VII.8.5</span>：
+        Grössencharacter の一般論と、テータ級数経由の解析接続・関数等式。
+        ATAEC II.10.3 が「古典的に既知」として引いた定理の完全証明はここにある。
+        Deuring の定理（CM 曲線の L = Hecke L の積）と合わせて、CM 曲線の BSD が「意味を持つ」ことの根拠。</li>
+      <li><strong>Artin L 関数と導手</strong><span class="refchip nk">ANT VII §10–§12</span>：
+        Galois 表現の L 関数と Artin 導手。導手判別式公式<span class="refchip nk">ANT VII.11.9</span>は
+        Ogg の公式（ATAEC IV.11.1）の「f(E/K)」側の一般論。
+        楕円曲線の導手とは、Tate 加群という Galois 表現の Artin 導手のことである。</li>
+      <li><strong>Chebotarev の密度定理</strong><span class="refchip nk">ANT VII.13.4</span>：
+        Frobenius が Galois 群を一様に埋め尽くす。曲線の還元 mod p の統計
+        （a<sub>p</sub> の分布、同種の判定など）を支える、現代数論の空気のような定理。</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ シリーズでの使用箇所</div>
+      <ul>
+        <li><a href="/math-site/in/atec.html#s7">終章 扉5</a>：Deuring の定理の背景（Hecke L の解析接続）。</li>
+        <li><a href="/math-site/in/atec.html#s8">終章 扉6</a>：「L(E,s) はそもそも存在するのか」問題の一般論側。
+          保型形式（ATAEC I）と Hecke L（ANT VII §8）は、同じ関数等式技法の2つの顔。</li>
+        <li><a href="/math-site/in/atec.html#s3">終章 扉1</a>：Ogg 公式の導手 f(E/K) の定義の本体。</li>
+        <li><a href="/math-site/in/descent.html#s6">第4部 §9</a>：楕円レギュレータの命名の由来（単数基準 R の類似）。</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 伴走ルート ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Section 10</div>
+    <h2>伴走ルート ─ ANT をシリーズの副読本として歩く3本の道</h2>
+    <p>
+      武器庫を棚ごとに使うだけでなく、まとまって読みたい人のための最短路です。
+      いずれも<strong>シリーズの該当ページを横に開きながら</strong>読むことを前提にしています。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>ルート</th><th>読む範囲</th><th>ゴール</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>A. 弱MWを底まで</strong></td>
+          <td class="g">I §2–§11 → II §1–§9 →（III §2）</td>
+          <td>第2部の証明の外部入力（類数・S-単数・惰性・判別式）が<strong>全部自前になる</strong>。
+            シリーズ最重要ルート。</td>
+        </tr>
+        <tr>
+          <td><strong>B. 類体論へ</strong></td>
+          <td class="g">IV §1–§3 → V §1 → VI §1, §5–§6</td>
+          <td>ATAEC II（CM）を読む装備一式。抽象類体論の公理系（IV §4–§7）は
+            初回は飛ばし、V・VI で必要になったら戻る読み方で足りる。</td>
+        </tr>
+        <tr>
+          <td><strong>C. L関数へ</strong></td>
+          <td class="g">VII §1–§2 → §5 → §6, §8</td>
+          <td>類数公式と Hecke L の関数等式。BSD・ATAEC I–II の解析側の言葉が読めるようになる。</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="why">
+      <div class="w-label">? なぜ Neukirch なのか</div>
+      <p>
+        本シリーズが借りた定理はどれも標準的で、他の教科書にもあります。それでも ANT を推すのは、
+        <strong>局所と大域を往復する視点</strong>（まさに Selmer 群の視点）が全編を貫いていることと、
+        Riemann–Roch 理論・Arakelov 的な視点（III 章）を通じて「数論は幾何である」という
+        本シリーズ後半のテーマ──高さ＝交叉数（ATAEC III）、Ogg 公式（ATAEC IV）──に
+        まっすぐ接続するからです。武器庫というより、次の山脈の登山口でもあります。
+      </p>
+    </div>
+    <p>
+      シリーズ本編で「⏩ 一旦認めて先へ」と言った箇所は、これですべて返済先が明示されました。
+      借りたまま進む勇気と、いつでも返しに戻れる地図──両方揃って、はじめて安心して速く歩けます。
+      よい登山を。
+    </p>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/atec.html">
+      <div class="p-dir">← PREV ─ 終章</div>
+      <div class="p-title">その先へ ─ Advanced Topics への招待</div>
+    </a>
+    <a class="next" href="/math-site/in/aec.html">
+      <div class="p-dir">SERIES TOP</div>
+      <div class="p-title">全体地図へ戻る →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 付録（参照専用）</p>
+    <p>底本：J. Neukirch, Algebraic Number Theory, Grundlehren der mathematischen Wissenschaften 322, Springer (ANT)</p>
+    <p>シリーズ底本：Silverman, AEC (GTM 106) ／ ATAEC (GTM 151)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
