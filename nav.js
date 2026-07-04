@@ -24,9 +24,35 @@
     document.head.appendChild(s);
   }
 
+  /* ── 「大学院」メニューを動的に追加 ──
+     各ページのナビHTMLを書き換えずに、全ページ共通でドロップダウンを足す。
+     挿入位置は「なぜ学ぶのか」の直前（無ければ末尾）。 */
+  function injectGradMenu(nav){
+    var list=nav.querySelector('.site-nav__list');
+    if(!list || nav.querySelector('.site-nav__item--grad')) return;
+    var li=document.createElement('li');
+    li.className='site-nav__item site-nav__item--grad';
+    li.innerHTML=
+      '<a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学院 <span class="site-nav__arrow">▼</span></a>'+
+      '<div class="site-nav__dropdown">'+
+        '<a href="/math-site/in/aec.html">楕円曲線の数論 ─ 全体地図</a>'+
+        '<a href="/math-site/in/weakmw.html">弱Mordell–Weil定理</a>'+
+        '<a href="/math-site/in/kummer.html">Kummer対とコホモロジー</a>'+
+        '<a href="/math-site/in/descent.html">降下法とMordell–Weil定理</a>'+
+        '<a href="/math-site/in/selmer.html">Selmer群とШ群</a>'+
+      '</div>';
+    var ref=null, ch=list.children;
+    for(var i=0;i<ch.length;i++){
+      var a=ch[i].querySelector && ch[i].querySelector('a.site-nav__link[href]');
+      if(a && (a.getAttribute('href')||'').indexOf('why.html')>-1){ ref=ch[i]; break; }
+    }
+    if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
+  }
+
   function init(){
     var nav=document.querySelector('.site-nav');
     if(!nav) return;
+    injectGradMenu(nav);
     injectCSS();
 
     /* 固定パネルの位置（ナビの高さ）をCSS変数に反映 */

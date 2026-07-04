@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>降下法と高さ ─ AEC VIII §3–§4 精読 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'ĥ'; position:absolute; right:10px; top:-46px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .canvas-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; margin:26px 0; }
+  canvas { display:block; width:100%; border-radius:4px; }
+  .slider-row { display:flex; align-items:center; gap:14px; margin:14px 0 4px; }
+  .slider-row label { font-family:var(--mono); font-size:12px; color:var(--gold); white-space:nowrap; min-width:110px; }
+  .slider-row input[type=range] { flex:1; -webkit-appearance:none; height:2px; background:var(--border); border-radius:2px; outline:none; }
+  .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--gold); cursor:pointer; }
+  .slider-row .val { font-family:var(--mono); font-size:13px; color:var(--gold-soft); min-width:64px; text-align:right; }
+  .sim-note { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 4/5</div>
+    <h1>降下法と高さ<br>─ Mordell–Weil 定理の完成<br><span class="en">The Descent Procedure &amp; Heights</span></h1>
+    <p class="hero-sub">
+      「余りの種類が有限（弱MW）」＋「m倍すると点は必ず大きくなる（高さ）」＝「有限生成」。
+      Fermat の無限降下の現代版を、AEC VIII §3–§4 に沿って完全に実行します。
+      後半では §5–§11（一般の数体・標準高さ・捩れ・階数）を展望します。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §3–§4（精読）、§5–§11（展望）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a class="cur" href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>なぜ弱MWだけでは足りないのか <span class="refchip">AEC VIII §3 冒頭</span></h2>
+    <p>まず反例で感覚を固定します。「A/mA 有限 ⇒ A 有限生成」は<strong>偽</strong>です。</p>
+    <ul>
+      <li><strong>A = ℝ</strong>：どんな m ≥ 1 でも ℝ/mℝ = 0（有限！）。だが ℝ は有限生成でない。</li>
+      <li><strong>A = E(ℚ<sub>p</sub>)</strong>：E(ℚ<sub>p</sub>) は指数有限の部分群 ≅ ℤ<sub>p</sub> を含む<span class="refchip">AEC VII.6.3</span>。
+        ℤ<sub>p</sub>/mℤ<sub>p</sub> は有限（p ∤ m なら 0）なので E(ℚ<sub>p</sub>)/mE(ℚ<sub>p</sub>) は有限。
+        だが E(ℚ<sub>p</sub>) は有限生成でない（ℤ<sub>p</sub> は非可算）。</li>
+    </ul>
+    <p>
+      両方の反例に共通する病理は「<strong>m で無限回割れる元が大量にある</strong>」ことです
+      （ℝ でも ℤ<sub>p</sub> でも、任意の元が m で割れ続ける）。
+      数体上の楕円曲線ではこの病理が起きないことを言うために、「点の大きさ」＝<strong>高さ</strong>を導入し、
+      「m倍写像は高さをほぼ m² 倍にする」ことを示します。
+      大きさが有界な点は有限個しかないので、無限に割り続けることは不可能になる──これが降下法の心です。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>降下定理 <span class="en">Descent Theorem</span></h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（降下定理） <span class="refchip">AEC VIII.3.1</span></div>
+      <p>A をアーベル群とし、関数 h : A → ℝ（高さ関数）が次の3性質を持つとする。</p>
+      <div class="formula">
+        <div class="fline">(i)　各 Q ∈ A に対し定数 C₁ = C₁(Q) があり：h(P + Q) ≤ 2h(P) + C₁　（∀P）</div>
+        <div class="fline">(ii)　ある整数 m ≥ 2 と定数 C₂ があり：h(mP) ≥ m²h(P) − C₂　（∀P）</div>
+        <div class="fline">(iii)　任意の定数 C₃ に対し { P ∈ A : h(P) ≤ C₃ } は有限集合</div>
+      </div>
+      <p>さらに (ii) の m について A/mA が有限ならば、<strong>A は有限生成</strong>である。</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">証明（完全版・コメント付き）</div>
+      <p>
+        A/mA の剰余類の代表 Q₁, …, Q<sub>r</sub> を取ります（有限性の仮定）。任意の P ∈ A から出発して、
+        「m で割って余りを引く」操作を繰り返します：
+      </p>
+      <div class="formula">
+        <div class="fline">P = mP₁ + Q<sub>i₁</sub>,　P₁ = mP₂ + Q<sub>i₂</sub>,　…,　P<sub>n−1</sub> = mP<sub>n</sub> + Q<sub>iₙ</sub></div>
+      </div>
+      <p>各ステップで高さがどう変わるかを評価します。任意の j で：</p>
+      <div class="formula">
+        <div class="fline">h(P<sub>j</sub>) ≤ (1/m²)( h(mP<sub>j</sub>) + C₂ )　　　（(ii) より）</div>
+        <div class="fline">　　　 = (1/m²)( h(P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub>) + C₂ )</div>
+        <div class="fline">　　　 ≤ (1/m²)( 2h(P<sub>j−1</sub>) + C₁′ + C₂ )　（(i) を Q = −Q<sub>i</sub> に適用）</div>
+        <div class="fline fc">C₁′ = max{ C₁(−Q<sub>i</sub>) : i = 1,…,r }。C₁′ も C₂ も P に依らない定数</div>
+      </div>
+      <p>
+        つまり1ステップごとに高さは「約 2/m² 倍＋定数」になります。m ≥ 2 なら 2/m² ≤ 1/2 なので、
+        これは<strong>縮小写像</strong>です。繰り返し使うと：
+      </p>
+      <div class="formula">
+        <div class="fline">h(P<sub>n</sub>) ≤ (2/m²)ⁿ h(P) + ( 1/m² + 2/m⁴ + ⋯ + 2ⁿ⁻¹/m²ⁿ )(C₁′ + C₂)</div>
+        <div class="fline">　　　 &lt; (2/m²)ⁿ h(P) + (C₁′ + C₂)/(m² − 2)</div>
+        <div class="fline">　　　 ≤ 2⁻ⁿ h(P) + (C₁′ + C₂)/2　　（m ≥ 2 のとき）</div>
+      </div>
+      <p>n を十分大きく取れば h(P<sub>n</sub>) ≤ 1 + (C₁′ + C₂)/2。一方、割り算の列を逆にたどると</p>
+      <div class="formula">
+        <div class="fline">P = mⁿP<sub>n</sub> + Σ<sub>j=1</sub><sup>n</sup> m<sup>j−1</sup> Q<sub>i<sub>j</sub></sub></div>
+      </div>
+      <p>なので、P は次の集合の元の一次結合です：</p>
+      <div class="formula">
+        <div class="fline">{ Q₁, …, Q<sub>r</sub> } ∪ { Q ∈ A : h(Q) ≤ 1 + (C₁′ + C₂)/2 }</div>
+      </div>
+      <p>(iii) よりこれは有限集合。よって A は有限生成です。</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <h3>高さ降下シミュレータ</h3>
+    <p>
+      証明中の縮小の様子を目で見てみます。棒グラフは上の不等式が保証する h(P<sub>j</sub>) の上界です。
+      初期高さや定数をどれだけ大きくしても、<strong>数ステップで「床」（＝ 1 + (C₁′+C₂)/2 のライン）に落ちる</strong>
+      ことを確認してください。
+    </p>
+    <div class="canvas-wrap">
+      <div class="slider-row">
+        <label>h(P) 初期高さ</label>
+        <input type="range" id="slH" min="5" max="500" step="5" value="200">
+        <span class="val" id="vH">200</span>
+      </div>
+      <div class="slider-row">
+        <label>C₁′+C₂ 定数</label>
+        <input type="range" id="slC" min="1" max="60" step="1" value="12">
+        <span class="val" id="vC">12</span>
+      </div>
+      <div class="slider-row">
+        <label>m</label>
+        <input type="range" id="slM" min="2" max="5" step="1" value="2">
+        <span class="val" id="vM">2</span>
+      </div>
+      <canvas id="cDescent" height="260"></canvas>
+      <div class="sim-note">
+        棒：h(P₀), h(P₁), h(P₂), … の上界（漸化式 h ↦ (2h + C)/m²）。
+        金色の点線：不動点 C/(m²−2)（降下の「床」）。床以下の点は有限個しかない（性質(iii)）ので、そこで生成元探しが終わる。
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Fermat の無限降下との関係</div>
+      <p>
+        Fermat は「解があれば、より小さい解が作れる → 無限に小さくなれないから矛盾」という形で使いました（非存在の証明）。
+        Mordell–Weil では同じ縮小構造を「どんな点も、有限ステップで床に落ちる → 床の点と余り Q<sub>i</sub> で全部生成できる」
+        という<strong>生成の証明</strong>に転用しています。「無限降下」が非存在ではなく有限生成を生む──ここが歴史的にも面白い転回点です。
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">効果性の注意 <span class="refchip">AEC VIII.3.2</span></div>
+      <p>
+        降下定理を「アルゴリズム」にするには、(1) 各 C₁(Q<sub>i</sub>)、(2) C₂、(3) 床以下の点の列挙、
+        の3つが計算可能であればよい。楕円曲線の高さ（次節）ではこれら<strong>すべてが有効に計算できます</strong>。
+        つまり、<strong>E(K)/mE(K) の生成元さえ手に入れば E(K) の生成元は必ず計算できる</strong>。
+        Mordell–Weil 定理の非有効性は、第2部・注意2で見た一点（E(K)/mE(K) の決定）に本当に集中しているのです。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>ℚ 上の高さ関数 ─ 定義と性質 (a)</h2>
+
+    <p>
+      あとは E(ℚ) の上に (i)(ii)(iii) を満たす関数を作れば、m = 2 の弱MW（第2部）とあわせて
+      E(ℚ) の有限生成が出ます。E : y² = x³ + Ax + B（A, B ∈ ℤ）を固定します。
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">定義（素朴な高さ） <span class="refchip">AEC VIII §4</span></div>
+      <p>t = p/q ∈ ℚ（既約分数）に対し H(t) = max{ |p|, |q| }。そして</p>
+      <div class="formula">
+        <div class="fline">h<sub>x</sub> : E(ℚ) → ℝ,　h<sub>x</sub>(P) = log H(x(P))　（P ≠ O）,　h<sub>x</sub>(O) = 0</div>
+      </div>
+      <p>「x座標の分子・分母の大きい方の桁数」が点の大きさ、という素朴な定義である。h<sub>x</sub> ≥ 0 に注意。</p>
+    </div>
+
+    <p>
+      性質 (iii) は明らかです：H(t) ≤ C なる有理数は分子分母が [−C, C] の整数なので高々 (2C+1)² 個、
+      各 x に対して y は高々2つ<span class="refchip">AEC VIII.4.2(c)</span>。
+      問題は (i)(ii)、つまり<strong>「加法・倍加が高さをどう変えるか」を加法公式から読み取る</strong>ことです。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">補題（高さの性質） <span class="refchip">AEC VIII.4.2</span></div>
+      <div class="formula">
+        <div class="fline">(a)　h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁(P₀, A, B)</div>
+        <div class="fline">(b)　h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂(A, B)</div>
+        <div class="fline">(c)　{ P : h<sub>x</sub>(P) ≤ C₃ } は有限</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">(a) の証明（要点＋行間）</div>
+      <p>
+        P₀ = O や P ∈ {O, ±P₀} の場合は C₁ を大きく取れば済むので、それ以外とします。
+        既約分数表示で P = (a/d², b/d³)、P₀ = (a₀/d₀², b₀/d₀³) と書けます
+        （Weierstrass方程式の分母は必ずこの形になります：x = u/v が既約なら y² の分母から v = d² が従う）。
+        加法公式<span class="refchip">AEC III.2.3(d)</span>を曲線の式で整理すると：
+      </p>
+      <div class="formula">
+        <div class="fline">x(P + P₀) = ( (xx₀ + A)(x + x₀) + 2B − 2yy₀ ) / (x − x₀)²</div>
+        <div class="fline">　　　　 = ( (aa₀ + Ad²d₀²)(ad₀² + a₀d²) + 2Bd⁴d₀⁴ − 2bd·b₀d₀ ) / (ad₀² − a₀d²)²</div>
+      </div>
+      <p>
+        分子・分母は a, d², bd の「2次以下」の式です。約分は高さを下げるだけなので、
+      </p>
+      <div class="formula">
+        <div class="fline">H(x(P+P₀)) ≤ C′ · max{ |a|², |d|⁴, |bd| }</div>
+      </div>
+      <p>
+        となります（C′ は A, B, a₀, b₀, d₀ だけの定数）。
+        H(x(P)) = max{|a|, |d|²} なので、|a|² と |d|⁴ はちょうど H(x(P))² の形。
+        <strong>唯一の邪魔者は |bd|</strong> です。ここで「P が曲線上にある」ことを使います：
+        b² = a³ + Aad⁴ + Bd⁶ より
+      </p>
+      <div class="formula">
+        <div class="fline">|b| ≤ C″ max{ |a|³ᐟ², |d|³ }　⇒　|bd| ≤ C″ max{ |a|³ᐟ²|d|, |d|⁴ } ≤ C″ max{ |a|², |d|⁴ }</div>
+        <div class="fline fc">最後の不等号：|a|¹ᐟ² ≥ |d| なら |a|³ᐟ²|d| ≤ |a|²、そうでなければ |a|³ᐟ²|d| &lt; |d|⁴</div>
+      </div>
+      <p>
+        よって H(x(P+P₀)) ≤ C₁ max{|a|,|d|²}² = C₁ H(x(P))²。対数を取れば (a) が出ます。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+    <div class="why">
+      <div class="w-label">? (a) の教訓</div>
+      <p>
+        加法公式は x について次数2の有理式なので「高さ2倍＋定数」は<em>ほぼ</em>自明──
+        ただし y の項（|bd|）が混ざるところだけは、<strong>曲線の方程式そのもの</strong>で y を x で抑える必要がある。
+        「点が曲線に乗っている」という情報が定量評価に化ける瞬間です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>急所：倍加は高さを4倍にする ─ 性質 (b)</h2>
+
+    <p>
+      (b) は (a) より難しい。理由は不等式の向きです。
+      (a) は「大きくなりすぎない」（上から抑える）だけなので約分を無視できましたが、
+      (b) は「<strong>小さくなりすぎない</strong>」（下から抑える）ので、
+      <strong>分数がどれだけ約分されうるかを制御</strong>しなければなりません。
+    </p>
+    <p>倍加公式を斉次化します。x = x(P) = p/q（既約）として：</p>
+    <div class="formula">
+      <div class="fline">x([2]P) = F(p, q) / G(p, q)</div>
+      <div class="fline">F(X, Z) = X⁴ − 2AX²Z² − 8BXZ³ + A²Z⁴</div>
+      <div class="fline">G(X, Z) = 4X³Z + 4AXZ³ + 4BZ⁴　（= 4y²·Z⁴ に対応）</div>
+    </div>
+    <p>
+      F(X,1) と G(X,1) は互いに素な多項式（Δ ≠ 0 のとき）なので、終結式の理論により
+      「互いに素さの証明書」となる恒等式が存在します。AECはそれを明示的に書き下しています：
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">副補題（明示的な恒等式） <span class="refchip">AEC VIII.4.3</span></div>
+      <p>Δ' = 4A³ + 27B²（判別式の −16 倍を除いた部分）とおくと、ℤ[A,B,X,Z] の恒等式として</p>
+      <div class="formula">
+        <div class="fline">f₁(X,Z)·F(X,Z) − g₁(X,Z)·G(X,Z) = 4Δ'·Z⁷</div>
+        <div class="fline">f₂(X,Z)·F(X,Z) − g₂(X,Z)·G(X,Z) = 4Δ'·X⁷</div>
+        <div class="fline fc">f₁ = 12X²Z + 16AZ³,　g₁ = 3X³ − 5AXZ² − 27BZ³　（f₂, g₂ も次数3の明示的な多項式）</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">(b) の証明（完全版・コメント付き）</div>
+      <p>
+        C₂ ≥ 4·max{ h<sub>x</sub>(T) : T ∈ E(ℚ)[2] } と取っておけば [2]P = O の場合は自明なので、[2]P ≠ O とします。
+        約分量を δ = gcd( F(p,q), G(p,q) ) とおきます。恒等式に (X,Z) = (p,q) を代入すると：
+      </p>
+      <div class="formula">
+        <div class="fline">f₁(p,q)F(p,q) − g₁(p,q)G(p,q) = 4Δ'q⁷,　f₂(p,q)F(p,q) − g₂(p,q)G(p,q) = 4Δ'p⁷</div>
+      </div>
+      <p>
+        δ は左辺の両方を割るので、4Δ'q⁷ と 4Δ'p⁷ の両方を割ります。gcd(p,q) = 1 なので
+        <strong>δ | 4Δ'</strong>。つまり約分は高々 |4Δ'|（P に依らない定数！）しか起きません。よって：
+      </p>
+      <div class="formula">
+        <div class="fline">H(x([2]P)) ≥ max{ |F(p,q)|, |G(p,q)| } / |4Δ'|</div>
+      </div>
+      <p>
+        あとは max{|F|, |G|} を下から max{|p|,|q|}⁴ で抑えれば終わりです。再び恒等式から：
+      </p>
+      <div class="formula">
+        <div class="fline">|4Δ'q⁷| ≤ 2 max{|f₁|, |g₁|} · max{|F|, |G|},　|4Δ'p⁷| ≤ 2 max{|f₂|, |g₂|} · max{|F|, |G|}</div>
+      </div>
+      <p>
+        f₁, g₁, f₂, g₂ は次数3の多項式なので max{|f₁|,…,|g₂|} ≤ C·max{|p|,|q|}³。まとめると
+      </p>
+      <div class="formula">
+        <div class="fline">max{ |4Δ'p⁷|, |4Δ'q⁷| } ≤ 2C·max{|p|,|q|}³ · max{|F|, |G|}</div>
+        <div class="fline">⇒　max{|F|, |G|} / |4Δ'| ≥ (2C)⁻¹ max{|p|,|q|}⁴ = (2C)⁻¹ H(x(P))⁴</div>
+      </div>
+      <p>対数を取って h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂ を得ます。</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? なぜ「4倍」は崩れないのか ── 議論の本質</div>
+      <p>
+        倍加公式は次数4の有理写像なので、高さが「最大4倍」なのは当たり前。
+        非自明なのは「<strong>ほぼきっかり4倍」が下からも保証される</strong>ことで、
+        その理由は F と G が共通零点を持たない（＝曲線が非特異、Δ ≠ 0）ことにあります。
+        共通零点がないことの定量版が副補題の恒等式で、「約分 δ は 4Δ' を割る」という形で
+        <strong>幾何の非退化性が数論の評価に翻訳</strong>されています。
+        この「射影空間の射は高さを次数倍する」という現象は、一般論として AEC VIII.5.6 に昇格します。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>組み立て：ℚ 上の Mordell–Weil 定理</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理 <span class="refchip">AEC VIII.4.1</span></div>
+      <p>E/ℚ を楕円曲線とすると、E(ℚ) は有限生成である。</p>
+    </div>
+    <div class="proof">
+      <div class="p-label">証明</div>
+      <p>
+        弱Mordell–Weil定理（第2部、m = 2）より E(ℚ)/2E(ℚ) は有限。
+        h<sub>x</sub> は VIII.4.2 の (a)(b)(c) により降下定理の仮定 (i)(ii)(iii)（m = 2）を満たす。
+        よって降下定理（VIII.3.1）から E(ℚ) は有限生成。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+    <p>
+      注意：ここで使う弱MWは m = 2 の場合だけで、しかも E[2] ⊂ E(ℚ) は<strong>仮定していません</strong>
+      （第2部の帰着補題が体拡大を処理してくれるため）。2つの部品が噛み合う様子を味わってください。
+    </p>
+
+    <h3>数値で「4倍＋O(1)」を体感する ─ E : y² = x³ + 3, P = (1, 2)</h3>
+    <p>倍加公式（A = 0, B = 3）で実際に計算すると：</p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>点</th><th>x座標</th><th>h<sub>x</sub>（=log H）</th><th>前項との比</th></tr></thead>
+      <tbody>
+        <tr><td class="m">P</td><td class="m">1</td><td class="m">log 1 = 0</td><td class="m">─</td></tr>
+        <tr><td class="m">2P</td><td class="m">−23/16</td><td class="m">log 23 ≈ 3.14</td><td class="m">─（h=0 なので比は無意味）</td></tr>
+        <tr><td class="m">4P</td><td class="m">2540833/7744</td><td class="m">log 2540833 ≈ 14.75</td><td class="m">14.75/3.14 ≈ 4.7</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      検算のヒント：x(2P) = (x⁴ − 24x)/(4x³ + 12)、x = 1 で (1−24)/16 = −23/16。
+      次に F(−23,16) = (−23)⁴ − 24·(−23)·16³ = 2540833、G(−23,16) = 4(−23)³·16 + 12·16⁴ = 7744、
+      gcd = 1（4Δ' = 972 = 2²·3⁵ と 7744 = 2⁶·11² の共通因子は 4 だが 2540833 は奇数）。
+      比が 4 に落ち着いていく様子、そして「+O(1)」のぶんだけ 4 からずれる様子が見えます。
+      ちなみにこの数列から lim h<sub>x</sub>(2ⁿP)/4ⁿ ≈ 0.9 が読み取れ、これが次節の<strong>標準高さ</strong>の値の近似です。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ 展望（要約）</div>
+    <h2>VIII §5–§11 を地図で歩く</h2>
+
+    <h3>§5–§6：一般の数体への拡張と「高さ機械」</h3>
+    <p>
+      一般の数体 K では、すべての素点（絶対値）をまとめて高さを定義します：
+      P = [x₀ : … : x<sub>N</sub>] ∈ ℙᴺ(K) に対し H<sub>K</sub>(P) = Π<sub>v</sub> max<sub>i</sub>|x<sub>i</sub>|<sub>v</sub><sup>n<sub>v</sub></sup>。
+      積公式のおかげで座標の取り方に依りません。重要な成果は2つ：
+    </p>
+    <ul>
+      <li><strong>Northcott の有限性</strong><span class="refchip">AEC VIII.5.11</span>：高さと次数が有界な点は有限個。性質(iii)の一般版。</li>
+      <li><strong>高さ機械</strong>：偶関数 f ∈ K(E) に対し h<sub>f</sub> が「ほぼ2次形式」になる
+        （h<sub>f</sub>(P+Q) + h<sub>f</sub>(P−Q) = 2h<sub>f</sub>(P) + 2h<sub>f</sub>(Q) + O(1)、平行四辺形則）<span class="refchip">AEC VIII.6.2</span>。
+        これから (i)(ii) 型の不等式が全て従い、<strong>一般の数体上の Mordell–Weil 定理</strong>
+        <span class="refchip">AEC VIII.6.7</span> が §4 と同じ骨格で証明されます。</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        §5–§6 は「§4 で手計算したことを、任意の数体・任意の射影埋め込みで通用する形に鍛え直す」章です。
+        ℚ の場合の骨格（今日の内容）を理解していれば、§5–§6 は「同じ議論の一般化」として安心して読み流せます。
+        深入りは標準高さ（§9）が必要になったときで十分です。
+      </p>
+    </div>
+
+    <h3>§7：捩れ部分群 ─ Lutz–Nagell と Mazur</h3>
+    <div class="box thm">
+      <div class="box-label">定理（Lutz–Nagell） <span class="refchip">AEC VIII.7.1–7.2</span></div>
+      <p>
+        E : y² = x³ + Ax + B（A,B ∈ ℤ）、P = (x,y) を捩れ点（≠ O）とすると、
+        x, y ∈ ℤ であり、y = 0 または y² | 4A³ + 27B²。
+      </p>
+    </div>
+    <p>
+      これで E(ℚ)<sub>tors</sub> は<strong>有限回の割り算チェックで決定できます</strong>（練習問題5）。
+      さらに深い事実として、Mazur の定理<span class="refchip">AEC VIII.7.5</span>：E(ℚ)<sub>tors</sub> は
+      ℤ/Nℤ（N ≤ 10 または 12）か ℤ/2ℤ × ℤ/2Nℤ（N ≤ 4）の15種類に限る。
+      （証明はAECの範囲外。主張だけ知っていれば十分です。）
+    </p>
+
+    <h3>§8：最小判別式・大域最小モデル</h3>
+    <p>
+      K = ℚ では全素点で同時に最小な Weierstrass 方程式（大域最小モデル）が取れます<span class="refchip">AEC VIII.8.2–8.3</span>
+      （一般の数体では類数1なら取れる）。第2部で S を決めるときの「最小方程式」の裏付けです。要約でOK。
+    </p>
+
+    <h3>§9：標準高さ（Néron–Tate height）</h3>
+    <p>h<sub>x</sub> の「+O(1)」の揺らぎを、極限で完全に消すことができます：</p>
+    <div class="formula">
+      <div class="fline">ĥ(P) = (1/2)·lim<sub>n→∞</sub> 4⁻ⁿ h<sub>x</sub>([2ⁿ]P)</div>
+      <div class="fline fc">（正規化は流儀により1/2倍の差がある。AEC VIII §9 は h_f/deg f の極限で定義）</div>
+    </div>
+    <ul>
+      <li>ĥ は<strong>正確な2次形式</strong>になり、ĥ(P) = 0 ⟺ P は捩れ点<span class="refchip">AEC VIII.9.3</span>。</li>
+      <li>E(K) ⊗ ℝ 上で正定値<span class="refchip">AEC VIII.9.6</span>。
+        双線形形式 ⟨P,Q⟩ = ĥ(P+Q) − ĥ(P) − ĥ(Q) の行列式が<strong>楕円レギュレータ</strong><span class="refchip">AEC VIII.9.7</span>で、
+        BSD予想の公式に登場します。</li>
+      <li>極限の存在証明は「Tateの望遠鏡トリック」と呼ばれる初等的な議論です（練習問題6で実際にやります）。</li>
+    </ul>
+
+    <h3>§10–§11：階数の謎・Szpiro予想（読み物として）</h3>
+    <p>
+      階数 r には、いまだに基本的な未解決問題が並びます：階数は非有界か<span class="refchip">AEC VIII.10.1（予想）</span>、
+      階数の「平均」はいくつか、など。§11 は Szpiro 予想（判別式と導手の不等式）と ABC 予想の同値性を扱う読み物で、
+      Mordell–Weil の理解には不要です<span class="refchip">AEC VIII §11</span>。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7. 練習問題 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Exercises</div>
+    <h2>練習問題</h2>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 1</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          降下定理の証明で「n を十分大きく取れば h(P<sub>n</sub>) ≤ 1 + (C₁′+C₂)/2」とした。
+          h(P) と C₁′+C₂ が与えられたとき、これを保証する n を明示的に1つ与えよ（m = 2 とする）。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            評価式は h(P<sub>n</sub>) ≤ 2⁻ⁿ h(P) + (C₁′+C₂)/2 なので、2⁻ⁿ h(P) ≤ 1 となれば十分。
+            すなわち n ≥ log₂ h(P) なる任意の整数、たとえば n = max{0, ⌈log₂ h(P)⌉} が取れる。
+            高さの対数（≒桁数の対数）ステップで床に到達する──降下が「速い」ことも読み取れる。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 2</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          高さの性質 (iii)（有界集合の有限性）だけを使って、E(ℚ) の捩れ部分群が有限であることを
+          降下定理を経由せずに直接示せ。（ヒント：捩れ点の高さは有界であることを (a)(b) から導く。）
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            P を捩れ点、位数を k とする。(b) を繰り返すと h<sub>x</sub>(2ⁿP) ≥ 4ⁿ h<sub>x</sub>(P) − C₂(1 + 4 + … + 4ⁿ⁻¹)
+            ≥ 4ⁿ( h<sub>x</sub>(P) − C₂/3 )。もし h<sub>x</sub>(P) &gt; C₂/3 なら左辺は n とともに発散するが、
+            {2ⁿP} は有限集合（P の生成する巡回群に含まれる）なので高さは有界、矛盾。
+            よってすべての捩れ点は h<sub>x</sub> ≤ C₂/3 を満たし、(iii) より捩れ点は有限個。
+            ──これは「ĥ(捩れ点) = 0」（VIII.9.3）の素朴版である。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 3</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          E : y² = x³ + 3、P = (1,2) について、本文の表の 4P の行を検算せよ。
+          すなわち F(−23,16) = 2540833、G(−23,16) = 7744 を計算し、
+          gcd(2540833, 7744) = 1 を「δ | 4Δ' = 972」を使って確認し、h<sub>x</sub>(4P) = log 2540833 を結論せよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            F(X,Z) = X⁴ − 24XZ³（A=0, B=3 なので −2AX²Z² と A²Z⁴ は消える）：
+            F(−23,16) = 279841 + 24·23·4096 = 279841 + 2260992 = 2540833。
+            G(X,Z) = 4X³Z + 12Z⁴：G(−23,16) = −778688 + 786432 = 7744 = 2⁶·11²。
+            δ | 4Δ' = 972 = 2²·3⁵ かつ δ | 7744 = 2⁶·11² なので δ | 4。
+            F(−23,16) は奇数（偶数＋奇数）なので δ = 1。
+            よって既約分数として x(4P) = 2540833/7744、分子の方が大きいので h<sub>x</sub>(4P) = log 2540833 ≈ 14.75。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 4</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          A = 0, B = 3 の場合に副補題（VIII.4.3）の第1恒等式
+          f₁F − g₁G = 4Δ'Z⁷ を実際に展開して検証せよ。
+          （f₁ = 12X²Z, g₁ = 3X³ − 81Z³, F = X⁴ − 24XZ³, G = 4X³Z + 12Z⁴, 4Δ' = 972。）
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            f₁F = 12X²Z(X⁴ − 24XZ³) = 12X⁶Z − 288X³Z⁴。<br>
+            g₁G = (3X³ − 81Z³)(4X³Z + 12Z⁴) = 12X⁶Z + 36X³Z⁴ − 324X³Z⁴ − 972Z⁷
+            = 12X⁶Z − 288X³Z⁴ − 972Z⁷。<br>
+            差を取ると f₁F − g₁G = 972Z⁷ = 4·243·Z⁷ = 4Δ'Z⁷（Δ' = 27·9 = 243）。✓
+            一般の A, B での検証は「退屈だが確実にできる計算」（AECの言葉では tedious calculation）である。
+            f₁, g₁ を Euclid の互除法で自力導出してみるのもよい練習になる。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 5</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          Lutz–Nagell（VIII.7.1–7.2）を使って E : y² = x³ + 3 の捩れ部分群が自明（= {O}）であることを示し、
+          P = (1,2) と Mordell–Weil 定理から rank E(ℚ) ≥ 1 を結論せよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            4A³ + 27B² = 0 + 243 = 243 = 3⁵。捩れ点 (x,y) ≠ O は x,y ∈ ℤ で、
+            y = 0 なら x³ = −3（整数解なし）。y ≠ 0 なら y² | 243 より y² ∈ {1, 9, 81}、
+            つまり y ∈ {±1, ±3, ±9}。それぞれ x³ = y² − 3 ∈ {−2, 6, 78} となるが、
+            いずれも整数の立方でない。よって捩れ点は O のみ。
+            P = (1,2) ∈ E(ℚ) は O でないので無限位数。E(ℚ) ≅ ℤʳ（捩れなし）で r ≥ 1。
+            （実は r = 1 で P が生成元だが、その証明には第5部の降下計算が要る。）
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 6</span><span class="diff d3">★★★ 発展</span></div>
+      <div class="ex-body">
+        <p>
+          （Tateの望遠鏡トリック＝標準高さの存在<span class="refchip">AEC VIII.9.1 の核心</span>）
+          h = h<sub>x</sub> とする。まず (a)：ある定数 C で |h(2P) − 4h(P)| ≤ C（∀P）が成り立つことを、
+          VIII.4.2(b) と「上からの評価 h(2P) ≤ 4h(P) + C」（これは (a) と同様の粗い評価で出る）から認めてよい。
+          このとき (b)：数列 aₙ = 4⁻ⁿ h(2ⁿP) が Cauchy 列であることを示し、
+          極限 ĥ'(P) = lim aₙ が存在して |ĥ'(P) − h(P)| ≤ C/3 を満たすことを証明せよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答の方針を開く</summary>
+        <div class="sol-body">
+          <p>
+            隣接項の差を評価する：|a<sub>n+1</sub> − a<sub>n</sub>| = 4⁻⁽ⁿ⁺¹⁾|h(2·2ⁿP) − 4h(2ⁿP)| ≤ C·4⁻⁽ⁿ⁺¹⁾。
+            よって n &lt; m に対し |a<sub>m</sub> − a<sub>n</sub>| ≤ C Σ<sub>k&gt;n</sub> 4⁻ᵏ = C·4⁻ⁿ/3 → 0、Cauchy列。
+            極限を ĥ'(P) とすると |ĥ'(P) − a₀| ≤ Σ<sub>k≥1</sub> C·4⁻ᵏ = C/3、a₀ = h(P) なので主張が従う。
+          </p>
+          <p>
+            補足：同じ望遠鏡評価から ĥ'(2P) = 4ĥ'(P) が<strong>誤差なしで</strong>成り立つことも直ちに出る
+            （定義の極限をずらすだけ）。「+O(1) を極限で消して完全な2次形式にする」という §9 の設計思想が、
+            この計算に凝縮されている。平行四辺形則を使うと同様の議論で ĥ' が2次形式であることまで示せる
+            （AEC VIII.9.3 の証明）。
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/kummer.html">
+      <div class="p-dir">← PREV ─ 第3部</div>
+      <div class="p-title">Kummer対とGaloisコホモロジー（AEC VIII §2）</div>
+    </a>
+    <a class="next" href="/math-site/in/selmer.html">
+      <div class="p-dir">NEXT ─ 第5部</div>
+      <div class="p-title">Selmer群とTate–Shafarevich群（AEC X §4）→</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 4/5</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. VIII §3–§11</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+
+  /* ── 高さ降下シミュレータ ── */
+  var slH = document.getElementById('slH'), slC = document.getElementById('slC'), slM = document.getElementById('slM');
+  var vH = document.getElementById('vH'), vC = document.getElementById('vC'), vM = document.getElementById('vM');
+  var cv = document.getElementById('cDescent');
+
+  function draw(){
+    var h0 = parseFloat(slH.value), C = parseFloat(slC.value), m = parseInt(slM.value, 10);
+    vH.textContent = h0; vC.textContent = C; vM.textContent = m;
+
+    var dpr = window.devicePixelRatio || 1;
+    var W = cv.parentElement.clientWidth - 48;
+    var Hpx = 260;
+    cv.width = W * dpr; cv.height = Hpx * dpr;
+    cv.style.width = W + 'px'; cv.style.height = Hpx + 'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, Hpx);
+
+    var m2 = m * m;
+    var floor = C / (m2 - 2);           /* 不動点 */
+    var vals = [h0];
+    var steps = 14;
+    for (var i = 0; i < steps; i++) {
+      vals.push((2 * vals[i] + C) / m2);
+    }
+    var maxV = Math.max(h0, floor) * 1.12 + 1;
+    var pad = 30, baseY = Hpx - 28;
+    var bw = Math.min(38, (W - pad * 2) / vals.length - 8);
+
+    /* 床ライン */
+    var fy = baseY - (floor / maxV) * (baseY - 20);
+    ctx.strokeStyle = 'rgba(232,197,71,0.85)';
+    ctx.setLineDash([6, 5]);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(pad, fy); ctx.lineTo(W - 8, fy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(232,197,71,0.9)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillText('床 = C/(m²−2) ≈ ' + floor.toFixed(1), pad + 4, fy - 6);
+
+    /* 棒 */
+    for (var j = 0; j < vals.length; j++) {
+      var x = pad + j * ((W - pad * 2) / vals.length) + 4;
+      var bh = (vals[j] / maxV) * (baseY - 20);
+      var onFloor = vals[j] <= floor * 1.05 + 0.5;
+      ctx.fillStyle = onFloor ? 'rgba(94,207,158,0.75)' : 'rgba(232,197,71,0.55)';
+      ctx.fillRect(x, baseY - bh, bw, bh);
+      ctx.fillStyle = 'rgba(125,132,160,0.9)';
+      ctx.font = '10px JetBrains Mono, monospace';
+      if (j % 2 === 0 || vals.length < 10) ctx.fillText('P' + j, x + 2, baseY + 14);
+    }
+
+    /* 軸 */
+    ctx.strokeStyle = 'rgba(125,132,160,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad - 6, baseY); ctx.lineTo(W - 8, baseY); ctx.stroke();
+  }
+
+  [slH, slC, slM].forEach(function(s){ s.addEventListener('input', draw); });
+  window.addEventListener('resize', draw);
+  if (document.readyState === 'complete') { draw(); }
+  else { window.addEventListener('load', draw); }
+})();
+</script>
+</body>
+</html>

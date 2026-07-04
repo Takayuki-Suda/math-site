@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>楕円曲線の数論 ─ 全体地図（AEC I–VII） | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--serif); font-weight:300; line-height:1.9;
+    min-height:100vh; overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0;
+  }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'E'; position:absolute; right:-10px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--display); font-size:clamp(2.1rem,5.6vw,3.6rem); font-weight:300; font-style:italic;
+    line-height:1.25; color:#fff; margin-bottom:14px; }
+  .hero h1 .jp { font-family:var(--serif); font-style:normal; font-weight:700; }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:620px; line-height:2.0; margin-bottom:8px; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a {
+    font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none;
+    color:var(--muted); border:1px solid var(--border); border-radius:999px; padding:6px 14px;
+    transition:all .25s; background:var(--surface);
+  }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.9rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip {
+    display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px;
+    color:var(--gold-dim); border:1px solid rgba(200,168,75,.35); border-radius:4px;
+    padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap;
+  }
+
+  .formula {
+    background:var(--surface2); border-left:3px solid var(--gold);
+    padding:16px 22px; margin:22px 0; border-radius:0 6px 6px 0;
+    font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft);
+    overflow-x:auto;
+  }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 1/5</div>
+    <h1>The Arithmetic of<br>Elliptic Curves<br><span class="jp" style="font-size:.62em;">─ 全体地図と前提知識</span></h1>
+    <p class="hero-sub">
+      J.H. Silverman『The Arithmetic of Elliptic Curves』（第2版、GTM 106。以下 <strong>AEC</strong>）を、
+      <strong>Chapter VIII（Mordell–Weil定理）を本当に理解する</strong>という一点に向けて読むための教材シリーズです。
+      この第1部では、AECの全体像と、Chapter I–VII のうち「山頂へ行くのに必要な装備」だけをまとめます。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. I–VII（前提の要約）</p>
+    <div class="series-nav">
+      <a class="cur" href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1. 読み方 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このシリーズの目的と、読み方の約束</h2>
+
+    <p>
+      目的地は一つです。AEC <strong>Chapter VIII「Elliptic Curves over Global Fields」</strong>、
+      とくに次の4つの節を、証明の細部と「なぜその議論が必要なのか」まで含めて理解すること。
+    </p>
+    <ul>
+      <li>§1 弱Mordell–Weil定理（The Weak Mordell–Weil Theorem）</li>
+      <li>§2 コホモロジーによるKummer対（The Kummer Pairing via Cohomology）</li>
+      <li>§3 降下法（The Descent Procedure）</li>
+      <li>§4 ℚ上のMordell–Weil定理（The Mordell–Weil Theorem over ℚ）</li>
+    </ul>
+    <p>
+      そしてその延長線上にある AEC <strong>Chapter X §4「The Selmer and Shafarevich–Tate Groups」</strong>までを、同じ深さで扱います。
+      このシリーズの第2部〜第5部が、その4つの山場に対応します。
+    </p>
+    <p>
+      一方、Chapter I–VII、IX、および X の残りの節は、<strong>山頂に登るための前提知識・展望</strong>として要約で扱います。
+      要約部分は「主張を使えるようになる」ことが目標で、証明を追うことは要求しません。
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ この教材の一番大事な約束</div>
+      <p>
+        AECを1ページ目から完璧に読もうとすると、ほぼ確実に Chapter II の Riemann–Roch あたりで止まります。
+        この教材では、<strong>「一旦認めて先へ進む」箇所を明示的に指定します</strong>。
+        緑の枠（この枠）が出てきたら、そこは立ち止まらなくてよい合図です。
+        全部を理解してから進むのではなく、山頂（Ch.VIII）から逆算して必要なものだけ拾う。
+        それがこのシリーズの読み方です。
+      </p>
+    </div>
+
+    <p>
+      原著の該当箇所は <span class="refchip">AEC VIII.1.5</span> のような形で常に明記します。
+      「命題番号 VIII.1.5」は「Chapter VIII の §1 にある 5 番目の項目」の意味で、AEC第2版の番号付けに従います。
+      深く知りたくなったら、いつでも原著の該当箇所へ潜ってください。
+    </p>
+  </div>
+
+  <!-- ════════ 2. ゴール ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>ゴールの確認 ─ <span class="en">Mordell–Weil Theorem</span></h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（Mordell–Weil） <span class="refchip">AEC VIII, 冒頭 / VIII.6.7</span></div>
+      <p>
+        K を数体（ℚの有限次拡大）、E/K を楕円曲線とする。このとき有理点のなす群 E(K) は<strong>有限生成</strong>である。すなわち
+      </p>
+      <div class="formula"><div class="fline">E(K) ≅ E(K)<sub>tors</sub> × ℤ<sup>r</sup></div>
+      <div class="fline fc">E(K)<sub>tors</sub>：有限な捩れ部分群　　r：階数（rank）</div></div>
+      <p>
+        と書ける。
+      </p>
+    </div>
+
+    <p>
+      「3次曲線の有理点全体が、有限個の点から加法だけで生成される」──主張は一行ですが、
+      証明は2つのまったく性格の異なる部分に分かれます<span class="refchip">AEC VIII 冒頭</span>。
+    </p>
+    <ol>
+      <li><strong>弱Mordell–Weil定理</strong>：商群 E(K)/mE(K) が有限であること（VIII §1–§2）。
+        ここで使われるのは<em>代数的整数論</em>です──還元・分岐・類数の有限性・S-単数定理。</li>
+      <li><strong>降下（descent）</strong>：高さ関数 h を使い、「E(K)/mE(K) の代表点＋高さが小さい点」で全体が生成されることを示す（VIII §3–§6）。
+        ここで使われるのは<em>ディオファントス幾何（高さの理論）</em>です。</li>
+    </ol>
+    <p>
+      この2段構成は、Fermat が使った「無限降下法」の直系の子孫です。
+      そして「E(K)/mE(K) を<strong>実際に計算</strong>しようとすると何が障害になるか」を突き詰めたところに、
+      Selmer群と Tate–Shafarevich 群 Ш が現れます（Ch.X §4、第5部）。
+    </p>
+  </div>
+
+  <!-- ════════ 3. 地図 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>AEC 全体地図</h2>
+    <p>
+      各章の依存関係を図にすると、登るべきルートが見えます。
+      <strong>金色が本シリーズの重点</strong>、それ以外は「装備を整える」ための要約対象です。
+    </p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 560" role="img" aria-label="AEC章依存関係図">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+          <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .nbox { fill:#171a29; stroke:#3a4160; stroke-width:1; rx:8; }
+          .nbox-g { fill:rgba(232,197,71,0.10); stroke:#E8C547; stroke-width:1.6; rx:8; }
+          .nt { font-family:'JetBrains Mono',monospace; font-size:12px; fill:#aab1cc; }
+          .ntt { font-family:'Noto Serif JP',serif; font-size:14px; font-weight:700; fill:#e8eaf4; }
+          .ntt-g { font-family:'Noto Serif JP',serif; font-size:14.5px; font-weight:700; fill:#E8C547; }
+          .edge { stroke:#565d7d; stroke-width:1.3; fill:none; marker-end:url(#arr); }
+          .edge-g { stroke:#E8C547; stroke-width:2; fill:none; marker-end:url(#arrg); }
+          .lbl { font-family:'JetBrains Mono',monospace; font-size:10px; fill:#7d84a0; }
+        </style>
+
+        <!-- Level 1 -->
+        <rect class="nbox" x="40" y="20" width="180" height="52" rx="8"/>
+        <text class="nt" x="52" y="41">Ch. I</text>
+        <text class="ntt" x="52" y="60">代数多様体</text>
+        <rect class="nbox" x="290" y="20" width="180" height="52" rx="8"/>
+        <text class="nt" x="302" y="41">Ch. II</text>
+        <text class="ntt" x="302" y="60">代数曲線・Riemann–Roch</text>
+        <path class="edge" d="M220,46 L290,46"/>
+
+        <!-- Level 2: III -->
+        <rect class="nbox" x="230" y="112" width="300" height="56" rx="8"/>
+        <text class="nt" x="244" y="134">Ch. III</text>
+        <text class="ntt" x="244" y="154">楕円曲線の幾何（群法則・同種写像・E[m]）</text>
+        <path class="edge" d="M380,72 L380,112"/>
+
+        <!-- Level 3: IV V VI -->
+        <rect class="nbox" x="40" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="52" y="233">Ch. IV</text>
+        <text class="ntt" x="52" y="252">形式群（p進の顕微鏡）</text>
+        <rect class="nbox" x="280" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="292" y="233">Ch. V</text>
+        <text class="ntt" x="292" y="252">有限体上（Hasse評価）</text>
+        <rect class="nbox" x="520" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="532" y="233">Ch. VI</text>
+        <text class="ntt" x="532" y="252">ℂ上（格子・一意化）</text>
+        <path class="edge" d="M290,168 L170,212"/>
+        <path class="edge" d="M380,168 L380,212"/>
+        <path class="edge" d="M470,168 L600,212"/>
+
+        <!-- Level 4: VII -->
+        <rect class="nbox" x="230" y="308" width="300" height="56" rx="8"/>
+        <text class="nt" x="244" y="330">Ch. VII</text>
+        <text class="ntt" x="244" y="350">局所体上（還元・Néron–Ogg–Shafarevich）</text>
+        <path class="edge" d="M140,264 L330,308"/>
+        <path class="edge" d="M380,264 L380,308"/>
+
+        <!-- Level 5: VIII -->
+        <rect class="nbox-g" x="200" y="410" width="360" height="60" rx="8"/>
+        <text class="nt" x="216" y="433" fill="#E8C547">Ch. VIII ★ 重点</text>
+        <text class="ntt-g" x="216" y="454">大域体上 ─ Mordell–Weil定理（弱MW＋降下）</text>
+        <path class="edge-g" d="M380,364 L380,410"/>
+
+        <!-- Level 6 -->
+        <rect class="nbox" x="40" y="508" width="200" height="44" rx="8"/>
+        <text class="nt" x="52" y="527">Ch. IX</text>
+        <text class="ntt" x="52" y="544">整数点（Siegel）</text>
+        <rect class="nbox" x="290" y="508" width="180" height="44" rx="8"/>
+        <text class="nt" x="302" y="527">Ch. X §1–3, 5–6</text>
+        <text class="ntt" x="302" y="544">等質空間・twist</text>
+        <rect class="nbox-g" x="510" y="500" width="220" height="56" rx="8"/>
+        <text class="nt" x="524" y="522" fill="#E8C547">Ch. X §4 ★ 重点</text>
+        <text class="ntt-g" x="524" y="543">Selmer群とШ群</text>
+        <path class="edge" d="M300,470 L170,508"/>
+        <path class="edge" d="M380,470 L380,508"/>
+        <path class="edge-g" d="M470,470 L590,500"/>
+      </svg>
+      <div class="svg-cap">
+        図1：AECの章の依存関係。Ch.V・VI は Ch.VIII を読むだけなら迂回可能（後述）。
+        Ch.X §4 は Ch.VIII §2 のコホモロジーの言葉と Ch.X §3 の等質空間の辞書を使う。
+      </div>
+    </div>
+
+    <p>ここから先は、地図の上から順に「何が示されるか」「VIIIのどこで使うか」だけを拾っていきます。</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 4. Ch I ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ 要約</div>
+    <h2>Ch. I 代数多様体 <span class="en">Algebraic Varieties</span></h2>
+    <p>
+      舞台設定の章です。体 K（と固定した代数閉包 <span class="ov">K</span>）の上で、
+      アフィン多様体・射影多様体・その間の写像（有理写像と射）を定義します。
+      押さえるべきことは3点だけです。
+    </p>
+    <ul>
+      <li><strong>多様体は「<span class="ov">K</span> 上の点集合＋どの体で定義されているかの情報」</strong>で考える。
+        V(K)（K-有理点）と V = V(<span class="ov">K</span>) を常に区別する。Galois群 G<sub><span class="ov">K</span>/K</sub> が
+        V(<span class="ov">K</span>) に作用し、その固定点が V(K)。この視点は Ch.VIII 以降の主役になります。</li>
+      <li><strong>関数体 K(V) と次元・非特異性</strong>の定義。楕円曲線は「次元1・非特異」の場合しか使いません。</li>
+      <li><strong>射影多様体上では、曲線からの有理写像は自動的に射に延びる</strong>
+        （曲線の滑らかな点で定義される<span class="refchip">AEC II.2.1</span>）。
+        群法則が「式の見た目上定義できない点」でも定義できる理由がこれです。</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        スキーム論は不要です。AECは古典的な（Weil流の）代数幾何だけで書かれており、
+        「多様体＝方程式の解集合、射＝多項式で書ける写像」という素朴な理解で Ch.VIII まで通れます。
+        次元論や既約性の細部が曖昧でも先に進んで構いません。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5. Ch II ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ 要約</div>
+    <h2>Ch. II 代数曲線 <span class="en">Algebraic Curves</span></h2>
+    <p>
+      非特異射影曲線の一般論です。Ch.III で楕円曲線の構造を確立するための基礎工事にあたります。
+      使う結果は次の通りです。
+    </p>
+    <ul>
+      <li><strong>曲線間の非定数射は全射で、有限次の「被覆」</strong>：
+        φ : C₁ → C₂ が非定数なら全射<span class="refchip">AEC II.2.3</span>で、
+        次数 deg φ = [K(C₁) : φ*K(C₂)] が定まる。
+        分岐指数 e<sub>φ</sub>(P) と Σ e<sub>φ</sub>(P) = deg φ（各ファイバーで）<span class="refchip">AEC II.2.6</span>。
+        「同種写像の次数」の正体はこれです。</li>
+      <li><strong>因子（divisor）</strong>：D = Σ n<sub>P</sub>(P)、次数 deg D = Σ n<sub>P</sub>。
+        主因子 div(f) は次数0<span class="refchip">AEC II.3.1</span>。
+        Pic⁰(C) = （次数0の因子）/（主因子）。この群が楕円曲線の群法則の「本体」です。</li>
+      <li><strong>Riemann–Roch の定理</strong><span class="refchip">AEC II.5.4</span>：
+        種数 g が定義され、ℓ(D) − ℓ(K<sub>C</sub> − D) = deg D − g + 1 が成り立つ。
+        楕円曲線＝種数1で使うのは次の帰結だけ：
+        <div class="formula" style="margin-top:12px;"><div class="fline">g = 1 のとき：deg D ≥ 1 ⇒ ℓ(D) = deg D</div></div>
+        これだけで「種数1曲線は Weierstrass 方程式で書ける」「E ≅ Pic⁰(E)」が両方出ます。</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        Riemann–Roch の<strong>証明</strong>は完全にブラックボックスでよい（AECも証明を他書に投げています）。
+        「ℓ(D)＝『極がD以下の関数のなすベクトル空間の次元』であり、種数1・正次数なら ℓ(D) = deg D」──
+        この一行が使えれば Ch.III 以降は追えます。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. Ch III ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ 要約（厚め）</div>
+    <h2>Ch. III 楕円曲線の幾何 <span class="en">The Geometry of Elliptic Curves</span></h2>
+    <p>
+      主役の登場です。この章の結果は Ch.VIII で<strong>常時使用</strong>するので、他の章より丁寧に押さえます。
+    </p>
+
+    <h3>(1) Weierstrass 方程式と判別式</h3>
+    <p>
+      楕円曲線（種数1＋基点O）は Weierstrass 方程式で書けます。char K ≠ 2,3 なら
+    </p>
+    <div class="formula">
+      <div class="fline">E : y² = x³ + Ax + B,　Δ = −16(4A³ + 27B²) ≠ 0</div>
+      <div class="fline fc">Δ ≠ 0 ⟺ 非特異（楕円曲線）　　j = 6912A³/(4A³+27B²) （j-不変量）</div>
+    </div>
+    <p>
+      非特異性と Δ の関係は<span class="refchip">AEC III.1.4</span>。
+      Δ は Ch.VII で「どの素点で還元が悪くなるか」を検出する装置になります。
+    </p>
+
+    <h3>(2) 群法則 ─ なぜ結合的か</h3>
+    <p>
+      「直線との3交点を足すと O」という幾何的な加法で E(K) はアーベル群になります<span class="refchip">AEC III.2.2</span>。
+      加法の座標表示（加法公式・倍加公式）は<span class="refchip">AEC III.2.3(d)</span>にあり、
+      <strong>Ch.VIII §4 の高さ計算はこの公式を直接使います</strong>。y² = x³ + Ax + B のとき：
+    </p>
+    <div class="formula">
+      <div class="fline">x(P + Q) = ((y₂−y₁)/(x₂−x₁))² − x₁ − x₂　（x₁ ≠ x₂）</div>
+      <div class="fline">x(2P) = (x⁴ − 2Ax² − 8Bx + A²) / (4x³ + 4Ax + 4B)　（倍加公式）</div>
+    </div>
+    <p>
+      結合法則の「本当の理由」は、写像
+    </p>
+    <div class="formula">
+      <div class="fline">E → Pic⁰(E),　P ↦ (P) − (O) のクラス</div>
+    </div>
+    <p>
+      が全単射であり<span class="refchip">AEC III.3.4</span>、幾何的加法がこの全単射で Pic⁰ の（自明に結合的な）加法に対応することです。
+      「楕円曲線の群＝因子類群」という見方は、Weil対の構成や Ch.X の等質空間でも効いてきます。
+    </p>
+
+    <h3>(3) 同種写像・双対同種写像・[m]</h3>
+    <ul>
+      <li><strong>同種写像（isogeny）</strong>：O を O に送る非定数射 φ : E₁ → E₂。自動的に群準同型になる<span class="refchip">AEC III.4.8</span>。</li>
+      <li><strong>m倍写像 [m] : E → E</strong> は次数 m² の同種写像<span class="refchip">AEC III.6.2(d)</span>。とくに m ≠ 0 なら [m] は非定数、
+        したがって <span class="ov">K</span>-点の上では<strong>全射</strong>。この全射性が Ch.VIII の Kummer 完全列の出発点です。</li>
+      <li><strong>双対同種写像</strong> φ̂ : E₂ → E₁ が存在して φ̂∘φ = [deg φ]<span class="refchip">AEC III.6.1–6.2</span>。
+        Ch.X §4 の「2-同種による降下」で φ と φ̂ を往復するときの基礎です。</li>
+    </ul>
+
+    <h3>(4) m分点 E[m] ─ Ch.VIII の主役</h3>
+    <div class="box thm">
+      <div class="box-label">定理 <span class="refchip">AEC III.6.4</span></div>
+      <p>char K = 0（または char K ∤ m）のとき</p>
+      <div class="formula"><div class="fline">E[m] := ker [m] = { P ∈ E(<span class="ov">K</span>) : [m]P = O } ≅ ℤ/mℤ × ℤ/mℤ</div></div>
+      <p>
+        とくに E[m] は位数 m² の<strong>有限群</strong>で、G<sub><span class="ov">K</span>/K</sub> が作用する（座標が代数的数だから）。
+      </p>
+    </div>
+    <p>
+      注意すべきは、E[m] の点は一般には K-有理で<strong>ない</strong>ことです。
+      「E[m] ⊂ E(K) と仮定してよいか」が Ch.VIII §1 の最初の関門になります（第2部で詳述）。
+    </p>
+
+    <h3>(5) Tate加群と Weil対（使う場所を知っておく）</h3>
+    <p>
+      Tate加群 T<sub>ℓ</sub>(E) = lim← E[ℓⁿ]<span class="refchip">AEC III §7</span> は Ch.VIII では直接使いませんが、
+      「E[m] たちを束ねた線形代数の対象」としてGalois表現の言葉を与えます。
+      Weil対 e<sub>m</sub> : E[m] × E[m] → μ<sub>m</sub><span class="refchip">AEC III.8.1</span> は
+      双線形・交代的・非退化・Galois同変で、系として
+      <strong>E[m] ⊂ E(K) ならば μ<sub>m</sub> ⊂ K</strong>（1のm乗根がKに入る）が出ます<span class="refchip">AEC III.8.1.1</span>。
+      これは第3部（コホモロジー）で E[m] と μ<sub>m</sub>×μ<sub>m</sub> を同一視するときの根拠です。
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        III §7（Tate加群）・§9（自己準同型環）・§10（自己同型群）は Ch.VIII に必須ではありません。
+        E[m] ≅ (ℤ/m)² と Weil対の存在（と III.8.1.1）だけ持って先へ進んで大丈夫です。
+        同種写像の理論も「[m] は次数 m² の全射群準同型、双対 φ̂ がある」で一旦十分です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. Ch IV ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07 ─ 要約</div>
+    <h2>Ch. IV 形式群 <span class="en">The Formal Group of an Elliptic Curve</span></h2>
+    <p>
+      楕円曲線を O の近くで「べき級数のメガネ」で見る章です。
+      z = −x/y という O でのローカル座標をとると、群法則が形式的べき級数 F(z₁, z₂) ∈ R[[z₁,z₂]] で書けます。
+      これを E の<strong>形式群</strong> Ê と呼びます<span class="refchip">AEC IV §1–§2</span>。
+    </p>
+    <p>
+      Ch.VIII との関係で重要なのは次の一点だけです。完備離散付値環（例：ℤ<sub>p</sub>）の極大イデアル M 上で、
+      形式群の点のなす群 Ê(M) を考えると：
+    </p>
+    <div class="box thm">
+      <div class="box-label">定理（形式群の捩れ） <span class="refchip">AEC IV.6.1 / IV §6</span></div>
+      <p>
+        剰余標数 p の完備離散付値環上、Ê(M) は「p と素な位数の捩れ元を持たない」。
+        つまり m が p と素なら、Ê(M) の中に位数 m の点は存在しない。
+      </p>
+    </div>
+    <p>
+      これが Ch.VII で「還元写像が m 分点上単射」（後述の VII.3.1）を証明する道具になり、
+      その VII.3.1 こそが<strong>弱Mordell–Weil定理の証明の急所</strong>（不分岐性の議論）で使われます。
+      依存の鎖は IV§6 → VII.3.1 → VIII.1.5b です。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        形式群の一般論（形式対数・高さ・char p の話）は全部飛ばせます。
+        「E₁（還元がOになる点たち）は形式群で制御でき、そこには p と素な捩れがない」──この結論だけ携えて進んでください。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8. Ch V, VI ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08 ─ 要約</div>
+    <h2>Ch. V 有限体上 ／ Ch. VI ℂ上 <span class="en">Finite Fields / Complex Numbers</span></h2>
+
+    <h3>Ch. V ─ 有限体上の楕円曲線</h3>
+    <p>
+      中心は Hasse の評価です：E/𝔽<sub>q</sub> に対し
+    </p>
+    <div class="formula"><div class="fline">| #E(𝔽<sub>q</sub>) − q − 1 | ≤ 2√q</div>
+    <div class="fline fc">〔AEC V.1.1〕　「有理点の個数は q+1 から高々 2√q しかずれない」</div></div>
+    <p>
+      Ch.VIII の証明そのものには使いませんが、Ch.VII の「還元した曲線 Ẽ(k)」の大きさの感覚、
+      および第5部（Selmer群の局所条件の計算）で𝔽<sub>p</sub>点の存在を保証する場面の背景になります。
+    </p>
+
+    <h3>Ch. VI ─ ℂ上の楕円曲線（格子と一意化）</h3>
+    <p>
+      ℂ上では E(ℂ) ≅ ℂ/Λ（Λ は格子）という解析的な同型があります（一意化定理<span class="refchip">AEC VI §5</span>）。
+      すると m 分点は
+    </p>
+    <div class="formula"><div class="fline">E[m] ≅ (1/m)Λ / Λ ≅ ℤ/mℤ × ℤ/mℤ</div></div>
+    <p>
+      と<strong>目で見え</strong>ます。III.6.4 の代数的証明が与える構造の、最良の直観がこれです。
+      平行四辺形（基本領域）を m×m の格子に切ると、その格子点が E[m]。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        Ch.V・VI は Ch.VIII の証明の論理的な前提ではありません（AEC自身が「V・VIは飛ばしてよい」構成にしています）。
+        E[m] ≅ (ℤ/m)² の直観を得たら、それで十分です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 9. Ch VII ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09 ─ 要約（厚め）</div>
+    <h2>Ch. VII 局所体上の楕円曲線 <span class="en">Elliptic Curves over Local Fields</span></h2>
+    <p>
+      Ch.VIII の直前に位置する、<strong>最重要の前提章</strong>です。
+      K を局所体（例：ℚ<sub>p</sub> の有限次拡大）、R をその整数環、k を剰余体、π を素元とします。
+    </p>
+
+    <h3>(1) 最小Weierstrass方程式と還元</h3>
+    <p>
+      座標変換で係数を R に入れ、v(Δ) を最小にしたものが<strong>最小Weierstrass方程式</strong>（存在する<span class="refchip">AEC VII.1.3</span>）。
+      係数を mod π すると k 上の（特異かもしれない）曲線 Ẽ が得られ、<strong>還元写像</strong>
+      E(K) → Ẽ(k) が定まります。そして：
+    </p>
+    <ul>
+      <li><strong>良い還元（good reduction）</strong>：Ẽ が非特異（⟺ v(Δ) = 0 が最小方程式で成立）。</li>
+      <li><strong>悪い還元（bad reduction）</strong>：Ẽ が特異。結節点なら乗法的還元、尖点なら加法的還元<span class="refchip">AEC VII §5</span>。</li>
+    </ul>
+    <p>重要な部分群のフィルトレーションがあります<span class="refchip">AEC VII.2.1–2.2</span>：</p>
+    <div class="formula">
+      <div class="fline">E₁(K) ⊂ E₀(K) ⊂ E(K)</div>
+      <div class="fline fc">E₀ = 還元が非特異点に落ちる点　　E₁ = 還元が Õ になる点（還元写像の核）</div>
+      <div class="fline">0 → E₁(K) → E₀(K) → Ẽ<sub>ns</sub>(k) → 0　（完全列）</div>
+      <div class="fline">E₁(K) ≅ Ê(M)　（形式群の点と同型）</div>
+    </div>
+    <p>
+      さらに [E(K) : E₀(K)] は有限です（Kodaira–Néron<span class="refchip">AEC VII.6.1–6.2</span>。名前だけで可）。
+    </p>
+
+    <h3>(2) 弱Mordell–Weilの急所になる定理</h3>
+    <div class="box thm">
+      <div class="box-label">定理（捩れ点の還元は単射） <span class="refchip">AEC VII.3.1</span></div>
+      <p>
+        E/K が良い還元を持ち、m が剰余標数 char k と素ならば、還元写像は m 分点の上で単射：
+      </p>
+      <div class="formula"><div class="fline">E(K)[m] ↪ Ẽ(k)</div></div>
+      <p>
+        （証明の芯：核 E₁(K) ≅ Ê(M) には p = char k と素な捩れがない〔IV §6〕。）
+      </p>
+    </div>
+    <p>
+      この定理が、第2部で証明する「体拡大 K([m]⁻¹E(K))/K は S の外で不分岐」<span class="refchip">AEC VIII.1.5b</span> の唯一の非自明な入力です。
+      <strong>Ch.VIIから持っていく武器はこれ一本</strong>と言ってもよいくらいです。
+    </p>
+
+    <h3>(3) Néron–Ogg–Shafarevich 判定法（展望）</h3>
+    <p>
+      「良い還元 ⟺ 惰性群が Tate 加群（あるいは十分多くの m 分点）に自明に作用」という判定法<span class="refchip">AEC VII.7.1</span>。
+      その系として「同種な曲線は同じ素点で良い還元を持つ」<span class="refchip">AEC VII.7.2</span>が出ます。
+      後者は第5部（Selmer群の有限性で φ-同種の悪い素点の集合を取るとき）にひっそり使われます。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        VII.3.1 の主張（と「なぜ形式群が効くのか」の一行）を理解したら Ch.VIII に入れます。
+        Kodaira–Néron の分類、Tateアルゴリズム、E/E₀ の詳細は今回の登山には不要です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 10. チェックリスト ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Section 10</div>
+    <h2>出発前チェックリスト</h2>
+    <p>
+      第2部（弱Mordell–Weil定理）に入る前に、次の8項目が「主張として使える」状態であれば準備完了です。
+      証明まで理解している必要はありません。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>#</th><th>使う事実</th><th>出典</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>E(K) はアーベル群。加法公式・倍加公式が明示的に書ける</td><td class="m">AEC III.2.2, III.2.3(d)</td></tr>
+        <tr><td>2</td><td>E[m] ≅ (ℤ/m)²（位数m²の有限群、G<sub><span class="ov">K</span>/K</sub> が作用）</td><td class="m">AEC III.6.4</td></tr>
+        <tr><td>3</td><td>[m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) は全射（m ≠ 0）</td><td class="m">AEC III.6.2 + II.2.3</td></tr>
+        <tr><td>4</td><td>E[m] ⊂ E(K) ⇒ μ<sub>m</sub> ⊂ K（Weil対の系）</td><td class="m">AEC III.8.1.1</td></tr>
+        <tr><td>5</td><td>良い還元＋(m, char k)=1 ⇒ E(K)[m] ↪ Ẽ(k) 単射</td><td class="m">AEC VII.3.1</td></tr>
+        <tr><td>6</td><td>数体の素点・完備化・惰性群・「拡大が v で不分岐」の意味</td><td class="m">代数的整数論の教科書</td></tr>
+        <tr><td>7</td><td>イデアル類群の有限性・DirichletのS-単数定理</td><td class="m">代数的整数論の教科書</td></tr>
+        <tr><td>8</td><td>（無限次）Galois理論：G<sub><span class="ov">K</span>/K</sub> は有限商で考えれば十分</td><td class="m">Galois理論の教科書</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      6・7・8 はAECの外の前提です。とくに 7 の2つの有限性定理は、
+      弱Mordell–Weil定理の「数論的な心臓部」で正確にこの形のまま使われます（第2部 §6）。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ 完璧主義への最後の注意</div>
+      <p>
+        チェックリストに不安が残っていても、まず第2部を読み始めることを勧めます。
+        「どこで何が使われるか」を先に見てから戻るほうが、前提の勉強も速くなります。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a class="next" href="/math-site/in/weakmw.html" style="margin-left:auto;">
+      <div class="p-dir">NEXT ─ 第2部</div>
+      <div class="p-title">弱Mordell–Weil定理（AEC VIII §1）→</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 1/5</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106, Springer (AEC)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

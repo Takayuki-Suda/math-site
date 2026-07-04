@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弱Mordell–Weil定理 ─ AEC VIII §1 精読 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'κ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 2/5</div>
+    <h1>弱 Mordell–Weil 定理<br><span class="en">The Weak Mordell–Weil Theorem</span></h1>
+    <p class="hero-sub">
+      E(K)/mE(K) は有限である──この一つの主張の中に、還元（局所理論）、Galois作用、
+      そして代数的整数論の2大有限性定理が全部詰まっています。
+      この第2部では AEC VIII §1 の証明を、行間を埋めながら一歩ずつ読みます。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §1（精読）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a class="cur" href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>主張と、その位置づけ</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（弱Mordell–Weil） <span class="refchip">AEC VIII.1.1</span></div>
+      <p>K を数体、E/K を楕円曲線、m ≥ 2 を整数とする。このとき</p>
+      <div class="formula"><div class="fline">E(K)/mE(K)　は有限群</div></div>
+    </div>
+
+    <p>
+      まず、この定理が<strong>何を言っていないか</strong>をはっきりさせます。
+      「E(K)/mE(K) が有限」だけからは「E(K) が有限生成」は出ません。
+      たとえば ℝ/mℝ = 0 はどんな m でも自明群ですが、ℝ は有限生成ではありません。
+      同様に、p進体上の楕円曲線 E(ℚ<sub>p</sub>) も E(ℚ<sub>p</sub>)/mE(ℚ<sub>p</sub>) は有限ですが
+      E(ℚ<sub>p</sub>) は有限生成になりません<span class="refchip">AEC VIII §3 冒頭 / VII.6.3</span>。
+      足りないのは「m で何回でも割れてしまう点」を排除する仕組みで、それを供給するのが高さ関数と降下法（第4部）です。
+    </p>
+    <p>
+      つまり Mordell–Weil 定理は「弱MW（今回）＋降下（第4部）」の2段ロケットで、
+      今回はその1段目を打ち上げます。
+    </p>
+
+    <div class="why">
+      <div class="w-label">? なぜ商群 E(K)/mE(K) なのか</div>
+      <p>
+        降下法（第4部の定理 VIII.3.1）が要求する入力がまさに「A/mA が有限」だからです。
+        降下法は「任意の点 P を、mで割った余り（＝剰余類の代表点）を引きながら縮めていく」議論なので、
+        余りの種類が有限でないと始まりません。弱MWは、その「余りの有限性」を保証します。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>証明の設計図</h2>
+    <p>
+      証明は4ステップです。先に全体を見てから、各ステップに潜ります。
+    </p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 640" role="img" aria-label="弱Mordell-Weil定理の証明構造図">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+          <marker id="arr2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .b { fill:#171a29; stroke:#3a4160; stroke-width:1; }
+          .bg { fill:rgba(232,197,71,0.09); stroke:#E8C547; stroke-width:1.5; }
+          .bs { fill:#12141f; stroke:#565d7d; stroke-width:1; stroke-dasharray:4 3; }
+          .t1 { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#c8a84b; }
+          .t2 { font-family:'Noto Serif JP',serif; font-size:13.5px; font-weight:700; fill:#e8eaf4; }
+          .t3 { font-family:'Noto Serif JP',serif; font-size:11.5px; fill:#9aa1bd; }
+          .e { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr2); }
+          .eg { stroke:#E8C547; stroke-width:1.8; fill:none; marker-end:url(#arr2g); }
+        </style>
+
+        <rect class="b" x="40" y="18" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="42">STEP 0 ─ 帰着補題〔VIII.1.1.1〕</text>
+        <text class="t2" x="56" y="63">体を有限次拡大してよい</text>
+        <text class="t3" x="56" y="82">⇒ E[m] ⊂ E(K) と仮定して証明すれば十分</text>
+
+        <rect class="b" x="40" y="136" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="160">STEP 1 ─ Kummer対〔VIII.1.2〕</text>
+        <text class="t2" x="56" y="181">κ : E(K)/mE(K) × G(L/K) → E[m] は完全対</text>
+        <text class="t3" x="56" y="200">⇒ 「E(K)/mE(K) 有限」⟺「拡大 L/K が有限」に翻訳</text>
+
+        <rect class="b" x="40" y="254" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="278">STEP 2 ─ 拡大 L/K の性質〔VIII.1.5〕</text>
+        <text class="t2" x="56" y="299">L/K は指数mのアーベル拡大で S の外不分岐</text>
+        <text class="t3" x="56" y="318">S = 悪い還元の素点 ∪ mを割る素点 ∪ 無限素点（有限集合）</text>
+
+        <rect class="b" x="40" y="372" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="396">STEP 3 ─ 体論の有限性〔VIII.1.6〕</text>
+        <text class="t2" x="56" y="417">そのような拡大は必ず有限次</text>
+        <text class="t3" x="56" y="436">Kummer理論 ＋ 類数の有限性 ＋ DirichletのS-単数定理</text>
+
+        <rect class="bg" x="40" y="500" width="500" height="64" rx="8"/>
+        <text class="t1" x="56" y="526" fill="#E8C547">結論〔VIII.1.1〕</text>
+        <text class="t2" x="56" y="548" fill="#E8C547">E(K)/mE(K) は有限　∎</text>
+
+        <path class="e" d="M290,96 L290,136"/>
+        <path class="e" d="M290,214 L290,254"/>
+        <path class="e" d="M290,332 L290,372"/>
+        <path class="eg" d="M290,450 L290,500"/>
+
+        <rect class="bs" x="580" y="254" width="164" height="78" rx="8"/>
+        <text class="t1" x="592" y="280">局所からの入力</text>
+        <text class="t3" x="592" y="300">良い還元 ⇒ m分点の</text>
+        <text class="t3" x="592" y="318">還元は単射〔VII.3.1〕</text>
+        <path class="e" d="M580,293 L544,293"/>
+
+        <rect class="bs" x="580" y="372" width="164" height="78" rx="8"/>
+        <text class="t1" x="592" y="398">大域からの入力</text>
+        <text class="t3" x="592" y="418">類数の有限性</text>
+        <text class="t3" x="592" y="436">S-単数定理</text>
+        <path class="e" d="M580,411 L544,411"/>
+      </svg>
+      <div class="svg-cap">
+        図1：弱Mordell–Weil定理の証明構造。点線の箱が「外部から入ってくる深い定理」。
+        証明のオリジナリティはSTEP 1–2の「翻訳」にあり、有限性の供給源はSTEP 3の古典数論。
+      </div>
+    </div>
+
+    <p>
+      一言でまとめると：<strong>有理点の有限性の問題を、体拡大の有限性の問題に翻訳し（Kummer対）、
+      その体拡大が「行儀よい」ことを還元理論で示し（不分岐性）、
+      行儀よい拡大が有限個しかないことを古典数論で保証する（類数・単数）</strong>──これが全経路です。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3. STEP 0 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03 ─ Step 0</div>
+    <h2>帰着補題 ─ E[m] ⊂ E(K) と仮定してよい</h2>
+
+    <p>
+      これから使う Kummer 対は「E[m] の点が K-有理」だと圧倒的に扱いやすくなります。
+      しかし一般の E/K では E[m] ⊄ E(K) です。そこで最初に、
+      <strong>体を有限次Galois拡大で取り替えても定理の成立・不成立は変わらない</strong>ことを示します。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">補題（帰着補題） <span class="refchip">AEC VIII.1.1.1</span></div>
+      <p>
+        L/K を有限次Galois拡大とする。E(L)/mE(L) が有限ならば、E(K)/mE(K) も有限である。
+      </p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">証明（完全版）</div>
+      <p>
+        包含 E(K) ⊂ E(L) から自然な写像 E(K)/mE(K) → E(L)/mE(L) が誘導されます。この核を Φ とおくと
+      </p>
+      <div class="formula"><div class="fline">Φ = ( E(K) ∩ mE(L) ) / mE(K)</div></div>
+      <p>
+        です（「K有理点で、Lまで行けば m で割れるもの」たち）。
+        <strong>Φ が有限であることを示せば十分</strong>です。実際そのとき、完全列
+        0 → Φ → E(K)/mE(K) → E(L)/mE(L) により、E(K)/mE(K) は有限群 Φ と有限群 E(L)/mE(L) に挟まれて有限になります。
+      </p>
+      <p>
+        Φ の各元 P（mod mE(K)）に対し、[m]Q<sub>P</sub> = P となる点 Q<sub>P</sub> ∈ E(L) を1つ選び、写像
+      </p>
+      <div class="formula"><div class="fline">λ<sub>P</sub> : G<sub>L/K</sub> → E[m],　λ<sub>P</sub>(σ) = Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub></div></div>
+      <p>
+        を定めます。まず行き先が本当に E[m] に入ること：
+        [m](Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub>) = ([m]Q<sub>P</sub>)<sup>σ</sup> − [m]Q<sub>P</sub> = P<sup>σ</sup> − P = O。
+        最後の等号は P が K-有理で σ が K を固定することによります。
+      </p>
+      <p>
+        <strong>核心の主張：P ↦ λ<sub>P</sub> は単射</strong>（Φ からの写像として）。
+        λ<sub>P</sub> = λ<sub>P′</sub> と仮定すると、すべての σ ∈ G<sub>L/K</sub> で
+        (Q<sub>P</sub> − Q<sub>P′</sub>)<sup>σ</sup> = Q<sub>P</sub> − Q<sub>P′</sub>。
+        つまり Q<sub>P</sub> − Q<sub>P′</sub> は G<sub>L/K</sub> 不変、Galois理論より Q<sub>P</sub> − Q<sub>P′</sub> ∈ E(K)。
+        m倍すると P − P′ = [m](Q<sub>P</sub> − Q<sub>P′</sub>) ∈ mE(K)、
+        すなわち P ≡ P′ (mod mE(K))。単射が示されました。
+      </p>
+      <p>
+        ところが G<sub>L/K</sub> も E[m] も有限集合なので、写像の集合 Map(G<sub>L/K</sub>, E[m]) は有限。
+        そこに Φ が単射で入るので Φ は有限です。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? この証明の「変数」はどこにあるか</div>
+      <p>
+        鍵は「P の m 等分点 Q<sub>P</sub> の<strong>Galois軌道のずれ</strong> Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub> が
+        P の情報を（mod mE(K) で）覚えている」という一点です。
+        この λ<sub>P</sub> は、第3部で学ぶ言葉では<strong>1-コサイクル</strong>そのものです。
+        AECも「λ<sub>P</sub> is an example of a 1-cocycle; see (VIII §2)」と注記しています。
+        いま素手でやったこの議論は、第3部で inflation–restriction 完全列という一般論に整理されます。
+      </p>
+    </div>
+
+    <p>
+      さて、E[m] は位数 m² の有限集合で、各点の座標は <span class="ov">K</span> 内の代数的数です<span class="refchip">AEC III.6.4</span>。
+      そこで L = K(E[m])（全 m 分点の座標を添加した体）は有限次拡大であり、
+      G<sub><span class="ov">K</span>/K</sub> が E[m] を集合として保つ（[m]P = O は Galois で不変な条件）ことから
+      L/K は Galois 拡大です。帰着補題より、<strong>以後 E[m] ⊂ E(K) を仮定して定理を証明すれば十分</strong>です。
+      この仮定は §1 の残りすべてで有効です。
+    </p>
+  </div>
+
+  <!-- ════════ 4. STEP 1 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Step 1</div>
+    <h2>Kummer 対 ─ 有理点を体拡大に翻訳する</h2>
+
+    <div class="box dfn">
+      <div class="box-label">定義（Kummer対） <span class="refchip">AEC VIII §1</span></div>
+      <p>E[m] ⊂ E(K) を仮定する。P ∈ E(K) と σ ∈ G<sub><span class="ov">K</span>/K</sub> に対し、
+      [m]Q = P となる点 Q ∈ E(<span class="ov">K</span>) を任意に選び</p>
+      <div class="formula"><div class="fline">κ(P, σ) = Q<sup>σ</sup> − Q</div></div>
+      <p>と定める。（Q の存在は [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) の全射性による<span class="refchip">AEC III.6.2 + II.2.3</span>。）</p>
+    </div>
+
+    <p>
+      直観的には、κ(P, σ) は「<strong>P を m で割ろうとしたときに生じる Galois 的なねじれ</strong>」を測っています。
+      P が K の中で割り切れる（P ∈ mE(K)）なら Q を K-有理に取れるのでねじれは無し。
+      割り切れないなら、Q は真の拡大体に住み、σ が Q を動かした差分が E[m] の中に現れる──という構図です。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">命題（Kummer対の基本性質） <span class="refchip">AEC VIII.1.2</span></div>
+      <p>(a) κ は well-defined。　(b) κ は双線形。　(c) 左核は mE(K)。　(d) 右核は G<sub><span class="ov">K</span>/L</sub>。ここで</p>
+      <div class="formula"><div class="fline">L = K([m]<sup>−1</sup>E(K)) = 「[m]Q ∈ E(K) となる全ての Q ∈ E(<span class="ov">K</span>) を添加した体」</div></div>
+      <p>したがって κ は<strong>完全対（perfect pairing）</strong></p>
+      <div class="formula"><div class="fline">E(K)/mE(K) × G<sub>L/K</sub> → E[m]</div></div>
+      <p>を誘導する。</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">証明（完全版・コメント付き）</div>
+      <p>
+        <strong>(a) well-defined性。</strong>
+        まず κ(P,σ) ∈ E[m]：[m](Q<sup>σ</sup> − Q) = P<sup>σ</sup> − P = O（P は K-有理）。
+        次に Q の選び方に依らないこと：別の選択は Q + T（T ∈ E[m]）の形しかない（差が m 倍で消えるから）。すると
+      </p>
+      <div class="formula"><div class="fline">(Q+T)<sup>σ</sup> − (Q+T) = Q<sup>σ</sup> − Q + (T<sup>σ</sup> − T) = Q<sup>σ</sup> − Q</div></div>
+      <p>
+        最後の等号で <strong>E[m] ⊂ E(K) を使いました</strong>：T が K-有理だから T<sup>σ</sup> = T。
+        帰着補題で整えた仮定が、早速ここで効いています。
+      </p>
+      <p>
+        <strong>(b) 双線形性。</strong>
+        P について線形なのは定義から明らか（Q の選択を加法的に取ればよい）。
+        σ について：σ, τ ∈ G<sub><span class="ov">K</span>/K</sub> に対し
+      </p>
+      <div class="formula">
+        <div class="fline">κ(P, στ) = Q<sup>στ</sup> − Q = (Q<sup>σ</sup> − Q)<sup>τ</sup> + (Q<sup>τ</sup> − Q) = κ(P,σ)<sup>τ</sup> + κ(P,τ)</div>
+      </div>
+      <p>
+        ここで κ(P,σ) ∈ E[m] ⊂ E(K) だから τ で不動、よって κ(P,στ) = κ(P,σ) + κ(P,τ)。
+        <strong>再び E[m] ⊂ E(K) が効いています</strong>。
+        この計算は「κ(P,·) は一般には準同型でなく1-コサイクル。E[m] が有理的なときに限り準同型になる」ことを示しており、
+        第3部（コホモロジー）での視点の伏線です。
+      </p>
+      <p>
+        <strong>(c) 左核 = mE(K)。</strong>
+        P = [m]Q, Q ∈ E(K) なら Q<sup>σ</sup> = Q なので κ(P,·) ≡ O。
+        逆にすべての σ で κ(P,σ) = O なら、Q<sup>σ</sup> = Q（∀σ ∈ G<sub><span class="ov">K</span>/K</sub>）なので Q ∈ E(K)、
+        よって P = [m]Q ∈ mE(K)。
+      </p>
+      <p>
+        <strong>(d) 右核 = G<sub><span class="ov">K</span>/L</sub>。</strong>
+        σ が L を固定すれば、各 Q（[m]Q ∈ E(K)）は L の点なので Q<sup>σ</sup> = Q、つまり κ(·,σ) ≡ O。
+        逆にすべての P で κ(P,σ) = O なら、[m]Q ∈ E(K) となる任意の Q に対し Q<sup>σ</sup> = Q。
+        L はそのような Q たちの座標で生成されるので σ は L を固定します。
+      </p>
+      <p>
+        最後に L/K が Galois であること：G<sub><span class="ov">K</span>/K</sub> は集合 [m]<sup>−1</sup>E(K) を保つ
+        （[m]Q ∈ E(K) ⇒ [m]Q<sup>σ</sup> = ([m]Q)<sup>σ</sup> ∈ E(K)）ので、L は共役で閉じています。
+        そして (d) から、σ ↦ κ(·,σ) が単射準同型
+      </p>
+      <div class="formula"><div class="fline">G<sub>L/K</sub> ↪ Hom( E(K), E[m] )</div></div>
+      <p>を与え、完全対の主張が従います。</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">この時点で得られた「翻訳」</div>
+      <p>
+        完全対の一般論より、E(K)/mE(K) は Hom(G<sub>L/K</sub>, E[m]) に単射で入ります。E[m] は有限なので：
+      </p>
+      <div class="formula"><div class="fline">E(K)/mE(K) が有限 ⟺ 拡大 L/K が有限</div></div>
+      <p>
+        残る仕事は「L = K([m]<sup>−1</sup>E(K)) は K の有限次拡大」を示すことだけになりました。
+        <strong>有理点の問題が、体の問題になった</strong>──これがSTEP 1の成果です。
+      </p>
+    </div>
+
+    <h3>古典Kummer理論との対応（アナロジーの辞書）</h3>
+    <p>
+      「Kummer対」という名前の由来です。μ<sub>m</sub> ⊂ K を含む体の古典的な Kummer 理論と、
+      いま作った理論は完全に平行しています<span class="refchip">AEC VIII.1.2.1</span>。
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>古典Kummer理論（乗法群）</th><th>楕円曲線版（今回）</th></tr></thead>
+      <tbody>
+        <tr><td class="m">K<sup>×</sup> と m乗写像 x ↦ x<sup>m</sup></td><td class="m">E(K) と m倍写像 [m]</td></tr>
+        <tr><td class="m">μ<sub>m</sub>（1のm乗根）⊂ K を仮定</td><td class="m">E[m]（m分点）⊂ E(K) を仮定</td></tr>
+        <tr><td class="m">K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup></td><td class="m">E(K)/mE(K)</td></tr>
+        <tr><td class="m"><sup>m</sup>√a を添加した体 K′</td><td class="m">[m]<sup>−1</sup>E(K) を添加した体 L</td></tr>
+        <tr><td class="m">(a,σ) ↦ (<sup>m</sup>√a)<sup>σ</sup> / <sup>m</sup>√a ∈ μ<sub>m</sub></td><td class="m">(P,σ) ↦ Q<sup>σ</sup> − Q ∈ E[m]</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      なお、E[m] ⊂ E(K) のとき Weil 対の系<span class="refchip">AEC III.8.1.1</span>により μ<sub>m</sub> ⊂ K が自動で従うので、
+      楕円曲線版の仮定は古典版の仮定を含んでいます。この辞書は第3部でコホモロジーの言葉に昇格します。
+    </p>
+  </div>
+
+  <!-- ════════ 5. STEP 2 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Step 2</div>
+    <h2>拡大 L/K の性質 ─ 分岐は S の外で禁止される</h2>
+
+    <p>まず、悪さをしうる素点の集合を固定します。</p>
+    <div class="formula">
+      <div class="fline">S = { v : E が v で悪い還元 } ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup></div>
+      <div class="fline fc">M<sub>K</sub><sup>∞</sup> = 無限素点（アルキメデス的絶対値）の集合</div>
+    </div>
+    <p>
+      S が<strong>有限集合</strong>であることが大前提です：Weierstrass方程式を1本固定すると、
+      有限個を除くすべての v で係数が v-整かつ v(Δ) = 0 となり、そこでは良い還元を持ちます<span class="refchip">AEC VIII.1.3</span>。
+      m を割る素点も有限個、無限素点も有限個です。
+    </p>
+
+    <p>Ch.VIIから持ってきた武器を、使う形で再掲します。</p>
+    <div class="box thm">
+      <div class="box-label">命題（m分点の還元は単射） <span class="refchip">AEC VIII.1.4 = VII.3.1(b)</span></div>
+      <p>
+        v を v(m) = 0 なる有限素点とし、E は v で良い還元を持つとする。このとき還元写像
+      </p>
+      <div class="formula"><div class="fline">E(K<sub>v</sub>)[m] → Ẽ<sub>v</sub>(k<sub>v</sub>)</div></div>
+      <p>は単射である。（核となる E₁ は形式群で制御され、そこには m と素な捩れがない〔AEC IV §6, VII.2.2〕。）</p>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">命題（Lの性質） <span class="refchip">AEC VIII.1.5</span></div>
+      <p>L = K([m]<sup>−1</sup>E(K)) とする。</p>
+      <p>(a) L/K はアーベル拡大で、Galois群の指数（exponent）は m を割る。</p>
+      <p>(b) L/K は S の外で不分岐。すなわち v ∉ S ならば L/K は v で不分岐。</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">証明（完全版・コメント付き）</div>
+      <p>
+        <strong>(a)</strong> STEP 1 の単射 G<sub>L/K</sub> ↪ Hom(E(K), E[m]) から直ちに従います。
+        右辺はアーベル群で、すべての元の m 倍が消える（値域が E[m] だから）ので、
+        G<sub>L/K</sub> もアーベルかつ指数 m です。
+      </p>
+      <p>
+        <strong>(b)</strong> ここが急所です。v ∉ S を取り、[m]Q ∈ E(K) となる Q を1つ選び、K′ = K(Q) とおきます。
+        L はこのような K′ たちの合成体なので、<strong>各 K′/K が v で不分岐であることを示せば十分</strong>です
+        （不分岐拡大の合成は不分岐）。
+      </p>
+      <p>
+        v′ を K′ の v の上の素点とし、惰性群 I<sub>v′/v</sub> ⊂ G<sub><span class="ov">K</span>/K</sub> の元 σ を任意に取ります。
+        「K′/K が v′ で不分岐」とは「惰性群が K′ に自明に作用する」ことなので、
+        <strong>σ が Q を動かさないことを示せばよい</strong>のです。
+      </p>
+      <p>
+        v ∉ S より E は v で良い還元を持ち（同じWeierstrass方程式が v′ でも最小・非特異）、還元写像
+        E(K′<sub>v′</sub>) → Ẽ(k′<sub>v′</sub>) があります。惰性群の定義そのものにより、σ は剰余体 k′<sub>v′</sub> に自明に作用します。したがって
+      </p>
+      <div class="formula">
+        <div class="fline">(Q<sup>σ</sup> − Q)˜ = Q̃<sup>σ</sup> − Q̃ = Q̃ − Q̃ = Õ　（還元先ではズレが見えない）</div>
+      </div>
+      <p>
+        一方、[m](Q<sup>σ</sup> − Q) = ([m]Q)<sup>σ</sup> − [m]Q = O（[m]Q は K-有理）なので
+        Q<sup>σ</sup> − Q ∈ E[m]。
+        つまり Q<sup>σ</sup> − Q は「<strong>m分点であり、かつ還元の核に入る点</strong>」です。
+        v(m) = 0 だから VIII.1.4 が適用でき、そのような点は O しかありません：
+      </p>
+      <div class="formula"><div class="fline">Q<sup>σ</sup> − Q = O,　すなわち Q<sup>σ</sup> = Q</div></div>
+      <p>
+        よって惰性群は Q を固定し、K′ = K(Q) は v で不分岐です。
+        これがすべての v ∉ S と、v の上のすべての v′ について成り立つので (b) が従います。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? この議論の何がすごいのか</div>
+      <p>
+        「L/K の分岐」は純粋に大域的・体論的な情報です。それを、
+        <strong>「還元した曲線の上では惰性群は何も動かせない」という幾何的な事実</strong>が禁止する──
+        局所（各素点での還元）が大域（体拡大の形）を縛る、数論幾何の典型的な構図です。
+        なお (b) の証明は E[m] ⊂ E(K) の仮定を使っていません（AECもこの点を注意しています）。
+        この事実は第5部で Selmer 群の有限性を示すとき、そのまま再利用されます。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. STEP 3 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Step 3</div>
+    <h2>体論の有限性 ─ 数論の心臓部</h2>
+
+    <div class="box thm">
+      <div class="box-label">命題 <span class="refchip">AEC VIII.1.6</span></div>
+      <p>
+        K を数体、S ⊂ M<sub>K</sub> を M<sub>K</sub><sup>∞</sup> を含む有限集合、m ≥ 2 とする。
+        「指数 m のアーベル拡大で S の外不分岐なもののうち最大のもの」を L/K とすると、L/K は有限次拡大である。
+      </p>
+    </div>
+
+    <p>証明は5段階です。各段階でどの古典定理が働くかに注目してください。</p>
+
+    <div class="proof">
+      <div class="p-label">証明（完全版・コメント付き）</div>
+      <p>
+        <strong>(i) μ<sub>m</sub> ⊂ K と仮定してよい。</strong>
+        K′ = K(μ<sub>m</sub>)、S′ を S の上の素点全体とします。命題が K′ で正しければ、
+        LK′/K′ は指数m・アーベル・S′外不分岐なので有限次、よって L/K も有限次です。
+        以後 μ<sub>m</sub> ⊂ K とします。
+      </p>
+      <p>
+        <strong>(ii) S を大きくしてよい。</strong>S を大きくすると L は大きくなるだけなので、大きい S で示せば十分。
+        そこで<strong>イデアル類群の有限性</strong>を使い、類群の代表イデアル a₁, …, a<sub>h</sub> を割る素点を S に加えて、
+        S-整数環
+      </p>
+      <div class="formula"><div class="fline">R<sub>S</sub> = { a ∈ K : v(a) ≥ 0 （∀v ∉ S） }</div></div>
+      <p>
+        が<strong>単項イデアル整域（PID）</strong>になるようにします。さらに v(m) = 0（∀v ∉ S）となるよう m を割る素点も加えます。
+      </p>
+      <p>
+        <strong>(iii) Kummer理論。</strong>μ<sub>m</sub> を含む標数0の体では、
+        最大指数mアーベル拡大は「全元のm乗根の添加」で得られます（体論の教科書、または AEC演習8.4）。
+        よって L は K(<sup>m</sup>√a : a ∈ K<sup>×</sup>) の中の「S外不分岐な最大部分体」です。
+        どの <sup>m</sup>√a が不分岐拡大を与えるか判定します。
+        v ∉ S では v(m) = 0 で、多項式 X<sup>m</sup> − a の判別式は ±m<sup>m</sup>a<sup>m−1</sup> なので：
+      </p>
+      <div class="formula">
+        <div class="fline">K<sub>v</sub>(<sup>m</sup>√a)/K<sub>v</sub> が不分岐 ⟺ ord<sub>v</sub>(a) ≡ 0 (mod m)</div>
+      </div>
+      <p>
+        したがって、L を生成するのは次の集合の元のm乗根だけです：
+      </p>
+      <div class="formula">
+        <div class="fline">T<sub>S</sub> = { a ∈ K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> : ord<sub>v</sub>(a) ≡ 0 (mod m) （∀v ∉ S） }</div>
+        <div class="fline">L = K(<sup>m</sup>√a : a ∈ T<sub>S</sub>)</div>
+      </div>
+      <p>
+        あとは <strong>T<sub>S</sub> が有限集合</strong>であることを示せば、Kummer理論により [L : K] も有限です。
+      </p>
+      <p>
+        <strong>(iv) S-単数が T<sub>S</sub> に全射する。</strong>
+        自然な写像 R<sub>S</sub><sup>×</sup> → T<sub>S</sub> を考えます。a ∈ K<sup>×</sup> が T<sub>S</sub> の元を代表するとします。
+        条件 ord<sub>v</sub>(a) ≡ 0 (mod m)（∀v∉S）は「イデアル aR<sub>S</sub> が R<sub>S</sub> のイデアルの m 乗」を意味します
+        （R<sub>S</sub> の素イデアル ⟷ v ∉ S）。R<sub>S</sub> は PID なので aR<sub>S</sub> = b<sup>m</sup>R<sub>S</sub> となる b ∈ K<sup>×</sup> があり、
+        u = a/b<sup>m</sup> とおくと u ∈ R<sub>S</sub><sup>×</sup> かつ、K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> の中で a と u は同じ類です。
+        よって全射
+      </p>
+      <div class="formula"><div class="fline">R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ↠ T<sub>S</sub></div></div>
+      <p>を得ます（実は同型ですが、全射で十分）。</p>
+      <p>
+        <strong>(v) DirichletのS-単数定理。</strong>R<sub>S</sub><sup>×</sup> は有限生成
+        （具体的には μ(K) × ℤ<sup>#S−1</sup>）なので、R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> は有限、
+        よって T<sub>S</sub> は有限。以上で証明が完了します。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">定量的な補足（効率の感覚）</div>
+      <p>
+        (v) の構造定理から |R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup>| = m<sup>#S</sup>
+        （μ<sub>m</sub> ⊂ K のとき）なので、拡大後の S に対して [L : K] ≤ m<sup>#S</sup> という明示的な上界が出ます。
+        つまり弱MW定理は「E(K)/mE(K) の位数は m<sup>2·(何か計算可能な数)</sup> 以下」という形の
+        <strong>明示的な上界</strong>まで与えてくれます。
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? なぜ「類数」と「単数」の両方が要るのか</div>
+      <p>
+        T<sub>S</sub> の元は「付値が全部 m の倍数」という条件しか課されていません。
+        これを「m乗×単数」の形に直すとき、<strong>イデアルのレベルで m 乗根が取れること（PID性＝類群を殺した状態）</strong>と、
+        <strong>残った単数部分が有限型であること（S-単数定理）</strong>の両方が必要になります。
+        類数の有限性が「イデアルと元のズレ」を制御し、単数定理が「元の可逆部分」を制御する──
+        代数的整数論の2大有限性定理が、それぞれ別の役割で正確に一度ずつ使われる。美しい分業です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. 組み立て ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>証明の完成と、2つの注目すべき注意</h2>
+
+    <div class="proof">
+      <div class="p-label">弱Mordell–Weil定理の証明（組み立て）</div>
+      <p>
+        帰着補題（STEP 0）により E[m] ⊂ E(K) と仮定する。L = K([m]<sup>−1</sup>E(K)) とおく。
+        完全対（STEP 1）より、E(K)/mE(K) が有限であることと G<sub>L/K</sub> が有限であることは同値。
+        STEP 2 より L/K は指数mのアーベル拡大で有限集合 S の外不分岐。
+        STEP 3 より、そのような拡大は有限次。よって E(K)/mE(K) は有限。
+      </p>
+      <div class="qed">∎（AEC VIII.1.1）</div>
+    </div>
+
+    <h3>注意1：Minkowski 経由の別証明 <span class="refchip">AEC VIII.1.7</span></h3>
+    <p>
+      STEP 3 の代わりに、Minkowski–Hermite の定理
+      「次数が有界で S の外不分岐な K の拡大は有限個」を使う道もあります。
+      実際、Q ∈ [m]<sup>−1</sup>E(K) の Galois 共役はすべて Q + T（T ∈ E[m]）の形なので
+      [K(Q) : K] ≤ m² と次数が一様に抑えられ、
+      K(Q) の候補が有限個 ⇒ 合成体 L は有限次、となります。
+      この見方は「なぜ有限になるのか」の別の直観（<strong>判別式の有界性</strong>）を与えてくれます。
+    </p>
+
+    <h3>注意2：どこが「計算できない」のか <span class="refchip">AEC VIII.1.8</span></h3>
+    <p>
+      実は G<sub>L/K</sub> は（上の証明を明示的にたどれば）<strong>完全に計算可能</strong>です。
+      すると単射 E(K)/mE(K) ↪ Hom(G<sub>L/K</sub>, E[m]) の右辺の元もすべて書き下せます。
+      計算できないのはただ一点、<strong>「右辺のどの元が、実際に有理点から来るか」の判定</strong>です。
+      Mordell–Weil定理の非有効性はすべてここに集中しており、
+      この一点を攻めるために発明されたのが Selmer 群です（第5部）。
+      この注意は必ず頭に置いてから第5部に進んでください。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 8. 実例 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>実例で全部を確かめる ─ E : y² = x³ − x, m = 2</h2>
+
+    <p>
+      抽象論を1つの曲線で最後まで実行します。K = ℚ、m = 2。
+      この曲線は Δ = 64、E[2] = {O, (0,0), (1,0), (−1,0)} が<strong>すべて ℚ-有理</strong>なので、
+      帰着補題なしでいきなり理論が回ります。さらに E(ℚ) はこの4点で全部です
+      （階数0。これは第5部の方法で証明できるので、ここでは認めます）。
+    </p>
+    <div class="formula">
+      <div class="fline">S = {2, ∞}　（Δ = 64 なので悪い還元は 2 のみ。m = 2 も 2 のみを割る）</div>
+    </div>
+
+    <h3>L = ℚ([2]⁻¹E(ℚ)) を実際に計算する</h3>
+    <p>
+      各 P ∈ E(ℚ) に対し [2]Q = P の解 Q を求めます。倍加公式<span class="refchip">AEC III.2.3(d)</span>は
+      A = −1, B = 0 なので：
+    </p>
+    <div class="formula"><div class="fline">x([2]Q) = (x² + 1)² / ( 4(x³ − x) )　（x = x(Q)）</div></div>
+    <p>
+      たとえば P = (1, 0) の場合。x([2]Q) = 1 を整理すると
+      x⁴ − 4x³ + 2x² + 4x + 1 = 0。これは見事に平方の形に畳めます：
+    </p>
+    <div class="formula">
+      <div class="fline">x⁴ − 4x³ + 2x² + 4x + 1 = (x² − 2x − 1)²　⇒　x = 1 ± √2</div>
+      <div class="fline">y² = x³ − x = 2(1+√2)²　⇒　y = ±√2(1+√2)　（x = 1+√2 のとき）</div>
+    </div>
+    <p>
+      つまり (1,0) の半分の点は ℚ(√2) に住んでいます。他の点も同様に計算すると：
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>P ∈ E(ℚ)</th><th>Q（[2]Q = P の解の一つ）</th><th>K(Q)</th></tr></thead>
+      <tbody>
+        <tr><td class="m">O</td><td class="m">Q ∈ E[2] ⊂ E(ℚ)</td><td class="m">ℚ</td></tr>
+        <tr><td class="m">(0, 0)</td><td class="m">(i, 1−i) など</td><td class="m">ℚ(i)</td></tr>
+        <tr><td class="m">(1, 0)</td><td class="m">(1+√2, √2(1+√2)) など</td><td class="m">ℚ(√2)</td></tr>
+        <tr><td class="m">(−1, 0)</td><td class="m">(−1+√2, i√2(√2−1)) など</td><td class="m">ℚ(i, √2)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="formula"><div class="fline">L = ℚ(i, √2),　G<sub>L/ℚ</sub> ≅ (ℤ/2ℤ)²</div></div>
+
+    <h3>理論の予言と照合する</h3>
+    <ul>
+      <li><strong>指数2のアーベル拡大か？</strong> Gal ≅ (ℤ/2)²。✓</li>
+      <li><strong>S = {2,∞} の外で不分岐か？</strong> ℚ(i,√2) = ℚ(ζ₈)（1の8乗根の体）で、その判別式は 2 のべき。
+        分岐する有限素点は 2 のみ。✓ 理論（VIII.1.5b）の通りです。</li>
+      <li><strong>完全対になっているか？</strong> |E(ℚ)/2E(ℚ)| = 4、|G<sub>L/ℚ</sub>| = 4、E[2] ≅ (ℤ/2)²。
+        4×4 の対が (ℤ/2)² に値を取り、両側の核が消えている──サイズも整合します。✓</li>
+    </ul>
+    <p>
+      抽象的な L = K([m]<sup>−1</sup>E(K)) が、実際にはこんなに小さく具体的な体（円分体 ℚ(ζ₈)！）になる。
+      この感覚を持っておくと、第5部で K(S,2) = {±1, ±2} のような有限集合が出てきたときに驚かずに済みます。
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 練習問題 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Exercises</div>
+    <h2>練習問題</h2>
+    <p>
+      ★=基礎（定義と証明の確認）、★★=標準（手を動かす）、★★★=発展（自力で議論を組む）。
+      すべての問題に解答または方針が付いています。まず自力で15分、が目安です。
+    </p>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 1</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          Kummer対の well-defined 性の証明（VIII.1.2a）では、仮定 E[m] ⊂ E(K) が1箇所だけ本質的に使われた。
+          その箇所を特定せよ。また、この仮定を外すと κ(P,σ) はどんな対象として生き残るか
+          （ヒント：値は Q の選択に依存してどう変わるか）。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            使われたのは「別の選択 Q + T（T ∈ E[m]）に対し T<sup>σ</sup> = T」の部分。
+            E[m] ⊂ E(K) だから σ が T を固定できた。
+            仮定を外すと、Q を Q + T に取り替えたとき κ の値は (Q+T)<sup>σ</sup> − (Q+T) = (Q<sup>σ</sup> − Q) + (T<sup>σ</sup> − T) となり、
+            T<sup>σ</sup> − T の分だけずれる。σ ↦ T<sup>σ</sup> − T はコバウンダリ（自明な1-コサイクル）なので、
+            κ(P,·) は「写像」としては well-defined でなくなるが、
+            <strong>1-コサイクルのコホモロジー類としては well-defined</strong> のまま生き残る。
+            これが第3部で δ : E(K)/mE(K) → H¹(G, E[m]) が一般の状況で定義できる理由である。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 2</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          帰着補題の証明中、λ<sub>P</sub> = λ<sub>P′</sub> ⇒ P ≡ P′ (mod mE(K)) の議論を、
+          本文を見ずに自分で再構成せよ。とくに「Galois不変な <span class="ov">K</span>-点は K-点」という事実を
+          どこで使うか明示すること。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            λ<sub>P</sub>(σ) = λ<sub>P′</sub>(σ) ⟺ Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub> = Q<sub>P′</sub><sup>σ</sup> − Q<sub>P′</sub>
+            ⟺ (Q<sub>P</sub> − Q<sub>P′</sub>)<sup>σ</sup> = Q<sub>P</sub> − Q<sub>P′</sub>。
+            これが全ての σ ∈ G<sub>L/K</sub> で成立。Q<sub>P</sub>, Q<sub>P′</sub> ∈ E(L) なので差も E(L) の点であり、
+            G<sub>L/K</sub> 不変な L-点は（Galois理論により座標が K に落ちるので）K-点。
+            よって R := Q<sub>P</sub> − Q<sub>P′</sub> ∈ E(K)。
+            [m]R = P − P′ なので P − P′ ∈ mE(K)。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 3</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          不分岐性の証明（VIII.1.5b）では v(m) = 0（v が m を割らない）という条件が必要だった。
+          この条件が外れる（p = char k<sub>v</sub> が m を割る）と、証明のどのステップが崩れるか。
+          形式群（AEC IV §6）の言葉で説明せよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            崩れるのは「Q<sup>σ</sup> − Q ∈ E[m] ∩ (還元の核) ⇒ Q<sup>σ</sup> − Q = O」のステップ（VIII.1.4 の適用）。
+            還元の核 E₁ は形式群 Ê(M) と同型で、Ê(M) には p と<strong>素な</strong>位数の捩れ元は存在しないが、
+            <strong>p ベキ位数の捩れ元は存在しうる</strong>（例：ℚ<sub>p</sub> の分岐拡大上）。
+            p | m だと E[m] が p-部分を持つため、「m分点かつ還元の核」という点が O 以外にありえて、
+            単射性が保証されなくなる。実際、m = p のとき K([p]⁻¹E(K))/K は良い還元の素点 p の上でも分岐しうる。
+            S に「m を割る素点」を入れておくのはこのためである。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 4</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          E : y² = x³ − x, P = (−1, 0) とする。[2]Q = P を満たす Q の x座標が満たす4次方程式を導き、
+          それが (x² + 2x − 1)² であることを確かめ、Q の座標と体 ℚ(Q) を決定せよ
+          （本文の表の最終行を自力で埋める問題）。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            倍加公式より (x²+1)² / (4(x³−x)) = −1、整理して x⁴ + 4x³ + 2x² − 4x + 1 = 0。
+            展開比較で (x² + 2x − 1)² = x⁴ + 4x³ + 2x² − 4x + 1 を確認（(x²+2x−1)² の展開：x⁴+4x³+4x²−2x²−4x+1）。
+            よって x = −1 ± √2。x = −1+√2 のとき
+            y² = x³ − x = x(x−1)(x+1) = (−1+√2)(−2+√2)(√2) = −2(√2−1)² &lt; 0（実数では負）なので
+            y = ± i√2(√2−1)。したがって Q = (−1+√2, i√2(√2−1)) で、ℚ(Q) = ℚ(i, √2)（4次拡大）。
+            この P だけは半分の点が ℚ(i) にも ℚ(√2) にも入らず、合成体が必要になる。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 5</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          VIII.1.6 の証明では全射 R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ↠ T<sub>S</sub> を作ったが、
+          AECは「実は同型」と注記している。単射性を証明せよ。
+          すなわち u ∈ R<sub>S</sub><sup>×</sup> が K<sup>×</sup> の中で m乗（u = b<sup>m</sup>, b ∈ K<sup>×</sup>）なら、
+          b ∈ R<sub>S</sub><sup>×</sup> であることを示せ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            任意の v ∉ S に対し m·ord<sub>v</sub>(b) = ord<sub>v</sub>(b<sup>m</sup>) = ord<sub>v</sub>(u) = 0
+            （u は S-単数なので）。よって ord<sub>v</sub>(b) = 0 が全ての v ∉ S で成り立ち、b ∈ R<sub>S</sub><sup>×</sup>。
+            つまり u が (K<sup>×</sup>)<sup>m</sup> に入るなら既に (R<sub>S</sub><sup>×</sup>)<sup>m</sup> に入っており、
+            核は自明。全射と合わせて R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ≅ T<sub>S</sub>。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 6</span><span class="diff d3">★★★ 発展</span></div>
+      <div class="ex-body">
+        <p>
+          （Minkowski経由の別証明<span class="refchip">AEC VIII.1.7</span>を完成させる）
+          E[m] ⊂ E(K) を仮定する。Q ∈ [m]<sup>−1</sup>E(K) に対し、拡大次数の評価
+          [K(Q) : K] ≤ m² を証明せよ。さらに、Hermite–Minkowskiの定理
+          「次数有界・S外不分岐な拡大は有限個」を認めて、L = K([m]<sup>−1</sup>E(K)) が有限次であることを導け。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答の方針を開く</summary>
+        <div class="sol-body">
+          <p>
+            <strong>次数評価：</strong>σ ∈ G<sub><span class="ov">K</span>/K</sub> に対し
+            [m](Q<sup>σ</sup> − Q) = ([m]Q)<sup>σ</sup> − [m]Q = O なので Q<sup>σ</sup> ∈ { Q + T : T ∈ E[m] }。
+            つまり Q の Galois 共役は高々 #E[m] = m² 個しかなく、Q の（座標の）最小多項式の次数は m² 以下。
+            よって [K(Q) : K] ≤ m²。
+          </p>
+          <p>
+            <strong>有限性：</strong>各 K(Q) は VIII.1.5b と同じ議論で S の外不分岐（この議論は E[m] ⊂ E(K) を使わない）。
+            次数 ≤ m² かつ S外不分岐な拡大は Hermite–Minkowski により有限個しかないので、
+            体の候補 K(Q₁), …, K(Q<sub>t</sub>) は有限個。L はそれらの合成体なので
+            [L : K] ≤ Π [K(Q<sub>i</sub>) : K] &lt; ∞。
+          </p>
+          <p>
+            <strong>比較：</strong>本文の証明（Kummer理論）は「アーベル・指数m」という構造を使って有限性を出したのに対し、
+            こちらは「次数の一様有界性」だけで押し切る。どちらも「不分岐性」（STEP 2）は共通に必要である点に注意。
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/aec.html">
+      <div class="p-dir">← PREV ─ 第1部</div>
+      <div class="p-title">全体地図と前提知識（AEC I–VII）</div>
+    </a>
+    <a class="next" href="/math-site/in/kummer.html">
+      <div class="p-dir">NEXT ─ 第3部</div>
+      <div class="p-title">Kummer対とGaloisコホモロジー（AEC VIII §2）→</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 2/5</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. VIII §1</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

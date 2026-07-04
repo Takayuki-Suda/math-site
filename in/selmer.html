@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selmer群とTate–Shafarevich群 ─ AEC X §4 精読 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Ш'; position:absolute; right:0; top:-30px; font-family:var(--display);
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">大学院教材 ─ 楕円曲線の数論 5/5</div>
+    <h1>Selmer 群と<br>Tate–Shafarevich 群<br><span class="en">The Selmer and Shafarevich–Tate Groups</span></h1>
+    <p class="hero-sub">
+      Mordell–Weil 定理はどこで「計算可能」で、どこで「計算不能」になるのか。
+      その境界線を正確に描くのが Selmer 群と Ш 群です。
+      AEC X §4 を精読し、実際に1本の曲線の Mordell–Weil 群を計算しきります。
+      最後に Ch. IX と Ch. X の残りを展望して、シリーズを締めくくります。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. X §4（精読）、X §1–§3・§5–§6 / Ch. IX（展望）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/aec.html">Ⅰ 全体地図</a>
+      <a href="/math-site/in/weakmw.html">Ⅱ 弱Mordell–Weil</a>
+      <a href="/math-site/in/kummer.html">Ⅲ Kummer対</a>
+      <a href="/math-site/in/descent.html">Ⅳ 降下法</a>
+      <a class="cur" href="/math-site/in/selmer.html">Ⅴ Selmer群とШ</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>問題の再設定 ─ 失われた計算可能性を取り戻す</h2>
+    <p>シリーズのここまでで確定した状況を整理します。</p>
+    <ul>
+      <li>E(K) は有限生成（第4部）。しかも E(K)/mE(K) の生成元さえ分かれば、
+        E(K) の生成元は降下法で<strong>有効に</strong>計算できる<span class="refchip">AEC VIII.3.2 / 演習8.18</span>。</li>
+      <li>E(K)/mE(K) は有限で、計算可能な有限群 H¹(G<sub><span class="ov">K</span>/K</sub>, E[m]; S)
+        （S外不分岐類）に単射で入る（第2・3部）。</li>
+      <li>ただし「H¹ のどの元が有理点由来か」の判定法がない<span class="refchip">AEC VIII.1.8</span>。
+        ここが唯一の非有効ポイント。</li>
+    </ul>
+    <p>
+      Chapter X の発想はこうです：<strong>「有理点由来か」は判定できないが、
+      「局所的に有理点由来でありうるか」は判定できる</strong>。
+      各完備化 K<sub>v</sub> は Hensel の補題のおかげで「計算しやすい世界」だからです。
+      そこで H¹ を局所条件で切った群──Selmer群──を間に挟み、
+      切り残った誤差を Ш と名付けて正面から研究する。これが X §4 の設計です。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02 ─ 準備（要約）</div>
+    <h2>X §1–§3 の道具立て ─ 等質空間という辞書</h2>
+
+    <h3>X §1：完全 2-降下（すでに半分知っている）</h3>
+    <p>
+      第3部 §7 で見た「E[2] ⊂ E(K) のとき E(K)/2E(K) ↪ (K<sup>×</sup>/(K<sup>×</sup>)²)²、
+      P ↦ (x−e₁, x−e₂)」の像を特定する話です<span class="refchip">AEC X.1.1 / X.1.4</span>。
+      鍵は、像が有限群
+    </p>
+    <div class="formula">
+      <div class="fline">K(S, m) = { b ∈ K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> : ord<sub>v</sub>(b) ≡ 0 (mod m)（∀v ∉ S） }</div>
+      <div class="fline fc">第2部STEP 3の T<sub>S</sub> と同じもの。S = {悪い還元} ∪ {v | 2} ∪ M<sub>K</sub><sup>∞</sup></div>
+    </div>
+    <p>
+      の2つ組に入ること、そして (b₁,b₂) ∈ K(S,2)² が像に入るか否かが<strong>補助曲線の有理点の存在</strong>
+    </p>
+    <div class="formula">
+      <div class="fline">b₁z₁² − b₂z₂² = e₂ − e₁,　b₁z₁² − b₁b₂z₃² = e₃ − e₁</div>
+    </div>
+    <p>
+      に言い換えられることです<span class="refchip">AEC X.1.4</span>。
+      例として AEC は y² = x(x−2)(x−10) を完全に計算し、階数0を示しています<span class="refchip">AEC X.1.5</span>。
+      「E(K)/2E(K) の計算 ＝ 有限個の補助曲線たちの有理点探し」という形が、この章全体の原型です。
+    </p>
+
+    <h3>X §2–§3：twist・等質空間・Weil–Châtelet 群</h3>
+    <p>
+      第3部で「H¹(G, E(<span class="ov">K</span>)) ≠ 0 が楕円曲線の理論を難しくしている」と言いました。
+      X §3 はこの群に幾何的な意味を与えます。
+    </p>
+    <div class="box dfn">
+      <div class="box-label">定義（等質空間） <span class="refchip">AEC X §3</span></div>
+      <p>
+        E/K の<strong>（主）等質空間</strong>（principal homogeneous space, torsor）とは、
+        種数1の滑らかな曲線 C/K と、K上定義された単純推移的な作用 C × E → C の組。
+        自明な例は C = E 自身。2つの等質空間は K-同型で同一視し、同値類全体を
+        <strong>Weil–Châtelet 群 WC(E/K)</strong> と呼ぶ。
+      </p>
+    </div>
+    <p>使う事実は次の3つだけです（証明は読み流してよい）：</p>
+    <ul>
+      <li><strong>{C/K} が自明 ⟺ C(K) ≠ ∅</strong><span class="refchip">AEC X.3.3</span>。
+        「K-有理点を持つ torsor は E と同一視できる」。</li>
+      <li><strong>WC(E/K) ≅ H¹(G<sub><span class="ov">K</span>/K</sub>, E(<span class="ov">K</span>))</strong><span class="refchip">AEC X.3.6</span>。
+        対応は、<span class="ov">K</span>-同型 θ : C → E を選び σ ↦ θ<sup>σ</sup>(p) − θ(p) 型のコサイクルを取るもの。</li>
+      <li>C の Jacobian（Pic⁰(C)）は E に戻る<span class="refchip">AEC X.3.8</span>。
+        「E の torsor ＝ Jacobian が E である種数1曲線」という辞書。</li>
+    </ul>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>コホモロジーの言葉</th><th>幾何の言葉</th></tr></thead>
+      <tbody>
+        <tr><td class="m">ξ ∈ H¹(G, E)</td><td>種数1曲線 C/K（Jacobian が E）</td></tr>
+        <tr><td class="m">ξ = 0</td><td>C(K) ≠ ∅（有理点がある）</td></tr>
+        <tr><td class="m">res<sub>v</sub>(ξ) = 0 ∈ H¹(G<sub>v</sub>, E)</td><td>C(K<sub>v</sub>) ≠ ∅（v進点がある）</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="goon">
+      <div class="g-label">⏩ ここで止まらない</div>
+      <p>
+        X §2（twist の一般論）と X §3 の証明群は、初読では上の辞書（3項目＋表）だけ持って通過してよい部分です。
+        辞書さえ手にあれば §4 の議論はすべて追えます。等質空間の理論の詳細が必要になったら
+        AEC X §3 に戻ってください。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>基本図式と2つの群の定義 <span class="refchip">AEC X §4</span></h2>
+
+    <p>
+      φ : E → E′ を K 上定義された同種写像とします（E = E′、φ = [m] が典型例。
+      一般化しておくのは「2-同種による降下」（§5）で本当に使うからです）。
+      短完全列 0 → E[φ] → E → E′ → 0 から、第3部と同じ手順で<strong>大域の基本完全列</strong>：
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K)/φ(E(K)) →<sup>δ</sup> H¹(G<sub><span class="ov">K</span>/K</sub>, E[φ]) → WC(E/K)[φ] → 0　(∗)</div>
+    </div>
+    <p>
+      各素点 v で同じことをすると（G<sub>v</sub> ⊂ G<sub><span class="ov">K</span>/K</sub> は分解群）、<strong>局所版</strong>：
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K<sub>v</sub>)/φ(E(K<sub>v</sub>)) →<sup>δ</sup> H¹(G<sub>v</sub>, E[φ]) → WC(E/K<sub>v</sub>)[φ] → 0　(∗v)</div>
+    </div>
+    <p>そして制限写像で両者を束ねた可換図式が、この節の全議論の舞台です：</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 780 260" role="img" aria-label="大域と局所の可換図式">
+        <defs>
+          <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+        </defs>
+        <style>
+          .qt { font-family:'JetBrains Mono',monospace; font-size:13.5px; fill:#f0d888; }
+          .qs { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#7d84a0; }
+          .qe { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr5); }
+        </style>
+        <!-- global row -->
+        <text class="qt" x="20" y="60">0</text>
+        <text class="qt" x="58" y="60">E′(K)/φ(E(K))</text>
+        <text class="qt" x="300" y="60">H¹(G, E[φ])</text>
+        <text class="qt" x="530" y="60">WC(E/K)[φ]</text>
+        <text class="qt" x="740" y="60">0</text>
+        <path class="qe" d="M36,55 L52,55"/>
+        <path class="qe" d="M244,55 L292,55"/><text class="qs" x="258" y="46">δ</text>
+        <path class="qe" d="M456,55 L522,55"/>
+        <path class="qe" d="M692,55 L732,55"/>
+        <!-- local row -->
+        <text class="qt" x="20" y="205">0</text>
+        <text class="qt" x="40" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> E′(K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">)/φ(E(K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">))</tspan></text>
+        <text class="qt" x="300" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> H¹(G</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">, E[φ])</tspan></text>
+        <text class="qt" x="530" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> WC(E/K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">)[φ]</tspan></text>
+        <text class="qt" x="740" y="205">0</text>
+        <path class="qe" d="M36,200 L52,200"/>
+        <path class="qe" d="M262,200 L292,200"/><text class="qs" x="268" y="191">δ</text>
+        <path class="qe" d="M486,200 L522,200"/>
+        <path class="qe" d="M712,200 L732,200"/>
+        <!-- vertical arrows -->
+        <path class="qe" d="M140,75 L140,185"/>
+        <path class="qe" d="M370,75 L370,185"/>
+        <path class="qe" d="M600,75 L600,185"/>
+        <text class="qs" x="378" y="135">res（制限）</text>
+      </svg>
+      <div class="svg-cap">
+        図1：基本可換図式 (∗∗)〔AEC X §4〕。上段が大域 (∗)、下段が局所 (∗v) の積。
+        目標＝上段左（有理点）の像の決定。右下（局所WC）は Hensel の補題により計算可能。
+      </div>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">定義（Selmer群・Tate–Shafarevich群） <span class="refchip">AEC X §4</span></div>
+      <div class="formula">
+        <div class="fline">S<sup>(φ)</sup>(E/K) = ker{ H¹(G<sub><span class="ov">K</span>/K</sub>, E[φ]) → ∏<sub>v</sub> WC(E/K<sub>v</sub>) }　（φ-Selmer群）</div>
+        <div class="fline">Ш(E/K) = ker{ WC(E/K) → ∏<sub>v</sub> WC(E/K<sub>v</sub>) }　（Tate–Shafarevich群）</div>
+      </div>
+      <p>
+        いずれも v の <span class="ov">K</span> への延長の選び方に依らない<span class="refchip">AEC X.4.1.1</span>。
+      </p>
+    </div>
+
+    <p>幾何の辞書（§2）で読み替えると、定義の意味が鮮明になります：</p>
+    <ul>
+      <li><strong>S<sup>(φ)</sup></strong> ＝「対応する等質空間が<strong>すべての完備化で点を持つ</strong>ようなコホモロジー類」。
+        つまり「局所的には有理点由来と区別がつかない類」の集まり。</li>
+      <li><strong>Ш</strong> ＝「<strong>どこでも局所的に自明なのに、大域的には自明でない</strong>torsorたち」<span class="refchip">AEC X.4.1.2</span>。
+        つまり<strong>Hasse原理（局所大域原理）の破れ</strong>を測る群。種数0の曲線（円錐曲線）では
+        Hasse–Minkowski の定理によりこの群に相当するものは消えますが、種数1では消えません。</li>
+    </ul>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>基本定理 ─ 完全列と有限性</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理 <span class="refchip">AEC X.4.2</span></div>
+      <p>φ : E/K → E′/K を同種写像とすると：</p>
+      <div class="formula">
+        <div class="fline">(a)　0 → E′(K)/φ(E(K)) → S<sup>(φ)</sup>(E/K) → Ш(E/K)[φ] → 0　は完全</div>
+        <div class="fline">(b)　S<sup>(φ)</sup>(E/K) は有限群</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">(a) の証明（図式追跡を全部書く）</div>
+      <p>
+        <strong>像が Selmer に入ること：</strong>P ∈ E′(K) に対し δ(P) は大域列 (∗) の完全性より
+        WC(E/K) で 0 に行く。図式の可換性より、各 v での像（∈ WC(E/K<sub>v</sub>)）も 0。よって δ(P) ∈ S<sup>(φ)</sup>。
+      </p>
+      <p>
+        <strong>S<sup>(φ)</sup> → Ш[φ] が定義できること：</strong>ξ ∈ S<sup>(φ)</sup> の WC(E/K)[φ] での像を c とすると、
+        可換性より c の各局所像は ξ の局所像と一致し、それは 0。よって c ∈ Ш[φ]。
+      </p>
+      <p>
+        <strong>全射性：</strong>c ∈ Ш(E/K)[φ] を任意に取る。大域列 (∗) の完全性（右端が全射）より
+        c はある ξ ∈ H¹(G, E[φ]) の像。ξ の局所像は c の局所像 = 0 に行くので ξ ∈ S<sup>(φ)</sup>。
+      </p>
+      <p>
+        <strong>S<sup>(φ)</sup> での完全性：</strong>ξ ∈ S<sup>(φ)</sup> が Ш[φ] で 0 に行く ⟺ ξ の WC(E/K) での像が 0
+        ⟺（大域列の完全性）ξ ∈ im δ。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">(b) の証明（弱MWの議論の再演）</div>
+      <p>
+        ξ ∈ S<sup>(φ)</sup> とし、v を「deg φ = m を割らず、E が良い還元を持つ」有限素点とします。
+        <strong>ξ が v で不分岐であること</strong>を示します。
+      </p>
+      <p>
+        ξ ∈ S<sup>(φ)</sup> より ξ は WC(E/K<sub>v</sub>) で自明。局所列 (∗v) の完全性から、
+        ある P ∈ E(<span class="ov">K</span><sub>v</sub>) が存在して ξ<sub>σ</sub> = P<sup>σ</sup> − P（∀σ ∈ G<sub>v</sub>）、
+        しかも P<sup>σ</sup> − P ∈ E[φ] ⊂ E[m]。σ を惰性群 I<sub>v</sub> の元とすると、
+        還元先では惰性は動かないので (P<sup>σ</sup> − P)˜ = Õ。
+        つまり P<sup>σ</sup> − P は「m分点かつ還元の核」の点であり、
+        VIII.1.4（= VII.3.1、第2部STEP 2の武器）よりそれは O。
+        よって ξ<sub>σ</sub> = 0（∀σ ∈ I<sub>v</sub>）、ξ は v で不分岐です。
+      </p>
+      <p>
+        したがって S<sup>(φ)</sup> ⊂ H¹(G, E[φ]; S)（S = {悪い還元} ∪ {v | deg φ} ∪ M<sub>K</sub><sup>∞</sup>、
+        有限集合<span class="refchip">AEC X.4.4</span>。E と E′ の悪い還元素点が一致すること〔AEC VII.7.2〕もここで効く）。
+        あとは次の補題で終わりです。
+      </p>
+      <div class="qed">∎（補題を除き）</div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">補題（S外不分岐コホモロジーの有限性） <span class="refchip">AEC X.4.3</span></div>
+      <p>M を有限 G<sub><span class="ov">K</span>/K</sub>-加群、S を有限な素点集合とすると、
+      H¹(G<sub><span class="ov">K</span>/K</sub>, M; S) = { ξ : S外で不分岐 } は有限。</p>
+    </div>
+    <div class="proof">
+      <div class="p-label">証明</div>
+      <p>
+        M は有限なので、M の全元を固定する開部分群がある。inflation–restriction（第3部）により
+        K を有限次拡大に取り替えてよく、<strong>作用は自明としてよい</strong>。
+        すると H¹(G, M; S) = Hom(G, M; S)。M の指数を m とし、
+        L/K を「指数mの最大アーベル拡大で S外不分岐なもの」とすると、
+        S外不分岐な準同型 G → M はすべて G<sub>L/K</sub> を経由する。
+        <strong>VIII.1.6（第2部STEP 3！）より L/K は有限次</strong>なので、Hom(G<sub>L/K</sub>, M) は有限。
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? 「弱MWの証明」と「Selmer群の有限性」は同じ定理である</div>
+      <p>
+        φ = [m] の場合、(a) の完全列の左端が E(K)/mE(K) なので、(b) の有限性から弱MW定理が従います。
+        逆に (b) の証明は、第2部の STEP 2（不分岐性）と STEP 3（体論の有限性）をそのまま再演したものです。
+        つまり<strong>弱Mordell–Weil定理の証明の「本体」は Selmer 群の有限性であり、
+        第2部で学んだことは一切無駄になっていない</strong>。シリーズ全体がここで一つに繋がります。
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">Selmer群は計算可能 <span class="refchip">AEC X.4.5</span></div>
+      <p>
+        H¹(G, E[φ]; S) は（第2部STEP 3を明示的にたどれば）計算可能な有限群。
+        その各元 ξ について「ξ ∈ S<sup>(φ)</sup> か？」は、対応する等質空間 C<sub>ξ</sub> が
+        各 v ∈ S で K<sub>v</sub>-点を持つかの判定であり、<strong>Henselの補題により有限回の合同式チェック</strong>に帰着する
+        （v ∉ S では不分岐性から自動的に局所点がある）。
+        よって S<sup>(φ)</sup>(E/K) は原理的に必ず計算できる。
+        計算できないのは Ш[φ]──「局所的に見えない大域的障害」だけである。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>2-同種による降下 ─ 実戦用の道具 <span class="refchip">AEC X.4.8–4.9</span></h2>
+
+    <p>
+      K-有理な2分点 T = (0,0) を持つ曲線なら、[2] を「次数2の同種写像2つの合成」に分解して
+      降下計算を軽くできます。E(K)[2] ≠ 0 なら常に使える、実戦上最も重要な形です<span class="refchip">AEC X.4.9.2</span>。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">命題（2-同種による降下） <span class="refchip">AEC X.4.9</span></div>
+      <div class="formula">
+        <div class="fline">E : y² = x³ + ax² + bx,　E′ : Y² = X³ − 2aX² + (a² − 4b)X</div>
+        <div class="fline">φ : E → E′,　φ(x,y) = ( y²/x², y(b − x²)/x² ),　ker φ = { O, (0,0) },　deg φ = 2</div>
+        <div class="fline">S = M<sub>K</sub><sup>∞</sup> ∪ { v : v(2) ≠ 0 または v(b) ≠ 0 または v(a²−4b) ≠ 0 }</div>
+      </div>
+      <p>d ∈ K<sup>×</sup> に対し等質空間 C<sub>d</sub> を</p>
+      <div class="formula">
+        <div class="fline">C<sub>d</sub> : dw² = d² − 2adz² + (a² − 4b)z⁴</div>
+      </div>
+      <p>で定めると、完全列</p>
+      <div class="formula">
+        <div class="fline">0 → E′(K)/φ(E(K)) →<sup>δ</sup> K(S,2) → WC(E/K)[φ]</div>
+        <div class="fline fc">δ(O) = 1,　δ((0,0)) = a² − 4b,　δ((X,Y)) = X（X ≠ 0）／　d ↦ {C<sub>d</sub>/K}</div>
+      </div>
+      <p>があり、Selmer群は</p>
+      <div class="formula">
+        <div class="fline">S<sup>(φ)</sup>(E/K) ≅ { d ∈ K(S,2) : C<sub>d</sub>(K<sub>v</sub>) ≠ ∅（∀v ∈ S） }</div>
+      </div>
+      <p>さらに ψ : C<sub>d</sub> → E′, ψ(z,w) = ( d/z², −dw/z³ ) は、
+      P ∈ C<sub>d</sub>(K) が見つかったとき δ(ψ(P)) ≡ d を満たす（点の回収装置<span class="refchip">AEC X.4.6</span>）。</p>
+    </div>
+
+    <p>
+      E′ は E と同じ形なので、<strong>双対同種写像 φ̂ : E′ → E にも同じ命題が使えます</strong>。
+      2つの降下の結果は、次の完全列で E(K)/2E(K) に合成されます<span class="refchip">AEC X.4.7</span>：
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K)[φ̂] / φ(E(K)[2]) → E′(K)/φ(E(K)) →<sup>φ̂</sup> E(K)/2E(K) → E(K)/φ̂(E′(K)) → 0</div>
+      <div class="fline fc">（φ̂∘φ = [2] を使った初等的な図式追跡で得られる）</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ 完全実行例</div>
+    <h2>実戦：E : y² = x³ − 6x² + 17x の Mordell–Weil 群 <span class="refchip">AEC X.4.10</span></h2>
+
+    <p>
+      a = −6, b = 17。判別式は Δ = −2⁹·17² なので S = {∞, 2, 17}、
+      ℚ(S,2) = {±1, ±2, ±17, ±34}（8元）。2-同種で移る相手は
+    </p>
+    <div class="formula">
+      <div class="fline">E′ : Y² = X³ + 12X² − 32X,　C<sub>d</sub> : dw² = d² + 12dz² − 32z⁴</div>
+    </div>
+
+    <h3>φ 側の Selmer 群を決める</h3>
+    <ul>
+      <li><strong>d = −2 ∈ S<sup>(φ)</sup></strong>：(0,0) ∈ E′(ℚ) の像が δ(0,0) = a²−4b = −32 ≡ −2。
+        有理点由来なので自動的に Selmer に入る。</li>
+      <li><strong>d = 2 ∈ S<sup>(φ)</sup>（しかも有理点由来）</strong>：C₂ : 2w² = 4 + 24z² − 32z⁴ を
+        z = Z/2 で整理すると w² = 2 + 3Z² − Z⁴。<strong>目視で有理点 (Z, w) = (1, 2)</strong>、
+        すなわち (z,w) = (1/2, 2) ∈ C₂(ℚ)。回収装置 ψ で
+        ψ(1/2, 2) = (8, −32) ∈ E′(ℚ)、検算：δ(8,−32) = 8 ≡ 2。✓</li>
+      <li><strong>d = 17 ∉ S<sup>(φ)</sup>（17進で死ぬ）</strong>：C₁₇ : 17w² = 17² + 12·17z² − 32z⁴ に
+        ℚ₁₇-点があると仮定する。ord₁₇(17w²) は奇数、ord₁₇(32z⁴) は偶数であることに注意して
+        付値を比較すると z, w ∈ ℤ₁₇ が必要。すると方程式から順に
+        z ≡ 0, w ≡ 0 (mod 17)、最後に 17² ≡ 0 (mod 17³) となり矛盾。よって C₁₇(ℚ₁₇) = ∅。</li>
+      <li><strong>残りは群構造で自動処理</strong>：S<sup>(φ)</sup> は ℚ(S,2) の部分群で、
+        {1, 2, −2, −1} を含み 17 を含まない。±17, ±34 のどれかが入ると（2, −1 との積で）17 が入ってしまう。
+        よって S<sup>(φ)</sup>(E/ℚ) = {±1, ±2} ≅ (ℤ/2)²。</li>
+    </ul>
+    <p>
+      さらに、S<sup>(φ)</sup> の4元がすべて E′(ℚ) の点（O, (0,0), (8,−32), それらの和）から来ることが
+      分かったので、完全列 (X.4.2a) より <strong>Ш(E/ℚ)[φ] = 0</strong>。運が良い場合です。
+    </p>
+
+    <h3>φ̂ 側（E′ から E へ）</h3>
+    <ul>
+      <li>C′<sub>d</sub> : dw² = d² − 24dz² + 272z⁴（a′ = 12, b′ = −32, a′²−4b′ = 272）。</li>
+      <li>(0,0) ∈ E(ℚ) の像：δ(0,0) = 272 ≡ 17。よって 17 ∈ S<sup>(φ̂)</sup>。</li>
+      <li><strong>d &lt; 0 は実数で死ぬ</strong>：d &lt; 0 なら左辺 dw² ≤ 0、
+        右辺 = d² − 24dz² + 272z⁴ は各項 ≥ 0 で d² &gt; 0 なので正。C′<sub>d</sub>(ℝ) = ∅。</li>
+      <li><strong>d = 2 は2進で死ぬ</strong>：C′₂ を z = Z/2 で整理すると 2w² = 4 − 12Z² + 17Z⁴。
+        ℚ₂-点があるとすると Z, w ∈ ℤ₂ が必要で、mod 2 で順に Z ≡ 0、w ≡ 0、
+        最後に 4 ≡ 0 (mod 8) となり矛盾。</li>
+      <li>まとめると S<sup>(φ̂)</sup>(E′/ℚ) = {1, 17} ≅ ℤ/2、しかも両方有理点由来なので Ш(E′/ℚ)[φ̂] = 0。</li>
+    </ul>
+
+    <h3>組み立て</h3>
+    <div class="formula">
+      <div class="fline">E′(ℚ)/φ(E(ℚ)) ≅ (ℤ/2)²　（生成：(0,0), (8,−32)）</div>
+      <div class="fline">E(ℚ)/φ̂(E′(ℚ)) ≅ ℤ/2　（生成：(0,0)）</div>
+      <div class="fline">X.4.7 の完全列に代入 ⇒ E(ℚ)/2E(ℚ) ≅ (ℤ/2)²</div>
+    </div>
+    <p>
+      E(ℚ)[2] = {O, (0,0)}（x² − 6x + 17 は判別式負で有理根なし）なので
+      dim₂ E(ℚ)/2E(ℚ) = rank + dim₂ E(ℚ)[2] より rank = 1。結論：
+    </p>
+    <div class="formula">
+      <div class="fline">E(ℚ) ≅ ℤ × ℤ/2ℤ</div>
+      <div class="fline fc">無限位数の点の例：(4, 6) ∈ E(ℚ)（64 − 96 + 68 = 36 = 6²）</div>
+    </div>
+    <p>
+      <strong>これが「Mordell–Weil群を計算する」ことの全工程です</strong>。
+      弱MW（第2部）が保証した有限性を、Selmer群という計算可能な入れ物で実際に決定し、
+      降下定理（第4部）が「あとは生成元探しだけ」と言ってくれる。理論の全部品が動いています。
+    </p>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Ш は本当に自明でないのか ─ Hasse原理の破れ <span class="refchip">AEC X.4.11</span></h2>
+
+    <p>
+      ここまでの例はすべて「運が良く」Ш[φ] = 0 でした。しかし Ш は一般に消えません。
+      歴史上最初の例は Lind（1940）と Reichardt（1942）によるものです：
+    </p>
+    <div class="formula">
+      <div class="fline">C : 2w² = 1 − 17z⁴</div>
+      <div class="fline fc">すべての ℚ<sub>p</sub> と ℝ で点を持つが、ℚ-点を持たない（練習問題5で証明する）</div>
+    </div>
+    <p>
+      この C は然るべき楕円曲線の等質空間であり、Ш の非自明な元（位数2）を与えます。
+      少し後に Selmer（1951）は 3次曲線
+    </p>
+    <div class="formula">
+      <div class="fline">3x³ + 4y³ + 5z³ = 0</div>
+    </div>
+    <p>
+      が同種の例（x³ + y³ + 60z³ = 0 の Jacobian に対する位数3の Ш 元）であることを示し、
+      大規模な系列を研究しました。<strong>Selmer 群の名はこの研究に由来します</strong>。
+    </p>
+
+    <h3>Ш をどこまで攻められるか <span class="refchip">AEC X.4.12–4.14</span></h3>
+    <ul>
+      <li><strong>精密化された降下</strong><span class="refchip">AEC X.4.12</span>：
+        S<sup>(mⁿ)</sup> の像 S<sup>(m,n)</sup> ⊂ S<sup>(m)</sup> を使うと
+        0 → E(K)/mE(K) → S<sup>(m,n)</sup> → m<sup>n−1</sup>Ш[mⁿ] → 0。
+        n を上げつつ有理点探索と並走させれば、Ш に「無限に m 割り可能な元」がない限りいつか階数が確定する。</li>
+      <li><strong>Ш有限性予想</strong><span class="refchip">AEC X.4.13</span>：Ш(E/K) は有限だろう、という予想。
+        Kolyvagin・Rubin により特定の場合（解析階数 ≤ 1 など）には証明済み。
+        有限性が分かれば上の手続きは必ず停止する＝<strong>Mordell–Weil群の計算は完全アルゴリズムになる</strong>。</li>
+      <li><strong>Casselsの対</strong><span class="refchip">AEC X.4.14</span>：交代双線形対
+        Γ : Ш × Ш → ℚ/ℤ が存在し、核は可除元のみ。とくに <strong>Ш が有限ならその位数は完全平方数</strong>。
+        「まだ有限かどうかも分からない群の位数について、これほど美しい制約が証明できる」という驚くべき定理。</li>
+    </ul>
+    <div class="why">
+      <div class="w-label">? BSD 予想への一言（シリーズの出口）</div>
+      <p>
+        Birch–Swinnerton-Dyer 予想<span class="refchip">AEC C.16.5</span>は、階数 r と Ш を
+        L関数 L(E,s) の s = 1 での挙動に結びつけます：ord<sub>s=1</sub> L(E,s) = r、
+        そして先頭係数の公式に #Ш とレギュレータ（第4部 §9）が現れる。
+        このシリーズで学んだ対象たち──rank、ĥ、Ш──が全部一つの解析的公式に集まるのが現代数論の風景です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08 ─ 展望(要約)</div>
+    <h2>Ch. IX 整数点 ／ Ch. X の残り</h2>
+
+    <h3>Ch. IX：整数点（Siegelの定理）</h3>
+    <p>
+      Mordell–Weil が「有理点」の構造定理だとすると、Ch. IX は「<strong>整数点</strong>」の有限性定理です。
+      主結果は Siegel の定理：Weierstrass 方程式の S-整数点は有限個<span class="refchip">AEC IX §3–§4</span>。
+      証明はディオファントス近似（Roth の定理<span class="refchip">AEC IX §1, §8</span>）と、
+      なんと<strong>Mordell–Weil定理そのもの</strong>を使います（点を m で割って近似の質を上げる、descent の親戚）。
+      Baker の方法による有効版<span class="refchip">AEC IX §5</span>、
+      「S外で良い還元を持つ楕円曲線は有限個」という Shafarevich の定理<span class="refchip">AEC IX.6.1</span>も
+      この章にあります。
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ 位置づけだけ知っていればよい</div>
+      <p>
+        Ch. IX は VIII の応用編で、X §4 とは独立に読めます。
+        本シリーズの目的（VIII の理解）には「Mordell–Weil が近似定理と組み合わさって整数点の有限性を出す」
+        という一文の理解で十分です。
+      </p>
+    </div>
+
+    <h3>Ch. X §5–§6：twist の具体論</h3>
+    <p>
+      §5 は楕円曲線としての twist（2次twist E<sup>(d)</sup> : dy² = x³ + Ax + B など）の一般論
+      <span class="refchip">AEC X.5.4</span>、§6 はそれを使って曲線族 Y² = X³ + DX の
+      Mordell–Weil 群を D ごとに解析する大規模な実戦例です<span class="refchip">AEC X §6</span>。
+      §4 まで理解していれば、§6 は「腕試しの演習場」として最高の教材です。
+    </p>
+
+    <h3>シリーズ総括 ─ 一本の物語として</h3>
+    <div class="formula">
+      <div class="fline">有理点の群 E(K)</div>
+      <div class="fline">　→ 弱MW：E(K)/mE(K) は有限　〔VIII §1–§2 ＝ 第2・3部〕</div>
+      <div class="fline">　→ 高さと降下：E(K) は有限生成　〔VIII §3–§6 ＝ 第4部〕</div>
+      <div class="fline">　→ どこが計算できないか：Hom の中の有理点像　〔VIII.1.8〕</div>
+      <div class="fline">　→ 局所条件で挟む：E(K)/mE(K) ⊂ S<sup>(m)</sup>（計算可能）　〔X §4 ＝ 第5部〕</div>
+      <div class="fline">　→ 誤差項 Ш ＝ Hasse原理の破れ。有限性は予想　〔X.4.13〕</div>
+      <div class="fline">　→ その先に BSD　〔C §16〕</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 練習問題 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Exercises</div>
+    <h2>練習問題</h2>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 1</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          基本図式 (∗∗) から完全列 0 → E′(K)/φ(E(K)) → S<sup>(φ)</sup> → Ш[φ] → 0（X.4.2a）を導く
+          図式追跡を、本文を見ずに再構成せよ。とくに「全射性」の議論で大域列 (∗) の右端の全射性を
+          どこで使うかを明示すること。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            本文 Section 04 の4段落（像が入る／写像が定義できる／全射／中央での完全性）を再構成すればよい。
+            全射性：c ∈ Ш[φ] ⊂ WC(E/K)[φ] に対し、(∗) の H¹(G,E[φ]) → WC(E/K)[φ] が<strong>全射</strong>である
+            ことから持ち上げ ξ を取る。この全射性は長完全列で WC[φ] の次の項が H¹(G,E) 自身の φ 倍への
+            移行部分になっていること（Kummer型完全列の切り出し）による。
+            持ち上げの局所像が 0 になるのは c ∈ Ш だから。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 2</span><span class="diff d1">★ 基礎</span></div>
+      <div class="ex-body">
+        <p>
+          本文 Section 06 の C₁₇(ℚ₁₇) = ∅ の議論（17進付値の偶奇）を、すべての行間を埋めて書き下せ。
+          すなわち：C₁₇ : 17w² = 17² + 12·17z² − 32z⁴ に (z,w) ∈ ℚ₁₇² があると仮定し、
+          (i) z, w ∈ ℤ₁₇ が必要であること、(ii) z ≡ 0 (mod 17)、(iii) w ≡ 0 (mod 17)、
+          (iv) 矛盾、の順で示せ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            (i) ord(z) &lt; 0 とすると右辺の付値は 4·ord(z)（−32z⁴ の項が支配、ord₁₇(32)=0）で偶数、
+            左辺は 1 + 2·ord(w) で奇数、矛盾。よって z ∈ ℤ₁₇。すると右辺の付値 ≥ 0 は明らかで、
+            左辺 1 + 2ord(w) ≥ 0 から ord(w) ≥ 0（付値は整数なので ≥ 0）、w ∈ ℤ₁₇。
+            (ii) mod 17 で 0 ≡ −32z⁴、32 は単数なので z ≡ 0 (mod 17)。
+            (iii) z = 17z₁ を代入：17w² = 17² + 12·17³z₁² − 32·17⁴z₁⁴。17で割って
+            w² = 17 + 12·17²z₁² − 32·17³z₁⁴ ≡ 0 (mod 17)、よって w ≡ 0 (mod 17)。
+            (iv) w = 17w₁ を代入し 17² で割ると 17w₁² = 1 + 12·17z₁²·… の形になり
+            mod 17 で 0 ≡ 1、矛盾。（書き方は一通りでないが、付値の偶奇と mod 17 の交互使用が骨格。）
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 3</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          本文 Section 06 で「残りは群構造で自動処理」とした部分を厳密に実行せよ。
+          すなわち S<sup>(φ)</sup>(E/ℚ) が ℚ(S,2) = {±1,±2,±17,±34} の部分群であり
+          {1,−1,2,−2} を含み 17 を含まないことから、S<sup>(φ)</sup> = {±1,±2} を結論せよ。
+          また、なぜ S<sup>(φ)</sup> が部分群になるのか（コホモロジー的理由）を一行で述べよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            S<sup>(φ)</sup> は群準同型 H¹(G,E[φ]) → ∏<sub>v</sub>WC(E/K<sub>v</sub>) の核なので部分群
+            （これが一行の理由。等質空間の言葉だけだと積構造は見えにくいが、コホモロジーでは自明になる）。
+            {±1, ±2} ⊂ S<sup>(φ)</sup> は本文の通り（−2 と 2 が入り、積で −1、1 は単位元）。
+            もし 17 ∈ S<sup>(φ)</sup> なら仮定に反する。34 ∈ S<sup>(φ)</sup> なら 34·2 = 68 ≡ 17（mod 平方）
+            が入り矛盾。−17 なら −17·(−1) = 17 が矛盾。−34 なら −34·(−2) = 68 ≡ 17 が矛盾。
+            よって {±17, ±34} は全部除外され、S<sup>(φ)</sup> = {±1, ±2}。
+            位数8の群の部分群として位数4は正当（Lagrange）である。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 4</span><span class="diff d2">★★ 標準</span></div>
+      <div class="ex-body">
+        <p>
+          回収装置 ψ の検算：Section 06 の C₂ の有理点 (z,w) = (1/2, 2) に対し
+          ψ(z,w) = (d/z², −dw/z³)（d = 2）が (8, −32) を与えること、
+          この点が実際に E′ : Y² = X³ + 12X² − 32X の上にあること、
+          さらに δ(8,−32) = 8 ≡ 2 (mod (ℚ<sup>×</sup>)²) を確かめよ。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答を開く</summary>
+        <div class="sol-body">
+          <p>
+            ψ(1/2, 2) = ( 2/(1/4), −2·2/(1/8) ) = (8, −32)。
+            曲線上にあること：8³ + 12·8² − 32·8 = 512 + 768 − 256 = 1024 = (−32)²。✓
+            δ の公式（X.4.9）は δ((X,Y)) = X（X ≠ 0）なので δ(8,−32) = 8 = 2·4 ≡ 2。✓
+            「局所条件を満たす d に対して大域点が見つかれば、その d は確かに有理点由来」という
+            Selmer 群の哲学が、この小さな計算に凝縮されている。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 5</span><span class="diff d3">★★★ 発展</span></div>
+      <div class="ex-body">
+        <p>
+          （Lind–Reichardt：Hasse原理の破れの証明<span class="refchip">AEC X.4.11</span>）
+          C : 2w² = 1 − 17z⁴ について次を示せ。
+        </p>
+        <p>
+          (1) C(ℝ) ≠ ∅ と C(ℚ₁₇) ≠ ∅。<br>
+          (2) C(ℚ₂) ≠ ∅ と、p ∤ 2·17 での C(ℚ<sub>p</sub>) ≠ ∅。
+          （必要なら「z = ∞ 側のチャート」 2w′² = z′⁴ − 17（z′ = 1/z, w′ = w/z²）を使ってよい。）<br>
+          (3) C(ℚ) = ∅。（ヒント：2u² = t⁴ − 17s⁴（整数、gcd(t,s)=1）に帰着させ、
+          u の素因数 p に対して 17 が mod p で平方剰余であることを示し、
+          平方剰余の相互法則で (p/17) = 1 を導き、u 全体が mod 17 で平方剰余、
+          したがって 2 が mod 17 で<strong>4乗剰余</strong>であることを結論して矛盾を出す。）
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答の方針を開く</summary>
+        <div class="sol-body">
+          <p>
+            (1) ℝ：|z| が小さければ 1 − 17z⁴ &gt; 0 なので w が取れる。
+            ℚ₁₇：z = 0 とすると w² = 1/2。1/2 ≡ 9 (mod 17) は平方剰余（9 = 3²）なので
+            Henselの補題で w ∈ ℤ₁₇ に持ち上がる。
+          </p>
+          <p>
+            (2) ℚ₂：z = 1/11 ∈ ℤ₂（11 は 2進単数）を試すと 1 − 17/11⁴ = 14624/14641、
+            w² = 7312/11⁴ = 16·457/11⁴。457 ≡ 1 (mod 8) なので 457 は ℤ₂ の平方数、
+            よって w = 4√457/121 ∈ ℚ₂ が存在する。
+            p ∤ 2·17：C の還元は 𝔽<sub>p</sub> 上の種数1の滑らかな曲線（2つのチャートを貼った射影モデルで考える）。
+            Hasse–Weil の評価 #C(𝔽<sub>p</sub>) ≥ p + 1 − 2√p &gt; 0 により 𝔽<sub>p</sub>-点があり、
+            滑らかさから Hensel で持ち上がる。小さい p は手でも確認できる
+            （例：p = 5 では z-チャートに解がないが、z′-チャートに (z′,w′) = (0, 2)：2·4 = 8 ≡ −17 ≡ 3
+            …となるのは −2 ≡ 3 の確認。両チャートを見る必要があるのがこの問題の教育的な罠）。
+          </p>
+          <p>
+            (3) 有理点 (z,w) があるとし、z = s/t（既約）とおいて分母を払うと
+            2u² = t⁴ − 17s⁴（u = wt² ∈ ℤ としてよい。u &gt; 0 に取れる：u = 0 なら 17 が4乗数で矛盾）。
+            gcd(t,s) = 1。17 ∤ u：もし 17 | u なら t⁴ ≡ 0 (mod 17) で 17 | t、すると 17⁴ | 17s⁴ から
+            17 | s となり gcd に反する。
+            u の任意の奇素因数 p（p ≠ 17）：t⁴ ≡ 17s⁴ (mod p) で p ∤ s（さもなくば p | t）なので
+            17 ≡ (t/s)⁴：17 は mod p で4乗剰余、とくに平方剰余。17 ≡ 1 (mod 4) なので相互法則から
+            (p/17) = (17/p) = 1。また (2/17) = 1（6² = 36 ≡ 2）、(−1/17) = 1（17 ≡ 1 mod 4）。
+            よって u = ±2<sup>e</sup>·∏p<sub>i</sub> の各因子が mod 17 で平方剰余、u 自身も平方剰余：
+            u ≡ g<sup>2c</sup>（g は mod 17 の原始根）。
+            すると 2u² ≡ t⁴ (mod 17) より 2 ≡ t⁴·u⁻² = （4乗剰余）·（4乗剰余）⁻¹ は4乗剰余。
+            しかし mod 17 の4乗剰余は {1, 4, 13, 16} であり 2 は含まれない（2 の位数は 8）。矛盾。
+          </p>
+          <p>
+            まとめ：C はすべての局所体で点を持つが ℚ-点を持たない。
+            C が対応する楕円曲線（Jacobian）の Ш に、位数2の非自明元を与える。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">問 6</span><span class="diff d3">★★★ 発展</span></div>
+      <div class="ex-body">
+        <p>
+          （階数の上界としての Selmer 群）φ = [2] の完全列
+          0 → E(ℚ)/2E(ℚ) → S<sup>(2)</sup>(E/ℚ) → Ш(E/ℚ)[2] → 0 から、ℤ/2-次元の等式
+        </p>
+        <p style="font-family:var(--mono); color:var(--gold-soft);">
+          dim₂ S<sup>(2)</sup> = rank E(ℚ) + dim₂ E(ℚ)[2] + dim₂ Ш[2]
+        </p>
+        <p>
+          を導け。さらに Cassels の対（X.4.14）を認めて、「Ш が有限なら #Ш は完全平方数」を導け
+          （ヒント：非退化な交代形式を持つ有限アーベル群の位数を考える）。
+        </p>
+      </div>
+      <details class="sol">
+        <summary>解答の方針を開く</summary>
+        <div class="sol-body">
+          <p>
+            前半：E(ℚ) ≅ ℤʳ × T（T 有限）より E(ℚ)/2E(ℚ) ≅ (ℤ/2)ʳ × T/2T、
+            そして dim₂ T/2T = dim₂ T[2]（有限アーベル群では 2T の余核と 2-捩れの次元が等しい：
+            構造定理で巡回成分ごとに確認）。よって dim₂ E(ℚ)/2E(ℚ) = r + dim₂ E(ℚ)[2]。
+            完全列の次元勘定でそのまま主張の等式になる。
+            <strong>この等式が「Selmer群 ＝ 階数の計算可能な上界」の正確な意味</strong>である：
+            dim₂ S<sup>(2)</sup> − dim₂ E(ℚ)[2] ≥ r で、等号成立 ⟺ Ш[2] = 0。
+          </p>
+          <p>
+            後半：Ш 有限とすると Cassels の対 Γ は Ш 上非退化（可除元は有限群では 0 のみ）。
+            非退化な交代双線形形式 Γ : A × A → ℚ/ℤ を持つ有限アーベル群 A は、
+            シンプレクティック基底の構成（各巡回対 (x, y) with Γ(x,y) = 1/n を取り、直交補空間に降りる帰納法）
+            により A ≅ B × B の形になる。よって #A = (#B)²。
+            p-成分ごとに同じ議論が通るので、各 p-部分の位数も平方数。
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/descent.html">
+      <div class="p-dir">← PREV ─ 第4部</div>
+      <div class="p-title">降下法と高さ（AEC VIII §3–§4）</div>
+    </a>
+    <a class="next" href="/math-site/in/aec.html">
+      <div class="p-dir">SERIES TOP</div>
+      <div class="p-title">全体地図へ戻る →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 大学院教材／楕円曲線の数論シリーズ 5/5（完）</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. X §4（および IX, X §1–§3, §5–§6）</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
