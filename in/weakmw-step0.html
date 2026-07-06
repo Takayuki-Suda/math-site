@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行間ノート N0：帰着補題の完全証明 ─ 弱Mordell–Weil | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Φ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">行間ノート ─ 弱Mordell–Weil N0/N3</div>
+    <h1>帰着補題の完全証明<br><span class="en">Reduction Lemma, with every step justified</span></h1>
+    <p class="hero-sub">
+      「E[m] ⊂ E(K) と仮定してよい」──本編 STEP 0 のこの一行を、飛躍ゼロで組み立て直します。
+      使う前提を先に番号付きで固定し、証明の各ステップに「主張」と「根拠」を明示します。
+      本編が地図なら、このノートは等高線まで描いた測量図です。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.1.1.1（完全展開）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/weakmw.html">本編Ⅱ 弱MW</a>
+      <a class="cur" href="/math-site/in/weakmw-step0.html">N0 帰着補題</a>
+      <a href="/math-site/in/weakmw-step1.html">N1 Kummer対</a>
+      <a href="/math-site/in/weakmw-step2.html">N2 不分岐性</a>
+      <a href="/math-site/in/weakmw-step3.html">N3 体論の有限性</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このノートで埋める行間</h2>
+    <p>
+      本編 STEP 0 の証明は正しい設計図ですが、次の6箇所で読者の頭の中の補完に頼っていました。
+      このノートはそれを全部、紙の上に出します。
+    </p>
+    <ul>
+      <li>①「自然な写像 E(K)/mE(K) → E(L)/mE(L)」が well-defined である<strong>理由</strong></li>
+      <li>②「有限群に挟まれて有限」という言い回しの<strong>集合論的に正確な形</strong>（第一同型定理）</li>
+      <li>③ λ<sub>P</sub> の構成に必要な<strong>2重の選択</strong>（剰余類の代表元と、そのm等分点）の明示</li>
+      <li>④「Galois不変な点は K-有理」──<strong>点の相等と座標の相等</strong>の関係まで遡った正確な証明</li>
+      <li>⑤ [m] と Galois 作用の可換性（証明中で暗黙に3回使われる）の<strong>根拠</strong></li>
+      <li>⑥ 系で使う「K(E[m])/K は有限次 Galois」の<strong>完全な証明</strong></li>
+    </ul>
+    <p>
+      方針：まず Section 02 で前提を P1–P5 として固定します。以後の証明では、
+      すべてのステップが「P1–P5・既に示したステップ・純粋な計算」のいずれかだけから従うことを確認しながら進みます。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>前提の固定（P1–P5）</h2>
+    <p>
+      ここに挙げるものだけを外部から輸入します。それぞれ出典を明示します。
+      逆に言えば、以後の証明でこれ以外の「魔法」は一切使いません。
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">前提 P1 ─ 点集合の群構造 <span class="refchip">AEC III.2.2 / III.3.6</span></div>
+      <p>
+        E(<span class="ov">K</span>) は O = [0:1:0] を単位元とするアーベル群であり、
+        加法と逆元は <strong>K 係数の射</strong>で与えられる。
+        中間体 K ⊂ F ⊂ <span class="ov">K</span> に対し E(F) は部分群である。
+        [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) は加法の反復なので群準同型である。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 P2 ─ Galois作用と加法の可換性</div>
+      <p>
+        σ ∈ G<sub><span class="ov">K</span>/K</sub> は P = (x, y) ↦ P<sup>σ</sup> = (x<sup>σ</sup>, y<sup>σ</sup>)、O<sup>σ</sup> = O によって E(<span class="ov">K</span>) に作用し、
+      </p>
+      <div class="formula"><div class="fline">(P + Q)<sup>σ</sup> = P<sup>σ</sup> + Q<sup>σ</sup>,　(−P)<sup>σ</sup> = −P<sup>σ</sup>,　したがって ([m]P)<sup>σ</sup> = [m](P<sup>σ</sup>)</div></div>
+      <p>
+        が成り立つ。また P ∈ E(K) ならば P<sup>σ</sup> = P（座標が K の元で、σ は K を固定するから）。
+      </p>
+      <details class="sol">
+        <summary>なぜ可換か（証明を開く）</summary>
+        <div class="sol-body">
+          <p>
+            加法 P + Q の座標は、P, Q の座標の<strong> K 係数の有理式</strong>で書ける（弦と接線の公式：AEC III.2.3）。
+            σ は K を固定する体準同型なので、K 係数の有理式 f に対し f(x₁,…)<sup>σ</sup> = f(x₁<sup>σ</sup>,…) が成り立つ。
+            よって (P+Q)<sup>σ</sup> の座標 = 加法公式に σ を通したもの = P<sup>σ</sup> + Q<sup>σ</sup> の座標。
+            場合分け（P = ±Q、O が絡む場合）も O = [0:1:0] が K-有理であることから同様。
+            ([m]P)<sup>σ</sup> = [m](P<sup>σ</sup>) は (P+Q)<sup>σ</sup> = P<sup>σ</sup>+Q<sup>σ</sup> を m−1 回適用するだけである。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 P3 ─ Galois不変な点は下の体の点</div>
+      <p>
+        M/F を（有限次または無限次の）Galois 拡大とすると E(M)<sup>G<sub>M/F</sub></sup> = E(F)。
+      </p>
+      <details class="sol">
+        <summary>証明を開く（④の行間）</summary>
+        <div class="sol-body">
+          <p>
+            ⊇ は P2 の最後の主張。⊆ を示す。P ∈ E(M) が全ての σ で P<sup>σ</sup> = P を満たすとする。
+            P = O なら O ∈ E(F) で終わり。P ≠ O なら P はアフィン座標 (x, y) を持ち、
+            <strong>アフィン座標は点を一意に表す</strong>ので、「点として P<sup>σ</sup> = P」から
+            「座標として x<sup>σ</sup> = x かつ y<sup>σ</sup> = y」が従う（ここが行間④：射影座標なら比の一致しか言えないが、
+            アフィン座標の組は一意である）。
+            よって x, y ∈ M<sup>G<sub>M/F</sub></sup> = F。最後の等号は Galois 理論の基本定理
+            （無限次の場合も「Galois 拡大の固定体は基礎体」は成立：体論）。ゆえに P ∈ E(F)。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 P4 ─ m分点の個数 <span class="refchip">AEC III.6.2(d)</span></div>
+      <p>
+        char K = 0 のとき E[m] := ker( [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) ) ≅ (ℤ/mℤ)²。
+        特に #E[m] = m² で、E[m] は E(<span class="ov">K</span>) の有限部分群。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 P5 ─ 群論の標準事実（第一同型定理）</div>
+      <p>
+        φ : A → B を群準同型、N = ker φ とすると A/N ≅ im φ。
+        したがって A は N の剰余類 |im φ| 個に分割され、
+        N と im φ が共に有限なら |A| = |N|・|im φ| で A も有限。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>主張と証明の設計</h2>
+
+    <div class="box thm">
+      <div class="box-label">補題（帰着補題） <span class="refchip">AEC VIII.1.1.1</span></div>
+      <p>
+        L/K を有限次 Galois 拡大とする。E(L)/mE(L) が有限ならば E(K)/mE(K) も有限である。
+      </p>
+    </div>
+
+    <p>
+      設計：制限写像 E(K)/mE(K) → E(L)/mE(L) の核 Φ を、有限集合
+      Map(G<sub>L/K</sub>, E[m])（G<sub>L/K</sub> から E[m] への<strong>写像全体</strong>の集合）へ単射で送り込みます。
+      核と像が両方有限なら全体が有限（P5）、という2段構えです。
+    </p>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Part 1</div>
+    <h2>核 Φ の特定と「挟み撃ち」の正確な形</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>mE(K) ⊆ mE(L)。したがって合成写像 E(K) ↪ E(L) ↠ E(L)/mE(L) は部分群 mE(K) を 0 に送る。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　mE(K) の元は [m]R（R ∈ E(K)）の形で、E(K) ⊆ E(L)（P1）より R ∈ E(L)、よって [m]R ∈ mE(L)。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>群準同型 φ : E(K)/mE(K) → E(L)/mE(L)、φ(P mod mE(K)) = P mod mE(L) が well-defined に誘導される。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　商群の普遍性：核に mE(K) を含む準同型（Step 1）は商 E(K)/mE(K) を経由する。これが行間①の中身。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Φ := ker φ = ( E(K) ∩ mE(L) ) / mE(K)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　P mod mE(K) ∈ ker φ ⟺ P ∈ mE(L)（φ の定義）⟺ P ∈ E(K) ∩ mE(L)（P はもともと E(K) の元）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>E(L)/mE(L) が有限のとき、<strong>Φ が有限なら E(K)/mE(K) は有限</strong>で、|E(K)/mE(K)| = |Φ|・|im φ| ≤ |Φ|・|E(L)/mE(L)|。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　P5 を A = E(K)/mE(K), N = Φ に適用。im φ は有限群 E(L)/mE(L) の部分集合なので有限。これが行間②の正確な形。以後、目標は「Φ は有限」だけになる。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Part 2</div>
+    <h2>写像 λ の構成 ─ 2重の選択を明示する</h2>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>各剰余類 c ∈ Φ に対し、代表元 P<sub>c</sub> ∈ E(K) ∩ mE(L) を1つ選ぶ。さらに [m]Q<sub>c</sub> = P<sub>c</sub> となる Q<sub>c</sub> ∈ E(L) を1つ選ぶ。この2つの選択を以後固定する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　代表元の存在は剰余類の定義。Q<sub>c</sub> の存在は P<sub>c</sub> ∈ mE(L) の定義そのもの。これが行間③：以後の議論は「選んだ P<sub>c</sub>, Q<sub>c</sub>」に依存した写像 c ↦ λ<sub>c</sub> についてのものであり、それで論理は完結する（単射性さえ言えれば濃度の比較には十分）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>λ<sub>c</sub> : G<sub>L/K</sub> → E(<span class="ov">K</span>) を λ<sub>c</sub>(σ) := Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub> で定義する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Q<sub>c</sub> ∈ E(L) で G<sub>L/K</sub> は E(L) に作用する（P2 を L/K に適用）ので右辺は意味を持つ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>λ<sub>c</sub> の値は実は E[m] に入る。すなわち λ<sub>c</sub> ∈ Map(G<sub>L/K</sub>, E[m])。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　次の3行の計算。各行の等号の理由を右に付す。</p>
+        <div class="formula">
+          <div class="fline">[m](Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub>) = [m](Q<sub>c</sub><sup>σ</sup>) − [m]Q<sub>c</sub> <span class="fc">← [m] は準同型（P1）</span></div>
+          <div class="fline">　= ([m]Q<sub>c</sub>)<sup>σ</sup> − [m]Q<sub>c</sub> <span class="fc">← 作用と [m] の可換性（P2）＝行間⑤</span></div>
+          <div class="fline">　= P<sub>c</sub><sup>σ</sup> − P<sub>c</sub> = O <span class="fc">← P<sub>c</sub> ∈ E(K) と P2 の最後の主張</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Part 3</div>
+    <h2>単射性と有限性</h2>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>単射性：</strong>λ<sub>c</sub> = λ<sub>c′</sub> ならば c = c′。以下 8a–8d に分解する。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8a</div>
+      <div class="ps-b">
+        <p>仮定より、すべての σ ∈ G<sub>L/K</sub> で Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub> = Q<sub>c′</sub><sup>σ</sup> − Q<sub>c′</sub>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　λ<sub>c</sub> = λ<sub>c′</sub> は写像としての相等、つまり全ての引数での値の一致。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8b</div>
+      <div class="ps-b">
+        <p>移項して (Q<sub>c</sub> − Q<sub>c′</sub>)<sup>σ</sup> = Q<sub>c</sub> − Q<sub>c′</sub>（∀σ ∈ G<sub>L/K</sub>）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　E(<span class="ov">K</span>) はアーベル群（P1）なので移項は自由。(A − B)<sup>σ</sup> = A<sup>σ</sup> − B<sup>σ</sup> は P2。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8c</div>
+      <div class="ps-b">
+        <p>R := Q<sub>c</sub> − Q<sub>c′</sub> とおくと R ∈ E(L) かつ G<sub>L/K</sub> 不変。よって R ∈ E(K)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　E(L) は部分群（P1）なので差も E(L) の点。不変性は 8b。結論は P3 を M = L, F = K に適用（L/K は Galois という仮定をここで使用）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8d</div>
+      <div class="ps-b">
+        <p>[m]R = P<sub>c</sub> − P<sub>c′</sub>。R ∈ E(K) だから P<sub>c</sub> − P<sub>c′</sub> ∈ mE(K)、すなわち c = c′。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　[m]R = [m]Q<sub>c</sub> − [m]Q<sub>c′</sub>（P1：[m] は準同型）= P<sub>c</sub> − P<sub>c′</sub>（Step 5 の選択）。「c = c′」は商群 E(K)/mE(K) における相等の定義（差が mE(K) に入ること）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>Map(G<sub>L/K</sub>, E[m]) は有限集合で、その濃度はちょうど (m²)<sup>[L:K]</sup>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　|G<sub>L/K</sub>| = [L:K] &lt; ∞（有限次 Galois 拡大：体論）、#E[m] = m²（P4）。有限集合 X から有限集合 Y への写像は |Y|<sup>|X|</sup> 個。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>c ↦ λ<sub>c</sub> は Φ から Map(G<sub>L/K</sub>, E[m]) への単射（Step 8）。よって |Φ| ≤ (m²)<sup>[L:K]</sup> &lt; ∞。Step 4 と合わせて補題の証明が完了する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　単射があれば濃度は値域の濃度以下（集合論）。</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">副産物：明示的な上界</div>
+      <div class="formula">
+        <div class="fline">|E(K)/mE(K)| ≤ m<sup>2[L:K]</sup> ・ |E(L)/mE(L)|</div>
+      </div>
+      <p>
+        「有限である」だけでなく定量的な評価が付いてくることに注意。
+        Mordell–Weil 階数の明示的上界（本編 STEP 3 の補足）は、この種の評価の積み重ねです。
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">何を使わなかったか（証明の輪郭を知る）</div>
+      <p>
+        G<sub>L/K</sub> の<strong>アーベル性は不要</strong>（どんな有限次 Galois 拡大でもよい）。
+        L/K の<strong>有限性は Step 9 でのみ</strong>使った。
+        E[m] ⊂ E(K) の仮定は<strong>一切使っていない</strong>──だからこそ、この補題で
+        「E[m] を有理化する拡大」へ安全に登れます。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>系 ─ E[m] ⊂ E(K) と仮定してよい</h2>
+
+    <div class="box thm">
+      <div class="box-label">系</div>
+      <p>
+        L := K(E[m])（E[m] の全ての点のアフィン座標を K に添加した体）とおくと、
+        L/K は有限次 Galois 拡大である。したがって帰着補題より、
+        弱 Mordell–Weil 定理は E[m] ⊂ E(K) の場合に示せば十分である。
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>L/K は有限次拡大である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　E[m] は有限集合（P4：m² 個）で、各点の座標は <span class="ov">K</span> の元、つまり<strong>定義により K 上代数的</strong>。有限個の代数的元で生成される拡大は有限次（体論の標準事実）。「代数的か」は問題にすらならない──E(<span class="ov">K</span>) の点の座標は最初から代数的閉包の中にいる。これが行間⑥の前半。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>G<sub><span class="ov">K</span>/K</sub> は集合 E[m] を保つ：T ∈ E[m] ⇒ T<sup>σ</sup> ∈ E[m]。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　[m](T<sup>σ</sup>) = ([m]T)<sup>σ</sup>（P2）= O<sup>σ</sup> = O（P2：O は K-有理）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>L/K は正規、したがって（char 0 ゆえ分離的でもあり）Galois。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　任意の K-埋め込み τ : L → <span class="ov">K</span> は <span class="ov">K</span> の自己同型 σ に延長できる（同型延長定理：体論）。Step 2 より σ は E[m] を置換するので、生成元の集合 {x(T), y(T) : T ∈ E[m]} を集合として保つ。よって τ(L) = K(σ(生成元)) = K(生成元) = L。「全ての埋め込みで像が L」は正規性の定義。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>E(L)/mE(L) が有限だと示せば（E/L は E[m] ⊂ E(L) を満たす楕円曲線）、帰着補題により E(K)/mE(K) も有限。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Step 1–3 で L/K は有限次 Galois。E[m] ⊂ E(L) は L の作り方そのもの。E[m] は係数体の拡大で変わらない（<span class="ov">K</span> の中で定義された集合だから）。</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="why">
+      <div class="w-label">? λ は何者か ─ 第3部への橋</div>
+      <p>
+        λ<sub>c</sub>(σ) = Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub> は、第3部の言葉では G<sub>L/K</sub> の E[m] における<strong>1-コサイクル</strong>です
+        （E[m] への作用が自明とは限らないので、一般には準同型ではありません）。
+        今回「写像の集合 Map に単射で入る」という素朴な議論で済んだのは、<strong>濃度の評価しか要らなかった</strong>からです。
+        構造まで欲しくなったとき（どの λ が実現するか？）、コホモロジー群 H¹ が必要になります。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/weakmw.html">
+      <div class="p-dir">← 本編</div>
+      <div class="p-title">弱Mordell–Weil定理（STEP 0 へ戻る）</div>
+    </a>
+    <a class="next" href="/math-site/in/weakmw-step1.html">
+      <div class="p-dir">NEXT ─ 行間ノート N1</div>
+      <div class="p-title">Kummer対の完全証明 →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 行間ノート（弱Mordell–Weil定理）N0/N3</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.1.1.1</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

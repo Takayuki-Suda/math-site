@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行間ノート N2：不分岐性の完全証明 ─ 弱Mordell–Weil | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Noto Serif JP', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'I'; position:absolute; right:20px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:0.92rem; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">行間ノート ─ 弱Mordell–Weil N2/N3</div>
+    <h1>不分岐性の完全証明<br><span class="en">Unramifiedness outside S, with every step justified</span></h1>
+    <p class="hero-sub">
+      「L/K は S の外で不分岐」──本編 STEP 2 で最も行間が広いのはここです。
+      還元写像を原始座標から構成し、Galois 作用との両立性を手で証明し、
+      惰性群による不分岐判定を経由して、合成体の問題まで一気に片づけます。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.1.3–1.5（完全展開）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/weakmw.html">本編Ⅱ 弱MW</a>
+      <a href="/math-site/in/weakmw-step0.html">N0 帰着補題</a>
+      <a href="/math-site/in/weakmw-step1.html">N1 Kummer対</a>
+      <a class="cur" href="/math-site/in/weakmw-step2.html">N2 不分岐性</a>
+      <a href="/math-site/in/weakmw-step3.html">N3 体論の有限性</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このノートで埋める行間</h2>
+    <ul>
+      <li>① S が有限集合である理由の<strong>1行ずつの根拠</strong>（「有限個を除いて係数が整」はなぜか）</li>
+      <li>② 還元写像 P ↦ P̃ の<strong>構成そのもの</strong>（原始座標・well-defined 性）──本編では存在を認めていた</li>
+      <li>③ 還元と Galois 作用の両立性 (Q<sup>σ</sup>)˜ = Q̃<sup>σ̃</sup> の<strong>証明</strong>──本編の計算の心臓部なのに、通常どの本でも「明らか」で済まされる</li>
+      <li>④「惰性群が自明に作用 ⟺ 不分岐」の<strong>正確な言明</strong>（前提として明示・出典付き）</li>
+      <li>⑤ K(Q)/K が<strong>有限次</strong>であることの証明（そもそも「体拡大の分岐」を語る前提）</li>
+      <li>⑥ L は<strong>無限個の生成体の合成</strong>かもしれない──その不分岐性をどう処理するか</li>
+    </ul>
+    <p>
+      N0 の P1–P4、N1 の Q1–Q4 は引き続き使用します。E[m] ⊂ E(K) の仮定は
+      <strong>(a) でのみ使い、(b) では使いません</strong>（Section 08 で明記）。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>前提の固定（R1–R5）</h2>
+    <p>
+      代数的整数論からの入力を先に全部並べます。出典は Neukirch（付録
+      <a href="/math-site/in/ant.html" style="color:var(--green);">数論の武器庫</a>の棚番号）と AEC です。
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R1 ─ 素点・完備化・分岐 <span class="refchip">ANT I §8, II §8</span></div>
+      <p>
+        数体 M の有限素点 w には正規化付値 ord<sub>w</sub> : M<sup>×</sup> ↠ ℤ、完備化 M<sub>w</sub>、
+        整数環と剰余体 k<sub>w</sub>（有限体、標数 p<sub>w</sub>）が付随する。
+        有限次拡大 M/K と w | v に対し分岐指数 e(w/v) が定まり、K<sup>×</sup> 上で
+        ord<sub>w</sub> = e(w/v)・ord<sub>v</sub>。
+        <strong>「M/K が v で不分岐」とは、v の上の全ての w で e(w/v) = 1</strong>（剰余体拡大の分離性は有限体ゆえ自動）。
+        e は完備化で計算してもよい：e(w/v) = e(M<sub>w</sub>/K<sub>v</sub>)。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R2 ─ <span class="ov">K</span> への延長・分解群・惰性群 <span class="refchip">ANT I §9 / II §9</span></div>
+      <p>
+        v の <span class="ov">K</span> への延長 v̄ が存在する。分解群と惰性群を
+      </p>
+      <div class="formula">
+        <div class="fline">D<sub>v̄/v</sub> = { σ ∈ G<sub><span class="ov">K</span>/K</sub> : v̄ ∘ σ = v̄ },　σ ∈ D は剰余体 k(v̄) に σ̃ を誘導</div>
+        <div class="fline">I<sub>v̄/v</sub> = { σ ∈ D<sub>v̄/v</sub> : σ̃ = id<sub>k(v̄)</sub> }</div>
+      </div>
+      <p>
+        と定める。<strong>塔での関係</strong>：K ⊂ K′ ⊂ <span class="ov">K</span>、w′ = v̄|<sub>K′</sub> のとき
+        D<sub>v̄/w′</sub> = D<sub>v̄/v</sub> ∩ G<sub><span class="ov">K</span>/K′</sub>、I も同様
+        （定義から直ちに従う：条件「v̄∘σ = v̄」「σ̃ = id」は同じで、動く群だけが小さくなる）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R3 ─ 惰性群による不分岐判定 <span class="refchip">ANT I §9（惰性体）</span></div>
+      <p>
+        T<sub>v̄</sub> := （I<sub>v̄/v</sub> の固定体）とおく（<strong>惰性体</strong>）。有限次拡大 M/K（M ⊂ <span class="ov">K</span>）について：
+      </p>
+      <div class="formula"><div class="fline">M ⊂ T<sub>v̄</sub>　⟺　M/K は素点 v̄|<sub>M</sub> で不分岐（e = 1）</div></div>
+      <p>
+        さらに、M の v の上の<strong>任意の</strong>素点は適当な延長 v̄′ の制限 v̄′|<sub>M</sub> として得られる<span class="refchip">ANT II.8.1</span>。
+        よって「M/K が v で不分岐」⟺「v の全ての延長 v̄′ で M ⊂ T<sub>v̄′</sub>」。
+      </p>
+      <div class="goon">
+        <div class="g-label">▸ なぜこの言い換えを使うのか（行間⑥の解消装置）</div>
+        <p>
+          「T<sub>v̄</sub> に含まれるか」という<strong>包含条件</strong>に翻訳すると、
+          合成体の不分岐性が自明になります：M₁ ⊂ T かつ M₂ ⊂ T なら M₁M₂ ⊂ T（体の包含だから）。
+          部分拡大も自明：M′ ⊂ M ⊂ T なら M′ ⊂ T。
+          e の積公式で個別に戦うより、この一手が圧倒的に強い。N3 でも再利用します。
+        </p>
+      </div>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R4 ─ 局所還元理論 <span class="refchip">AEC VII.2.1 / VII.3.1</span></div>
+      <p>
+        F を数体の有限素点での完備化（局所体）、剰余体 k、標数 p とする。
+        E/F が F-整係数・単元判別式の Weierstrass 方程式（＝良い還元のモデル）で与えられているとき：
+      </p>
+      <p>(i) 還元写像 red : E(F) → Ẽ(k) は<strong>群準同型</strong>である<span class="refchip">AEC VII.2.1</span>（良い還元なので E₀(F) = E(F)）。</p>
+      <p>(ii) p ∤ m ならば red の E(F)[m] への制限は<strong>単射</strong>である<span class="refchip">AEC VII.3.1(b)</span>。</p>
+      <details class="sol">
+        <summary>(ii) の理由の骨子を開く（形式群）</summary>
+        <div class="sol-body">
+          <p>
+            核 E₁(F) = ker(red) は形式群 Ê(𝔪) と同型<span class="refchip">AEC VII.2.2</span>。
+            形式群では、[m](T) = mT + （高次項）の1次の係数 m が p ∤ m により単元なので、
+            [m] : Ê(𝔪) → Ê(𝔪) は形式的逆関数定理により同型<span class="refchip">AEC IV.2.3</span>。
+            特に Ê(𝔪) に m-捩れはない。よって E(F)[m] ∩ E₁(F) = {O}、
+            すなわち red を E(F)[m] に制限すると核が自明＝単射。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R5 ─ 完備化との両立</div>
+      <p>
+        数体 M と有限素点 w について E(M) ⊂ E(M<sub>w</sub>) であり、
+        M の付値環 O<sub>(w)</sub> = {a ∈ M : ord<sub>w</sub>(a) ≥ 0} を使って定義した還元（Section 04）と、
+        M<sub>w</sub> の整数環を使って定義した還元は E(M) 上で一致する。
+        根拠：O<sub>(w)</sub> は M<sub>w</sub> の整数環と M の共通部分であり、剰余体は同一<span class="refchip">ANT II.4.3</span>。
+        原始座標はどちらの環で見ても原始的である。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>S は有限集合である（行間①）</h2>
+
+    <div class="formula">
+      <div class="fline">S = { v : E が v で悪い還元 } ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Weierstrass 方程式を1本固定する：係数 a₁, …, a₆ ∈ K、判別式 Δ ≠ 0。各係数 a<sub>i</sub> について { v ∈ M<sub>K</sub><sup>0</sup> : v(a<sub>i</sub>) &lt; 0 } は有限。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　a ∈ K<sup>×</sup> の分数イデアル (a) は有限個の素イデアルの積に一意分解する<span class="refchip">ANT I §3</span>。v(a) ≠ 0 となるのはその素因子に対応する v だけ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>{ v : v(Δ) ≠ 0 } も有限。{ v : v(m) ≠ 0 } も有限。M<sub>K</sub><sup>∞</sup> は高々 [K:ℚ] 個。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Step 1 と同じ（Δ, m ∈ K<sup>×</sup>）。無限素点の個数は実埋め込み＋複素埋め込み対の個数<span class="refchip">ANT I §5</span>。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>v ∉ S なる有限素点では、固定した方程式は v-整係数かつ v(Δ) = 0。したがって E は v で<strong>良い還元</strong>を持ち、この方程式自身が良いモデルである。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　係数が整で判別式が単元なら、還元した方程式は k<sub>v</sub> 上の Weierstrass 方程式で判別式 Δ̃ = Δ mod 𝔪<sub>v</sub> ≠ 0、つまり非特異＝楕円曲線。「整係数・単元判別式のモデルが存在 ⟺ 良い還元」<span class="refchip">AEC VII.5.1(b)</span>。（このモデルは v で最小でもある：整モデルの中で v(Δ) = 0 は最小値。）</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p><strong>拡大しても壊れない：</strong>K′/K 有限、w | v、v ∉ S ならば、同じ方程式は w-整係数かつ w(Δ) = 0。つまり E/K′ も w で良い還元を持ち、還元曲線は Ẽ<sub>v</sub> の係数拡大である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　K の元 a に対し ord<sub>w</sub>(a) = e(w/v)・ord<sub>v</sub>(a)（R1）。ord<sub>v</sub>(a<sub>i</sub>) ≥ 0 ⇒ ord<sub>w</sub>(a<sub>i</sub>) ≥ 0、ord<sub>v</sub>(Δ) = 0 ⇒ ord<sub>w</sub>(Δ) = 0。<strong>分岐していても成り立つ</strong>ことに注意（e 倍しても 0 は 0）。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>還元写像の構成と Galois 両立性（行間②③）</h2>
+
+    <div class="box thm">
+      <div class="box-label">補題 N2-A（還元写像の構成）</div>
+      <p>
+        M を数体、w を有限素点、O<sub>(w)</sub> = {a ∈ M : ord<sub>w</sub>(a) ≥ 0}、剰余体 k。
+        このとき写像 red : ℙ²(M) → ℙ²(k) が次で well-defined に定まる：
+        A = [x₀ : x₁ : x₂] の代表を min<sub>i</sub> ord<sub>w</sub>(x<sub>i</sub>) = 0 となるように取り（<strong>原始座標</strong>）、
+        red(A) := [x̄₀ : x̄₁ : x̄₂]。
+        さらに E が w-整係数・単元判別式の方程式で与えられていれば red(E(M)) ⊂ Ẽ(k)。
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>原始座標は存在する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　任意の代表 (x₀,x₁,x₂) ≠ 0 に対し n := min<sub>i</sub> ord<sub>w</sub>(x<sub>i</sub>) ∈ ℤ。ord<sub>w</sub>(π) = 1 なる π ∈ M が存在する（ord<sub>w</sub> は全射：R1）ので π<sup>−n</sup> 倍すれば min = 0 にできる。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>原始座標は<strong>単元倍を除いて一意</strong>。したがって red(A) は代表の取り方に依らない。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　2組の原始座標は λ ∈ M<sup>×</sup> 倍で移り合う（射影座標の定義）。両方の min が 0 なので ord<sub>w</sub>(λ) = 0、つまり λ は単元。単元の還元は k<sup>×</sup> の元なので、還元後も射影座標として同じ点。また min = 0 より少なくとも1つの x̄<sub>i</sub> ≠ 0、つまり (x̄) ≠ (0,0,0) で red(A) は本当に ℙ²(k) の点。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>A ∈ E(M) ならば red(A) ∈ Ẽ(k)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　E の同次方程式 F(x₀,x₁,x₂) = 0 は O<sub>(w)</sub> 係数。環準同型 O<sub>(w)</sub> → k を通すと 0 = F(x)の還元 = F̃(x̄)。F̃ は Ẽ の定義方程式。</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">補題 N2-B（Galois 両立性）──行間③の核心</div>
+      <p>
+        さらに M/K が Galois で、E は K 上定義され、σ ∈ G<sub>M/K</sub> が w ∘ σ = w を満たすとする。
+        σ は O<sub>(w)</sub> と極大イデアルを保つので剰余体に σ̃ : k → k を誘導する。このとき全ての A ∈ E(M) で
+      </p>
+      <div class="formula"><div class="fline">red(A<sup>σ</sup>) = red(A)<sup>σ̃</sup></div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>A の原始座標 (x₀,x₁,x₂) を取ると、(x₀<sup>σ</sup>, x₁<sup>σ</sup>, x₂<sup>σ</sup>) は A<sup>σ</sup> の<strong>原始</strong>座標である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　ord<sub>w</sub>(x<sub>i</sub><sup>σ</sup>) = (ord<sub>w</sub>∘σ)(x<sub>i</sub>) = ord<sub>w</sub>(x<sub>i</sub>)（仮定 w∘σ = w）。よって min も 0 のまま。A<sup>σ</sup> ∈ E(M) は E の係数が K の元で σ 不変だから（N0 の P2 と同じ理屈）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>red(A<sup>σ</sup>) = [ (x₀<sup>σ</sup>)¯ : (x₁<sup>σ</sup>)¯ : (x₂<sup>σ</sup>)¯ ] = [ x̄₀<sup>σ̃</sup> : x̄₁<sup>σ̃</sup> : x̄₂<sup>σ̃</sup> ] = red(A)<sup>σ̃</sup>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　最初の等号は Step 4（原始座標で還元を計算してよい：補題 N2-A の一意性）。2つ目は σ̃ の定義（σ̃(ā) := (σa)¯、これが well-defined なのは σ が極大イデアルを保つから）。</p>
+      </div>
+    </div>
+    <div class="qed">N2-A・N2-B ∎</div>
+
+    <div class="why">
+      <div class="w-label">? この2つの補題の意味</div>
+      <p>
+        本編で1行だった「(Q<sup>σ</sup> − Q)˜ = Q̃<sup>σ</sup> − Q̃」は、実は
+        <strong>N2-A（well-defined性）＋ N2-B（両立性）＋ R4(i)（準同型性）</strong>の3点セットです。
+        どの教科書でも「明らか」で通過する箇所ですが、原始座標まで降りれば全て単なる付値の計算です。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>主定理 (b) の証明 ─ L/K は S の外で不分岐</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理 <span class="refchip">AEC VIII.1.5(b)</span></div>
+      <p>L = K([m]<sup>−1</sup>E(K)) とすると、L/K は S の外で不分岐。</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><strong>目標の言い換え：</strong>任意の v ∉ S と任意の延長 v̄ について「全ての Q ∈ [m]<sup>−1</sup>E(K) に対し K(Q) ⊂ T<sub>v̄</sub>」を示せば十分。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　これが言えれば L =（K(Q) たちの合成）⊂ T<sub>v̄</sub>。すると L の任意の有限次部分拡大 M も M ⊂ T<sub>v̄</sub> なので、R3 により M は v̄|<sub>M</sub> で不分岐。v̄ が任意なので v の全素点で不分岐（R3 後半）、v ∉ S が任意なので「S 外不分岐」の定義（＝全ての有限次部分拡大が S 外不分岐）を満たす。行間⑥がここで消える。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>K(Q)/K は有限次で、[K(Q) : K] ≤ m²（行間⑤）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　P := [m]Q ∈ E(K) のファイバー [m]<sup>−1</sup>(P) は { Q + T : T ∈ E[m] }、ちょうど m² 個（差を取れば ker[m] = E[m]：P1, P4）。任意の τ ∈ G<sub><span class="ov">K</span>/K</sub> で [m](Q<sup>τ</sup>) = P<sup>τ</sup> = P（P2）なので Q<sup>τ</sup> はこのファイバーの元。K-埋め込み K(Q) ↪ <span class="ov">K</span> は <span class="ov">K</span> の自己同型 τ に延長でき（Q4）、生成元 x(Q), y(Q) の行き先は Q<sup>τ</sup> で決まるから、埋め込みの個数 ≤ #ファイバー = m²。char 0 では次数 = 埋め込み数（分離性）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>v ∉ S、延長 v̄、σ ∈ I<sub>v̄/v</sub>、Q ∈ [m]<sup>−1</sup>E(K) を任意に固定する。<strong>目標：Q<sup>σ</sup> = Q。</strong>M := K(Q) の Galois 閉包（⊂ <span class="ov">K</span>）とおくと、M/K は有限次 Galois で Q と Q<sup>σ</sup> の座標を含む。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Galois 閉包の存在と有限次性は体論（Step 2 で K(Q)/K 有限次）。Q<sup>σ</sup> の座標は x(Q), y(Q) の共役なので Galois 閉包に入る。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>w := v̄|<sub>M</sub> とおく。E は w で良い還元を持ち、還元写像 red : E(M<sub>w</sub>) → Ẽ(k<sub>w</sub>) は群準同型。E(M) 上では原始座標による還元（N2-A）と一致する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　良い還元：Section 03 Step 4（v ∉ S、w | v）。準同型性：R4(i)。一致：R5。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>R := Q<sup>σ</sup> − Q とおくと R ∈ E(M)[m]。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Q, Q<sup>σ</sup> ∈ E(M)（Step 3）で E(M) は群（P1）。[m]R = [m](Q<sup>σ</sup>) − [m]Q = ([m]Q)<sup>σ</sup> − [m]Q（P2）= O、最後は [m]Q ∈ E(K) が σ で不動（P2）だから。<strong>ここで E[m] ⊂ E(K) は使っていない</strong>。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>σ|<sub>M</sub> ∈ G<sub>M/K</sub> は w∘(σ|<sub>M</sub>) = w を満たし、誘導される σ̃ は k<sub>w</sub> 上恒等写像である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　σ(M) = M（M/K Galois・正規性）。w∘σ|<sub>M</sub> = (v̄∘σ)|<sub>M</sub> = v̄|<sub>M</sub> = w（σ ∈ I ⊂ D、R2）。剰余体の埋め込み k<sub>w</sub> ⊂ k(v̄) は付値環の包含 O<sub>(w)</sub> ⊂ O<sub>v̄</sub> から誘導され、σ̃ on k(v̄) は恒等（σ ∈ I<sub>v̄/v</sub> の定義：R2）なので、その制限である k<sub>w</sub> 上の σ̃ も恒等。これは R2 の塔の関係「I<sub>v̄/v</sub> の制限は下の惰性群に入る」の具体形。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>red(R) = red(Q<sup>σ</sup>) − red(Q) = red(Q)<sup>σ̃</sup> − red(Q) = red(Q) − red(Q) = Õ。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　1つ目の等号：red は準同型（Step 4）。2つ目：Galois 両立性 N2-B（Step 6 の条件を満たす）。3つ目：σ̃ = id（Step 6）。本編の1行計算の完全展開がこれ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>k<sub>w</sub> の標数 p は m を割らない。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　p | m と仮定すると v(m) ≥ v(p) ≥ 1（v は p の上の素点：w | v | p）となり v(m) = 0（v ∉ S）に矛盾。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>R = O、すなわち Q<sup>σ</sup> = Q。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　R ∈ E(M)[m] ⊂ E(M<sub>w</sub>)[m]（R5）。R4(ii)（Step 8 で適用条件 p ∤ m を確認済み）より red は E(M<sub>w</sub>)[m] 上単射。red(R) = Õ = red(O)（Step 7）なので R = O。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>したがって I<sub>v̄/v</sub> は x(Q), y(Q) を固定し、K(Q) ⊂ T<sub>v̄</sub>。Q が任意だったので Step 1 の言い換えにより定理 (b) が従う。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　Step 9 は任意の σ ∈ I<sub>v̄/v</sub> について成立（Step 3 で σ は任意に固定した）。点の固定 ⇒ アフィン座標の固定（N0 の P3 の議論と同じ）。固定体の定義。</p>
+      </div>
+    </div>
+    <div class="qed">(b) ∎</div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>(a) L/K はアーベルで指数は m を割る</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>N1 の Step 18 の単射準同型 ρ : G<sub>L/K</sub> ↪ Hom(E(K)/mE(K), E[m]) を使う。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　N1（この段階では E[m] ⊂ E(K) を仮定している）。</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>右辺は「値ごとの加法」でアーベル群をなし、全ての元 f が m·f = 0 を満たす。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　値の群 E[m] がアーベルで指数 m だから（(m·f)(x) = [m](f(x)) = O）。</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>G<sub>L/K</sub> はアーベル群の部分群と同型なのでアーベル、かつ全ての元の位数が m を割る（指数 | m）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　単射準同型の像は部分群。部分群はアーベル性と指数条件を継承する。</p>
+      </div>
+    </div>
+    <div class="qed">(a) ∎</div>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>まとめと、仮定の使用状況</h2>
+
+    <div class="box rem">
+      <div class="box-label">この時点で L/K について分かったこと</div>
+      <ul style="margin-bottom:0;">
+        <li>アーベル拡大で、Galois 群の指数は m を割る（(a)──E[m] ⊂ E(K) を<strong>使う</strong>）</li>
+        <li>有限集合 S の外で不分岐（(b)──E[m] ⊂ E(K) を<strong>使わない</strong>。この事実は第5部で Selmer 群の有限性にそのまま再利用される）</li>
+        <li><strong>まだ有限次とは言っていない</strong>──それを言うのが N3 の仕事</li>
+      </ul>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? 局所が大域を縛る、の正確な意味</div>
+      <p>
+        証明を1ステップずつ並べて見ると、「不分岐」という大域体論の結論は、
+        Step 7 の<strong>たった3つの等号</strong>──準同型性・Galois両立性・惰性の自明作用──と、
+        Step 9 の<strong>形式群からの単射性</strong>に完全に還元されています。
+        幾何（還元曲線）が見えなくする情報（Step 7）と、幾何が失わない情報（Step 9）の間に
+        R = Q<sup>σ</sup> − Q が挟まれて消滅する。これが「良い還元が分岐を禁止する」の実体です。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/weakmw-step1.html">
+      <div class="p-dir">← PREV ─ 行間ノート N1</div>
+      <div class="p-title">Kummer対の完全証明</div>
+    </a>
+    <a class="next" href="/math-site/in/weakmw-step3.html">
+      <div class="p-dir">NEXT ─ 行間ノート N3</div>
+      <div class="p-title">体論的有限性の完全証明 →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 行間ノート（弱Mordell–Weil定理）N2/N3</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.1.3–1.5 ／ J. Neukirch, Algebraic Number Theory（ANT）</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
