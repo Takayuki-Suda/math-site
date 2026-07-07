@@ -136,6 +136,11 @@
 
   .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
     font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+
+  .notelink { display:block; font-family:var(--mono); font-size:12px; letter-spacing:1px; color:var(--green);
+    text-decoration:none; border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:12px 18px;
+    margin:-6px 0 30px; background:rgba(94,207,158,.05); transition:all .25s; line-height:1.8; }
+  .notelink:hover { border-color:var(--green); background:rgba(94,207,158,.12); }
 </style>
 </head>
 <body>
@@ -259,6 +264,22 @@
       「m倍写像は高さをほぼ m² 倍にする」ことを示します。
       大きさが有界な点は有限個しかないので、無限に割り続けることは不可能になる──これが降下法の心です。
     </p>
+
+    <div class="goon">
+      <div class="g-label">▲ この記事は2層構造です（読み方）</div>
+      <p>
+        本編（このページ）は証明の<strong>設計と要点</strong>を追います。各部品の
+        <strong>飛躍ゼロの完全展開</strong>──前提の番号付き固定と、全ステップへの「主張＋根拠」の添付──は、
+        独立した<strong>行間ノート4本</strong>に分離しました。
+        まず本編を通読して全体の形を掴み、行間が気になった箇所でノートに潜る往復を推奨します。
+      </p>
+      <div class="series-nav" style="margin-top:14px;">
+        <a href="/math-site/in/descent-step0.html">N0 降下定理</a>
+        <a href="/math-site/in/descent-step1.html">N1 高さの土台</a>
+        <a href="/math-site/in/descent-step2.html">N2 性質(a) 加法</a>
+        <a href="/math-site/in/descent-step3.html">N3 性質(b) 倍加</a>
+      </div>
+    </div>
   </div>
 
   <!-- ════════ 2 ════════ -->
@@ -278,7 +299,7 @@
     </div>
 
     <div class="proof">
-      <div class="p-label">証明（完全版・コメント付き）</div>
+      <div class="p-label">証明（本線）</div>
       <p>
         A/mA の剰余類の代表 Q₁, …, Q<sub>r</sub> を取ります（有限性の仮定）。任意の P ∈ A から出発して、
         「m で割って余りを引く」操作を繰り返します：
@@ -313,6 +334,8 @@
       <p>(iii) よりこれは有限集合。よって A は有限生成です。</p>
       <div class="qed">∎</div>
     </div>
+
+    <a class="notelink" href="/math-site/in/descent-step0.html">🔬 行間ノート N0 ─ この証明を飛躍ゼロで：降下列の2重の選択の明示、縮小評価の帰納法、h が負の場合の処理、逆望遠鏡和、生成集合の確定まで全10ステップ →</a>
 
     <h3>高さ降下シミュレータ</h3>
     <p>
@@ -390,6 +413,8 @@
       問題は (i)(ii)、つまり<strong>「加法・倍加が高さをどう変えるか」を加法公式から読み取る</strong>ことです。
     </p>
 
+    <a class="notelink" href="/math-site/in/descent-step1.html">🔬 行間ノート N1 ─ 高さの土台：「座標は必ず (a/d², b/d³)」の p進付値による完全証明、H の基本性質、(c) の正確な数え上げ、実例 2P = (−23/16, −11/64) の検算 →</a>
+
     <div class="box thm">
       <div class="box-label">補題（高さの性質） <span class="refchip">AEC VIII.4.2</span></div>
       <div class="formula">
@@ -400,7 +425,7 @@
     </div>
 
     <div class="proof">
-      <div class="p-label">(a) の証明（要点＋行間）</div>
+      <div class="p-label">(a) の証明（本線）</div>
       <p>
         P₀ = O や P ∈ {O, ±P₀} の場合は C₁ を大きく取れば済むので、それ以外とします。
         既約分数表示で P = (a/d², b/d³)、P₀ = (a₀/d₀², b₀/d₀³) と書けます
@@ -432,6 +457,9 @@
       </p>
       <div class="qed">∎</div>
     </div>
+
+    <a class="notelink" href="/math-site/in/descent-step2.html">🔬 行間ノート N2 ─ 性質(a)を飛躍ゼロで：例外3点の処理、対称形の導出全行、d⁴d₀⁴ 倍の項別チェック、|bd| ≤ √(1+|A|+|B|)·M² の完全証明、C₁ の明示形まで →</a>
+
     <div class="why">
       <div class="w-label">? (a) の教訓</div>
       <p>
@@ -475,7 +503,7 @@
     </div>
 
     <div class="proof">
-      <div class="p-label">(b) の証明（完全版・コメント付き）</div>
+      <div class="p-label">(b) の証明（本線）</div>
       <p>
         C₂ ≥ 4·max{ h<sub>x</sub>(T) : T ∈ E(ℚ)[2] } と取っておけば [2]P = O の場合は自明なので、[2]P ≠ O とします。
         約分量を δ = gcd( F(p,q), G(p,q) ) とおきます。恒等式に (X,Z) = (p,q) を代入すると：
@@ -506,6 +534,8 @@
       <p>対数を取って h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂ を得ます。</p>
       <div class="qed">∎</div>
     </div>
+
+    <a class="notelink" href="/math-site/in/descent-step3.html">🔬 行間ノート N3 ─ 性質(b)を飛躍ゼロで：f₂・g₂ の明示形（本編では省略）と単項式別の検証表、δ | 4Δ′ の各行、C₂ = max{log 2κ, …} の明示形、y² = x³+3 での数値検算まで →</a>
 
     <div class="why">
       <div class="w-label">? なぜ「4倍」は崩れないのか ── 議論の本質</div>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行間ノート N2：性質(a)の完全証明 ─ 加法と高さ ─ 降下法と高さ | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'λ'; position:absolute; right:10px; top:-46px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:var(--mono); font-size:1rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">行間ノート ─ 降下法と高さ N2/N3</div>
+    <h1>性質(a)の完全証明 ─ 加法と高さ<br><span class="en">Translation doubles the height, at most</span></h1>
+    <p class="hero-sub">
+      h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁(P₀)──本編Ⅳ Section 03 で「要点＋行間」とした証明を、
+      例外ケースの処理から定数 C₁ の完全な明示形まで、飛躍ゼロで書き切ります。
+      急所は1箇所だけ：y の項 |bd| を<strong>曲線の方程式そのもの</strong>で抑えるところです。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.4.2(a)（完全展開）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/descent.html">本編Ⅳ 降下法</a>
+      <a href="/math-site/in/descent-step0.html">N0 降下定理</a>
+      <a href="/math-site/in/descent-step1.html">N1 高さの土台</a>
+      <a class="cur" href="/math-site/in/descent-step2.html">N2 性質(a) 加法</a>
+      <a href="/math-site/in/descent-step3.html">N3 性質(b) 倍加</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このノートで埋める行間</h2>
+    <ul>
+      <li>① 例外ケース（P₀ = O、P ∈ {O, P₀, −P₀}）で C₁ を<strong>どう取るか</strong>の明示</li>
+      <li>② 加法公式を<strong>対称形</strong> ((xx₀+A)(x+x₀)+2B−2yy₀)/(x−x₀)² に変形する計算の全行</li>
+      <li>③ 分母 d⁴d₀⁴ を掛けて<strong>整数の分数</strong>にする操作の項別チェック</li>
+      <li>④ 「約分は高さを下げるだけ」の<strong>正確な主張と証明</strong></li>
+      <li>⑤ 邪魔者 |bd| を M² で抑える議論の完全版（<strong>曲線の方程式の使用箇所</strong>）</li>
+      <li>⑥ 定数 C₁(P₀, A, B) の<strong>完全な明示形</strong></li>
+    </ul>
+    <p>
+      前提は A1–A3 の3つ。特に A1（N1 の座標補題）が全計算の土台です。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>前提の固定（A1–A3）</h2>
+
+    <div class="box dfn">
+      <div class="box-label">前提 A1 ─ 座標の形と高さ <span class="refchip">N1 で完全証明済み</span></div>
+      <p>
+        O でない P ∈ E(ℚ) は P = (a/d², b/d³)（a, b ∈ ℤ, d ≥ 1, gcd(a,d) = gcd(b,d) = 1）と一意に書け、
+      </p>
+      <div class="formula">
+        <div class="fline">H(x(P)) = max{ |a|, d² } =: M,　b² = a³ + Aad⁴ + Bd⁶　（整数の等式）</div>
+      </div>
+      <p>また h<sub>x</sub> ≥ 0、h<sub>x</sub>(P) = h<sub>x</sub>(−P)。</p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 A2 ─ 加法公式 <span class="refchip">AEC III.2.3(d)</span></div>
+      <p>
+        P = (x, y), P₀ = (x₀, y₀)、x ≠ x₀ のとき、λ = (y − y₀)/(x − x₀) として
+        x(P + P₀) = λ² − x − x₀。
+        なお E 上で x(P) = x(P₀) ⟺ P = ±P₀（同じ x を持つ点は (x, ±y) の2つだけ）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 A3 ─ 絶対値の初等評価と約分 <span class="refchip">初等整数論</span></div>
+      <p>
+        |s + t| ≤ |s| + |t|、|st| = |s||t|。さらに（行間④）：t = N/D（N, D ∈ ℤ, D ≠ 0）ならば
+        H(t) ≤ max{ |N|, |D| }。
+      </p>
+      <details class="sol">
+        <summary>H(t) ≤ max{|N|,|D|} の証明を開く</summary>
+        <div class="sol-body">
+          <p>
+            g = gcd(N, D) ≥ 1、p = N/g、q = ±D/g（符号は q ≥ 1 になるよう選ぶ）とすると
+            t = p/q は既約表示。よって H(t) = max{|p|, |q|} = max{|N|, |D|}/g ≤ max{|N|, |D|}。
+            <strong>約分（g で割ること）は高さを下げる方向にしか働かない</strong>──上からの評価では
+            約分を完全に無視してよい理由がこれである。（下からの評価ではそうはいかない。N3 の主題。）
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>主張と例外ケース（行間①）</h2>
+
+    <div class="box thm">
+      <div class="box-label">補題（高さの性質 (a)） <span class="refchip">AEC VIII.4.2(a)</span></div>
+      <p>
+        P₀ ∈ E(ℚ) を固定すると、定数 C₁ = C₁(P₀, A, B) が存在して、
+        すべての P ∈ E(ℚ) で h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁。
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>P₀ = O の場合：C₁ = 0 でよい。以後 P₀ = (a₀/d₀², b₀/d₀³) ≠ O とする。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　h(P + O) = h(P) ≤ 2h(P) + 0。h(P) ≥ 0（A1）を使った。P₀ の座標表示は A1。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>P ∈ { O, P₀, −P₀ } の場合：C₁ ≥ max{ h(P₀), h(2P₀) } と取っておけば不等式は成立。以後この3点を除外する。すると x(P) ≠ x(P₀) で A2 の公式が使え、P + P₀ ≠ O。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　P = O なら P+P₀ = P₀ で h(P₀) ≤ C₁ ≤ 2h(P)+C₁。P = P₀ なら h(2P₀) ≤ C₁。P = −P₀ なら P+P₀ = O で h(O) = 0 ≤ 2h(P)+C₁（C₁ ≥ 0：h の値は ≥ 0）。<strong>取り除いたのは高々3点だが、C₁ はその3点での値を「丸呑み」できる</strong>──(i) 型の不等式は定数項に余裕があるから例外は怖くない。これが行間①。x(P) ≠ x(P₀) は A2 の最後の主張の対偶。P+P₀ = O ⟺ P = −P₀ も除外済み。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>加法公式の対称形（行間②）</h2>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>λ² − x − x₀ を1つの分数にまとめる：</p>
+        <div class="formula">
+          <div class="fline">x(P + P₀) = (y − y₀)²/(x − x₀)² − (x + x₀) = [ (y − y₀)² − (x + x₀)(x − x₀)² ] / (x − x₀)²</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　A2 と通分。x ≠ x₀（Step 2）なので分母は 0 でない。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>分子の2つの塊を展開する：</p>
+        <div class="formula">
+          <div class="fline">(y − y₀)² = y² + y₀² − 2yy₀ = x³ + x₀³ + A(x + x₀) + 2B − 2yy₀</div>
+          <div class="fline">(x + x₀)(x − x₀)² = x³ + x₀³ − x²x₀ − xx₀²</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　1行目：y² = x³+Ax+B と y₀² = x₀³+Ax₀+B（<strong>両方の点が曲線上にある</strong>こと）を足した。2行目：(x−x₀)² = x²−2xx₀+x₀² を展開して (x+x₀) を掛け、6項のうち −2x²x₀+x²x₀ = −x²x₀、xx₀²−2xx₀² = −xx₀² とまとめた。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>差を取ると x³, x₀³ が消えて：</p>
+        <div class="formula">
+          <div class="fline">分子 = x²x₀ + xx₀² + A(x + x₀) + 2B − 2yy₀ = (xx₀ + A)(x + x₀) + 2B − 2yy₀</div>
+          <div class="fline">∴ x(P + P₀) = [ (xx₀ + A)(x + x₀) + 2B − 2yy₀ ] / (x − x₀)²</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　x²x₀ + xx₀² = xx₀(x + x₀) の因数分解のみ。3次の項が消えて<strong>各変数について次数2以下</strong>になった──「高さ2倍」の“2”はこの次数である。これが行間②の完成形（本編の式）。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>整数化 ─ d⁴d₀⁴ を掛ける（行間③④）</h2>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>x = a/d², y = b/d³, x₀ = a₀/d₀², y₀ = b₀/d₀³ を代入し、分子分母に d⁴d₀⁴ を掛けると x(P+P₀) = N/D、ここで</p>
+        <div class="formula">
+          <div class="fline">N = (aa₀ + Ad²d₀²)(ad₀² + a₀d²) + 2Bd⁴d₀⁴ − 2(bd)(b₀d₀)</div>
+          <div class="fline">D = (ad₀² − a₀d²)²　（≠ 0）</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　項別に分母を確認（行間③）：xx₀+A = (aa₀+Ad²d₀²)/(d²d₀²)、x+x₀ = (ad₀²+a₀d²)/(d²d₀²)、積の分母は d⁴d₀⁴。2yy₀ = 2bb₀/(d³d₀³) に d⁴d₀⁴ を掛けると 2bb₀dd₀ = 2(bd)(b₀d₀)──<strong>ちょうど1乗ずつ余る</strong>。(x−x₀)² = (ad₀²−a₀d²)²/(d⁴d₀⁴)。すべての項が同じ d⁴d₀⁴ で払える。N, D ∈ ℤ。D ≠ 0 は x ≠ x₀。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>H(x(P + P₀)) ≤ max{ |N|, |D| }。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　A3（行間④）。N/D は既約とは限らないが、上からの評価には約分を無視してよい。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>評価 ─ M² で抑える（行間⑤⑥）</h2>
+
+    <p>M := max{ |a|, d² } = H(x(P)) とおきます。使う関係は |a| ≤ M、d² ≤ M（ゆえに d ≤ M<sup>1/2</sup>、d⁴ ≤ M²）だけ。</p>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>y の絡まない3つの塊は素直に M で抑わる：</p>
+        <div class="formula">
+          <div class="fline">|ad₀² + a₀d²| ≤ (d₀² + |a₀|)·M,　|aa₀ + Ad²d₀²| ≤ (|a₀| + |A|d₀²)·M</div>
+          <div class="fline">|2Bd⁴d₀⁴| ≤ 2|B|d₀⁴·M²,　|D| = (ad₀² − a₀d²)² ≤ (d₀² + |a₀|)²·M²</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　三角不等式（A3）と |a| ≤ M, d² ≤ M。たとえば |ad₀²+a₀d²| ≤ d₀²|a| + |a₀|d² ≤ d₀²M + |a₀|M。D は1つ目の評価を2乗した。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p><strong>急所（行間⑤）：</strong>|b| ≤ (1+|A|+|B|)<sup>1/2</sup>·M<sup>3/2</sup>、したがって |bd| ≤ (1+|A|+|B|)<sup>1/2</sup>·M²。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　A1 の整数等式 b² = a³ + Aad⁴ + Bd⁶ に三角不等式：|b|² ≤ |a|³ + |A||a|d⁴ + |B|d⁶。3項とも M³ 以下（|a|³ ≤ M³、|a|d⁴ ≤ M·M²、d⁶ = (d²)³ ≤ M³）なので |b|² ≤ (1+|A|+|B|)M³。平方根を取り、d ≤ M<sup>1/2</sup> を掛ける。<strong>b（≒ y座標）は単独では M と無関係に見えるが、「P が曲線上にある」という等式が |b| ~ M<sup>3/2</sup> という上限を強制する</strong>──証明全体で曲線の方程式が定量的に効くのはこの1箇所（と Step 4 の1行目）だけである。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>合併して κ を定義：</p>
+        <div class="formula">
+          <div class="fline">|N| ≤ [ (|a₀| + |A|d₀²)(d₀² + |a₀|) + 2|B|d₀⁴ + 2|b₀|d₀·(1+|A|+|B|)<sup>1/2</sup> ]·M²</div>
+          <div class="fline">κ := max{ 上の [ ] 内, (d₀² + |a₀|)² }　⇒　max{|N|, |D|} ≤ κ·M²</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　N の3つの塊に Step 8–9 の評価を代入し三角不等式でまとめた。|2(bd)(b₀d₀)| ≤ 2|b₀|d₀·|bd|。κ は P₀ と A, B だけの定数（<strong>P に依らない</strong>）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>対数を取って仕上げ：</p>
+        <div class="formula">
+          <div class="fline">H(x(P+P₀)) ≤ κ·M² = κ·H(x(P))²　⇒　h(P + P₀) ≤ 2h(P) + log κ</div>
+          <div class="fline">C₁(P₀, A, B) := max{ log κ, h(P₀), h(2P₀) }</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　Step 7 + Step 10、log の単調性と log(uv) = log u + log v。最後の max は Step 2 の例外ケースを合流させた（行間①⑥）。κ ≥ (d₀²+|a₀|)² ≥ 1 なので log κ ≥ 0 であることにも注意。</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">副産物：C₁(Q) = C₁(−Q)</div>
+      <p>
+        −P₀ = (a₀/d₀², −b₀/d₀³) であり、κ の式は b₀ を<strong>絶対値でしか見ていない</strong>。
+        さらに h(−P₀) = h(P₀)、h(−2P₀) = h(2P₀)（N1）。よって上の構成では C₁(P₀) = C₁(−P₀) が
+        自動的に成り立つ。降下定理（N0 Step 1）で必要だった C₁′ = max<sub>i</sub> C₁(−Q<sub>i</sub>) は、
+        代表元自身の定数 max<sub>i</sub> C₁(Q<sub>i</sub>) と同じ値でよい──符号の心配は最初から不要だったことになる。
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? この証明には「下からの評価」が1つもない</div>
+      <p>
+        分母 D がどれほど小さくなろうと、N/D がどれほど約分されようと、上からの評価には響かない
+        （A3：約分は高さを下げるだけ）。だから (a) の証明は「全部を M² で上から抑える」だけの
+        一方通行で済みました。(b) では逆に「H(x(2P)) が<strong>小さくなりすぎない</strong>」ことを言う必要があり、
+        約分の量そのものを制御しなければなりません。その道具が2本の恒等式です──N3 へ。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/descent-step1.html">
+      <div class="p-dir">← PREV ─ 行間ノート N1</div>
+      <div class="p-title">高さの土台 ─ 座標の形と有限性</div>
+    </a>
+    <a class="next" href="/math-site/in/descent-step3.html">
+      <div class="p-dir">NEXT ─ 行間ノート N3</div>
+      <div class="p-title">性質(b)の完全証明 ─ 倍加と高さ →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 行間ノート（降下法と高さ）N2/N3</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.4.2(a)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
