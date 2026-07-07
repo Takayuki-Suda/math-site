@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行間ノート N0：群コホモロジーの土台 ─ Kummer対 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Z¹'; position:absolute; right:-10px; top:-36px; font-family:var(--display); font-style:italic;
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+  .box.warn { border-color:rgba(224,104,122,.5); background:rgba(224,104,122,.05); }
+  .box.warn .box-label { color:var(--red); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">行間ノート ─ Kummer対 N0/N3</div>
+    <h1>群コホモロジーの土台<br><span class="en">H⁰, H¹ and the Six-Term Sequence, fully assembled</span></h1>
+    <p class="hero-sub">
+      本編が「短完全列から完全列が生える」と一行で述べた機械を、部品から完全に組み立てます。
+      Z¹・B¹ の群構造、連続コサイクルの有限段階への降下、連結準同型 δ の well-defined 性、
+      そして6項完全列の<strong>5箇所すべて</strong>の完全性を、一行も飛ばさずに検証します。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Appendix B §1–§2（完全展開）</p>
+    <div class="series-nav">
+      <a href="/math-site/in/kummer.html">本編Ⅲ Kummer対</a>
+      <a class="cur" href="/math-site/in/kummer-step0.html">N0 コホモロジーの土台</a>
+      <a href="/math-site/in/kummer-step1.html">N1 Kummer完全列</a>
+      <a href="/math-site/in/kummer-step2.html">N2 Hilbert 90</a>
+      <a href="/math-site/in/kummer-step3.html">N3 inf–resと不分岐</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このノートで埋める行間</h2>
+    <ul>
+      <li>① コサイクル全体 Z¹・コバウンダリ全体 B¹ が<strong>群をなす</strong>こと──これが確かめられて初めて商 H¹ = Z¹/B¹ が群として定義できる</li>
+      <li>②「作用が自明なら H¹ = Hom(G, M)」の完全証明（本編は結果のみ）</li>
+      <li>③ 射有限群での「<strong>連続コサイクル</strong>」の正確な意味と、「連続なら必ずある有限次Galois拡大を経由する」ことの証明──本編が「以後この規約は暗黙とします」と書いた一文の中身</li>
+      <li>④ G-準同型 f : M → N が H¹ の写像 f<sub>*</sub> を誘導すること（完全列の後半2本の矢印の正体）</li>
+      <li>⑤ 連結準同型 δ の well-defined 性（持ち上げの取り替えがコバウンダリの差しか生まないこと）と、δ が<strong>群準同型</strong>であること</li>
+      <li>⑥ 6項完全列の完全性──<strong>5箇所</strong>の検証。本編は δ の構成だけ示して完全性は述べるにとどめた</li>
+    </ul>
+    <p>
+      このノートは楕円曲線を一切使いません。純粋に「機械の組み立て」です。
+      機械を楕円曲線に接続するのは <a href="/math-site/in/kummer-step1.html" style="color:var(--green);">N1</a>、
+      乗法群に接続するのは <a href="/math-site/in/kummer-step2.html" style="color:var(--green);">N2</a> の仕事です。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>前提の固定（R1–R3）</h2>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R1 ─ G-加群と右作用の規約</div>
+      <p>
+        G を群、M をアーベル群（加法的に書く）とする。M が <strong>G-加群</strong>であるとは、
+        各 σ ∈ G に対し写像 m ↦ m<sup>σ</sup> が与えられ、次を満たすこと：
+      </p>
+      <div class="formula">
+        <div class="fline">(i)　(m + n)<sup>σ</sup> = m<sup>σ</sup> + n<sup>σ</sup>　（各 σ は群準同型）</div>
+        <div class="fline">(ii)　m<sup>στ</sup> = (m<sup>σ</sup>)<sup>τ</sup>　（合成は右作用で読む）</div>
+        <div class="fline">(iii)　m<sup>e</sup> = m</div>
+      </div>
+      <p>
+        (ii) は弱MWノートの前提 Q3 と同じ規約<span class="refchip">weakmw N1 前提Q3</span>。
+        AEC の指数表記に合わせてある。(i)(ii) から (−m)<sup>σ</sup> = −m<sup>σ</sup>、0<sup>σ</sup> = 0 も出る
+        （準同型は逆元と単位元を保つ）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R2 ─ G-加群の短完全列</div>
+      <p>
+        G-加群と G-同変準同型（f(m<sup>σ</sup>) = f(m)<sup>σ</sup> を満たす群準同型）の列
+      </p>
+      <div class="formula"><div class="fline">0 → A →<sup>φ</sup> B →<sup>ψ</sup> C → 0</div></div>
+      <p>
+        が<strong>短完全列</strong>であるとは：φ が単射、ψ が全射、im φ = ker ψ。
+        以後 φ による像で A を B の部分 G-加群と同一視し、断りなく A ⊆ B と書く
+        （その際 ψ の核がちょうど A である）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 R3 ─ 記法</div>
+      <p>
+        写像 c : G → M を c<sub>σ</sub> := c(σ) と添字で書く。
+        コサイクル条件 c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> を満たす c の全体を Z¹(G, M)、
+        ある m ∈ M により c<sub>σ</sub> = m<sup>σ</sup> − m と書けるものの全体を B¹(G, M) と書く。
+        H⁰(G, M) := M<sup>G</sup>（不変部分群──部分「群」であることは (i) から明らか）、
+        H¹(G, M) := Z¹/B¹（商が定義できることは §03 で検証する）。
+        G が射有限群のときの位相的な条件は §04 で正確に述べる。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>コサイクルの計算規則（行間①②）</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Z¹(G, M) は、点ごとの和 (c + d)<sub>σ</sub> := c<sub>σ</sub> + d<sub>σ</sub> でアーベル群になる。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　和がコサイクル条件を満たすこと：(c+d)<sub>στ</sub> = c<sub>στ</sub> + d<sub>στ</sub> = (c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub>) + (d<sub>σ</sub><sup>τ</sup> + d<sub>τ</sub>) = (c<sub>σ</sub> + d<sub>σ</sub>)<sup>τ</sup> + (c+d)<sub>τ</sub>。最後の等号が R1(i)。零写像はコサイクル（0 = 0<sup>τ</sup> + 0）。−c もコサイクル（両辺の符号反転と (−m)<sup>τ</sup> = −m<sup>τ</sup>）。結合則・可換則は M から点ごとに遺伝。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>B¹(G, M) ⊆ Z¹(G, M) であり、B¹ は部分群。したがって商 H¹ = Z¹/B¹ が群として定義できる（行間①解消）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　m の定めるコバウンダリがコサイクル条件を満たすこと：(m<sup>σ</sup> − m)<sup>τ</sup> + (m<sup>τ</sup> − m) = m<sup>στ</sup> − m<sup>τ</sup> + m<sup>τ</sup> − m = m<sup>στ</sup> − m。ここで R1(i)(ii) を使った。部分群であること：m のコバウンダリと n のコバウンダリの差は m − n のコバウンダリ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>すべてのコサイクルは単位元で消える：c<sub>e</sub> = 0。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　c<sub>e</sub> = c<sub>e·e</sub> = c<sub>e</sub><sup>e</sup> + c<sub>e</sub> = c<sub>e</sub> + c<sub>e</sub>（R1(iii)）。両辺から c<sub>e</sub> を引く。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>逆元での値：c<sub>σ⁻¹</sub> = −(c<sub>σ</sub>)<sup>σ⁻¹</sup>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　0 = c<sub>e</sub> = c<sub>σσ⁻¹</sub> = c<sub>σ</sub><sup>σ⁻¹</sup> + c<sub>σ⁻¹</sub>（Step 3 とコサイクル条件）。移項するだけ。この式は N3 の共役補題で使う。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>G の作用が自明（m<sup>σ</sup> = m）ならば H¹(G, M) = Hom(G, M)（行間②解消）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　コサイクル条件は c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> = c<sub>σ</sub> + c<sub>τ</sub> となり「c が群準同型 G → M」と同値。つまり Z¹ = Hom(G, M)。コバウンダリは c<sub>σ</sub> = m<sup>σ</sup> − m = m − m = 0 のみ、つまり B¹ = 0。よって H¹ = Hom(G, M)/0 = Hom(G, M)。Z¹ の群構造（Step 1）が Hom の点ごとの和と一致することも定義から直ちに分かる。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>射有限群と連続コサイクル（行間③）</h2>
+
+    <div class="box dfn">
+      <div class="box-label">位相の規約（離散 G-加群）</div>
+      <p>
+        G を射有限群（＝有限群の逆極限。コンパクトで、開正規部分群 U が単位元の近傍基をなす）、
+        M を<strong>離散位相</strong>のアーベル群とする。作用が連続であるとは、
+        各 m ∈ M の固定化群 { σ : m<sup>σ</sup> = m } が G の開部分群を含むこと。
+        同値な言い換え：M = ⋃<sub>U</sub> M<sup>U</sup>（U は開正規部分群を走る）。
+        コサイクルには写像 c : G → M としての連続性を要求する。
+        G<sub><span class="ov">K</span>/K</sub> と E[m], E(<span class="ov">K</span>), <span class="ov">K</span><sup>×</sup> はすべてこの枠に入る
+        （各点の座標が有限次拡大に入るため。検証は N1・N2 で行う）。
+      </p>
+    </div>
+
+    <p>
+      コバウンダリは自動的に連続です：σ ↦ m<sup>σ</sup> は、U を m の固定化群に含まれる開部分群とすると
+      左剰余類 Uσ の上で定数（m<sup>ησ</sup> = (m<sup>η</sup>)<sup>σ</sup> = m<sup>σ</sup>、η ∈ U）、
+      つまり局所定数だからです。問題はコサイクルの側で、次が本節の主定理です。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">定理（連続コサイクルは有限段階から来る） <span class="refchip">AEC App. B §2 の暗黙の規約の中身</span></div>
+      <p>
+        c ∈ Z¹(G, M) を連続コサイクルとすると、ある開正規部分群 U が存在して：
+        c は各剰余類 σU 上で定数、c<sub>η</sub> = 0（∀η ∈ U）、全ての値 c<sub>σ</sub> は M<sup>U</sup> に入り、
+        c は有限群 G/U のコサイクル c̄ ∈ Z¹(G/U, M<sup>U</sup>) の引き戻し（inflation）である。したがって
+      </p>
+      <div class="formula"><div class="fline">H¹<sub>cont</sub>(G, M) = ⋃<sub>U</sub> inf( H¹(G/U, M<sup>U</sup>) )　（U は開正規部分群を走る増大和集合）</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>共通の開正規部分群 U が取れて、c は各剰余類 σU 上で定数になる。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　M は離散なので一点 {c<sub>σ</sub>} は開集合。連続性より c⁻¹({c<sub>σ</sub>}) は σ を含む開集合で、射有限群の位相の基本近傍系から、ある開正規部分群 V<sub>σ</sub> について σV<sub>σ</sub> ⊆ c⁻¹({c<sub>σ</sub>})。{σV<sub>σ</sub>}<sub>σ∈G</sub> は G の開被覆、G はコンパクトなので有限部分被覆 σ₁V₁, …, σ<sub>k</sub>V<sub>k</sub> が取れる。U := V₁ ∩ ⋯ ∩ V<sub>k</sub>（開正規部分群の有限交叉は開正規）。任意の σ はある σ<sub>i</sub>V<sub>i</sub> に入り、σU ⊆ σ<sub>i</sub>V<sub>i</sub>V<sub>i</sub> = σ<sub>i</sub>V<sub>i</sub>（V<sub>i</sub> は群）。c は σ<sub>i</sub>V<sub>i</sub> 上で値 c<sub>σᵢ</sub> の定数なので σU 上でも定数。U は正規なので σU = Uσ（両側剰余類が一致）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>c<sub>η</sub> = 0（∀η ∈ U）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　η ∈ U = eU で、c は eU 上定数、その値は c<sub>e</sub> = 0（Step 3）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>すべての値が不変部分に入る：c<sub>σ</sub> ∈ M<sup>U</sup>（∀σ ∈ G）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　η ∈ U に対しコサイクル条件：c<sub>ση</sub> = c<sub>σ</sub><sup>η</sup> + c<sub>η</sub> = c<sub>σ</sub><sup>η</sup>（Step 7）。一方 ση ∈ σU なので c<sub>ση</sub> = c<sub>σ</sub>（Step 6）。よって c<sub>σ</sub><sup>η</sup> = c<sub>σ</sub>。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>c̄<sub>σU</sub> := c<sub>σ</sub> は well-defined な c̄ ∈ Z¹(G/U, M<sup>U</sup>) を定め、その引き戻しが c に一致する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　well-defined 性は Step 6（剰余類上定数）。その前に M<sup>U</sup> が G/U-加群であること：m ∈ M<sup>U</sup>, σ ∈ G に対し m<sup>σ</sup> ∈ M<sup>U</sup> を検証する──η ∈ U に対し (m<sup>σ</sup>)<sup>η</sup> = m<sup>ση</sup> = m<sup>η′σ</sup>（η′ := σησ⁻¹ ∈ U、<strong>U の正規性</strong>）= (m<sup>η′</sup>)<sup>σ</sup> = m<sup>σ</sup>。さらに σ を同じ類の ση に取り替えても m<sup>ση</sup> = (m<sup>σ</sup>)<sup>η</sup> = m<sup>σ</sup> なので、作用 m<sup>σU</sup> := m<sup>σ</sup> は代表の取り方に依らない。コサイクル条件の降下：c̄<sub>(σU)(τU)</sub> = c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> = (c̄<sub>σU</sub>)<sup>τU</sup> + c̄<sub>τU</sub>（値が M<sup>U</sup> に入るのは Step 8）。引き戻しの一致：(inf c̄)<sub>σ</sub> = c̄<sub>σU</sub> = c<sub>σ</sub>、定義通り。</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="why">
+      <div class="w-label">? この定理が「暗黙の規約」の全貌</div>
+      <p>
+        本編・弱MW編を通じて「コサイクルは有限次Galois拡大を経由するものだけ考える」と繰り返してきた一文は、
+        この定理の主張そのものです。射有限群のコホモロジーは<strong>有限群のコホモロジーの増大和</strong>にすぎない──
+        だから第2部の「有限群 G<sub>L/K</sub> での手計算」と第3部の「絶対Galois群での一般論」が矛盾なく往復できます。
+        なお inf が類のレベルで<strong>単射</strong>であること（和集合が「重なりなく」増大すること）は
+        N3 の inflation–restriction 完全列の帰結です。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>関手性 ─ f<sub>*</sub> の構成（行間④）</h2>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>G-同変準同型 f : M → N は群準同型 f<sub>*</sub> : H¹(G, M) → H¹(G, N)、[c] ↦ [f∘c] を誘導する。H⁰ でも同様に f(M<sup>G</sup>) ⊆ N<sup>G</sup>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　f∘c がコサイクルであること：(f∘c)<sub>στ</sub> = f(c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub>) = f(c<sub>σ</sub>)<sup>τ</sup> + f(c<sub>τ</sub>)（f は加法的かつ G-同変）。コバウンダリを保つこと：f(m<sup>σ</sup> − m) = f(m)<sup>σ</sup> − f(m)、つまり m のコバウンダリは f(m) のコバウンダリに移る。ゆえに類の写像として well-defined。準同型性は f の加法性から点ごとに従う。連続性：M が離散なら f∘c は連続写像の合成（離散空間からの写像はすべて連続）。H⁰ 側：m<sup>σ</sup> = m ⇒ f(m)<sup>σ</sup> = f(m<sup>σ</sup>) = f(m)。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>連結準同型 δ（行間⑤）</h2>
+
+    <p>
+      0 → A → B →<sup>ψ</sup> C → 0 を短完全列（R2）とし、c ∈ C<sup>G</sup> を取ります。
+      本編が3行で述べた構成を、検証事項に分解します。
+    </p>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p><strong>構成：</strong>持ち上げ b ∈ B（ψ(b) = c）を1つ選び、d<sub>σ</sub> := b<sup>σ</sup> − b とおくと、d<sub>σ</sub> ∈ A。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　持ち上げの存在は ψ の全射性（R2）。ψ(d<sub>σ</sub>) = ψ(b<sup>σ</sup>) − ψ(b) = ψ(b)<sup>σ</sup> − ψ(b) = c<sup>σ</sup> − c = 0（ψ の G-同変性と c ∈ C<sup>G</sup>）。よって d<sub>σ</sub> ∈ ker ψ = A（R2）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>d は A に値を持つコサイクル：d ∈ Z¹(G, A)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　b<sup>στ</sup> − b = (b<sup>σ</sup> − b)<sup>τ</sup> + (b<sup>τ</sup> − b)（Step 2 と同じ恒等式、R1(i)(ii)）。値はすべて A に入り（Step 11）、A は G-部分加群なのでこの式は A の中の式として読める。連続性：σ ↦ b<sup>σ</sup> は局所定数（§04 冒頭のコバウンダリの議論と同じ）なので d は連続。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p><strong>well-defined 性：</strong>別の持ち上げ b′ を選ぶと、d は A のコバウンダリの差しか変わらない。したがって δ(c) := [d] ∈ H¹(G, A) は持ち上げに依らない（行間⑤解消）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　ψ(b′) = ψ(b) = c より a := b′ − b ∈ ker ψ = A。d′<sub>σ</sub> − d<sub>σ</sub> = (b′<sup>σ</sup> − b′) − (b<sup>σ</sup> − b) = a<sup>σ</sup> − a。a ∈ A なのでこれは B¹(G, A) の元。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">14</div>
+      <div class="ps-b">
+        <p>δ : C<sup>G</sup> → H¹(G, A) は群準同型。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　c₁, c₂ ∈ C<sup>G</sup> の持ち上げ b₁, b₂ を選ぶと、b₁ + b₂ は c₁ + c₂ の持ち上げ（ψ は準同型）。この選択で計算すると (b₁+b₂)<sup>σ</sup> − (b₁+b₂) = d₁<sub>σ</sub> + d₂<sub>σ</sub>。Step 13 より δ の値は持ち上げの選択に依らないので δ(c₁+c₂) = [d₁] + [d₂] = δ(c₁) + δ(c₂)。</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07 ─ Main</div>
+    <h2>6項完全列 ─ 5箇所の完全性（行間⑥）</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（低次の長完全列） <span class="refchip">AEC App. B §2</span></div>
+      <p>0 → A → B →<sup>ψ</sup> C → 0 を G-加群の短完全列とすると、次は完全：</p>
+      <div class="formula">
+        <div class="fline">0 → A<sup>G</sup> →<sup>φ</sup> B<sup>G</sup> →<sup>ψ</sup> C<sup>G</sup> →<sup>δ</sup> H¹(G,A) →<sup>φ*</sup> H¹(G,B) →<sup>ψ*</sup> H¹(G,C)</div>
+      </div>
+      <p>（射有限群と離散加群・連続コサイクルの設定でもそのまま成立。各ステップの根拠に連続性の注記を添える。）</p>
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 780 130" role="img" aria-label="6項完全列と5つの完全性検証点">
+        <style>
+          .st { font-family:'JetBrains Mono',monospace; font-size:14px; fill:#f0d888; }
+          .ss { font-family:'JetBrains Mono',monospace; font-size:10.5px; fill:#7d84a0; }
+          .sn { font-family:'JetBrains Mono',monospace; font-size:12px; fill:#5ecf9e; }
+          .se { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr0); }
+        </style>
+        <defs>
+          <marker id="arr0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+        </defs>
+        <text class="st" x="14" y="60">0</text>
+        <path class="se" d="M32,55 L52,55"/>
+        <text class="st" x="58" y="60">A<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M96,55 L124,55"/><text class="ss" x="103" y="46">φ</text>
+        <text class="st" x="130" y="60">B<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M168,55 L196,55"/><text class="ss" x="175" y="46">ψ</text>
+        <text class="st" x="202" y="60">C<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M240,55 L268,55"/><text class="ss" x="247" y="46">δ</text>
+        <text class="st" x="274" y="60">H¹(G,A)</text>
+        <path class="se" d="M348,55 L378,55"/><text class="ss" x="352" y="46">φ*</text>
+        <text class="st" x="384" y="60">H¹(G,B)</text>
+        <path class="se" d="M458,55 L488,55"/><text class="ss" x="462" y="46">ψ*</text>
+        <text class="st" x="494" y="60">H¹(G,C)</text>
+        <text class="sn" x="66" y="92">⑮</text>
+        <text class="sn" x="138" y="92">⑯</text>
+        <text class="sn" x="210" y="92">⑰</text>
+        <text class="sn" x="298" y="92">⑱</text>
+        <text class="sn" x="408" y="92">⑲</text>
+        <text class="ss" x="14" y="118">丸数字は下の Step 番号。各位置で「核 = ひとつ前の像」を検証する。</text>
+      </svg>
+      <div class="svg-cap">図1：6項完全列。完全性の検証点は5箇所（右端 H¹(G,C) では主張しない──そこで「続き」を測るのが H² だが、この教材では不要）。</div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">15</div>
+      <div class="ps-b">
+        <p><strong>A<sup>G</sup> で完全</strong>（= φ|<sub>A<sup>G</sup></sub> の単射性）。あわせて φ(A<sup>G</sup>) ⊆ B<sup>G</sup>, ψ(B<sup>G</sup>) ⊆ C<sup>G</sup> の確認。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　φ は A 全体で単射（R2）なので部分集合 A<sup>G</sup> 上でも単射。行き先の確認：a ∈ A<sup>G</sup> なら φ(a)<sup>σ</sup> = φ(a<sup>σ</sup>) = φ(a)、つまり φ(a) ∈ B<sup>G</sup>（φ の G-同変性）。ψ も同様。──この確認を経て初めて「不変部分の間の列」が意味を持つ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">16</div>
+      <div class="ps-b">
+        <p><strong>B<sup>G</sup> で完全</strong>：ker(ψ|<sub>B<sup>G</sup></sub>) = φ(A<sup>G</sup>)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　（⊇）ψ∘φ = 0 は im φ = ker ψ（R2）の片割れ。（⊆）b ∈ B<sup>G</sup>, ψ(b) = 0 とすると b ∈ ker ψ = im φ、つまり b = φ(a) なる a ∈ A がある。a が不変であること：φ(a<sup>σ</sup>) = φ(a)<sup>σ</sup> = b<sup>σ</sup> = b = φ(a) で、φ の単射性から a<sup>σ</sup> = a。よって b ∈ φ(A<sup>G</sup>)。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">17</div>
+      <div class="ps-b">
+        <p><strong>C<sup>G</sup> で完全</strong>：ker δ = ψ(B<sup>G</sup>)。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　（⊇）c = ψ(b), b ∈ B<sup>G</sup> なら、持ち上げとして b 自身を選べて（Step 13 で選択自由は保証済み）d<sub>σ</sub> = b<sup>σ</sup> − b = 0。よって δ(c) = 0。（⊆）δ(c) = 0 とすると、持ち上げ b に対し b<sup>σ</sup> − b = a<sup>σ</sup> − a（ある a ∈ A、コバウンダリの定義）。b′ := b − a とおくと b′<sup>σ</sup> − b′ = (b<sup>σ</sup> − b) − (a<sup>σ</sup> − a) = 0、つまり b′ ∈ B<sup>G</sup>。さらに ψ(b′) = ψ(b) − ψ(a) = c − 0 = c（a ∈ A = ker ψ）。よって c ∈ ψ(B<sup>G</sup>)。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">18</div>
+      <div class="ps-b">
+        <p><strong>H¹(G, A) で完全</strong>：ker φ<sub>*</sub> = im δ。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　（⊇）φ<sub>*</sub>δ(c) は「σ ↦ b<sup>σ</sup> − b を B の中で読んだ類」で、これは b ∈ B のコバウンダリそのもの。よって 0。（⊆）[c] ∈ H¹(G, A) が φ<sub>*</sub>[c] = 0 を満たすとする。B の中でコバウンダリ、つまりある b ∈ B で c<sub>σ</sub> = b<sup>σ</sup> − b（∀σ）。y := ψ(b) ∈ C とおくと y<sup>σ</sup> − y = ψ(b<sup>σ</sup> − b) = ψ(c<sub>σ</sub>) = 0（c<sub>σ</sub> ∈ A = ker ψ）なので y ∈ C<sup>G</sup>。この y の δ を持ち上げ b で計算すると δ(y) = [σ ↦ b<sup>σ</sup> − b] = [c]。よって [c] ∈ im δ。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">19</div>
+      <div class="ps-b">
+        <p><strong>H¹(G, B) で完全</strong>：ker ψ<sub>*</sub> = im φ<sub>*</sub>。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　（⊇）ψ<sub>*</sub>φ<sub>*</sub>[c] = [(ψ∘φ)∘c] = [0]（ψ∘φ = 0）。（⊆）[d] ∈ H¹(G, B) が ψ<sub>*</sub>[d] = 0 を満たすとする。C でコバウンダリ、つまりある y ∈ C で ψ(d<sub>σ</sub>) = y<sup>σ</sup> − y（∀σ）。ψ の全射性で y の持ち上げ b₀ ∈ B を選び、d′<sub>σ</sub> := d<sub>σ</sub> − (b₀<sup>σ</sup> − b₀) とおく。d′ は d とコホモロガス（b₀ のコバウンダリの差）。ψ(d′<sub>σ</sub>) = (y<sup>σ</sup> − y) − (ψ(b₀)<sup>σ</sup> − ψ(b₀)) = (y<sup>σ</sup> − y) − (y<sup>σ</sup> − y) = 0 なので d′ の値はすべて A = ker ψ に入る。d′ は B のコサイクルで値が A に入るから A のコサイクル（Step 12 と同じ論法）。連続性：σ ↦ b₀<sup>σ</sup> は局所定数なので d′ も連続。よって [d] = [d′] = φ<sub>*</sub>[d′] ∈ im φ<sub>*</sub>。</p>
+      </div>
+    </div>
+    <div class="qed">∎（5箇所すべて検証済み）</div>
+
+    <div class="why">
+      <div class="w-label">? δ が「両側から」完全性に絡む理由</div>
+      <p>
+        検証を並べると、δ は Step 17 で「左の核」、Step 18 で「右の像」として現れます。
+        つまり δ は<strong>「B<sup>G</sup> から来ない不変元」と「B で消えるコホモロジー類」を同一視する橋</strong>です。
+        本編の標語「δ は割り算の障害を測る」の正確な内容は、この2つの完全性の合わせ技に他なりません。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>本編との対応表</h2>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>本編（§02）の記述</th><th>このノートでの証明</th></tr></thead>
+      <tbody>
+        <tr><td>「H¹ = （1-コサイクル）/（1-コバウンダリ）」が群として意味を持つ</td><td class="m">Step 1–2</td></tr>
+        <tr><td>「作用が自明なら H¹ = Hom」</td><td class="m">Step 5</td></tr>
+        <tr><td>「コサイクルは連続なもの（＝ある有限次Galois拡大を経由するもの）だけを考えます」</td><td class="m">Step 6–9（§04 定理）</td></tr>
+        <tr><td>「次の完全列が生えます」</td><td class="m">Step 15–19</td></tr>
+        <tr><td>「持ち上げ b の取り替えはコバウンダリの差しか生まない」</td><td class="m">Step 13</td></tr>
+        <tr><td>「δ(c) = 0 ⟺ c は B<sup>G</sup> から来る」（why枠）</td><td class="m">Step 17</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">▸ 次は機械を楕円曲線に接続する</div>
+      <p>
+        部品は全部そろいました。N1 では A = E[m], B = C = E(<span class="ov">K</span>), ψ = [m] と置いて
+        この6項完全列を回し、切り出した短完全列が本編の「Kummer完全列」に、
+        δ が第2部の Kummer 対 κ にそれぞれ<strong>文字通り一致</strong>することを確かめます。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/kummer.html">
+      <div class="p-dir">← 本編</div>
+      <div class="p-title">Kummer対とGaloisコホモロジー（§02 へ戻る）</div>
+    </a>
+    <a class="next" href="/math-site/in/kummer-step1.html">
+      <div class="p-dir">NEXT ─ 行間ノート N1</div>
+      <div class="p-title">楕円曲線のKummer完全列 →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 行間ノート（Kummer対とGaloisコホモロジー）N0/N3</p>
+    <p>底本：J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Appendix B §1–§2</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
