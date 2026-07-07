@@ -273,27 +273,34 @@
         <line x1="120" y1="30" x2="120" y2="196" stroke="#8a5828" stroke-width="1.5"/>
         <line x1="168" y1="30" x2="168" y2="196" stroke="#8a5828" stroke-width="1.5"/>
 
-        <!-- 楔形文字の模擬（横線と三角で表現） -->
+        <!-- 楔形文字風の刻み（SVG図形で描画：楔形文字のUnicodeはフォントの無い端末で□になるため使わない） -->
+        <defs>
+          <pattern id="cunei-a" width="17" height="13" patternUnits="userSpaceOnUse">
+            <g fill="#5a3010">
+              <path d="M1.5,3.4 l4.4,1.5 -4.4,1.5 z"/>
+              <path d="M8,3 h1.7 l-0.85,3.6 z"/>
+              <path d="M11.2,3 h1.7 l-0.85,3.6 z"/>
+              <path d="M14.4,3 h1.7 l-0.85,3.6 z"/>
+            </g>
+          </pattern>
+          <pattern id="cunei-b" width="15" height="13" patternUnits="userSpaceOnUse">
+            <g fill="#5a3010">
+              <path d="M1.4,3 h1.7 l-0.85,3.6 z"/>
+              <path d="M4.6,3 h1.7 l-0.85,3.6 z"/>
+              <path d="M9,3.4 l4.4,1.5 -4.4,1.5 z"/>
+            </g>
+          </pattern>
+        </defs>
         <!-- ヘッダ行 -->
-        <text x="46" y="46" font-size="7" fill="#4a2808" font-family="serif">𒀭𒊑</text>
-        <text x="92" y="46" font-size="7" fill="#4a2808" font-family="serif">𒁹𒑰</text>
-        <text x="140" y="46" font-size="7" fill="#4a2808" font-family="serif">𒀭𒊏</text>
-        <text x="180" y="46" font-size="7" fill="#4a2808" font-family="serif">𒁹</text>
-
+        <rect x="40" y="36" width="24" height="11" fill="url(#cunei-a)"/>
+        <rect x="86" y="36" width="22" height="11" fill="url(#cunei-b)"/>
+        <rect x="134" y="36" width="24" height="11" fill="url(#cunei-a)"/>
+        <rect x="175" y="36" width="15" height="11" fill="url(#cunei-b)"/>
         <!-- データ行（15行分を簡略化） -->
-        <g fill="#5a3010" font-size="6.5" font-family="monospace">
-          <!-- 各行にそれらしい楔形文字パターン -->
-          <text x="36" y="62">𒐕𒐖𒐗  </text><text x="80" y="62">𒐕𒐕𒐖</text><text x="128" y="62">𒐗𒐘</text><text x="176" y="62">𒐕</text>
-          <text x="36" y="75">𒐖𒐙    </text><text x="80" y="75">𒐖𒐕𒐗</text><text x="128" y="75">𒐕𒐙</text><text x="176" y="75">𒐖</text>
-          <text x="36" y="88">𒐕𒐕𒐗  </text><text x="80" y="88">𒐕𒐖𒐘</text><text x="128" y="88">𒐗𒐖</text><text x="176" y="88">𒐗</text>
-          <text x="36" y="101">𒐙𒐖   </text><text x="80" y="101">𒐘𒐕</text><text x="128" y="101">𒐙𒐗</text><text x="176" y="101">𒐘</text>
-          <text x="36" y="114">𒐕𒐗𒐙  </text><text x="80" y="114">𒐕𒐙𒐖</text><text x="128" y="114">𒐖𒐘</text><text x="176" y="114">𒐙</text>
-          <text x="36" y="127">𒐕𒐕𒐙  </text><text x="80" y="127">𒐖𒐙𒐕</text><text x="128" y="127">𒐙𒐗</text><text x="176" y="127">𒐚</text>
-          <text x="36" y="140">𒐙𒐕    </text><text x="80" y="140">𒐕𒐘𒐗</text><text x="128" y="140">𒐗𒐙</text><text x="176" y="140">𒐛</text>
-          <text x="36" y="153">𒐕𒐖𒐕  </text><text x="80" y="153">𒐘𒐙𒐖</text><text x="128" y="153">𒐚𒐕</text><text x="176" y="153">𒐜</text>
-          <text x="36" y="166">𒐖𒐙𒐗  </text><text x="80" y="166">𒐙𒐕𒐗</text><text x="128" y="166">𒐛𒐖</text><text x="176" y="166">𒐝</text>
-          <text x="36" y="179">𒐕𒐙𒐘  </text><text x="80" y="179">𒐕𒐖𒐙</text><text x="128" y="179">𒐜𒐗</text><text x="176" y="179">𒐐𒐕</text>
-        </g>
+        <rect x="36" y="52" width="33" height="138" fill="url(#cunei-a)"/>
+        <rect x="78" y="52" width="37" height="138" fill="url(#cunei-b)"/>
+        <rect x="126" y="52" width="37" height="138" fill="url(#cunei-a)"/>
+        <rect x="173" y="52" width="20" height="138" fill="url(#cunei-b)"/>
 
         <!-- 右側：現代語での解説 -->
         <rect x="248" y="20" width="118" height="186" rx="10"

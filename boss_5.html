@@ -308,7 +308,7 @@ function startBattle(){
       ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(cx,cy,72+14*pulse,0,Math.PI*2); ctx.fill();
       ctx.restore();
       /* 軌道を巡る記号 */
-      var syms=['ζ','𝔼','Gal','π₁','∮','∞'];
+      var syms=['ζ','∂','Gal','π₁','∮','∞'];
       ctx.textAlign='center'; ctx.textBaseline='middle';
       syms.forEach(function(s,i){
         var ang=t*(0.5+0.05*i)+i*Math.PI*2/syms.length;
