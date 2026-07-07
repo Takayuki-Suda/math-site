@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行間ノート N2：Hilbert 90 と乗法群への接続 ─ Kummer対 | 数学の教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'90'; position:absolute; right:-10px; top:-36px; font-family:var(--display); font-style:italic;
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+  .box.warn { border-color:rgba(224,104,122,.5); background:rgba(224,104,122,.05); }
+  .box.warn .box-label { color:var(--red); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:0.9rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">行間ノート ─ Kummer対 N2/N3</div>
+    <h1>Hilbert 90 と乗法群への接続<br><span class="en">Hilbert 90, the Weil Pairing, and Square Classes</span></h1>
+    <p class="hero-sub">
+      本編が「古典体論の金字塔」と一行で引いた Hilbert 90 を、Dedekind の独立性補題から
+      射有限版（AEC B.2.5）まで完全証明します。さらに Weil 対の性質から
+      E[m] ≅ μ<sub>m</sub> × μ<sub>m</sub>（E[m] ⊂ E(K) のとき）を組み立て、
+      本編 §07 の「x − e<sub>i</sub>」の写像が準同型である理由──直線の恒等式──まで、
+      E[m] と乗法群の間の橋をすべて架けます。
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §2, App. B.2.5, Ch. III §8, Ch. X §1 ／ Neukirch, ANT IV §3</p>
+    <div class="series-nav">
+      <a href="/math-site/in/kummer.html">本編Ⅲ Kummer対</a>
+      <a href="/math-site/in/kummer-step0.html">N0 コホモロジーの土台</a>
+      <a href="/math-site/in/kummer-step1.html">N1 Kummer完全列</a>
+      <a class="cur" href="/math-site/in/kummer-step2.html">N2 Hilbert 90</a>
+      <a href="/math-site/in/kummer-step3.html">N3 inf–resと不分岐</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>このノートで埋める行間</h2>
+    <ul>
+      <li>① <span class="ov">K</span><sup>×</sup> と μ<sub>m</sub> が「離散 G-加群」の枠に入ること──N0 §04 が予告した宿題の後半（前半の E(<span class="ov">K</span>) は N1 §03）</li>
+      <li>② 乗法群の短完全列 1 → μ<sub>m</sub> → <span class="ov">K</span><sup>×</sup> → <span class="ov">K</span><sup>×</sup> → 1 の検証と、6項完全列の乗法版</li>
+      <li>③ <strong>有限次版 Hilbert 90</strong>（H¹(G<sub>L/K</sub>, L<sup>×</sup>) = 1）の完全証明──鍵は Dedekind の独立性補題</li>
+      <li>④ 有限次版から本編の主張 H¹(G<sub><span class="ov">K</span>/K</sub>, <span class="ov">K</span><sup>×</sup>) = 0 への持ち上げ──N0 §04 の連続コサイクル定理の初仕事</li>
+      <li>⑤ Weil 対の性質（引用）と、系「E[m] ⊂ E(K) ⇒ μ<sub>m</sub> ⊂ K」の証明</li>
+      <li>⑥ E[m] ⊂ E(K) のとき <strong>E[m] ≅ μ<sub>m</sub> × μ<sub>m</sub>（G-加群として）</strong>──本編 §07 が「基底 T₁, T₂ を選ぶと」と一行で書いた同型の中身</li>
+      <li>⑦ m = 2 の完全具体化：「x − e<sub>i</sub>」が準同型を定める理由──<strong>直線の恒等式</strong>（sympy 検証済み）</li>
+    </ul>
+    <p>
+      前提は §02 の W 系列で固定します。N0 の機械（6項完全列・連続コサイクル定理）と
+      N1 の手続き（切り出し・[m]<sub>*</sub> = m 倍）を引き継ぎます。
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>前提の固定（W1–W4）</h2>
+
+    <div class="box dfn">
+      <div class="box-label">前提 W1 ─ 乗法的記法と μ<sub>m</sub></div>
+      <p>
+        K は標数 0 の体（数体を想定）、<span class="ov">K</span>、G := G<sub><span class="ov">K</span>/K</sub> は N1 の D1 と同じ。
+        このノートの主役 <span class="ov">K</span><sup>×</sup> は<strong>乗法群</strong>なので、N0 の加法的記法を次の辞書で読み替える：
+      </p>
+      <div class="table-wrap">
+      <table class="cmp">
+        <thead><tr><th>加法的（N0・N1）</th><th>乗法的（このノート）</th></tr></thead>
+        <tbody>
+          <tr><td class="m">0,　m + n,　−m</td><td class="m">1,　m·n,　m<sup>−1</sup></td></tr>
+          <tr><td class="m">m 倍　[m]</td><td class="m">m 乗　z ↦ z<sup>m</sup></td></tr>
+          <tr><td class="m">コサイクル条件　c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub></td><td class="m">c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> · c<sub>τ</sub></td></tr>
+          <tr><td class="m">コバウンダリ　σ ↦ m<sup>σ</sup> − m</td><td class="m">σ ↦ β<sup>σ</sup>/β</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>
+        μ<sub>m</sub> := { z ∈ <span class="ov">K</span><sup>×</sup> : z<sup>m</sup> = 1 }。char 0 では X<sup>m</sup> − 1 は分離的
+        （導関数 mX<sup>m−1</sup> との共通根なし）なので #μ<sub>m</sub> = m、しかも μ<sub>m</sub> は位数 m の巡回群
+        （体の乗法群の有限部分群は巡回群──1の冪根の標準事実）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 W2 ─ 無限 Galois 理論の対応 <span class="refchip">ANT IV.1.2</span></div>
+      <p>
+        G の開正規部分群 U と <span class="ov">K</span> 内の有限次 Galois 拡大 L/K は
+        U = G<sub><span class="ov">K</span>/L</sub> で1対1に対応し（Krull 位相の主定理）、
+        制限写像により G/U ≅ G<sub>L/K</sub><span class="refchip">weakmw N1 前提Q4</span>。
+        固定体は <span class="ov">K</span><sup>U</sup> = L であり、したがって
+        (<span class="ov">K</span><sup>×</sup>)<sup>U</sup> = L<sup>×</sup>（0 を除くだけ）。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 W3 ─ Weil 対 <span class="refchip">AEC III.8.1</span></div>
+      <p>E/K 楕円曲線、m ≥ 2、char 0 とする。次の性質を持つ対（Weil pairing）が存在する：</p>
+      <div class="formula"><div class="fline">e<sub>m</sub> : E[m] × E[m] → μ<sub>m</sub></div></div>
+      <p>
+        (a) <strong>双線形</strong>：e<sub>m</sub>(S₁+S₂, T) = e<sub>m</sub>(S₁,T)·e<sub>m</sub>(S₂,T)、第2変数も同様。
+        (b) <strong>交代</strong>：e<sub>m</sub>(T, T) = 1（したがって e<sub>m</sub>(S,T) = e<sub>m</sub>(T,S)<sup>−1</sup>）。
+        (c) <strong>非退化</strong>：e<sub>m</sub>(S, T) = 1 が全ての T ∈ E[m] で成り立てば S = O。
+        (d) <strong>Galois 同変</strong>：e<sub>m</sub>(S, T)<sup>σ</sup> = e<sub>m</sub>(S<sup>σ</sup>, T<sup>σ</sup>)。
+        構成は因子と関数の理論による（AEC III §8）。このノートでは<strong>性質だけ</strong>を使う。
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">前提 W4 ─ N0・N1 の機械</div>
+      <p>
+        6項完全列と5箇所の完全性（N0 §07）、連続コサイクルの有限段階への降下（N0 §04）、
+        切り出しの手続きと「誘導写像 = m 倍（乗法版：m 乗）」（N1 Step 9–12）。
+        乗法群への適用は W1 の辞書を通す。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>乗法群も機械の枠に入る（行間①②）</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><span class="ov">K</span><sup>×</sup> と μ<sub>m</sub> は離散 G-加群である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　σ は体の自己同型なので (ab)<sup>σ</sup> = a<sup>σ</sup>b<sup>σ</sup>、1<sup>σ</sup> = 1、つまり各 σ は <span class="ov">K</span><sup>×</sup> の群自己同型（W1 の辞書で R1(i)）。合成規約 (ii)・恒等 (iii) は体の作用そのもの。離散性：a ∈ <span class="ov">K</span><sup>×</sup> は K 上代数的だから固定化群は開部分群 G<sub><span class="ov">K</span>/K(a)</sub> を含む（N1 Step 2 と同じ議論）。μ<sub>m</sub> が G-安定であること：(z<sup>σ</sup>)<sup>m</sup> = (z<sup>m</sup>)<sup>σ</sup> = 1<sup>σ</sup> = 1。有限（#μ<sub>m</sub> = m、W1）なので離散。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>次は離散 G-加群の短完全列である：</p>
+        <div class="formula"><div class="fline">1 → μ<sub>m</sub> → <span class="ov">K</span><sup>×</sup> →<sup>m乗</sup> <span class="ov">K</span><sup>×</sup> → 1</div></div>
+        <p class="ps-why"><b>▸ 根拠</b>　z ↦ z<sup>m</sup> は準同型（乗法群はアーベル）。G-同変：(z<sup>m</sup>)<sup>σ</sup> = (z<sup>σ</sup>)<sup>m</sup>（体準同型）。核は μ<sub>m</sub>（定義）。全射：a ∈ <span class="ov">K</span><sup>×</sup> に対し X<sup>m</sup> − a は代数閉体 <span class="ov">K</span> に根 α を持ち、a ≠ 0 なので α ≠ 0、つまり α ∈ <span class="ov">K</span><sup>×</sup>。包含 μ<sub>m</sub> ⊆ <span class="ov">K</span><sup>×</sup> は G-同変単射（Step 1 の G-安定性）。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>6項完全列（乗法版）と切り出し。N0 §07 を W1 の辞書で適用し、(<span class="ov">K</span><sup>×</sup>)<sup>G</sup> = K<sup>×</sup> を代入すると：</p>
+        <div class="formula">
+          <div class="fline">1 → μ<sub>m</sub>(K) → K<sup>×</sup> →<sup>m乗</sup> K<sup>×</sup> →<sup>δ</sup> H¹(G, μ<sub>m</sub>) → H¹(G, <span class="ov">K</span><sup>×</sup>) →<sup>(m乗)*</sup> H¹(G, <span class="ov">K</span><sup>×</sup>)</div>
+        </div>
+        <p>N1 §07 と同じ切り出しの手続きにより：</p>
+        <div class="formula">
+          <div class="fline">1 → K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> →<sup>δ</sup> H¹(G, μ<sub>m</sub>) → H¹(G, <span class="ov">K</span><sup>×</sup>)[m] → 1,　δ(a) = [ σ ↦ α<sup>σ</sup>/α ]（α<sup>m</sup> = a）</div>
+        </div>
+        <p class="ps-why"><b>▸ 根拠</b>　(<span class="ov">K</span><sup>×</sup>)<sup>G</sup> = K<sup>×</sup> は <span class="ov">K</span><sup>G</sup> = K（N1 D1）から 0 を除くだけ。μ<sub>m</sub>(K) := μ<sub>m</sub> ∩ K<sup>×</sup>。δ の表示は N0 Step 11 の構成で持ち上げとして「m 乗根 α」を選んだもの（乗法版の b<sup>σ</sup> − b が α<sup>σ</sup>/α）<span class="refchip">AEC VIII.2.2</span>。誘導写像 (m乗)<sub>*</sub> が「H¹ の類の m 乗」に一致すること・切り出しの3箇所の完全性は、N1 Step 9–12 の証明が文字の読み替えだけでそのまま通る（使った性質は「Z¹ の演算が点ごと」「完全性5箇所」のみで、加法性は使っていない）。</p>
+      </div>
+    </div>
+
+    <p>
+      残った仕事はただ一つ、右端の障害 H¹(G, <span class="ov">K</span><sup>×</sup>) が<strong>消える</strong>ことの証明です。
+      これが Hilbert の定理 90。証明の鍵は、コホモロジーではなく<strong>古典的な線形代数</strong>にあります。
+    </p>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>Dedekind の独立性補題（行間③の鍵）</h2>
+
+    <div class="box thm">
+      <div class="box-label">補題（指標の一次独立性：Dedekind–Artin） <span class="refchip">Lang, Algebra VI §4</span></div>
+      <p>
+        H を群、L を体、χ₁, …, χ<sub>n</sub> : H → L<sup>×</sup> を<strong>相異なる</strong>群準同型（指標）とする。
+        χ₁, …, χ<sub>n</sub> は L 上一次独立：a₁χ₁(h) + ⋯ + a<sub>n</sub>χ<sub>n</sub>(h) = 0 が
+        すべての h ∈ H で成り立てば a₁ = ⋯ = a<sub>n</sub> = 0。
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>最短の非自明な関係式を仮定して矛盾を導く（n についての最小反例法）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　非自明な関係式（係数が全部は 0 でない）のうち、<strong>0 でない係数の個数が最小</strong>のものを取る。0 の係数の項を落とし、番号を付け替えて a₁, …, a<sub>n</sub> ≠ 0 としてよい。n = 1 なら h = e を代入して a₁χ₁(e) = a₁·1 = 0、矛盾。よって n ≥ 2。χ₁ ≠ χ<sub>n</sub> なので χ₁(h₀) ≠ χ<sub>n</sub>(h₀) となる h₀ ∈ H が取れる。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>h₀ を使って関係式を1つ短くする──これで矛盾。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　任意の h で、関係式に h₀h を代入：Σ a<sub>i</sub>χ<sub>i</sub>(h₀)χ<sub>i</sub>(h) = Σ a<sub>i</sub>χ<sub>i</sub>(h₀h) = 0。一方、元の関係式を χ<sub>n</sub>(h₀) 倍：Σ a<sub>i</sub>χ<sub>n</sub>(h₀)χ<sub>i</sub>(h) = 0。差を取ると i = n の項が消えて Σ<sub>i≤n−1</sub> a<sub>i</sub>(χ<sub>i</sub>(h₀) − χ<sub>n</sub>(h₀))χ<sub>i</sub>(h) = 0（∀h）。第1項の係数 a₁(χ₁(h₀) − χ<sub>n</sub>(h₀)) ≠ 0 なので、これは 0 でない係数の個数が n より少ない非自明な関係式。最小性に矛盾。∎</p>
+      </div>
+    </div>
+
+    <p>
+      応用の形：L/K を有限次 Galois 拡大とすると、相異なる τ ∈ G<sub>L/K</sub> は
+      L<sup>×</sup> → L<sup>×</sup> の相異なる指標（乗法を保つ）なので、L 上一次独立です。
+      すなわち係数 c<sub>τ</sub> ∈ L<sup>×</sup> がすべて 0 でない限り、関数
+      z ↦ Σ<sub>τ</sub> c<sub>τ</sub>·z<sup>τ</sup> は恒等的に 0 ではありません。
+    </p>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>有限次版 Hilbert 90（行間③）</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（Hilbert の定理 90・有限次版） <span class="refchip">ANT IV.3.5</span></div>
+      <p>L/K を有限次 Galois 拡大、<span style="text-decoration:overline">G</span> := G<sub>L/K</sub> とすると：</p>
+      <div class="formula"><div class="fline">H¹( G<sub>L/K</sub>, L<sup>×</sup> ) = 1　（すべての1-コサイクルはコバウンダリ σ ↦ β<sup>σ</sup>/β）</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p><strong>平均化の準備：</strong>c ∈ Z¹(G<sub>L/K</sub>, L<sup>×</sup>) を取る。ある a ∈ L<sup>×</sup> で</p>
+        <div class="formula"><div class="fline">b := Σ<sub>τ ∈ G<sub>L/K</sub></sub> c<sub>τ</sub> · a<sup>τ</sup> ≠ 0</div></div>
+        <p class="ps-why"><b>▸ 根拠</b>　係数 c<sub>τ</sub> は L<sup>×</sup> の元、つまりすべて 0 でない。§04 の補題（応用の形）より z ↦ Σ c<sub>τ</sub>z<sup>τ</sup> は L<sup>×</sup> 上恒等的に 0 でないので、b ≠ 0 となる a ∈ L<sup>×</sup> が存在する。和は有限（G<sub>L/K</sub> は有限群）なので b ∈ L。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p><strong>コサイクル条件で b の Galois 軌道を計算：</strong>b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> · b（∀σ）。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　b<sup>σ</sup> = Σ<sub>τ</sub> c<sub>τ</sub><sup>σ</sup> · a<sup>τσ</sup>（作用は体準同型、(a<sup>τ</sup>)<sup>σ</sup> = a<sup>τσ</sup> は右作用規約）。コサイクル条件（W1 の辞書）を組 (τ, σ) で読むと c<sub>τσ</sub> = c<sub>τ</sub><sup>σ</sup> · c<sub>σ</sub>、つまり c<sub>τ</sub><sup>σ</sup> = c<sub>τσ</sub> · c<sub>σ</sub><sup>−1</sup>。代入して b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> Σ<sub>τ</sub> c<sub>τσ</sub> a<sup>τσ</sup>。τ ↦ τσ は G<sub>L/K</sub> の全単射（群の右移動）なので和は b に一致：b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> b。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>結論：</strong>β := b<sup>−1</sup> とおくと c<sub>σ</sub> = β<sup>σ</sup>/β。つまり c はコバウンダリで、H¹ = 1。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　β<sup>σ</sup>/β = (b<sup>σ</sup>)<sup>−1</sup>/b<sup>−1</sup> = b/b<sup>σ</sup> = b/(c<sub>σ</sub><sup>−1</sup>b) = c<sub>σ</sub>（Step 7）。b ∈ L<sup>×</sup> なので β ∈ L<sup>×</sup>。任意のコサイクルがコバウンダリになったので H¹(G<sub>L/K</sub>, L<sup>×</sup>) = 1。∎</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? 古典形（巡回拡大のノルム定理）との関係</div>
+      <p>
+        G<sub>L/K</sub> = ⟨σ⟩ が巡回群のとき、コサイクルは1つの値 c<sub>σ</sub> で決まり、
+        コサイクル条件は「N<sub>L/K</sub>(c<sub>σ</sub>) = 1」に化けます。すると定理は
+        『ノルム 1 の元は β<sup>σ</sup>/β の形』──ant.html 棚4 に「古典形」として並べた主張です。
+        Hilbert の原論文（数論報文 Satz 90）はこの形でした。上の証明の b は「Poincaré 級数」と
+        呼ばれる平均化で、体の<strong>加法</strong>を借りて乗法群の問題を解くのがミソです。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>射有限版への持ち上げと同型 δ（行間④）</h2>
+
+    <div class="box thm">
+      <div class="box-label">定理（Hilbert 90・射有限版） <span class="refchip">AEC B.2.5</span></div>
+      <div class="formula"><div class="fline">H¹( G<sub><span class="ov">K</span>/K</sub>, <span class="ov">K</span><sup>×</sup> ) = 0（乗法的に書けば = 1）</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>証明：連続コサイクルを有限段階に降ろして §05 を適用する。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　c を連続コサイクルとする。<span class="ov">K</span><sup>×</sup> は離散 G-加群（Step 1）なので N0 §04 の定理が使え、開正規部分群 U があって c は c̄ ∈ Z¹(G/U, (<span class="ov">K</span><sup>×</sup>)<sup>U</sup>) の inflation。W2 より U = G<sub><span class="ov">K</span>/L</sub>（L/K 有限次 Galois）、G/U ≅ G<sub>L/K</sub>、(<span class="ov">K</span><sup>×</sup>)<sup>U</sup> = L<sup>×</sup>。つまり c̄ ∈ Z¹(G<sub>L/K</sub>, L<sup>×</sup>)。§05 の定理より c̄<sub>σ̄</sub> = β<sup>σ̄</sup>/β なる β ∈ L<sup>×</sup> が存在。inflation はコバウンダリをコバウンダリに移す：c<sub>σ</sub> = c̄<sub>σU</sub> = β<sup>σ|<sub>L</sub></sup>/β = β<sup>σ</sup>/β（β ∈ L なので σ の作用は制限 σ|<sub>L</sub> で決まる）。よって [c] = 0。∎</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">帰結（連結準同型が同型になる） <span class="refchip">AEC VIII.2.2</span></div>
+      <div class="formula">
+        <div class="fline">δ : K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> ≅ H¹(G, μ<sub>m</sub>),　δ(a) = [ σ ↦ α<sup>σ</sup>/α ]　（α<sup>m</sup> = a）</div>
+      </div>
+      <p>
+        Step 3 の切り出した完全列の右端 H¹(G, <span class="ov">K</span><sup>×</sup>)[m] が 0 になったので、
+        単射 δ は全射でもある。<strong>乗法群の「m 乗根の理論」は K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> で完結する</strong>
+        ──本編 §04 の対比表の左列がすべて検証済みになった。
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? 同じ証明が楕円曲線で走らない場所はどこか</div>
+      <p>
+        §05 の証明の心臓部は b = Σ c<sub>τ</sub>a<sup>τ</sup> という<strong>平均化</strong>で、
+        「乗法群の元 c<sub>τ</sub> を係数、体の加法で和を取る」という操作でした。
+        E(<span class="ov">K</span>) には「係数を掛ける」も「体の加法」もありません──点の加法しかない。
+        だから同じ平均化が定義できず、実際 H¹(G, E) は一般に消えません（本編 §04 の表の右下）。
+        あの「≠ 0」の一マスは、<strong>平均化できない</strong>という構造的な理由の現れです。
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Weil 対で E[m] を μ<sub>m</sub> に接続する（行間⑤⑥）</h2>
+
+    <p>
+      以後この節では <strong>E[m] ⊂ E(K)</strong> を仮定します（本編 §07 と同じ設定。
+      m = 2 なら「e<sub>i</sub> が全部 K にある」ことと同値）。
+    </p>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p><strong>系：</strong>E[m] ⊂ E(K) ならば μ<sub>m</sub> ⊂ K<sup>×</sup>。<span class="refchip">AEC III.8.1.1</span></p>
+        <p class="ps-why"><b>▸ 根拠</b>　基底 T₁, T₂ ∈ E[m] を取る（E[m] ≅ (ℤ/mℤ)²、N1 D3）。ζ := e<sub>m</sub>(T₁, T₂) とおき、ζ の位数を d（d | m）とする。任意の S = [a]T₁ + [b]T₂ に対し、双線形性(a)と交代性(b)より e<sub>m</sub>([d]T₁, S) = e<sub>m</sub>(T₁, T₁)<sup>da</sup> · e<sub>m</sub>(T₁, T₂)<sup>db</sup> = 1 · (ζ<sup>d</sup>)<sup>b</sup> = 1。非退化性(c)より [d]T₁ = O。T₁ の位数はちょうど m（基底）なので m | d、よって d = m。つまり ζ は原始 m 乗根で μ<sub>m</sub> = ⟨ζ⟩（W1：μ<sub>m</sub> は位数 m の巡回群）。Galois 同変性(d)と T<sub>i</sub> ∈ E(K) より ζ<sup>σ</sup> = e<sub>m</sub>(T₁<sup>σ</sup>, T₂<sup>σ</sup>) = e<sub>m</sub>(T₁, T₂) = ζ（∀σ）、つまり ζ ∈ <span class="ov">K</span><sup>G</sup> = K。よって μ<sub>m</sub> = ⟨ζ⟩ ⊂ K<sup>×</sup>。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>写像 w : E[m] → μ<sub>m</sub> × μ<sub>m</sub>,　S ↦ ( e<sub>m</sub>(S, T₁), e<sub>m</sub>(S, T₂) ) は <strong>G-加群の同型</strong>である。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　準同型：第1変数の双線形性(a)。単射：w(S) = (1,1) なら、任意の T = [a]T₁+[b]T₂ に対し e<sub>m</sub>(S,T) = e<sub>m</sub>(S,T₁)<sup>a</sup>e<sub>m</sub>(S,T₂)<sup>b</sup> = 1、非退化性(c)より S = O。全単射：単射＋両辺の位数が m² で等しい（#E[m] = m²、#(μ<sub>m</sub>×μ<sub>m</sub>) = m²）。G-同変：w(S<sup>σ</sup>) = (e<sub>m</sub>(S<sup>σ</sup>, T₁), …) = (e<sub>m</sub>(S<sup>σ</sup>, T₁<sup>σ</sup>), …) = (e<sub>m</sub>(S, T₁)<sup>σ</sup>, …) = w(S)<sup>σ</sup>（T<sub>i</sub> は K-有理で不動＋同変性(d)）。なお今の仮定下では両辺とも G の作用は自明（E[m] ⊂ E(K)、μ<sub>m</sub> ⊂ K：Step 10）なので、同変性は「自明作用同士」としても成立している──本編 §07 の「G-加群として。μ₂ = {±1} は作用自明なので単に (ℤ/2)²」という括弧書きの中身。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>同型は H¹ の同型を誘導し、直積は成分ごとに分解する。結論：</p>
+        <div class="formula"><div class="fline">H¹(G, E[m]) ≅<sup>w*</sup> H¹(G, μ<sub>m</sub> × μ<sub>m</sub>) ≅ H¹(G, μ<sub>m</sub>)² ≅ ( K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> )²</div></div>
+        <p class="ps-why"><b>▸ 根拠</b>　第1の同型：f<sub>*</sub> の構成（N0 Step 10）は合成と恒等を保つ──(g∘f)<sub>*</sub>[c] = [(g∘f)∘c] = g<sub>*</sub>f<sub>*</sub>[c]、(id)<sub>*</sub> = id は定義から点ごとに明らか。よって (w<sup>−1</sup>)<sub>*</sub>∘w<sub>*</sub> = (w<sup>−1</sup>∘w)<sub>*</sub> = id、逆向きも同様で w<sub>*</sub> は同型。第2の同型：直積加群のコサイクルは成分の組 c = (c′, c″) で、コサイクル条件・コバウンダリ・連続性がすべて成分ごとに読めるから、射影が誘導する写像 [c] ↦ ([c′], [c″]) は同型（逆写像は組み立て）。第3の同型：§06 の帰結の2連装。</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">帰結（本編 §07 の同一視） </div>
+      <p>E[m] ⊂ E(K) のとき、N1 の Kummer 完全列の δ は単射準同型</p>
+      <div class="formula"><div class="fline">E(K)/mE(K) ↪ ( K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> )²</div></div>
+      <p>
+        を与える。m = 2 では μ₂ = {±1} ⊂ K が常に成り立つので、
+        仮定は「e₁, e₂, e₃ ∈ K」だけ。これが本編 §07 の
+        H¹(G, E[2]) ≅ K<sup>×</sup>/(K<sup>×</sup>)² × K<sup>×</sup>/(K<sup>×</sup>)² の完全な根拠である。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>m = 2 の具体化 ─「x − e<sub>i</sub>」の準同型性（行間⑦）</h2>
+
+    <p>
+      E : y² = f(x) = (x − e₁)(x − e₂)(x − e₃)、e<sub>i</sub> ∈ K、T<sub>i</sub> = (e<sub>i</sub>, 0) とします。
+      本編 §07 の写像 φ = (φ₁, φ₂)、φ<sub>i</sub>(P) = x(P) − e<sub>i</sub>（一般点。特殊値は §07 の規則）が
+      なぜ<strong>準同型</strong>なのか──全てを支えるのは、次の初等的な恒等式です。
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">補題（直線の恒等式・sympy 検証済み）</div>
+      <p>
+        P₁, P₂ ∈ E（どちらも O でない）を通る直線（P₁ = P₂ のときは接線）を y = λx + ν とし、
+        P₃ := −(P₁ + P₂) ≠ O とする。x<sub>j</sub> := x(P<sub>j</sub>) と書くと、<strong>任意の e</strong> に対し：
+      </p>
+      <div class="formula">
+        <div class="fline">(x₁ − e)(x₂ − e)(x₃ − e) = (λe + ν)² − f(e)</div>
+        <div class="fline fc">特に e = e<sub>i</sub>（f の根）では　(x₁ − e<sub>i</sub>)(x₂ − e<sub>i</sub>)(x₃ − e<sub>i</sub>) = (λe<sub>i</sub> + ν)²　＝ 平方</div>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p>恒等式の証明。</p>
+        <p class="ps-why"><b>▸ 根拠</b>　g(x) := f(x) − (λx + ν)² はモニック3次式。<strong>弦の場合</strong>（x₁ ≠ x₂）：P₁, P₂ は直線上の E の点なので y<sub>j</sub> = λx<sub>j</sub> + ν かつ y<sub>j</sub>² = f(x<sub>j</sub>)、ゆえに g(x₁) = g(x₂) = 0。第3の根は根と係数の関係（x² の係数の比較）で λ² + (e₁+e₂+e₃) − x₁ − x₂ となり、これは加法公式の x(P₁+P₂) に一致<span class="refchip">AEC III.2.3</span>。x(−P) = x(P) なので x₃ = x(P₁+P₂) はこの第3根。<strong>接線の場合</strong>（P₁ = P₂、y₁ ≠ 0、λ = f′(x₁)/(2y₁)）：g(x₁) = 0 に加え g′(x₁) = f′(x₁) − 2λ(λx₁+ν) = f′(x₁) − 2λy₁ = 0 なので x₁ は二重根、第3根が x₃ = x([2]P₁)。どちらの場合も g(x) = (x − x₁)(x − x₂)(x − x₃)。あとは x = e を代入：g(e) = (e−x₁)(e−x₂)(e−x₃) = −(x₁−e)(x₂−e)(x₃−e)。整理して主張の式。e = e<sub>i</sub> では f(e<sub>i</sub>) = 0。</p>
+        <details class="sol">
+          <summary>sympy による厳密検証（方針と結果）</summary>
+          <div class="sol-body">
+            <p>
+              弦：x₁, x₂, y₁, y₂, e₁, e₂, e₃, e を不定元とし、λ = (y₂−y₁)/(x₂−x₁)、ν = y₁ − λx₁、
+              x₃ = λ² + (e₁+e₂+e₃) − x₁ − x₂ とおく。差
+              (x₁−e)(x₂−e)(x₃−e) − {(λe+ν)² − f(e)} の分母を払った多項式を、
+              関係式 y₁² − f(x₁)、y₂² − f(x₂) で剰余を取ると<strong>恒等的に 0</strong>。
+              e = e₁, e₂, e₃ を代入した掲載形も同様に 0。
+            </p>
+            <p>
+              接線：λ = f′(x₁)/(2y₁)、x₃ = λ² + (e₁+e₂+e₃) − 2x₁ として
+              (x₁−e)²(x₃−e) − {(λe+ν)² − f(e)} を y₁² − f(x₁) で簡約 → <strong>恒等的に 0</strong>。
+              あわせて特殊値規則の整合 (e₁−e₂)(e₁−e₃) ÷ {(e₁−e₃)/(e₁−e₂)} = (e₁−e₂)²（完全平方）も確認済み。
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">14</div>
+      <div class="ps-b">
+        <p>φ<sub>i</sub> の準同型性（一般位置）。P₁, P₂, P₁+P₂ がどれも O でも 2-分点でもないとき：</p>
+        <div class="formula"><div class="fline">φ<sub>i</sub>(P₁) · φ<sub>i</sub>(P₂) · φ<sub>i</sub>(P₁+P₂) = (x₁−e<sub>i</sub>)(x₂−e<sub>i</sub>)(x₃−e<sub>i</sub>) = (λe<sub>i</sub>+ν)² ≡ 1</div></div>
+        <p class="ps-why"><b>▸ 根拠</b>　x(P₁+P₂) = x(−(P₁+P₂)) = x₃ なので左の等号は定義。中央は Step 13（P₁, P₂ ∈ E(K) なら λ, ν ∈ K：弦なら座標の有理式、接線なら f′(x₁)/(2y₁)。x₁ = x₂ かつ P₁ ≠ P₂ なら P₂ = −P₁ で P₁+P₂ = O となりこの場合には入らない）。λe<sub>i</sub>+ν ≠ 0 は「P₁+P₂ が 2-分点でない」ことから（= 0 なら x₃ = e<sub>i</sub> の二重・三重交点になる）。K<sup>×</sup>/(K<sup>×</sup>)² では各類が自分自身の逆元（t² ≡ 1）なので、積 ≡ 1 は φ<sub>i</sub>(P₁+P₂) = φ<sub>i</sub>(P₁)φ<sub>i</sub>(P₂) と同値。O が絡む場合：φ<sub>i</sub>(O) = 1 と P + O = P で自明。P₂ = −P₁ の場合：φ<sub>i</sub>(P₁)φ<sub>i</sub>(−P₁) = (x₁−e<sub>i</sub>)² ≡ 1 ✓。</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">15</div>
+      <div class="ps-b">
+        <p>2E(K) は核に入る──しかも「平方根」が明示的に書ける：</p>
+        <div class="formula"><div class="fline">x([2]P) − e<sub>i</sub> = ( (λe<sub>i</sub>+ν)/(x(P)−e<sub>i</sub>) )²　（接線 y = λx+ν、x(P) ≠ e<sub>i</sub>）</div></div>
+        <p class="ps-why"><b>▸ 根拠</b>　接線の場合の Step 13：(x₁−e<sub>i</sub>)²(x₃−e<sub>i</sub>) = (λe<sub>i</sub>+ν)²、x₃ = x([2]P)。両辺を (x₁−e<sub>i</sub>)² で割るだけ。形式的には準同型性（Step 14）だけからも φ<sub>i</sub>([2]P) = φ<sub>i</sub>(P)² ≡ 1 が出る（行き先は指数2の群）が、この明示式が「2-降下の計算可能性」の源泉──第2部で L = ℚ(√−1, √2) が<strong>手計算できた</strong>のはこの式のおかげである。</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? 特殊値規則の出どころ</div>
+      <p>
+        y ≠ 0 の点では (x−e₁)(x−e₂)(x−e₃) = y² ≡ 1、つまり<strong>3成分の平方類の積は常に 1</strong>です。
+        T₁ = (e₁, 0) では第1成分 x−e₁ が 0 になって使えませんが、積 ≡ 1 の関係から
+        「残り2成分の積」で代用できます：φ₁(T₁) = (e₁−e₂)(e₁−e₃)。
+        本編 §07 の規則 (e₁−e₃)/(e₁−e₂) はこれと (e₁−e₂)² 倍しか違わず、<strong>同じ平方類</strong>です
+        （sympy 確認済み）。規則が「気まぐれな約束」ではなく、恒等式の必然だと分かります。
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">このノートで検証した範囲と、残る引用 <span class="refchip">AEC X.1.1 / X.1.4</span></div>
+      <p>
+        ここまでで検証済み：φ<sub>i</sub> が（特殊値規則込みで）準同型を定める仕組み・2E(K) ⊆ ker φ・
+        特殊値規則の整合・第2部の実例との一致（本編 §07 の表と検算）。
+        残る引用は2点：<strong>(1)</strong> すべての退化ケースを網羅した well-defined 性の場合分け
+        （AEC X.1.4 の証明）、<strong>(2)</strong> この φ が §07 の同一視 w<sub>*</sub>∘δ と
+        <strong>写像として一致する</strong>こと──Weil 対 e₂(S, T<sub>i</sub>) を関数 x − e<sub>i</sub> で
+        計算する議論（AEC X.1.1 の証明）。(2) は第5部（Selmer 群）で正式に引用される。
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 9 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09</div>
+    <h2>本編との対応表</h2>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>本編の記述</th><th>このノートでの証明</th></tr></thead>
+      <tbody>
+        <tr><td>§04「まったく同じ手続きを乗法群でやってみます…切り出すと」</td><td class="m">Step 1–3</td></tr>
+        <tr><td>§04「定理（Hilbertの定理90）AEC B.2.5」</td><td class="m">Step 4–9（Dedekind → 有限次版 → 射有限版）</td></tr>
+        <tr><td>§04「したがって連結準同型が同型になります」</td><td class="m">§06 帰結 box</td></tr>
+        <tr><td>§04 対比表の右下「H¹(G, E) ≠ 0（一般に）」の構造的理由</td><td class="m">§06 why 枠（平均化が定義できない）</td></tr>
+        <tr><td>§07「基底 T₁, T₂ を選ぶと E[2] ≅ μ₂ × μ₂（G-加群として）」</td><td class="m">Step 10–12（一般の m で）</td></tr>
+        <tr><td>§07「なぜ x − e<sub>i</sub> なのか」「規則の出典 X.1.4」</td><td class="m">Step 13–15 ＋ why 枠（特殊値規則）</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">▸ Kummer 対の行間で残るのは「不分岐」の一枚</div>
+      <p>
+        N0–N2 で本編 §02・§03・§04・§07 の行間は埋まりました。残るは §05–§06
+        ──inflation–restriction 完全列と不分岐コホモロジー──の完全展開で、これは N3 として予定されています。
+        実戦（Selmer 群の定義と有限性）は本編Ⅴへ。このノートの §06・§07 の同型は、
+        そこで K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> 型の「有限の箱」を作るときにフル稼働します。
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/in/kummer.html#s4">
+      <div class="p-dir">← 本編</div>
+      <div class="p-title">体の Kummer 理論と Hilbert 90（§04 へ戻る）</div>
+    </a>
+    <a class="next" href="/math-site/in/selmer.html">
+      <div class="p-dir">NEXT ─ 実戦へ</div>
+      <div class="p-title">本編Ⅴ Selmer群とШ →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>数学の教室 ─ 行間ノート（Kummer対とGaloisコホモロジー）N2/N3</p>
+    <p>底本：J.H. Silverman, AEC 2nd ed., GTM 106 ─ Ch. VIII §2, App. B.2.5, Ch. III §8, Ch. X §1 ／ J. Neukirch, ANT ─ IV §3</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
