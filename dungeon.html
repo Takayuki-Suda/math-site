@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>会津・数のダンジョン｜60分の数学謎解きチャレンジ（会津若松・無料）</title>
+<meta name="description" content="紙とペンだけで、60分で4つの謎を解く数学の謎解きイベント。高校生〜大人、数学の得意・苦手は問いません。ひとり参加も歓迎。会津若松市内で開催予定・参加費無料。">
+<meta name="keywords" content="会津若松,数学,算数,無料,学び直し,家庭教師,不登校,個別指導">
+<meta property="og:title" content="会津・数のダンジョン｜60分の数学謎解きチャレンジ（会津若松・無料）">
+<meta property="og:description" content="紙とペンだけで、60分で4つの謎を解く数学の謎解きイベント。高校生〜大人、数学の得意・苦手は問いません。ひとり参加も歓迎。会津若松市内で開催予定・参加費無料。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/dungeon.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="会津若松の無料 算数・数学教室">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg:       #0a0e1a;
+    --bg2:      #111827;
+    --bg3:      #1a2235;
+    --gold:     #c8a84b;
+    --gold-lt:  #e8c96b;
+    --blue:     #7ec8e3;
+    --white:    #f0f4ff;
+    --gray:     #8899aa;
+    --line:     rgba(200,168,75,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    font-size: 15px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .ev-hero {
+    position: relative;
+    padding: 56px 24px 48px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .ev-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,168,75,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ev-hero > * { position: relative; }
+  .ev-kicker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .ev-title {
+    font-size: clamp(1.5rem, 5vw, 2.3rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+    margin-bottom: 14px;
+  }
+  .ev-title .accent { color: var(--gold); }
+  .ev-lead {
+    font-size: clamp(0.9rem, 2.6vw, 1.02rem);
+    color: #c8d4e0;
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: 2;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 48px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: clamp(1.15rem, 3.5vw, 1.5rem);
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .section-body {
+    color: #c8d4e0;
+    line-height: 2.1;
+    font-size: 0.95rem;
+  }
+  .divider {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ── ミッションの流れ ── */
+  .mission-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .mission {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 16px 0;
+    position: relative;
+  }
+  .mission:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 46px;
+    bottom: -16px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+  .mission-num {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gold-lt);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .mission-name {
+    font-weight: 700;
+    color: var(--white);
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .mission-desc {
+    font-size: 0.86rem;
+    color: var(--gray);
+    line-height: 1.85;
+  }
+
+  /* ── 開催情報テーブル ── */
+  .ev-info {
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 8px 22px;
+  }
+  .ev-row {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .ev-row + .ev-row { border-top: 1px solid rgba(200,168,75,0.14); }
+  .ev-key {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    min-width: 76px;
+    flex-shrink: 0;
+  }
+  .ev-val {
+    font-size: 0.92rem;
+    color: #c8d4e0;
+    line-height: 1.9;
+    flex: 1;
+    min-width: 200px;
+  }
+  .ev-tbd {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--bg);
+    background: var(--gold);
+    border-radius: 100px;
+    padding: 2px 11px;
+    margin-left: 6px;
+    vertical-align: 1px;
+  }
+
+  /* ── CTA ── */
+  .ev-cta {
+    text-align: center;
+    padding: 8px 24px 64px;
+  }
+  .apply-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 14px 36px;
+    background: var(--gold);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 100px;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: background .2s, transform .2s;
+  }
+  .apply-link:hover {
+    background: var(--gold-lt);
+    transform: translateY(-2px);
+  }
+  .ev-mail-note {
+    font-size: 0.78rem;
+    color: var(--gray);
+    margin-top: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1.8;
+  }
+  .ev-back {
+    display: inline-block;
+    margin-top: 28px;
+    font-size: 0.84rem;
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .ev-back:hover { color: var(--gold-lt); }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 36px 24px 44px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #667788;
+    border-top: 1px solid var(--line);
+    line-height: 1.9;
+  }
+</style>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+</head>
+<body>
+<script src="/math-site/sound.js"></script>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<!-- ══ HERO ══ -->
+<section class="ev-hero">
+  <div class="ev-kicker">EVENT</div>
+  <h1 class="ev-title">🗝️ 会津・<span class="accent">数のダンジョン</span></h1>
+  <p class="ev-lead">
+    紙とペンだけで、60分で4つの謎を解く。<br>
+    数学が得意じゃなくても大丈夫。
+  </p>
+</section>
+
+<hr class="divider">
+
+<!-- ══ 4つのミッション ══ -->
+<section class="section">
+  <div class="section-label">ダンジョンの構成</div>
+  <h2 class="section-title">4つのミッションを、順に抜けていきます</h2>
+  <p class="section-body" style="margin-bottom:28px;">
+    それぞれ手を動かして考える形式です。ここに書いてあるのは入口の名前だけ。中身は当日のお楽しみに。
+  </p>
+  <ol class="mission-list">
+    <li class="mission">
+      <div class="mission-num">1</div>
+      <div>
+        <div class="mission-name">暗号</div>
+        <div class="mission-desc">読めない文字列を、読めるようにするところから。</div>
+      </div>
+    </li>
+    <li class="mission">
+      <div class="mission-num">2</div>
+      <div>
+        <div class="mission-name">数のパズル</div>
+        <div class="mission-desc">数字の並びに、隠れたきまりを見つけます。</div>
+      </div>
+    </li>
+    <li class="mission">
+      <div class="mission-num">3</div>
+      <div>
+        <div class="mission-name">最短ルート</div>
+        <div class="mission-desc">どう進むのが一番はやいか。地図の上で考えます。</div>
+      </div>
+    </li>
+    <li class="mission">
+      <div class="mission-num">4</div>
+      <div>
+        <div class="mission-name">最後の鍵</div>
+        <div class="mission-desc">ここまでで手に入れたものが、最後に一つにつながります。</div>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<hr class="divider">
+
+<!-- ══ 開催情報 ══ -->
+<section class="section">
+  <div class="section-label">開催情報</div>
+  <div class="ev-info">
+    <div class="ev-row">
+      <div class="ev-key">日時</div>
+      <div class="ev-val">未定<span class="ev-tbd">調整中</span><br>決まり次第、このページでお知らせします。</div>
+    </div>
+    <div class="ev-row">
+      <div class="ev-key">会場</div>
+      <div class="ev-val">会津若松市内<span class="ev-tbd">調整中</span></div>
+    </div>
+    <div class="ev-row">
+      <div class="ev-key">対象</div>
+      <div class="ev-val">高校生〜大人。数学の得意・苦手は問いません。ひとりでの参加も歓迎です。</div>
+    </div>
+    <div class="ev-row">
+      <div class="ev-key">所要時間</div>
+      <div class="ev-val">60分</div>
+    </div>
+    <div class="ev-row">
+      <div class="ev-key">持ち物</div>
+      <div class="ev-val">とくにありません。紙とペンはこちらで用意します。使い慣れた筆記具があればお持ちください。</div>
+    </div>
+    <div class="ev-row">
+      <div class="ev-key">参加費</div>
+      <div class="ev-val">無料</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ CTA ══ -->
+<section class="section" style="padding-bottom:0;text-align:center;">
+  <div class="section-label" style="text-align:left;">参加・お問い合わせ</div>
+  <p class="section-body" style="text-align:left;">
+    日時が決まる前でも、「興味がある」とだけ伝えていただければ、決まった時点でご連絡します。質問だけでも大丈夫です。
+  </p>
+</section>
+<div class="ev-cta">
+  <a class="apply-link" href="mailto:suda.math.aizu@gmail.com?subject=%E4%BC%9A%E6%B4%A5%E3%83%BB%E6%95%B0%E3%81%AE%E3%83%80%E3%83%B3%E3%82%B8%E3%83%A7%E3%83%B3%E3%81%AE%E4%BB%B6%E3%81%A7">
+    ▶ メールで問い合わせる
+  </a>
+  <p class="ev-mail-note">
+    件名に「会津・数のダンジョンの件で」と一言添えて、<strong>suda.math.aizu@gmail.com</strong> までお気軽にどうぞ。
+  </p>
+  <a class="ev-back" href="/math-site/">← ホームへもどる</a>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <p>© 須田 貴之 — 会津若松の無料算数・数学指導</p>
+  <p style="margin-top:6px;color:var(--gold);font-style:italic;font-family:Georgia,serif;">
+    遠回りしても、人生は終わらない。
+  </p>
+</footer>
+
+</body>
+</html>
