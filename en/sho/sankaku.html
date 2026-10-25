@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/sho/sankaku.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/sho/sankaku.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/sho/sankaku.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/sho/sankaku.html"><!--/hreflang-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Area of a Triangle | Why "÷ 2"? - Math the Japanese Way</title>
+<meta name="description" content="Understand why the area of a triangle is &quot;base × height ÷ 2&quot; by turning it into a rectangle. Graduate from memorizing formulas.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Area of a Triangle | Why &quot;÷ 2&quot;? - Math the Japanese Way">
+<meta property="og:description" content="Understand why the area of a triangle is &quot;base × height ÷ 2&quot; by turning it into a rectangle. Graduate from memorizing formulas.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/sho/sankaku.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f5f9f0;
+    color: #1a2a1a;
+    padding: 0 0 32px;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 540px; margin: 0 auto; padding: 24px 12px 0; }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #2e7d32 0%, #00695c 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(0,105,92,0.3);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
+  h1 { font-size: 1.35rem; font-weight: 900;
+       border-bottom: 3px solid #1a2a1a; padding-bottom: 8px; margin-bottom: 4px; }
+  .lead { font-size: .88rem; color: #555; margin-bottom: 14px; }
+
+  .formula-panel {
+    background: #1a2a1a; color: #fff; border-radius: 14px;
+    padding: 14px 20px; margin-bottom: 14px; text-align: center;
+    font-size: 1.5rem; font-weight: 900;
+  }
+  .formula-panel .bc { color: #ffb366; }
+  .formula-panel .hc { color: #80d8ff; }
+  .formula-panel .ac { color: #b9f6ca; }
+
+  .fig-panel {
+    background: #fff; border: 1px solid #c8dcc8;
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  }
+  .fig-panel h2 { font-size: .95rem; font-weight: 900; margin-bottom: 6px;
+    border-left: 4px solid #2e7d32; padding-left: 8px; }
+
+  /* ステップナビ */
+  .step-nav {
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .snav {
+    flex: 1; padding: 8px 4px; border: 2px solid #ccc;
+    border-radius: 10px; background: #f5f5f5;
+    font-size: .78rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; color: #555; text-align: center;
+    transition: background .12s, border-color .12s;
+  }
+  .snav.on { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  .step-msg {
+    margin-top: 10px; padding: 12px 14px;
+    background: #f0f7f0; border-radius: 10px;
+    font-size: .92rem; line-height: 1.7; min-height: 56px;
+  }
+  .step-msg b { color: #2e7d32; }
+  .step-msg .rc { color: #bf360c; font-weight: 700; }
+  .step-msg .bc2 { color: #0d47a1; font-weight: 700; }
+
+  .apex-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px; font-size: .85rem;
+  }
+  .apex-row label { font-weight: 700; color: #555; min-width: 90px; }
+  .apex-row input { flex: 1; accent-color: #7b1fa2; }
+
+  .proof-panel {
+    background: #fff; border: 1px solid #c8dcc8;
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
+  }
+  .proof-panel h2 { font-size: .95rem; font-weight: 900; margin-bottom: 12px;
+    border-left: 4px solid #1565c0; padding-left: 8px; }
+  .pstep {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #f0f7f0; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 8px; font-size: .9rem; line-height: 1.7;
+  }
+  .pstep:last-child { margin-bottom: 0; }
+  .pno {
+    background: #1a2a1a; color: #fff; font-size: .72rem; font-weight: 700;
+    border-radius: 4px; padding: 2px 7px; white-space: nowrap; margin-top: 2px;
+  }
+
+  .answer-box {
+    background: #1a2a1a; color: #fff; border-radius: 14px;
+    padding: 14px 20px; text-align: center; font-size: 1.2rem; font-weight: 900;
+  }
+  .answer-box .big { font-size: 2rem; display: block; margin-top: 4px; color: #b9f6ca; }
+</style>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="header">
+  <h1>📐 Area of a Triangle</h1>
+  <p>Move the picture and get a feel for why it's "base × height ÷ 2".</p>
+</div>
+
+<div class="wrap">
+
+  <div class="formula-panel">
+    Area =
+    <span class="bc">base</span> ×
+    <span class="hc">height</span>
+    ÷ 2
+  </div>
+
+  <div class="fig-panel">
+    <h2>Look at it step by step</h2>
+    <div class="apex-row">
+      <label>Vertex position →</label>
+      <input type="range" id="sl-apex" min="10" max="90" value="38">
+    </div>
+    <div class="step-nav">
+      <button class="snav on" onclick="setStep(0)">① Triangle</button>
+      <button class="snav"    onclick="setStep(1)">② Surround it with a rectangle</button>
+      <button class="snav"    onclick="setStep(2)">③ Fold them over</button>
+      <button class="snav"    onclick="setStep(3)">④ ÷ 2 Done!</button>
+    </div>
+    <svg id="fig" viewBox="0 0 340 200"></svg>
+    <div class="step-msg" id="msg"></div>
+  </div>
+
+  <div class="proof-panel">
+    <h2>Summary</h2>
+    <div class="pstep">
+      <span class="pno">①</span>
+      <div>When you <b>surround the triangle exactly with a rectangle</b>,<br>
+      a <span style="color:#bf360c;font-weight:700">red</span> and a <span style="color:#0d47a1;font-weight:700">blue</span> triangle appear outside it.</div>
+    </div>
+    <div class="pstep">
+      <span class="pno">②</span>
+      <div>When you <b>fold over</b> the red and blue,<br>
+      they <b>fit exactly on top of</b> the green triangle.<br>
+      → red + blue = green (the same size!)</div>
+    </div>
+    <div class="pstep">
+      <span class="pno">③</span>
+      <div>Inside the rectangle there is green plus red-and-blue, <b>exactly two of them.</b><br>
+      So green (the triangle) = rectangle ÷ 2<br>
+      <b>= base × height ÷ 2!</b></div>
+    </div>
+  </div>
+
+  <div class="answer-box">
+    <span>For any triangle</span>
+    <span class="big">base × height ÷ 2</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  let step = 0;
+
+  const msgs = [
+    "This is a triangle. Move the vertex and it takes many different shapes.",
+    "<b>Surround the triangle exactly with a rectangle</b>. A <span class='rc'>red</span> and a <span class='bc2'>blue</span> right triangle appear outside it.",
+    "Take the outer <span class='rc'>red</span> and <span class='bc2'>blue</span> and <b>fold them over</b>… they fit exactly on top of the triangle!",
+    "The triangle = the outside parts, so it's <b>exactly half the rectangle</b>.<br>So it's <b>base × height ÷ 2</b>!"
+  ];
+
+  function pe(svg, tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    if(txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  function draw(){
+    const pct = parseInt(document.getElementById("sl-apex").value) / 100;
+    const svg = document.getElementById("fig");
+    svg.innerHTML = "";
+
+    const W=340, H=200, pad=28, labH=22;
+    const rw = W - pad*2;
+    const rh = H - pad - labH - 16;
+    const rx = pad, ry = pad;
+
+    // 三각형 꼭짓점
+    const BL = {x: rx,      y: ry+rh};
+    const BR = {x: rx+rw,   y: ry+rh};
+    const AP = {x: rx+rw*pct, y: ry};
+    const TL = {x: rx,      y: ry};
+    const TR = {x: rx+rw,   y: ry};
+
+    // ── ステップ別描画 ──
+    if(step === 0){
+      // 三角形のみ
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // 底辺ラベル
+      pe(svg,"text",{x:(BL.x+BR.x)/2,y:BL.y+18,"text-anchor":"middle",
+        "font-size":13,"font-weight":700,fill:"#e65100"},"base");
+      // 高さ
+      pe(svg,"line",{x1:AP.x,y1:AP.y,x2:AP.x,y2:BL.y,
+        stroke:"#1565c0","stroke-width":1.5,"stroke-dasharray":"4,3"});
+      pe(svg,"text",{x:AP.x+8,y:(AP.y+BL.y)/2,"text-anchor":"start",
+        "font-size":12,"font-weight":700,fill:"#1565c0"},"height");
+
+    } else if(step === 1){
+      // 長方形（薄緑破線）
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#e8f5e9",stroke:"#81c784","stroke-width":2,"stroke-dasharray":"6,4"});
+      // 赤（左上三角）
+      pe(svg,"polygon",{points:`${TL.x},${TL.y} ${AP.x},${AP.y} ${BL.x},${BL.y}`,
+        fill:"#ff7043",opacity:.35,stroke:"#bf360c","stroke-width":1.5});
+      // 青（右上三角）
+      pe(svg,"polygon",{points:`${TR.x},${TR.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#1565c0",opacity:.35,stroke:"#0d47a1","stroke-width":1.5});
+      // 三角形
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // ラベル
+      pe(svg,"text",{x:(TL.x+AP.x+BL.x)/3,y:(TL.y+AP.y+BL.y)/3+4,
+        "text-anchor":"middle","font-size":13,"font-weight":700,fill:"#bf360c"},"red");
+      pe(svg,"text",{x:(TR.x+BR.x+AP.x)/3,y:(TR.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":13,"font-weight":700,fill:"#0d47a1"},"blue");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":12,"font-weight":700,fill:"#fff"},"triangle");
+
+    } else if(step === 2){
+      // 長方形枠
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#f9f9f9",stroke:"#81c784","stroke-width":2,"stroke-dasharray":"6,4"});
+
+      // 折り返した赤（左）: BL, AP, (AP.x, BL.y) の三角形
+      const redFlip = {x: AP.x, y: BL.y};
+      pe(svg,"polygon",{
+        points:`${BL.x},${BL.y} ${AP.x},${AP.y} ${redFlip.x},${redFlip.y}`,
+        fill:"#ff7043",opacity:.55,stroke:"#bf360c","stroke-width":2,"stroke-dasharray":"5,3"});
+
+      // 折り返した青（右）: BR, AP, (AP.x, BR.y) の三角形
+      const blueFlip = {x: AP.x, y: BR.y};
+      pe(svg,"polygon",{
+        points:`${BR.x},${BR.y} ${AP.x},${AP.y} ${blueFlip.x},${blueFlip.y}`,
+        fill:"#1565c0",opacity:.55,stroke:"#0d47a1","stroke-width":2,"stroke-dasharray":"5,3"});
+
+      // 三角形（緑・上に重ねる）
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",opacity:.7,stroke:"#2e7d32","stroke-width":2.5});
+
+      // ラベル
+      pe(svg,"text",{x:BL.x+16,y:(BL.y+AP.y)/2+4,"text-anchor":"start",
+        "font-size":11,"font-weight":700,fill:"#bf360c"},"red↓");
+      pe(svg,"text",{x:BR.x-14,y:(BR.y+AP.y)/2+4,"text-anchor":"end",
+        "font-size":11,"font-weight":700,fill:"#0d47a1"},"↓blue");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+4,
+        "text-anchor":"middle","font-size":11,"font-weight":700,fill:"#fff"},"A perfect fit!");
+
+    } else {
+      // ④ 完成：三角形＝長方形の半分
+      pe(svg,"rect",{x:rx,y:ry,width:rw,height:rh,
+        fill:"#e8f5e9",stroke:"#81c784","stroke-width":2});
+      // 三角形（濃い緑）
+      pe(svg,"polygon",{points:`${BL.x},${BL.y} ${BR.x},${BR.y} ${AP.x},${AP.y}`,
+        fill:"#4caf50",stroke:"#2e7d32","stroke-width":2.5});
+      // ÷2 の視覚: 三角形の中に「半分！」
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3,
+        "text-anchor":"middle","font-size":15,"font-weight":900,fill:"#fff"},"This is");
+      pe(svg,"text",{x:(BL.x+BR.x+AP.x)/3,y:(BL.y+BR.y+AP.y)/3+20,
+        "text-anchor":"middle","font-size":15,"font-weight":900,fill:"#fff"},"half!");
+      // 長方形の外側（薄く）
+      pe(svg,"text",{x:W/2,y:ry+rh+16,"text-anchor":"middle",
+        "font-size":13,"font-weight":700,fill:"#2e7d32"},"base × height ÷ 2 = area of the triangle");
+    }
+  }
+
+  window.setStep = function(s){
+    step = s;
+    document.querySelectorAll(".snav").forEach((b,i)=>b.classList.toggle("on",i===s));
+    document.getElementById("msg").innerHTML = msgs[s];
+    draw();
+  };
+
+  document.getElementById("sl-apex").addEventListener("input", draw);
+  setStep(0);
+})();
+</script>

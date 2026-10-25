@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-5 The Clock Genie | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Clock Genie&quot; battle wraps up clocks and units. Check your understanding with a game.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 1-5 The Clock Genie | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Clock Genie&quot; battle wraps up clocks and units. Check your understanding with a game.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_sho_5.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_sho_5.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_sho_5.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_sho_5.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_sho_5.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gClockMin(){ var k=ri(1,11), m=k*5;
+  return {q:'The long hand of the clock points to '+k+'. How many minutes?', c:opts(m+' min',[(m+5)+' min',(m-5<0?55:m-5)+' min',k+' min']), a:0, exp:'Each number on the long hand is 5 minutes. '+k+'×5='+m+' min.'}; }
+function gTimeAdd(){ var h=ri(1,11), m=pick([5,10,15,20]), add=pick([15,20,25,30]); while(m+add>=60){ add-=5; } var nm=m+add;
+  return {q:h+' h '+m+' min + '+add+' min = ?', c:opts(h+' h '+nm+' min',[(h===12?1:h+1)+' h '+nm+' min',h+' h '+(nm+5)+' min',(h===1?12:h-1)+' h '+nm+' min']), a:0, exp:'The hour stays the same; only the minutes go forward '+add+' min → '+nm+' min.'}; }
+function gTimeOver(){ var h=ri(1,11), m=pick([40,45,50]), add=pick([20,25,30]), tot=m+add, nh=h+Math.floor(tot/60), nm=tot%60; if(nh>12)nh-=12;
+  return {q:h+' h '+m+' min + '+add+' min = ?', c:opts(nh+' h '+nm+' min',[h+' h '+nm+' min',(nh===12?1:nh+1)+' h '+nm+' min',h+' h '+tot+' min']), a:0, exp:m+'+'+add+'='+tot+' min. 60 min carries over into 1 hour → '+nh+' h '+nm+' min.'}; }
+function gCmMm(){ var x=ri(2,20); return {q:x+' cm is how many mm?', c:opts((x*10)+' mm',[(x*100)+' mm',(x+10)+' mm',(x*5)+' mm']), a:0, exp:'1cm=10mm. '+x+'×10='+(x*10)+'.'}; }
+function gMCm(){ var x=ri(2,9); return {q:x+' m is how many cm?', c:opts((x*100)+' cm',[(x*10)+' cm',(x*1000)+' cm',(x+100)+' cm']), a:0, exp:'1m=100cm.'}; }
+function gKgG(){ var x=ri(2,9); return {q:x+' kg is how many g?', c:opts((x*1000)+' g',[(x*100)+' g',(x*10)+' g',(x+1000)+' g']), a:0, exp:'1kg=1000g.'}; }
+function gLmL(){ var x=ri(2,9); return {q:x+' L is how many mL?', c:opts((x*1000)+' mL',[(x*100)+' mL',(x*500)+' mL',(x+1000)+' mL']), a:0, exp:'1L=1000mL.'}; }
+function gHrMin(){ var x=ri(2,6); return {q:x+' hours is how many minutes?', c:opts((x*60)+' min',[(x*100)+' min',(x*6)+' min',(x*30)+' min']), a:0, exp:'1 hour = 60 min. '+x+'×60='+(x*60)+'.'}; }
+function gMinSec(){ var x=ri(2,6); return {q:x+' minutes is how many seconds?', c:opts((x*60)+' sec',[(x*100)+' sec',(x*6)+' sec',(x*30)+' sec']), a:0, exp:'1 min = 60 sec.'}; }
+
+BossBattle({
+  no:'1-5',
+  name:'The Clock Genie',
+  sub:'Genie of clocks and units',
+  kids:true,
+  intro:['A clockwork genie living in the clock tower.','It rules over time and units.','"Can you read the time?"'],
+  theme:{main:'#d9a441',glow:'rgba(217,164,65,.45)',dark:'#241a0a',icon:'⏰'},
+  fleeHref:'/math-site/en/sho/map_5.html',
+  enterFlag:null,
+  questions:[ gClockMin, gCmMm, gHrMin, gTimeAdd, gMCm, gLmL ],
+  questions2:[ gTimeAdd, gTimeOver, gKgG, gLmL, gHrMin, gMinSec, gCmMm, gMCm ],
+  questions3:[ gTimeOver, gTimeAdd, gHrMin, gMinSec, gKgG, gClockMin ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+16, hurt=S.hurt>0.3, bob=Math.sin(t*1.6)*5, pulse=0.5+0.5*Math.sin(t*2);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,160);
+    ag.addColorStop(0,'rgba(217,164,65,'+(0.24*pulse)+')'); ag.addColorStop(1,'rgba(217,164,65,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    ctx.fillStyle='rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(0,108,82,15,0,0,7); ctx.fill();
+    /* 時計の枠 */
+    ctx.fillStyle=hurt?'#ff9a8a':'#caa24a'; ctx.beginPath(); ctx.arc(0,0,80,0,7); ctx.fill();
+    ctx.fillStyle='#2a2010'; ctx.beginPath(); ctx.arc(0,0,68,0,7); ctx.fill();
+    /* 目もり */
+    ctx.strokeStyle='#ffe09a'; ctx.lineWidth=3;
+    for(var i=0;i<12;i++){ var a=i*Math.PI/6; ctx.beginPath(); ctx.moveTo(Math.cos(a)*60,Math.sin(a)*60); ctx.lineTo(Math.cos(a)*66,Math.sin(a)*66); ctx.stroke(); }
+    /* はり */
+    ctx.strokeStyle='#fff'; ctx.lineWidth=5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(t*0.6-Math.PI/2)*34,Math.sin(t*0.6-Math.PI/2)*34); ctx.stroke();
+    ctx.strokeStyle='#ffd54f'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(t*2-Math.PI/2)*52,Math.sin(t*2-Math.PI/2)*52); ctx.stroke();
+    ctx.fillStyle='#ffe09a'; ctx.beginPath(); ctx.arc(0,0,5,0,7); ctx.fill();
+    /* 目（枠の上） */
+    var blink=(Math.sin(t*0.9)>0.95)?0.15:1;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(-26,-52,9,9*blink,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(26,-52,9,9*blink,0,0,7); ctx.fill();
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(-25,-51,4*blink,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(27,-51,4*blink,0,7); ctx.fill();
+    ctx.restore();
+    var syms=['⏰','60','cm','kg','L'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.7+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*152, oy=cy+Math.sin(a)*66, fr=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr?0.95:0.4; ctx.shadowColor='#ffd98a'; ctx.shadowBlur=12; ctx.fillStyle=hurt?'#ffd0c8':'#ffe09a'; ctx.font='900 '+(fr?26:19)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:120,
+    msg:'Time and units are yours now!<br>Remember the links like "1 hour = 60 min" and "1 m = 100 cm" and it\'s easy.<br>Now, at last, the final boss. — Mr. Suda',
+    cta:null
+  }
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N3: A Complete Proof of Property (b) ─ Doubling and Height ─ Descent and Heights | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N3, completely proving property (b) of the height function (its relation to doubling). The finishing note on descent.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N3: A Complete Proof of Property (b) ─ Doubling and Height ─ Descent and Heights | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N3, completely proving property (b) of the height function (its relation to doubling). The finishing note on descent.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/descent-step3.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Δ'; position:absolute; right:10px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/descent-step3.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/descent-step3.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/descent-step3.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/descent-step3.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Descent and heights N3/N3</div>
+    <h1>A complete proof of property (b) ─ doubling and height<br><span class="en">Duplication quadruples the height, almost exactly</span></h1>
+    <p class="hero-sub">
+      h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂ ── for a lower bound, everything comes down to controlling how much cancellation can happen.
+      The two identities the main part only described as "f₂, g₂ are also explicit polynomials of degree 3" are
+      written out completely down to the coefficients, with a monomial-by-monomial verification table, and we finish all the way to an explicit form of the constant C₂ and a numerical check.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.4.2(b), VIII.4.3 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/descent.html">Main IV Descent</a>
+      <a href="/math-site/en/in/descent-step0.html">N0 Descent theorem</a>
+      <a href="/math-site/en/in/descent-step1.html">N1 Foundations of height</a>
+      <a href="/math-site/en/in/descent-step2.html">N2 Property (a) addition</a>
+      <a class="cur" href="/math-site/en/in/descent-step3.html">N3 Property (b) doubling</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① <strong>Every line of the derivation</strong> of the duplication formula x([2]P) = F(p,q)/G(p,q), and G(p,q) ≠ 0 ⟺ [2]P ≠ O</li>
+      <li>② Handling the case [2]P = O ── <strong>E(ℚ)[2] has at most 4 points</strong>, so C₂ can swallow it whole</li>
+      <li>③ <strong>Explicit forms of f₂, g₂</strong> in the identities (VIII.4.3) (omitted in the main part), and a <strong>verification</strong> of the identities</li>
+      <li>④ Each step of the argument δ | 4Δ′ (including the reason gcd(p⁷, q⁷) = 1)</li>
+      <li>⑤ Why H(x([2]P)) = max{|F|, |G|}/δ is an <strong>equality</strong> (the exact form of reducing to lowest terms)</li>
+      <li>⑥ The lower bound via the triangle inequality, and a <strong>fully explicit form</strong> of the constant C₂</li>
+      <li>⑦ A <strong>numerical check</strong> on E : y² = x³ + 3 (actual values of the identities, δ and C₂)</li>
+    </ul>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (B1–B3)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise B1 ─ shape of coordinates <span class="refchip">fully proved in N1</span></div>
+      <p>
+        The x-coordinate of P ≠ O can be written in lowest terms as x(P) = p/q (q = d² ≥ 1, gcd(p,q) = 1), and
+        H(x(P)) = max{|p|, |q|} =: T ≥ 1.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise B2 ─ the duplication formula and 2-torsion points <span class="refchip">AEC III.2.3(d)</span></div>
+      <p>
+        For P = (x, y) with y ≠ 0, x([2]P) = λ² − 2x, λ = (3x² + A)/(2y).
+        Also, for P ≠ O, [2]P = O ⟺ y = 0 (the points where the tangent is vertical).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise B3 ─ basic properties of gcd <span class="refchip">elementary number theory</span></div>
+      <p>
+        δ | u and δ | v ⇒ δ | (su + tv) (∀s, t ∈ ℤ).
+        gcd(p, q) = 1 ⇒ gcd(p⁷, q⁷) = 1 (a prime dividing both p⁷ and q⁷ divides both p and q).
+        gcd(cu, cv) = |c|·gcd(u, v).
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>Homogenizing the duplication formula (gaps ①②)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (height property (b)) <span class="refchip">AEC VIII.4.2(b)</span></div>
+      <p>There is a constant C₂ = C₂(A, B) such that h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂ for all P ∈ E(ℚ).</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><strong>Swallowing the exceptions (gap ②):</strong> E(ℚ)[2] := { P : [2]P = O } has at most 4 points. If we take C₂ ≥ 4·max{ h<sub>x</sub>(P) : P ∈ E(ℚ)[2] }, the inequality holds automatically when [2]P = O. From now on assume [2]P ≠ O (in particular P ≠ O, y ≠ 0).</p>
+        <p class="ps-why"><b>▸ Reason</b>  P ≠ O with [2]P = O has y = 0 (B2), i.e. its x-coordinate is a rational root of x³ + Ax + B = 0. A cubic has at most 3 roots, so together with O there are at most 4 points ── <strong>finitely many, so the max exists</strong>. For this C₂, h([2]P) = h(O) = 0 ≥ 4h(P) − C₂. P = O also works: 0 ≥ 0 − C₂.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Rewrite the duplication formula as a rational function of x:</p>
+        <div class="formula">
+          <div class="fline">x([2]P) = (3x² + A)²/(4y²) − 2x = [ (3x² + A)² − 8xy² ] / (4y²)</div>
+          <div class="fline">numerator = 9x⁴ + 6Ax² + A² − 8x(x³ + Ax + B) = x⁴ − 2Ax² − 8Bx + A²</div>
+          <div class="fline">denominator = 4y² = 4x³ + 4Ax + 4B</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  B2, a common denominator, and substituting y² = x³ + Ax + B (once in the numerator, once in the denominator ── here we <strong>use up the curve's equation</strong>, and from now on it's a computation in x alone). Expanding: 9x⁴ − 8x⁴ = x⁴, 6Ax² − 8Ax² = −2Ax².</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Substitute x = p/q and multiply numerator and denominator by q⁴ to homogenize:</p>
+        <div class="formula">
+          <div class="fline">x([2]P) = F(p, q) / G(p, q)</div>
+          <div class="fline">F(X, Z) = X⁴ − 2AX²Z² − 8BXZ³ + A²Z⁴</div>
+          <div class="fline">G(X, Z) = 4X³Z + 4AXZ³ + 4BZ⁴</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  We just filled out the degree of each term with Z to make it homogeneous of degree 4 (x⁴ → X⁴, −2Ax² → −2AX²Z², and so on). F, G ∈ ℤ[X, Z] (A, B ∈ ℤ), so F(p,q), G(p,q) ∈ ℤ.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>G(p, q) = 4q⁴y² &gt; 0. In particular G(p, q) ≠ 0, and the fraction in Step 3 makes sense.</p>
+        <p class="ps-why"><b>▸ Reason</b>  G(p,q) = 4q(p³ + Apq² + Bq³) = 4q·q³(x³ + Ax + B) = 4q⁴y². Positive since y ≠ 0 (Step 1) and q ≥ 1. <strong>The geometry "G vanishes ⟺ 2-torsion point" is translated into the algebra of the fraction being well defined</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>The two identities ─ explicit down to f₂, g₂ (gap ③)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Sublemma (explicit identities, complete version) <span class="refchip">AEC VIII.4.3</span></div>
+      <p>Set Δ′ = 4A³ + 27B². As identities in ℤ[A, B, X, Z],</p>
+      <div class="formula">
+        <div class="fline">f₁·F − g₁·G = 4Δ′·Z⁷,    f₂·F − g₂·G = 4Δ′·X⁷</div>
+      </div>
+      <p>hold. Here all four are homogeneous polynomials of degree 3 in (X, Z):</p>
+      <div class="formula">
+        <div class="fline">f₁ = 12X²Z + 16AZ³</div>
+        <div class="fline">g₁ = 3X³ − 5AXZ² − 27BZ³</div>
+        <div class="fline">f₂ = 4Δ′X³ − 4A²BX²Z + 4A(3A³ + 22B²)XZ² + 12B(A³ + 8B²)Z³</div>
+        <div class="fline">g₂ = −A²BX³ − A(5A³ + 32B²)X²Z − 2B(13A³ + 96B²)XZ² + 3A²(A³ + 8B²)Z³</div>
+      </div>
+    </div>
+
+    <p>
+      Not "there exist" but "here they are". Verifying them is a finite computation: <strong>just expand and compare</strong>.
+      Both sides are homogeneous of degree 7 in (X, Z), so for the first identity it's enough to check the one-variable equation with Z = 1
+      (a homogeneous polynomial can be uniquely recovered from its dehomogenization).
+    </p>
+
+    <details class="sol">
+      <summary>Open the verification of the first identity (every line, by hand)</summary>
+      <div class="sol-body">
+        <p>Set Z = 1 and expand f₁F and g₁G separately.</p>
+        <p>
+          f₁F = (12X² + 16A)(X⁴ − 2AX² − 8BX + A²)<br>
+            = 12X⁶ − 24AX⁴ − 96BX³ + 12A²X² + 16AX⁴ − 32A²X² − 128ABX + 16A³<br>
+            = 12X⁶ − 8AX⁴ − 96BX³ − 20A²X² − 128ABX + <strong>16A³</strong>
+        </p>
+        <p>
+          g₁G = (3X³ − 5AX − 27B)·4(X³ + AX + B)<br>
+            = 4[ 3X⁶ + 3AX⁴ + 3BX³ − 5AX⁴ − 5A²X² − 5ABX − 27BX³ − 27ABX − 27B² ]<br>
+            = 4[ 3X⁶ − 2AX⁴ − 24BX³ − 5A²X² − 32ABX − 27B² ]<br>
+            = 12X⁶ − 8AX⁴ − 96BX³ − 20A²X² − 128ABX − <strong>108B²</strong>
+        </p>
+        <p>
+          The coefficients of X⁶, X⁴, X³, X², X <strong>agree exactly</strong> and cancel in the difference, leaving only the constant term:<br>
+          f₁F − g₁G = 16A³ + 108B² = 4(4A³ + 27B²) = 4Δ′. ✓
+        </p>
+      </div>
+    </details>
+
+    <p>The second identity has many terms, so we give a verification table listing the coefficients of f₂F and g₂G for each monomial X<sup>7−k</sup>Z<sup>k</sup>:</p>
+
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Monomial</th><th>Coefficient in f₂F</th><th>Coefficient in g₂G</th><th>Difference</th></tr></thead>
+      <tbody>
+        <tr><td class="m">X⁷</td><td class="m">4Δ′</td><td class="m">0</td><td class="m"><strong>4Δ′</strong></td></tr>
+        <tr><td class="m">X⁶Z</td><td class="m">−4A²B</td><td class="m">−4A²B</td><td class="m">0</td></tr>
+        <tr><td class="m">X⁵Z²</td><td class="m">−4A(5A³+32B²)</td><td class="m">−4A(5A³+32B²)</td><td class="m">0</td></tr>
+        <tr><td class="m">X⁴Z³</td><td class="m">−12B(9A³+64B²)</td><td class="m">−12B(9A³+64B²)</td><td class="m">0</td></tr>
+        <tr><td class="m">X³Z⁴</td><td class="m">−4A²(2A³+9B²)</td><td class="m">−4A²(2A³+9B²)</td><td class="m">0</td></tr>
+        <tr><td class="m">X²Z⁵</td><td class="m">−4AB(31A³+224B²)</td><td class="m">−4AB(31A³+224B²)</td><td class="m">0</td></tr>
+        <tr><td class="m">XZ⁶</td><td class="m">4(3A⁶−2A³B²−192B⁴)</td><td class="m">4(3A⁶−2A³B²−192B⁴)</td><td class="m">0</td></tr>
+        <tr><td class="m">Z⁷</td><td class="m">12A²B(A³+8B²)</td><td class="m">12A²B(A³+8B²)</td><td class="m">0</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      For 7 of the 8 monomials the coefficients match exactly and cancel, leaving only 4Δ′ as the coefficient of X⁷ ──
+      f₂F − g₂G = 4Δ′X⁷. ✓ (Expanding each coefficient is a mechanical computation of just "multiplying polynomials".
+      For example, the coefficient of X⁶Z: on the f₂F side, the X²Z coefficient of f₂ × the X⁴ coefficient of F = −4A²B·1;
+      on the g₂G side, the X³ coefficient of g₂ × the X³Z coefficient of G = (−A²B)·4. They agree. The other rows can be checked the same way.)
+    </p>
+
+    <div class="why">
+      <div class="w-label">? Where do the identities come from ─ resultants and Δ²</div>
+      <p>
+        When Δ′ ≠ 0, F(X, 1) and G(X, 1) have no common root (a common root x₀ would have y = 0 and be a common zero of the numerator and denominator of the duplication formula
+        = a sign of a singular point). For coprime polynomials, Euclid's algorithm returns "a Bézout certificate" fF − gG = constant, and
+        clearing denominators gives the identities above. Under the constraint of a pair of degree 3, the solution is <strong>unique</strong>, and
+        the smallest constant that appears is 4Δ′. Incidentally, computing the resultant gives Res(F, G) = 256Δ′² = Δ² ──
+        <strong>the nondegeneracy of the doubling map is engraved twice in the language of the discriminant</strong>.
+        The proof of the general theorem "a morphism of degree d of projective space multiplies heights by about d"<span class="refchip">AEC VIII.5.6</span>
+        is also a higher-dimensional version of this Nullstellensatz certificate.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Controlling cancellation ─ δ | 4Δ′ (gaps ④⑤)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>Set δ := gcd( F(p,q), G(p,q) ) ≥ 1 (defined since G(p,q) ≠ 0).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Step 4. gcd(u, v) (v ≠ 0) as defined in elementary number theory.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>Substitute (X, Z) = (p, q) into the identities:</p>
+        <div class="formula">
+          <div class="fline">f₁(p,q)·F(p,q) − g₁(p,q)·G(p,q) = 4Δ′q⁷,  f₂(p,q)·F(p,q) − g₂(p,q)·G(p,q) = 4Δ′p⁷</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  An identity in ℤ[X, Z] becomes an equation in ℤ under any integer substitution (A and B are integers fixed from the start).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>δ | 4Δ′q⁷ and δ | 4Δ′p⁷.</p>
+        <p class="ps-why"><b>▸ Reason</b>  δ divides both F(p,q) and G(p,q), so it divides their integer combinations too (the left sides in Step 6) (first property in B3, with s = f₁(p,q), t = −g₁(p,q), etc.). This is the first half of gap ④.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>δ | 4Δ′. <strong>The amount of cancellation is capped by a constant independent of P</strong>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  δ | gcd(4Δ′p⁷, 4Δ′q⁷) = |4Δ′|·gcd(p⁷, q⁷) = |4Δ′| (third property in B3, and gcd(p,q) = 1 ⇒ gcd(p⁷,q⁷) = 1: second property in B3). Δ′ ≠ 0 comes from Δ = −16Δ′ ≠ 0 (nonsingularity). This is the second half of gap ④ ── <strong>the moment geometric nondegeneracy (Δ ≠ 0) turns into an arithmetic constant, "the cap on cancellation"</strong>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p><strong>The height equation (gap ⑤):</strong> H(x([2]P)) = max{ |F(p,q)|, |G(p,q)| } / δ ≥ max{ |F(p,q)|, |G(p,q)| } / |4Δ′|.</p>
+        <p class="ps-why"><b>▸ Reason</b>  F/δ and G/δ are integers with gcd = 1 (since we divided out δ), and G/δ = 4q⁴y²/δ &gt; 0 (Step 4). So (F/δ)/(G/δ) <strong>is itself the reduced representation with positive denominator</strong>, and by uniqueness of the reduced representation (N1, V2) H equals its max. The second inequality is Step 8 (δ ≤ |4Δ′|). Where N2 got away with "≤", here we <strong>need an equality and an upper bound on δ</strong> ── because it's a lower bound.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>The lower bound and an explicit form of C₂ (gap ⑥)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>Let κ := the maximum of "the sum of absolute values of the coefficients" of f₁, g₁, f₂, g₂. Then, as a bound for any homogeneous cubic,</p>
+        <div class="formula">
+          <div class="fline">|f₁(p,q)|, |g₁(p,q)|, |f₂(p,q)|, |g₂(p,q)| ≤ κ·T³  (T = max{|p|, |q|})</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Each monomial of a homogeneous cubic satisfies |p|<sup>i</sup>|q|<sup>3−i</sup> ≤ T³ (triangle inequality). κ is a constant depending only on A, B.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>Applying the triangle inequality to the two equations of Step 6:</p>
+        <div class="formula">
+          <div class="fline">|4Δ′|·T⁷ = max{ |4Δ′p⁷|, |4Δ′q⁷| } ≤ 2κT³ · max{ |F(p,q)|, |G(p,q)| }</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  |f₁F − g₁G| ≤ |f₁||F| + |g₁||G| ≤ κT³|F| + κT³|G| ≤ 2κT³ max{|F|, |G|}, and likewise on the p⁷ side. max{|p⁷|, |q⁷|} = T⁷ is the definition of max.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>Dividing by T³ ≥ 1 and rearranging gives max{ |F|, |G| } ≥ (|4Δ′| / 2κ)·T⁴; together with Step 9:</p>
+        <div class="formula">
+          <div class="fline">H(x([2]P)) ≥ T⁴ / (2κ) = H(x(P))⁴ / (2κ)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Dividing by a positive number doesn't change the inequality (T ≥ 1, κ ≥ 1). The denominator |4Δ′| from Step 9 cancels here ── <strong>all that remains is the ratio of "how much cancellation can lose (≤ |4Δ′|)" to "how much the identities guarantee (≥ |4Δ′|T⁴/2κ)"</strong>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p>Finish by taking logarithms:</p>
+        <div class="formula">
+          <div class="fline">h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − log(2κ)</div>
+          <div class="fline">C₂(A, B) := max{ log 2κ,  4·max{ h<sub>x</sub>(P) : P ∈ E(ℚ)[2] } }</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Monotonicity of log. The final max merges in the exceptional case of Step 1 (gaps ②⑥). This completes the proof of the lemma.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">Four times from above too: |h([2]P) − 4h(P)| ≤ C</div>
+      <p>
+        Applying the same kind of "upper" bound as in N2 (ignoring cancellation, triangle inequality) to the same F, G
+        also gives h([2]P) ≤ 4h(P) + log(κ′) (κ′ = the maximum of the sums of absolute values of the coefficients of F, G).
+        Together, <strong>|h([2]P) − 4h(P)| ≤ C</strong>: this is what assumption (a) in Exercise 6 of the main part (Tate's telescoping trick) really is,
+        leading directly to the existence of the canonical height ĥ = lim 4⁻ⁿh([2ⁿ]P)<span class="refchip">AEC VIII.9</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Numerical check ─ E : y² = x³ + 3, 2P = (−23/16, −11/64) (gap ⑦)</h2>
+
+    <p>With A = 0, B = 3, Δ′ = 27·9 = 243, 4Δ′ = 972, and</p>
+    <div class="formula">
+      <div class="fline">f₁ = 12X²Z,  g₁ = 3X³ − 81Z³,  f₂ = 972X³ + 2592Z³,  g₂ = −5184XZ²</div>
+      <div class="fline fc">f₂ = 4Δ′X³ + 12B·8B²·Z³ = 972X³ + 12·3·72·Z³, g₂ = −2B·96B²·XZ² = −2·3·864·XZ² (only the terms that survive with A = 0)</div>
+    </div>
+
+    <p>For the coordinates (p, q) = (−23, 16) of 2P, with F(−23,16) = 2540833 and G(−23,16) = 7744:</p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Check</th><th>Left side</th><th>Right side</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>First identity</td><td class="m">f₁F − g₁G</td><td class="m">972·16⁷ = 260 919 263 232</td><td class="m">✓ match</td></tr>
+        <tr><td>Second identity</td><td class="m">f₂F − g₂G</td><td class="m">972·(−23)⁷ = −3 309 490 334 484</td><td class="m">✓ match</td></tr>
+        <tr><td>Cancellation δ</td><td class="m">δ | gcd(972, 7744) = 4</td><td class="m">F is odd ⇒ δ = 1</td><td class="m">✓ consistent with the table in the main part</td></tr>
+        <tr><td>Lower bound</td><td class="m">H(x(4P)) = 2 540 833</td><td class="m">≥ T⁴/2κ = 23⁴/10368 ≈ 27</td><td class="m">✓ (holds with room to spare)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      For this curve, the sums of absolute values of coefficients are f₁ : 12, g₁ : 84, f₂ : 3564, g₂ : 5184, so κ = 5184.
+      E(ℚ)[2] = {O} (x³ = −3 has no rational root), so the torsion term disappears and
+    </p>
+    <div class="formula">
+      <div class="fline">C₂ = log(2·5184) = log 10368 ≈ 9.25</div>
+      <div class="fline fc">so on this curve h([2]P) ≥ 4h(P) − 9.25 holds for every point. The measured h(4P) ≈ 4.7·h(2P) (from the table in the main part) sits comfortably inside this band</div>
+    </div>
+    <p>
+      The bound is crude (the guarantee is 1/10368, versus the actual ratio 2540833/23⁴ ≈ 9.1), but what matters is that it's <strong>uniform, independent of P</strong>.
+      Uniformity was all the descent theorem (N0) asked for.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ Now every part of Mordell–Weil has zero leaps</div>
+      <p>
+        Weak MW (Part 2 + between-the-lines notes N0–N3) × the descent theorem (N0) × height properties (a)(b)(c) (N1–N3) =
+        <strong>E(ℚ) is finitely generated</strong>. Go back to the "assembly" in Section 05 of the main part and
+        check that every citation has already been proved.
+        The peaks still unclimbed are the theory of the canonical height ĥ (AEC VIII §9) and the height machine for general number fields (§5–§6) ──
+        see the map in the final chapter, "Beyond".
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/descent-step2.html">
+      <div class="p-dir">← PREV ─ Between-the-lines note N2</div>
+      <div class="p-title">A complete proof of property (a) ─ addition and height</div>
+    </a>
+    <a class="next" href="/math-site/en/in/descent.html">
+      <div class="p-dir">Back to the main part</div>
+      <div class="p-title">Descent and heights (Main IV) →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (descent and heights) N3/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.4.2(b), VIII.4.3</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quadratic Functions y=a(x-p)²+q | Shifting Parabolas - Math the Japanese Way</title>
+<meta name="description" content="Understand with pictures why the graph of a quadratic function is a parabola and how p and q move it. A former teacher in Japan explains the vertex and translations.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Quadratic Functions y=a(x-p)²+q | Shifting Parabolas - Math the Japanese Way">
+<meta property="og:description" content="Understand with pictures why the graph of a quadratic function is a parabola and how p and q move it. A former teacher in Japan explains the vertex and translations.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/chu/niji.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #f4f7fb;
+  --white: #ffffff;
+  --ink: #1a2332;
+  --muted: #7a8a9a;
+  --red: #d62828;
+  --blue: #1a56c4;
+  --green: #2a7a3a;
+  --purple: #6a3aaa;
+  --orange: #e8650a;
+  --grid: #dde4ef;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 0 0 56px;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1a0a2e 0%, #3a1a6e 100%);
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(160,100,255,0.2);
+  color: #c0a0ff;
+  border: 1px solid rgba(160,100,255,0.4);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Kaisei Decol', serif;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+  line-height: 1.3;
+}
+.hero h1 .formula {
+  font-family: var(--mono);
+  color: #c0a0ff;
+  font-size: 0.85em;
+}
+.hero p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  position: relative;
+}
+
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 16px 0;
+}
+
+.graph-card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+canvas { display: block; width: 100%; border-radius: 8px; }
+
+.controls {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(26,35,50,0.10);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.formula-display {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+.v-a { color: var(--red); }
+.v-p { color: var(--green); }
+.v-q { color: var(--purple); }
+
+.slider-group { margin-bottom: 20px; }
+.slider-group:last-child { margin-bottom: 0; }
+.slider-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.slider-letter {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 20px;
+}
+.slider-letter.a { color: var(--red); }
+.slider-letter.p { color: var(--green); }
+.slider-letter.q { color: var(--purple); }
+.slider-meaning { font-size: 0.82rem; color: var(--muted); flex: 1; }
+.slider-value {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 48px;
+  text-align: right;
+}
+.slider-value.a { color: var(--red); }
+.slider-value.p { color: var(--green); }
+.slider-value.q { color: var(--purple); }
+
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  background: #e0e0e0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid currentColor;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+input[type=range].a-range::-webkit-slider-thumb { border-color: var(--red); }
+input[type=range].p-range::-webkit-slider-thumb { border-color: var(--green); }
+input[type=range].q-range::-webkit-slider-thumb { border-color: var(--purple); }
+
+/* タブ */
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab-btn {
+  padding: 7px 14px;
+  border-radius: 24px;
+  border: 2px solid #dde4ef;
+  background: #fff;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all 0.2s;
+}
+.tab-btn.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.explain-box {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 0.87rem;
+  line-height: 1.85;
+  color: var(--ink);
+  display: none;
+}
+.explain-box.show { display: block; }
+.explain-box .ha { color: var(--red); font-weight: 700; }
+.explain-box .hp { color: var(--green); font-weight: 700; }
+.explain-box .hq { color: var(--purple); font-weight: 700; }
+
+/* 頂点・軸情報 */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media(max-width:480px){ .info-grid { grid-template-columns: 1fr; } }
+
+.info-card {
+  border-radius: 12px;
+  padding: 14px 14px;
+  text-align: center;
+}
+.info-card.vertex { background: rgba(106,58,170,0.08); border: 1.5px solid rgba(106,58,170,0.25); }
+.info-card.axis   { background: rgba(42,122,58,0.08);  border: 1.5px solid rgba(42,122,58,0.25); }
+.info-card.opens  { background: rgba(214,40,40,0.08);  border: 1.5px solid rgba(214,40,40,0.25); }
+.info-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px; }
+.info-card.vertex .info-label { color: var(--purple); }
+.info-card.axis   .info-label { color: var(--green); }
+.info-card.opens  .info-label { color: var(--red); }
+.info-val {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.info-card.vertex .info-val { color: var(--purple); }
+.info-card.axis   .info-val { color: var(--green); }
+.info-card.opens  .info-val { color: var(--red); }
+
+/* 次のステップ */
+.next-section { max-width: 780px; margin: 8px auto 0; padding: 0 16px; }
+.next-card {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1.5px solid #4a9eff;
+  border-radius: 16px; padding: 20px 22px;
+  text-decoration: none; color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(74,158,255,0.2); }
+.next-icon { font-size: 1.8rem; flex-shrink: 0; }
+.next-body { flex: 1; }
+.next-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(74,158,255,0.15); color: #4a9eff;
+  border: 1px solid rgba(74,158,255,0.35); margin-bottom: 6px;
+}
+.next-title { font-size: 0.95rem; font-weight: 700; color: #f0f0ff; margin-bottom: 3px; }
+.next-desc  { font-size: 0.78rem; color: #8080b0; line-height: 1.6; }
+.next-arrow { font-size: 1.3rem; color: #4a9eff; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/chu/niji.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/chu/niji.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/chu/niji.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/chu/niji.html"><!--/hreflang-->
+</head>
+<body>
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+
+<div class="hero">
+  <div class="hero-badge">Grades 9–10</div>
+  <h1>🦅 Canyon of Parabolas<br><span class="formula">y = a(x − p)² + q</span></h1>
+  <p>STAGE 4 ── The Parabola Falcon flies along a parabola. Move a, p, and q, and take control of its flight path.</p>
+</div>
+
+<div class="main">
+
+  <!-- 情報カード -->
+  <div class="controls" style="padding-bottom:20px; margin-bottom:20px;">
+    <div class="info-grid">
+      <div class="info-card vertex">
+        <div class="info-label">Vertex</div>
+        <div class="info-val" id="vertexVal">(0, 0)</div>
+      </div>
+      <div class="info-card axis">
+        <div class="info-label">Axis</div>
+        <div class="info-val" id="axisVal">x = 0</div>
+      </div>
+      <div class="info-card opens">
+        <div class="info-label">Opens</div>
+        <div class="info-val" id="opensVal">Upward</div>
+      </div>
+    </div>
+
+    <div class="formula-display" id="formulaDisp">
+      y = <span class="v-a">1</span>(x − <span class="v-p">0</span>)² + <span class="v-q">0</span>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter a">a</span>
+        <span class="slider-meaning">how wide the parabola opens and which way (positive: up, negative: down)</span>
+        <span class="slider-value a" id="aVal">1</span>
+      </div>
+      <input type="range" class="a-range" id="aSlider" min="-3" max="3" step="0.5" value="1">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter p">p</span>
+        <span class="slider-meaning">x-coordinate of the vertex (left–right shift)</span>
+        <span class="slider-value p" id="pVal">0</span>
+      </div>
+      <input type="range" class="p-range" id="pSlider" min="-4" max="4" step="0.5" value="0">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-letter q">q</span>
+        <span class="slider-meaning">y-coordinate of the vertex (up–down shift)</span>
+        <span class="slider-value q" id="qVal">0</span>
+      </div>
+      <input type="range" class="q-range" id="qSlider" min="-4" max="4" step="0.5" value="0">
+    </div>
+  </div>
+
+  <!-- グラフ -->
+  <div class="graph-card">
+    <canvas id="graph" height="380"></canvas>
+  </div>
+
+  <!-- タブ説明 -->
+  <div class="controls" style="padding-bottom:20px;">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="what">What is a quadratic function?</button>
+      <button class="tab-btn" data-tab="a">What a means</button>
+      <button class="tab-btn" data-tab="pq">What p and q mean</button>
+      <button class="tab-btn" data-tab="vertex">Vertex and axis</button>
+    </div>
+
+    <div class="explain-box show" id="tab-what">
+      A <strong>quadratic function</strong> is a function that contains x squared. Its graph is a <strong>parabola</strong> (a U-shaped curve).<br><br>
+      Writing it in the form <strong>y = a(x − p)² + q</strong> lets you see the vertex, axis, and how it opens at a glance.<br><br>
+      Parabolas show up all over the natural world, like the path of a thrown ball or the arch of a bridge.
+    </div>
+
+    <div class="explain-box" id="tab-a">
+      <span class="ha">a (the coefficient)</span> decides how the parabola "opens" and which way it "faces".<br><br>
+      •<span class="ha">a &gt; 0</span> → opens upward (valley shape)<br>
+      •<span class="ha">a &lt; 0</span> → opens downward (mountain shape)<br>
+      •<span class="ha">|a| is large</span> → a narrow, pointed parabola<br>
+      •<span class="ha">|a| is small</span> → a wide, spread-out parabola<br><br>
+      Try moving only a! Keep p and q at 0.
+    </div>
+
+    <div class="explain-box" id="tab-pq">
+      <span class="hp">p</span> and <span class="hq">q</span> decide the <strong>position</strong> of the parabola.<br><br>
+      •<span class="hp">Change p</span> → the parabola moves left or right (its shape stays the same)<br>
+      •<span class="hq">Change q</span> → the parabola moves up or down (its shape stays the same)<br><br>
+      Careful: when <span class="hp">p = 2</span>, the equation is y = a(<strong>x − 2</strong>)² + q. Watch the sign!<br><br>
+      Fix a and move only p and q, and you'll see the parabola slide without changing shape.
+    </div>
+
+    <div class="explain-box" id="tab-vertex">
+      The <strong>vertex</strong> is the "top (or bottom)" point of the parabola.<br><br>
+      The vertex of y = a(x − p)² + q is <span class="hq">(<span class="hp">p</span>, <span class="hq">q</span>)</span>.<br><br>
+      The <strong>axis</strong> is the line of left–right symmetry of the parabola: <span class="hp">x = p</span>.<br><br>
+      Watch the "Vertex" and "Axis" readouts above change in real time!
+    </div>
+  </div>
+
+</div>
+
+<!-- 次のステップ -->
+<div class="next-section">
+  <a class="next-card" href="/math-site/en/chu/sanpei.html">
+    <div class="next-icon">📐</div>
+    <div class="next-body">
+      <span class="next-tag">Grade 9</span>
+      <div class="next-title">Experience the Pythagorean theorem</div>
+      <div class="next-desc">Why is a² + b² = c² true? Prove it by moving the pieces.</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</div>
+
+<script>
+const PI = Math.PI;
+
+function getVals() {
+  return {
+    a: parseFloat(document.getElementById('aSlider').value),
+    p: parseFloat(document.getElementById('pSlider').value),
+    q: parseFloat(document.getElementById('qSlider').value),
+  };
+}
+
+function drawGraph() {
+  const canvas = document.getElementById('graph');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 48;
+  const H = 380;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const { a, p, q } = getVals();
+  const cx = W / 2, cy = H / 2;
+  const unit = Math.min(W, H) / 12;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景
+  ctx.fillStyle = '#f8faff';
+  ctx.fillRect(0, 0, W, H);
+
+  // グリッド
+  ctx.strokeStyle = '#dde4ef';
+  ctx.lineWidth = 1;
+  for (let x = cx % unit; x <= W; x += unit) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = cy % unit; y <= H; y += unit) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // 軸
+  ctx.strokeStyle = '#b8c8de';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+  // 軸ラベル
+  ctx.fillStyle = '#7a8a9a';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  for (let i = -5; i <= 5; i++) {
+    if (i === 0) continue;
+    ctx.fillText(i, cx + i * unit, cy + 18);
+    ctx.textAlign = 'right';
+    ctx.fillText(-i, cx - 8, cy + i * unit + 4);
+    ctx.textAlign = 'center';
+  }
+  ctx.fillStyle = '#1a2332';
+  ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+  ctx.fillText('x', W - 8, cy - 8);
+  ctx.textAlign = 'left';
+  ctx.fillText('y', cx + 6, 14);
+
+  // 対称軸（緑の破線）
+  const axisX = cx + p * unit;
+  if (axisX >= 0 && axisX <= W) {
+    ctx.strokeStyle = 'rgba(42,122,58,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(axisX, 0); ctx.lineTo(axisX, H); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(42,122,58,0.8)';
+    ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`x=${p}`, axisX, 14);
+  }
+
+  // 放物線
+  if (a !== 0) {
+    ctx.strokeStyle = '#6a3aaa';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    let started = false;
+    for (let px2 = 0; px2 <= W; px2 += 1) {
+      const xv = (px2 - cx) / unit;
+      const yv = a * (xv - p) ** 2 + q;
+      const py2 = cy - yv * unit;
+      if (py2 < -H || py2 > H * 2) { started = false; continue; }
+      if (!started) { ctx.moveTo(px2, py2); started = true; }
+      else ctx.lineTo(px2, py2);
+    }
+    ctx.stroke();
+  } else {
+    // a=0: 直線 y=q
+    const py2 = cy - q * unit;
+    ctx.strokeStyle = '#6a3aaa';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(0, py2); ctx.lineTo(W, py2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // 頂点
+  const vx = cx + p * unit;
+  const vy = cy - q * unit;
+  if (vy >= 0 && vy <= H) {
+    ctx.beginPath();
+    ctx.arc(vx, vy, 7, 0, 2 * PI);
+    ctx.fillStyle = '#6a3aaa';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    // 頂点ラベル
+    ctx.fillStyle = '#6a3aaa';
+    ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+    ctx.textAlign = p >= 0 ? 'left' : 'right';
+    const offset = p >= 0 ? 12 : -12;
+    ctx.fillText(`(${p}, ${q})`, vx + offset, vy - 10);
+  }
+}
+
+function updateAll() {
+  const { a, p, q } = getVals();
+
+  document.getElementById('aVal').textContent = a;
+  document.getElementById('pVal').textContent = p;
+  document.getElementById('qVal').textContent = q;
+
+  // 式の表示
+  let aStr = a === 1 ? '' : a === -1 ? '−' : String(a);
+  let pStr = p === 0 ? 'x' : p > 0 ? `(x − <span class="v-p">${p}</span>)` : `(x + <span class="v-p">${Math.abs(p)}</span>)`;
+  let qStr = q >= 0 ? ` + <span class="v-q">${q}</span>` : ` − <span class="v-q">${Math.abs(q)}</span>`;
+  let formula;
+  if (a === 0) {
+    formula = `y = <span class="v-q">${q}</span> (not a quadratic function)`;
+  } else {
+    formula = `y = <span class="v-a">${aStr || ''}</span>${a === 1 ? '' : a === -1 ? '' : ''}${pStr}²${qStr}`;
+    if (a === 1) formula = `y = ${pStr}²${qStr}`;
+    if (a === -1) formula = `y = −${pStr}²${qStr}`;
+  }
+  document.getElementById('formulaDisp').innerHTML = formula;
+
+  // 情報カード
+  document.getElementById('vertexVal').textContent = `(${p}, ${q})`;
+  document.getElementById('axisVal').textContent = `x = ${p}`;
+  document.getElementById('opensVal').textContent =
+    a > 0 ? 'Upward ∪' : a < 0 ? 'Downward ∩' : '(horizontal line)';
+
+  drawGraph();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.explain-box').forEach(b => b.classList.remove('show'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('show');
+  });
+});
+
+['aSlider','pSlider','qSlider'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateAll);
+});
+
+window.addEventListener('load', updateAll);
+window.addEventListener('resize', updateAll);
+</script>
+</body>
+</html>

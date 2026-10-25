@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/sho/bunsu.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/sho/bunsu.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/sho/bunsu.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/sho/bunsu.html"><!--/hreflang-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adding Fractions | Common Denominators, Starting from "Why" - Math the Japanese Way</title>
+<meta name="description" content="Why do we find a common denominator when adding fractions with different denominators? Pictures that make it click. Gently explained by a former elementary school teacher in Japan for kids who find fractions hard.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Adding Fractions | Common Denominators, Starting from &quot;Why&quot; - Math the Japanese Way">
+<meta property="og:description" content="Why do we find a common denominator when adding fractions with different denominators? Pictures that make it click. Gently explained by a former elementary school teacher in Japan for kids who find fractions hard.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/sho/bunsu.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f0f7ff;
+    --ink: #1a2a3a;
+    --a-color: #e05a2b;
+    --b-color: #2b7ae0;
+    --sum-color: #2a8a4a;
+    --panel: #fff;
+    --line: #d0dce8;
+  }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 0 0 32px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 24px 12px 0; }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #ff6f00 0%, #e91e63 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(233,30,99,0.3);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+  }
+  .lead { font-size: .88rem; color: #555; margin-bottom: 16px; }
+
+  .sliders {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .frac-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .frac-row:last-child { margin-bottom: 0; }
+  .frac-label {
+    font-size: 1.5rem;
+    font-weight: 900;
+    min-width: 64px;
+    text-align: center;
+  }
+  .frac-label.a { color: var(--a-color); }
+  .frac-label.b { color: var(--b-color); }
+  .slider-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .slider-line { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+  .slider-line span { min-width: 28px; font-weight: 700; }
+  input[type=range] { flex: 1; }
+  input[type=range].ra { accent-color: var(--a-color); }
+  input[type=range].rb { accent-color: var(--b-color); }
+
+  .pizza-section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .pizza-section h2 {
+    font-size: .92rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--a-color);
+    padding-left: 8px;
+  }
+  .pizza-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .pizza-row:last-child { margin-bottom: 0; }
+  .pizza-row svg { flex-shrink: 0; }
+  .pizza-info { font-size: .88rem; }
+  .pizza-info .big { font-size: 1.1rem; font-weight: 700; }
+  .pizza-divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 12px 0;
+  }
+  .section-label {
+    font-size: .8rem;
+    font-weight: 700;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .calc-panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .calc-panel h2 {
+    font-size: .92rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--b-color);
+    padding-left: 8px;
+  }
+  .step {
+    background: #f4f8ff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: .9rem;
+    line-height: 1.8;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step .no {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .frac-inline {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 700;
+    font-size: .92rem;
+    vertical-align: middle;
+    margin: 0 2px;
+    line-height: 1.2;
+  }
+  .frac-inline .num { border-bottom: 2px solid currentColor; padding: 0 3px; }
+  .frac-inline .den { padding: 0 3px; }
+
+  .answer-box {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+  .answer-box .big {
+    font-size: 2rem;
+    display: block;
+    margin-top: 4px;
+    color: #7effa0;
+  }
+</style>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="header">
+  <h1>🍕 Adding Fractions</h1>
+  <p>Once the denominators match, adding fractions is easy. Check it with pictures.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- 式パネル -->
+  <div style="background:var(--ink);color:#fff;border-radius:14px;padding:16px 20px;
+              margin-bottom:14px;text-align:center;font-size:1.8rem;font-weight:900;
+              letter-spacing:.04em;">
+    <span style="color:#ffb366" id="eq-a">1/2</span>
+    　+　
+    <span style="color:#6eb8ff" id="eq-b">1/3</span>
+    　=　
+    <span style="color:#7effa0">?</span>
+  </div>
+
+  <div class="sliders">
+    <div class="frac-row">
+      <div class="frac-label a" id="label-a">1/2</div>
+      <div class="slider-group">
+        <div class="slider-line">
+          <span style="color:var(--a-color)">Denominator</span>
+          <input type="range" class="ra" id="ad" min="2" max="6" value="2">
+          <span id="ad-v">2</span>
+        </div>
+        <div class="slider-line">
+          <span style="color:var(--a-color)">Numerator</span>
+          <input type="range" class="ra" id="an" min="1" max="6" value="1">
+          <span id="an-v">1</span>
+        </div>
+      </div>
+    </div>
+    <div class="frac-row">
+      <div class="frac-label b" id="label-b">1/3</div>
+      <div class="slider-group">
+        <div class="slider-line">
+          <span style="color:var(--b-color)">Denominator</span>
+          <input type="range" class="rb" id="bd" min="2" max="6" value="3">
+          <span id="bd-v">3</span>
+        </div>
+        <div class="slider-line">
+          <span style="color:var(--b-color)">Numerator</span>
+          <input type="range" class="rb" id="bn" min="1" max="6" value="1">
+          <span id="bn-v">1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pizza-section">
+    <h2>Let's look at it with pizza</h2>
+    <div class="section-label">Before adding</div>
+    <div class="pizza-row">
+      <svg id="pizza-a" width="80" height="80" viewBox="0 0 80 80"></svg>
+      <div class="pizza-info">
+        <div class="big" id="pa-frac" style="color:var(--a-color)"></div>
+        <div id="pa-desc"></div>
+      </div>
+    </div>
+    <div class="pizza-row">
+      <svg id="pizza-b" width="80" height="80" viewBox="0 0 80 80"></svg>
+      <div class="pizza-info">
+        <div class="big" id="pb-frac" style="color:var(--b-color)"></div>
+        <div id="pb-desc"></div>
+      </div>
+    </div>
+
+    <div id="lcm-section">
+      <hr class="pizza-divider">
+      <div class="section-label">With a common denominator (cut into same-size pieces)</div>
+      <div class="pizza-row">
+        <svg id="pizza-la" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="pizza-info">
+          <div class="big" id="pla-frac" style="color:var(--a-color)"></div>
+          <div id="pla-desc"></div>
+        </div>
+      </div>
+      <div class="pizza-row">
+        <svg id="pizza-lb" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="pizza-info">
+          <div class="big" id="plb-frac" style="color:var(--b-color)"></div>
+          <div id="plb-desc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-panel">
+    <h2>Step by step</h2>
+    <div class="step" id="step1"></div>
+    <div class="step" id="step2"></div>
+    <div class="step" id="step3"></div>
+  </div>
+
+  <div class="answer-box">
+    <span>Answer</span>
+    <span class="big" id="answer"></span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+
+  function gcd(a,b){ return b===0?a:gcd(b,a%b); }
+  function lcm(a,b){ return a*b/gcd(a,b); }
+  function reduce(n,d){ const g=gcd(Math.abs(n),Math.abs(d)); return [n/g,d/g]; }
+
+  function drawPizza(id, slices, filled, fillColor){
+    const svg = document.getElementById(id);
+    svg.innerHTML = "";
+    const cx=40, cy=40, r=36;
+    function pe(tag,attrs){
+      const e=document.createElementNS(NS,tag);
+      for(const k in attrs) e.setAttribute(k,attrs[k]);
+      svg.appendChild(e); return e;
+    }
+    pe("circle",{cx,cy,r:r+2,fill:"#e8d5b0"});
+    for(let i=0;i<slices;i++){
+      const a1=(i/slices)*2*Math.PI-Math.PI/2;
+      const a2=((i+1)/slices)*2*Math.PI-Math.PI/2;
+      const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+      const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+      const large=(a2-a1>Math.PI)?1:0;
+      const fill = i<filled ? fillColor : "#f5e8d0";
+      pe("path",{d:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`,
+        fill, stroke:"#c8a878","stroke-width":"1.5"});
+    }
+    pe("circle",{cx,cy,r:3,fill:"#c8a878"});
+  }
+
+  function fi(n,d,col){
+    return `<span class="frac-inline" style="color:${col}"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+  }
+
+  function update(){
+    let ad=parseInt(document.getElementById("ad").value);
+    let an=parseInt(document.getElementById("an").value);
+    let bd=parseInt(document.getElementById("bd").value);
+    let bn=parseInt(document.getElementById("bn").value);
+
+    // 分子を分母以下に強制
+    const anMax = ad;
+    const bnMax = bd;
+    if(an > anMax){
+      an = anMax;
+      document.getElementById("an").value = an;
+    }
+    if(bn > bnMax){
+      bn = bnMax;
+      document.getElementById("bn").value = bn;
+    }
+    document.getElementById("an").max = anMax;
+    document.getElementById("bn").max = bnMax;
+
+    document.getElementById("an-v").textContent = an;
+    document.getElementById("ad-v").textContent = ad;
+    document.getElementById("bn-v").textContent = bn;
+    document.getElementById("bd-v").textContent = bd;
+    document.getElementById("label-a").textContent = `${an}/${ad}`;
+    document.getElementById("label-b").textContent = `${bn}/${bd}`;
+    document.getElementById("eq-a").textContent = `${an}/${ad}`;
+    document.getElementById("eq-b").textContent = `${bn}/${bd}`;
+
+    // 元のピザ
+    drawPizza("pizza-a", ad, an, "#e05a2b");
+    document.getElementById("pa-frac").textContent = `${an}/${ad}`;
+    document.getElementById("pa-desc").textContent = `${an} of ${ad} equal pieces`;
+
+    drawPizza("pizza-b", bd, bn, "#2b7ae0");
+    document.getElementById("pb-frac").textContent = `${bn}/${bd}`;
+    document.getElementById("pb-desc").textContent = `${bn} of ${bd} equal pieces`;
+
+    const L = lcm(ad, bd);
+    const ma = L/ad, mb = L/bd;
+    const newAN = an*ma, newBN = bn*mb;
+
+    // 同じ分母なら通分セクション非表示
+    const lcmSection = document.getElementById("lcm-section");
+    if(ad === bd){
+      lcmSection.style.display = "none";
+    } else if(L > 12){
+      // LCMが大きすぎる場合もピザ非表示
+      lcmSection.style.display = "none";
+    } else {
+      lcmSection.style.display = "block";
+      drawPizza("pizza-la", L, newAN, "#e05a2b");
+      document.getElementById("pla-frac").textContent = `${newAN}/${L}`;
+      document.getElementById("pla-desc").textContent = `${newAN} of ${L} equal pieces`;
+
+      drawPizza("pizza-lb", L, newBN, "#2b7ae0");
+      document.getElementById("plb-frac").textContent = `${newBN}/${L}`;
+      document.getElementById("plb-desc").textContent = `${newBN} of ${L} equal pieces`;
+    }
+
+    // 計算ステップ
+    const sumN = newAN + newBN;
+    const [rN, rD] = reduce(sumN, L);
+
+    if(ad === bd){
+      document.getElementById("step1").innerHTML =
+        `<span class="no">①</span>The denominators are the same (${ad}), so just add the numerators`;
+      document.getElementById("step2").innerHTML =
+        `<span class="no">②</span>
+        ${fi(an,ad,"var(--a-color)")} + ${fi(bn,bd,"var(--b-color)")}
+        = ${fi(an+"＋"+bn, ad, "var(--sum-color)")}
+        = ${fi(sumN, L, "var(--sum-color)")}`;
+      document.getElementById("step3").innerHTML =
+        sumN!==rN
+          ? `<span class="no">③</span>Simplifying gives ${fi(rN,rD,"var(--sum-color)")}`
+          : `<span class="no">③</span>This can't be simplified any further`;
+    } else {
+      document.getElementById("step1").innerHTML =
+        `<span class="no">①</span>The denominators are different (${ad} and ${bd}), so we find a <b>common denominator</b>.
+        Least common multiple → <b>${L}</b>`;
+      document.getElementById("step2").innerHTML =
+        `<span class="no">②</span>
+        ${fi(an,ad,"var(--a-color)")} = ${fi(an+"×"+ma, ad+"×"+ma, "var(--a-color)")} = ${fi(newAN,L,"var(--a-color)")}
+        &emsp;
+        ${fi(bn,bd,"var(--b-color)")} = ${fi(bn+"×"+mb, bd+"×"+mb, "var(--b-color)")} = ${fi(newBN,L,"var(--b-color)")}`;
+      document.getElementById("step3").innerHTML =
+        `<span class="no">③</span>
+        ${fi(newAN,L,"var(--a-color)")} + ${fi(newBN,L,"var(--b-color)")}
+        = ${fi(newAN+"＋"+newBN, L, "var(--sum-color)")}
+        = ${fi(sumN, L, "var(--sum-color)")}
+        ${sumN!==rN ? "= "+fi(rN,rD,"var(--sum-color)")+" (simplified)" : ""}`;
+    }
+
+    // 答え
+    const whole = Math.floor(rN/rD);
+    const remN  = rN % rD;
+    let ans = remN===0 ? `${rN}` : whole>0 ? `${whole} and ${remN}/${rD}` : `${rN}/${rD}`;
+    document.getElementById("answer").textContent = ans;
+  }
+
+  ["an","ad","bn","bd"].forEach(id=>
+    document.getElementById(id).addEventListener("input", update));
+  update();
+})();
+</script>

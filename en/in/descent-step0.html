@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N0: A Complete Proof of the Descent Theorem ─ Descent and Heights | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N0, proving the descent theorem completely from its premises. A close reading of the skeleton of the Mordell–Weil proof.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N0: A Complete Proof of the Descent Theorem ─ Descent and Heights | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N0, proving the descent theorem completely from its premises. A close reading of the skeleton of the Mordell–Weil proof.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/descent-step0.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'δ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/descent-step0.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/descent-step0.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/descent-step0.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/descent-step0.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Descent and heights N0/N3</div>
+    <h1>A complete proof of the descent theorem<br><span class="en">The Descent Theorem, with every step justified</span></h1>
+    <p class="hero-sub">
+      "A/mA finite + a height function ⇒ finitely generated" ── we rebuild the proof of Main Part IV, Section 02 with zero leaps.
+      The "choices" hidden in constructing the descent sequence, the induction for the shrinking estimate, the reverse telescoping sum, and even the exact meaning of "generate":
+      for every step we make the "claim" and the "reason" explicit. This is a chapter of pure group theory + real numbers, where elliptic curves haven't appeared yet.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.3.1 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/descent.html">Main IV Descent</a>
+      <a class="cur" href="/math-site/en/in/descent-step0.html">N0 Descent theorem</a>
+      <a href="/math-site/en/in/descent-step1.html">N1 Foundations of height</a>
+      <a href="/math-site/en/in/descent-step2.html">N2 Property (a) addition</a>
+      <a href="/math-site/en/in/descent-step3.html">N3 Property (b) doubling</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <p>
+      The proof in Section 02 of the main part is a correct blueprint, but in the following six places it relied on the reader filling things in mentally.
+      This note puts all of them on paper.
+    </p>
+    <ul>
+      <li>① Making explicit the <strong>double choice</strong> in constructing the descent sequence P₁, P₂, … (the coset index i<sub>j</sub> and the quotient P<sub>j</sub>)</li>
+      <li>② The sign handling when applying property (i) to "Q = −Q<sub>i</sub>", and why the constant C₁′ <strong>can be taken independent of P</strong></li>
+      <li>③ A <strong>rigorous proof by induction</strong> of the iterated estimate h(P<sub>n</sub>) ≤ (2/m²)ⁿh(P) + … (a geometric series)</li>
+      <li>④ h is real-valued and <strong>not assumed nonnegative</strong> ── checking that the argument works even when h(P) &lt; 0</li>
+      <li>⑤ A proof by induction of the reverse telescoping sum P = mⁿP<sub>n</sub> + Σ m<sup>j−1</sup>Q<sub>i<sub>j</sub></sub></li>
+      <li>⑥ Writing out the <strong>set-theoretically precise form</strong> of "generated by a finite set" (generated subgroup = the whole group)</li>
+    </ul>
+    <p>
+      Plan: first, in Section 02, we fix the premises as H1–H3. In the proof that follows,
+      we proceed while checking that every step follows only from "H1–H3, steps already shown, or pure computation".
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (H1–H3)</h2>
+    <p>
+      This note imports only the following three things from outside. It uses no elliptic curve theory and no field theory at all
+      (those first appear in N1–N3, when we prove "the existence of a height function").
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">Premise H1 ─ abelian groups and generation <span class="refchip">group theory definitions</span></div>
+      <p>
+        A is an abelian group (written additively). For a subset Z ⊆ A, the <strong>subgroup generated by</strong> Z is
+      </p>
+      <div class="formula"><div class="fline">⟨Z⟩ = { n₁z₁ + ⋯ + n<sub>k</sub>z<sub>k</sub> : k ≥ 0, n<sub>i</sub> ∈ ℤ, z<sub>i</sub> ∈ Z }  (empty sum = 0)</div></div>
+      <p>
+        "A is finitely generated" means there exists a finite set Z with A = ⟨Z⟩.
+        An integer multiple mP is repeated addition, and n(P+Q) = nP + nQ holds for any P, Q ∈ A and n ∈ ℤ.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise H2 ─ quotient groups and coset representatives <span class="refchip">group theory definitions</span></div>
+      <p>
+        mA = { mP : P ∈ A } is a subgroup, and the quotient group A/mA is defined.
+        "A/mA is finite (of order r)" means there are <strong>representatives Q₁, …, Q<sub>r</sub> ∈ A</strong> such that
+        for any a ∈ A, a − Q<sub>i</sub> ∈ mA for some i.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise H3 ─ elementary facts about real numbers <span class="refchip">basics of analysis</span></div>
+      <p>For 0 &lt; α &lt; 1 and a real number β ≥ 0:</p>
+      <div class="formula">
+        <div class="fline">Geometric series: β(1 + α + α² + ⋯ + α<sup>n−1</sup>) = β·(1−αⁿ)/(1−α) &lt; β/(1−α)</div>
+        <div class="fline">Archimedean property: for any x ≥ 0 there is an integer n ≥ 0 with 2⁻ⁿx ≤ 1</div>
+      </div>
+      <p>Also, dividing a real inequality by a positive number doesn't change its direction. That's all the analysis we use.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The statement and the design of the proof</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (descent theorem) <span class="refchip">AEC VIII.3.1</span></div>
+      <p>Let A be an abelian group and h : A → ℝ a function satisfying the following.</p>
+      <div class="formula">
+        <div class="fline">(i)  For each Q ∈ A there is a constant C₁ = C₁(Q) with: h(P + Q) ≤ 2h(P) + C₁  (∀P ∈ A)</div>
+        <div class="fline">(ii)  There are an integer m ≥ 2 and a constant C₂ with: h(mP) ≥ m²h(P) − C₂  (∀P ∈ A)</div>
+        <div class="fline">(iii)  For any constant C₃, { P ∈ A : h(P) ≤ C₃ } is a finite set</div>
+      </div>
+      <p>If moreover A/mA is finite for the m in (ii), then A is finitely generated.</p>
+    </div>
+
+    <p>
+      The design has three parts. <strong>Part 1 (construction)</strong>: from any point P, build a descent sequence by "dividing by m and subtracting the remainder".
+      <strong>Part 2 (estimate)</strong>: show that the heights in the descent sequence fall geometrically down to a "floor".
+      <strong>Part 3 (generation)</strong>: trace the descent sequence backward and check that P is an integer combination of "points on the floor + remainder representatives".
+      At the very end, (iii) single-handedly supplies the finiteness.
+    </p>
+
+    <div class="why">
+      <div class="w-label">? h doesn't need a "meaning"</div>
+      <p>
+        The h in this theorem is built with "the number of digits of a point of E(ℚ)" in mind, but in the proof
+        <strong>no properties other than (i)(ii)(iii) are used at all</strong>. Note that we don't even assume h ≥ 0
+        (checked in gap ④). Precisely because it was cut out axiomatically, this theorem can be reused as is beyond E(ℚ) ──
+        for example for E(K) over a general number field<span class="refchip">AEC VIII.6.7</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Part 1</div>
+    <h2>Constructing the descent sequence ─ making the choices explicit</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Choose and fix one set of representatives Q₁, …, Q<sub>r</sub> ∈ A of A/mA. Also define the constant C₁′ := max{ C₁(−Q₁), …, C₁(−Q<sub>r</sub>) }.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Representatives exist by H2 (the definition of A/mA being finite). C₁′ is the maximum of <strong>finitely many</strong> real numbers, so it certainly exists, and it doesn't depend on P. The existence of the constant C₁(−Q<sub>i</sub>) for each −Q<sub>i</sub> is (i). This is the second half of gap ②.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Take any P ∈ A and set P₀ := P. Inductively for j ≥ 1: once P<sub>j−1</sub> has been constructed, choose one index i<sub>j</sub> ∈ {1,…,r} with P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub> ∈ mA, and then choose one P<sub>j</sub> ∈ A with mP<sub>j</sub> = P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The existence of i<sub>j</sub> is H2 (P<sub>j−1</sub> lies in some coset). The existence of P<sub>j</sub> is the very definition of mA, "an element of mA = m times some element". This is gap ①: every step of the construction involves two choices, but at each step the options are nonempty, and all we need is <strong>to build one finite sequence</strong>, so we may choose arbitrarily and fix (no axiom of choice needed).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>In this way we get "descent data" (P₀, P₁, …, P<sub>n</sub>; i₁, …, i<sub>n</sub>) of any length n:</p>
+        <div class="formula">
+          <div class="fline">P₀ = P,  P<sub>j−1</sub> = mP<sub>j</sub> + Q<sub>i<sub>j</sub></sub>  (j = 1, …, n)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Just moving terms in the equation mP<sub>j</sub> = P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub> from Step 2 (A is an abelian group, H1).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Part 2</div>
+    <h2>The shrinking estimate ─ heights fall geometrically to the floor</h2>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p><strong>One-step estimate:</strong> for each j = 1, …, n,  h(P<sub>j</sub>) ≤ ( 2h(P<sub>j−1</sub>) + C₁′ + C₂ ) / m². Below we break it into 4a–4d.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4a</div>
+      <div class="ps-b">
+        <p>m²h(P<sub>j</sub>) ≤ h(mP<sub>j</sub>) + C₂.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Just (ii) applied to P = P<sub>j</sub>, with terms moved.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4b</div>
+      <div class="ps-b">
+        <p>h(mP<sub>j</sub>) = h(P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub>) = h(P<sub>j−1</sub> + (−Q<sub>i<sub>j</sub></sub>)).</p>
+        <p class="ps-why"><b>▸ Reason</b>  mP<sub>j</sub> and P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub> are <strong>the same element</strong> of A (by the construction in Step 2), so their values under h are equal too. Subtraction is "adding the inverse" (H1).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4c</div>
+      <div class="ps-b">
+        <p>h(P<sub>j−1</sub> + (−Q<sub>i<sub>j</sub></sub>)) ≤ 2h(P<sub>j−1</sub>) + C₁(−Q<sub>i<sub>j</sub></sub>) ≤ 2h(P<sub>j−1</sub>) + C₁′.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The first inequality is (i) applied with "Q = −Q<sub>i<sub>j</sub></sub>, P = P<sub>j−1</sub>". (i) gives a constant for <strong>any</strong> Q ∈ A, so we may use it for −Q<sub>i</sub> ── this is the first half of gap ② (the sign handling). The second inequality is the definition of C₁′ (Step 1: we took the max).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4d</div>
+      <div class="ps-b">
+        <p>Chain 4a–4c together and divide by m² ( &gt; 0 ) to get the claimed one-step estimate.</p>
+        <p class="ps-why"><b>▸ Reason</b>  m²h(P<sub>j</sub>) ≤ h(mP<sub>j</sub>) + C₂ ≤ 2h(P<sub>j−1</sub>) + C₁′ + C₂. Dividing by a positive number doesn't change the direction of the inequality (H3).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p><strong>Iteration (induction):</strong> setting α := 2/m², β := (C₁′ + C₂)/m², for any n ≥ 0</p>
+        <div class="formula">
+          <div class="fline">h(P<sub>n</sub>) ≤ αⁿ h(P) + β ( 1 + α + α² + ⋯ + α<sup>n−1</sup> )</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Induction on n (gap ③). n = 0 is "h(P) ≤ h(P)", true (the sum on the right is the empty sum = 0). If it holds for n, substitute the induction hypothesis into the one-step estimate of Step 4, h(P<sub>n+1</sub>) ≤ αh(P<sub>n</sub>) + β: h(P<sub>n+1</sub>) ≤ α( αⁿh(P) + β(1+⋯+α<sup>n−1</sup>) ) + β = α<sup>n+1</sup>h(P) + β(1+α+⋯+αⁿ). Since α &gt; 0 we may multiply the inequality by α.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p><strong>Deriving the floor:</strong> since m ≥ 2 gives α ≤ 1/2, setting h⁺ := max{ h(P), 0 },</p>
+        <div class="formula">
+          <div class="fline">h(P<sub>n</sub>) &lt; αⁿ h(P) + β/(1−α) ≤ 2⁻ⁿ h⁺ + (C₁′ + C₂)/(m² − 2) ≤ 2⁻ⁿ h⁺ + (C₁′ + C₂)/2</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  The sum of the geometric series is H3. β/(1−α) = [(C₁′+C₂)/m²] / [(m²−2)/m²] = (C₁′+C₂)/(m²−2) is just multiplying numerator and denominator by m². m ≥ 2 ⇒ m²−2 ≥ 2. Even though α ≤ 1/2, we can write αⁿh(P) ≤ 2⁻ⁿh(P) only when h(P) ≥ 0 ── if h(P) &lt; 0 then αⁿh(P) &lt; 0 ≤ 2⁻ⁿh⁺, so in either case αⁿh(P) ≤ 2⁻ⁿh⁺. This is gap ④: nonnegativity of h isn't needed; using max{h(P), 0} handles both cases uniformly. We also don't assume C₁′+C₂ ≥ 0, but if it's negative the floor just gets lower and the rest of the argument goes through unchanged.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p><strong>Choosing the stopping time:</strong> choose one n ≥ 0 with 2⁻ⁿ h⁺ ≤ 1. For this n,</p>
+        <div class="formula">
+          <div class="fline">h(P<sub>n</sub>) ≤ 1 + (C₁′ + C₂)/2 =: C₃*  (a constant independent of P!)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Existence is the Archimedean property in H3 (h⁺ ≥ 0). Explicitly, n = max{ 0, ⌈log₂ h⁺⌉ } works (main part, Exercise 1). <strong>n changes with P, but the floor C₃* doesn't</strong> ── this is the crux of the proof.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Part 3</div>
+    <h2>Reverse telescoping and generation</h2>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>Reverse telescoping sum:</strong> for any n ≥ 0,</p>
+        <div class="formula">
+          <div class="fline">P = mⁿ P<sub>n</sub> + Σ<sub>j=1</sub><sup>n</sup> m<sup>j−1</sup> Q<sub>i<sub>j</sub></sub>  (for n = 0, P = P₀ and the sum is empty)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Induction on n (gap ⑤). n = 0 is P = P₀ (the definition in Step 2). If it holds for n = k, substitute P<sub>k</sub> = mP<sub>k+1</sub> + Q<sub>i<sub>k+1</sub></sub> (Step 3): P = m<sup>k</sup>( mP<sub>k+1</sub> + Q<sub>i<sub>k+1</sub></sub> ) + Σ<sub>j≤k</sub> m<sup>j−1</sup>Q<sub>i<sub>j</sub></sub> = m<sup>k+1</sup>P<sub>k+1</sub> + Σ<sub>j≤k+1</sub> m<sup>j−1</sup>Q<sub>i<sub>j</sub></sub>. The distributive law m<sup>k</sup>(X+Y) = m<sup>k</sup>X + m<sup>k</sup>Y is H1.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p><strong>Pinning down the generating set:</strong> setting Z := { Q₁, …, Q<sub>r</sub> } ∪ { R ∈ A : h(R) ≤ C₃* }, Z is a finite set and A = ⟨Z⟩.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Finiteness: the first set has r elements, and the second set is finite by (iii) with C₃ = C₃* ── <strong>this is the only time (iii) is used in the whole proof</strong>. Generation: for any P, take the n from Step 7; then the formula in Step 8 expresses P as the sum of "mⁿ times P<sub>n</sub> (in the second set, Step 7)" and "m<sup>j−1</sup> times each Q<sub>i<sub>j</sub></sub>". This is literally an integer combination of Z in the sense of H1. This is gap ⑥: "generate" means every element can be written as an integer combination, and we wrote that out literally.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>Therefore A is generated by the finite set Z, and the proof of the theorem is complete.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Step 9 is exactly the definition of "finitely generated" (H1).</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">By-product: an explicit generating set and stopping time</div>
+      <div class="formula">
+        <div class="fline">A = ⟨ {Q₁,…,Q<sub>r</sub>} ∪ { R : h(R) ≤ 1 + (C₁′+C₂)/2 } ⟩,  stopping time n ≈ log₂ h⁺(P)</div>
+      </div>
+      <p>
+        The proof tells us not only "it's finitely generated" but even <strong>candidates for a generating set and the number of steps to reach it</strong>.
+        If C₁′ and C₂ can be computed (N2 and N3 actually compute them) and the points below the floor can be listed (the count in N1),
+        then generators <strong>can be found by an algorithm</strong> ── this is what the "remark on effectivity" in the main part<span class="refchip">AEC VIII.3.2</span> is about.
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">What we didn't use (knowing the outline of the proof)</div>
+      <p>
+        Nonnegativity of h is <strong>not needed</strong> (Step 6). The coefficient 2 in (i) is <strong>not essential</strong> ──
+        replacing 2 with any c &lt; m² still keeps the shrink factor c/m² &lt; 1; only the denominator of the floor changes to m²−c.
+        Countability of A or whether it has torsion isn't needed either. Finiteness was supplied in only two places: <strong>the single application of (iii)</strong> (Step 9) and
+        <strong>the finiteness of A/mA</strong> (Step 1).
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Seen as a contraction ─ what the simulator's "floor" really is</div>
+      <p>
+        The one-step estimate (Step 4) forces the real recursion x ↦ (2x + C)/m² onto the heights.
+        This linear map is a <strong>contraction</strong> with slope 2/m² &lt; 1, and its fixed point is x* = C/(m²−2) ──
+        that's the gold dotted line drawn in the main part's simulator. You can read it as an elementary version of Banach's fixed point theorem
+        guaranteeing that "however high a point is, it falls to the floor in logarithmically many steps".
+        The same shrinking structure Fermat's infinite descent used to produce a "contradiction" is used here to produce "generation" ──
+        savor it together with the why box in Section 02 of the main part.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/descent.html">
+      <div class="p-dir">← Main part</div>
+      <div class="p-title">Descent and heights (back to Section 02)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/descent-step1.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N1</div>
+      <div class="p-title">Foundations of height ─ the shape of coordinates and finiteness →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (descent and heights) N0/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.3.1</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

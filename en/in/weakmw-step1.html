@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N1: A Complete Proof of the Kummer Pairing ─ Weak Mordell–Weil | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N1, giving a complete proof of the Kummer pairing at the core of the weak Mordell–Weil theorem. Graduate-level notes.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N1: A Complete Proof of the Kummer Pairing ─ Weak Mordell–Weil | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N1, giving a complete proof of the Kummer pairing at the core of the weak Mordell–Weil theorem. Graduate-level notes.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/weakmw-step1.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'κ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step1.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/weakmw-step1.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step1.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/weakmw-step1.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Weak Mordell–Weil N1/N3</div>
+    <h1>A complete proof of the Kummer pairing<br><span class="en">The Kummer Pairing, with every step justified</span></h1>
+    <p class="hero-sub">
+      We carry out the construction of the perfect pairing E(K)/mE(K) × G<sub>L/K</sub> → E[m] without skipping a single line: well-definedness, bilinearity, determining the kernels on both sides,
+      descending to the quotients, and deriving the two injections.
+      Includes a complete table of "where E[m] ⊂ E(K) is used".
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.1.2 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/weakmw.html">Main II Weak MW</a>
+      <a href="/math-site/en/in/weakmw-step0.html">N0 Reduction lemma</a>
+      <a class="cur" href="/math-site/en/in/weakmw-step1.html">N1 Kummer pairing</a>
+      <a href="/math-site/en/in/weakmw-step2.html">N2 Unramifiedness</a>
+      <a href="/math-site/en/in/weakmw-step3.html">N3 Finiteness from field theory</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① <strong>A proof of surjectivity</strong> of [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) (only cited by chip in the main part)</li>
+      <li>② Why "another choice can only have the form Q + T (T ∈ E[m])"</li>
+      <li>③ Making explicit the <strong>action convention</strong> for the composition στ (P<sup>στ</sup> = (P<sup>σ</sup>)<sup>τ</sup>) ── leave this vague and the cocycle computations become uncheckable</li>
+      <li>④ Handling "fixed points of an <strong>infinite</strong> Galois extension", used in determining the left kernel</li>
+      <li>⑤ In determining the right kernel, the step from "the value at the chosen Q is O" to "<strong>every</strong> Q is fixed"</li>
+      <li>⑥ The procedure for <strong>descending κ to the quotients E(K)/mE(K) × G<sub>L/K</sub></strong> (each side needs checking)</li>
+      <li>⑦ The general theory giving <strong>two injections</strong> δ, ρ from a perfect pairing, and a proof of both directions of "finite ⟺ finite"</li>
+    </ul>
+    <p>
+      Convention: throughout this note we <strong>assume E[m] ⊂ E(K)</strong> (justified by <a href="/math-site/en/in/weakmw-step0.html" style="color:var(--green);">the corollary in N0</a>).
+      We abbreviate G := G<sub><span class="ov">K</span>/K</sub>.
+      N0's premises P1 (group structure), P2 (the action commutes with addition), P3 (fixed points), P4 (#E[m] = m²) remain in use.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Additional premises (Q1–Q4)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise Q1 ─ surjectivity of [m]</div>
+      <p>[m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) is surjective.</p>
+      <details class="sol">
+        <summary>Open the proof (gap ①)</summary>
+        <div class="sol-body">
+          <p>
+            [m] is an isogeny of degree m²<span class="refchip">AEC III.6.2(a)</span>, in particular a <strong>nonconstant</strong> morphism of curves.
+            A nonconstant morphism between smooth projective curves is surjective on points over an algebraically closed field<span class="refchip">AEC II.2.3</span>.
+            So for any P ∈ E(<span class="ov">K</span>) there is Q ∈ E(<span class="ov">K</span>) with [m]Q = P.
+            The two results cited here are theorems proved in Chapters II and III of AEC, and these two citations are the entire basis for "division can always be done inside <span class="ov">K</span>".
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise Q2 ─ fixed points of the absolute Galois group</div>
+      <p>
+        E(<span class="ov">K</span>)<sup>G</sup> = E(K). Reason: apply the same argument as P3 in N0 with M = <span class="ov">K</span>, F = K
+        (<span class="ov">K</span><sup>G</sup> = K is field theory in char 0; <span class="ov">K</span>/K is a Galois extension).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise Q3 ─ the composition convention for the action (gap ③)</div>
+      <p>
+        For the exponent notation P<sup>σ</sup>, composition is read with the <strong>right-action</strong> convention:
+      </p>
+      <div class="formula"><div class="fline">P<sup>στ</sup> := (P<sup>σ</sup>)<sup>τ</sup></div></div>
+      <p>
+        Every cocycle-type computation from here on is checked under this convention (the same convention as AEC's exponent notation).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise Q4 ─ surjectivity of the restriction map (field theory)</div>
+      <p>
+        If M/K is a (finite or infinite) Galois extension inside <span class="ov">K</span>, the restriction map
+        res : G → G<sub>M/K</sub>, σ ↦ σ|<sub>M</sub> is <strong>surjective</strong> with kernel G<sub><span class="ov">K</span>/M</sub>.
+        So G/G<sub><span class="ov">K</span>/M</sub> ≅ G<sub>M/K</sub>.
+        Also, for Galois extensions (even infinite ones), [M:K] = |G<sub>M/K</sub>| (as cardinals).
+        Reason: the isomorphism extension theorem (K-automorphisms of M extend to automorphisms of <span class="ov">K</span>).
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03 ─ (a)</div>
+    <h2>Definition and well-definedness</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Definition (the Kummer pairing) <span class="refchip">AEC VIII §1</span></div>
+      <p>For P ∈ E(K), σ ∈ G, choose Q ∈ E(<span class="ov">K</span>) with [m]Q = P (it exists: Q1), and</p>
+      <div class="formula"><div class="fline">κ(P, σ) := Q<sup>σ</sup> − Q</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>The values lie in E[m]: κ(P,σ) ∈ E[m].</p>
+        <p class="ps-why"><b>▸ Reason</b>  [m](Q<sup>σ</sup> − Q) = [m](Q<sup>σ</sup>) − [m]Q (P1) = ([m]Q)<sup>σ</sup> − [m]Q (P2) = P<sup>σ</sup> − P = O (P ∈ E(K), P2).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Any other choice of Q has the form Q + T (T ∈ E[m]).</p>
+        <p class="ps-why"><b>▸ Reason</b>  If [m]Q′ = P = [m]Q, then [m](Q′ − Q) = O (P1), i.e. T := Q′ − Q ∈ E[m] = ker[m]. This is gap ②: an application of the definition of kernel, "take the difference and it falls into the kernel".</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>The value doesn't depend on the choice: (Q+T)<sup>σ</sup> − (Q+T) = Q<sup>σ</sup> − Q.</p>
+        <p class="ps-why"><b>▸ Reason</b>  (Q+T)<sup>σ</sup> = Q<sup>σ</sup> + T<sup>σ</sup> (P2). Rearranging, the difference is T<sup>σ</sup> − T. Since <strong>T ∈ E[m] ⊂ E(K)</strong> (assumption), T<sup>σ</sup> = T (P2), so the difference is O. ── Where E[m] ⊂ E(K) is used [No. 1].</p>
+      </div>
+    </div>
+    <div class="qed">(a) ∎</div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ (b)</div>
+    <h2>Bilinearity</h2>
+
+    <h3>Linearity in P</h3>
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>For P₁, P₂ ∈ E(K), choosing Q₁, Q₂, Q₁ + Q₂ is a legitimate choice for P₁ + P₂.</p>
+        <p class="ps-why"><b>▸ Reason</b>  [m](Q₁+Q₂) = [m]Q₁ + [m]Q₂ = P₁ + P₂ (P1).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>κ(P₁+P₂, σ) = κ(P₁,σ) + κ(P₂,σ).</p>
+        <p class="ps-why"><b>▸ Reason</b>  We showed in (a) that the value doesn't depend on the choice, so we may compute with the choice of Step 4: (Q₁+Q₂)<sup>σ</sup> − (Q₁+Q₂) = (Q₁<sup>σ</sup> − Q₁) + (Q₂<sup>σ</sup> − Q₂) (P2 and commutativity). Note that having proved well-definedness <strong>first</strong> is the logical precondition for this one line.</p>
+      </div>
+    </div>
+
+    <h3>Linearity in σ</h3>
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>κ(P, στ) = Q<sup>στ</sup> − Q = (Q<sup>στ</sup> − Q<sup>τ</sup>) + (Q<sup>τ</sup> − Q).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Inserting the middle term ±Q<sup>τ</sup> (an identity in an abelian group).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>Q<sup>στ</sup> − Q<sup>τ</sup> = (Q<sup>σ</sup> − Q)<sup>τ</sup> = κ(P,σ)<sup>τ</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Q<sup>στ</sup> = (Q<sup>σ</sup>)<sup>τ</sup> (the convention Q3 ── this is where the convention is really used) and (A−B)<sup>τ</sup> = A<sup>τ</sup> − B<sup>τ</sup> (P2).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>κ(P,σ)<sup>τ</sup> = κ(P,σ). Therefore κ(P,στ) = κ(P,σ) + κ(P,τ).</p>
+        <p class="ps-why"><b>▸ Reason</b>  κ(P,σ) ∈ E[m] ⊂ E(K) (Step 1 and the assumption), so it's fixed by τ (P2). ── Where E[m] ⊂ E(K) is used [No. 2]. Without this assumption we'd only get as far as the <strong>1-cocycle relation</strong> κ(P,στ) = κ(P,σ)<sup>τ</sup> + κ(P,τ), not a homomorphism.</p>
+      </div>
+    </div>
+    <div class="qed">(b) ∎</div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ (c)</div>
+    <h2>Left kernel = mE(K)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>(⊇) If P ∈ mE(K), then κ(P,σ) = O (∀σ).</p>
+        <p class="ps-why"><b>▸ Reason</b>  We can write P = [m]Q₀, Q₀ ∈ E(K). By (a) we may compute with the choice Q = Q₀, and Q₀<sup>σ</sup> = Q₀ (P2), so κ(P,σ) = Q₀<sup>σ</sup> − Q₀ = O.</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>(⊆) If κ(P,σ) = O for all σ ∈ G, then P ∈ mE(K).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Fix one Q. By assumption Q<sup>σ</sup> = Q holds for <strong>every</strong> σ ∈ G, i.e. Q ∈ E(<span class="ov">K</span>)<sup>G</sup> = E(K) (Q2 ── gap ④: these are fixed points of the absolute Galois group, so the input is the field-theoretic fact that the fixed field of the infinite Galois extension <span class="ov">K</span>/K is K). So P = [m]Q ∈ mE(K).</p>
+      </div>
+    </div>
+    <div class="qed">(c) ∎</div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ (d)</div>
+    <h2>Right kernel = G<sub><span class="ov">K</span>/L</sub>, and L/K is Galois</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Definition</div>
+      <p>[m]<sup>−1</sup>E(K) := { Q ∈ E(<span class="ov">K</span>) : [m]Q ∈ E(K) },
+      L := K( x(Q), y(Q) : Q ∈ [m]<sup>−1</sup>E(K), Q ≠ O ).</p>
+      <p>Note that at this point it is <strong>unknown</strong> whether L/K is finite (knowing that is the very heart of the theorem).</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>(⊇) If σ ∈ G<sub><span class="ov">K</span>/L</sub>, then κ(P,σ) = O (∀P ∈ E(K)).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Any legitimate choice Q for P is by definition an element of [m]<sup>−1</sup>E(K), so its coordinates lie in L. σ fixes L, so Q<sup>σ</sup> = Q.</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>(⊆) If κ(P,σ) = O for all P ∈ E(K), then σ fixes <strong>every</strong> Q ∈ [m]<sup>−1</sup>E(K).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Take any Q ∈ [m]<sup>−1</sup>E(K) and set P := [m]Q ∈ E(K); this Q is a legitimate choice for κ(P,σ). By (a) the value of κ doesn't depend on the choice, so O = κ(P,σ) = Q<sup>σ</sup> − Q. This is gap ⑤: "the assumption is a formula about the chosen Q, but well-definedness builds the bridge to <strong>every</strong> Q".</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p>Therefore σ fixes all the generators of L, and σ ∈ G<sub><span class="ov">K</span>/L</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If a field automorphism fixes the generators, it fixes the whole field they generate (field theory: the set of fixed elements forms a subfield).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">14</div>
+      <div class="ps-b">
+        <p>L/K is a Galois extension (not necessarily finite).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Normality: for any σ ∈ G, Q ∈ [m]<sup>−1</sup>E(K) ⇒ [m](Q<sup>σ</sup>) = ([m]Q)<sup>σ</sup> ∈ E(K) (P2, and points of E(K) are fixed by σ), so the set [m]<sup>−1</sup>E(K) is G-stable. Hence σ preserves the set of generators of L and σ(L) = L. Any K-embedding into <span class="ov">K</span> is the restriction of an element of G (the extension theorem in Q4), so the image under every embedding is L, i.e. normal. Separability is char 0.</p>
+      </div>
+    </div>
+    <div class="qed">(d) ∎</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Descending to the quotients, and the two injections (gaps ⑥⑦)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">15</div>
+      <div class="ps-b">
+        <p><strong>Descent on the left:</strong> κ induces a pairing κ̄ on E(K)/mE(K) × G.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If P ≡ P′ (mod mE(K)) then P′ = P + [m]R (R ∈ E(K)), and κ(P′,σ) = κ(P,σ) + κ([m]R,σ) (linearity in P from (b)) = κ(P,σ) + O ((c)⊇). That is, κ(·,σ) is constant on cosets.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">16</div>
+      <div class="ps-b">
+        <p><strong>Descent on the right:</strong> κ(P,σ) depends only on σ|<sub>L</sub>. Therefore κ̄ descends to a bilinear pairing on E(K)/mE(K) × G<sub>L/K</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If σ|<sub>L</sub> = σ′|<sub>L</sub>, then σ′ = σι with ι := σ<sup>−1</sup>σ′ ∈ G<sub><span class="ov">K</span>/L</sub>. By linearity in σ from (b), κ(P,σι) = κ(P,σ) + κ(P,ι) = κ(P,σ) + O ((d)⊇). G/G<sub><span class="ov">K</span>/L</sub> ≅ G<sub>L/K</sub> is Q4 (we showed L/K is Galois in (d), so the quotient makes sense).</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Results so far (the perfect pairing)</div>
+      <p>A bilinear pairing</p>
+      <div class="formula"><div class="fline">κ̄ : E(K)/mE(K) × G<sub>L/K</sub> → E[m]</div></div>
+      <p>has been obtained, with both the left kernel ((c)) and the right kernel ((d)) trivial. This verifies the definition of a "perfect pairing".</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">17</div>
+      <div class="ps-b">
+        <p><strong>The injection δ:</strong> δ : E(K)/mE(K) ↪ Hom(G<sub>L/K</sub>, E[m]), δ(P̄) = κ̄(P̄, ·).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Each δ(P̄) is a group homomorphism = linearity in σ from (b). δ itself is a homomorphism = linearity in P from (b). Injectivity: if δ(P̄) is the zero map, P is in the left kernel, and by (c) P ∈ mE(K), i.e. P̄ = 0.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">18</div>
+      <div class="ps-b">
+        <p><strong>The injection ρ:</strong> ρ : G<sub>L/K</sub> ↪ Hom(E(K)/mE(K), E[m]), ρ(σ̄) = κ̄(·, σ̄).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The argument symmetric to Step 17 (using triviality of the right kernel (d)).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">19</div>
+      <div class="ps-b">
+        <p><strong>Translating finiteness (⇐):</strong> if [L:K] &lt; ∞, then E(K)/mE(K) is finite, and |E(K)/mE(K)| ≤ (m²)<sup>[L:K]</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Hom(G<sub>L/K</sub>, E[m]) ⊆ Map(G<sub>L/K</sub>, E[m]), the latter of cardinality (m²)<sup>|G<sub>L/K</sub>|</sup> (P4 and |G<sub>L/K</sub>| = [L:K] from Q4). δ is injective (Step 17).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">20</div>
+      <div class="ps-b">
+        <p><strong>Translating finiteness (⇒):</strong> if E(K)/mE(K) is finite, then [L:K] &lt; ∞.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Hom(E(K)/mE(K), E[m]) is a finite set (a subset of the maps from a finite set to a finite set). ρ is injective (Step 18), so G<sub>L/K</sub> is finite. By the last claim of Q4 (for Galois extensions [L:K] = |G<sub>L/K</sub>|), [L:K] &lt; ∞.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="goon">
+      <div class="g-label">▸ How it's used in the proof of the theorem</div>
+      <p>
+        The proof of the weak MW theorem actually uses only the direction of Step 19:
+        <strong>"just show L/K is finite and you win"</strong>. Showing that "finite" is the job of N2 (unramifiedness) and N3 (finiteness from field theory).
+        Step 20 is reassurance in the other direction (that the translation is an equivalence), corresponding to the right-pointing half of the "⟺" in the main part.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>Where did E[m] ⊂ E(K) come into play? ─ a complete list</h2>
+    <p>
+      Here we count every place this assumption is used. When the assumption is dropped in Part 3 (cohomology),
+      you can see at a glance what "breaks" and what "survives".
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Claim</th><th>Uses E[m] ⊂ E(K)?</th><th>Where it's used</th></tr></thead>
+      <tbody>
+        <tr><td>(a) well-definedness</td><td class="m">Yes [No. 1]</td><td>Step 3: T<sup>σ</sup> = T</td></tr>
+        <tr><td>(b) linearity in P</td><td class="m">No</td><td>─ (only indirect dependence via (a))</td></tr>
+        <tr><td>(b) linearity in σ</td><td class="m">Yes [No. 2]</td><td>Step 8: κ(P,σ)<sup>τ</sup> = κ(P,σ)</td></tr>
+        <tr><td>(c) left kernel</td><td class="m">No</td><td>─</td></tr>
+        <tr><td>(d) right kernel, L is Galois</td><td class="m">No</td><td>─</td></tr>
+        <tr><td>Unramifiedness in N2 (VIII.1.5b)</td><td class="m">No</td><td>─ (why it's reused in Part 5)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="why">
+      <div class="w-label">? What remains when the assumption is dropped (a preview of Part 3)</div>
+      <p>
+        If use [No. 1] disappears, κ(P,·) is no longer determined as a "map"; changing Q shifts it by a coboundary.
+        That is, it's well defined only <strong>as a cohomology class</strong>, and δ is promoted to
+        the connecting map E(K)/mE(K) ↪ H¹(G, E[m]).
+        If use [No. 2] disappears, the G-action on the value group E[m] becomes nontrivial, and Hom is replaced by H¹.
+        Each step we just followed by hand is absorbed into the general theory of exact sequences in Part 3.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/weakmw-step0.html">
+      <div class="p-dir">← PREV ─ Between-the-lines note N0</div>
+      <div class="p-title">A complete proof of the reduction lemma</div>
+    </a>
+    <a class="next" href="/math-site/en/in/weakmw-step2.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N2</div>
+      <div class="p-title">A complete proof of unramifiedness →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the weak Mordell–Weil theorem) N1/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.1.2</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

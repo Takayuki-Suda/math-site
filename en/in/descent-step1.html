@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N1: Foundations of Height ─ The Shape of Coordinates and Finiteness ─ Descent and Heights | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N1, sorting out the shape of coordinates and the finiteness that underlie height functions. A close reading of graduate math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N1: Foundations of Height ─ The Shape of Coordinates and Finiteness ─ Descent and Heights | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N1, sorting out the shape of coordinates and the finiteness that underlie height functions. A close reading of graduate math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/descent-step1.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'d'; position:absolute; right:10px; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/descent-step1.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/descent-step1.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/descent-step1.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/descent-step1.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Descent and heights N1/N3</div>
+    <h1>Foundations of height ─ the shape of coordinates and finiteness<br><span class="en">Denominators are perfect squares &amp; cubes</span></h1>
+    <p class="hero-sub">
+      "In lowest terms we can write P = (a/d², b/d³)", which Main Part IV glossed over in one line ──
+      is in fact the foundation of the whole theory of heights. In this note we nail down a complete proof via p-adic valuations, the basic properties of the height H,
+      and an exact count for property (c), "there are finitely many points of bounded height".
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII §4, VIII.4.2(c) (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/descent.html">Main IV Descent</a>
+      <a href="/math-site/en/in/descent-step0.html">N0 Descent theorem</a>
+      <a class="cur" href="/math-site/en/in/descent-step1.html">N1 Foundations of height</a>
+      <a href="/math-site/en/in/descent-step2.html">N2 Property (a) addition</a>
+      <a href="/math-site/en/in/descent-step3.html">N3 Property (b) doubling</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <p>
+      Section 03 of the main part went straight from the definition of height to the proof of property (a), and along the way the following five points sank between the lines.
+    </p>
+    <ul>
+      <li>① Proof of the <strong>basic properties</strong> of H(t) and h<sub>x</sub> (H ≥ 1, h<sub>x</sub> ≥ 0, h<sub>x</sub>(P) = h<sub>x</sub>(−P))</li>
+      <li>② "We can write x = a/d², y = b/d³" ── a complete proof that <strong>the denominators automatically come as a pair of a square and a cube</strong></li>
+      <li>③ The gcd conditions (a ⊥ d, b ⊥ d) and the <strong>uniqueness</strong> of the representation</li>
+      <li>④ An <strong>exact count</strong> for property (c), "{ P : h<sub>x</sub>(P) ≤ C₃ } is finite" (the reasons for (2C+1)² and "at most 2 values of y for each x")</li>
+      <li>⑤ Checking with an example ── how the denominators 16 = 4², 64 = 4³, 7744 = 88² appear in the doubling sequence of P = (1,2)</li>
+    </ul>
+    <p>
+      ② is the foundation all the estimates in N2 and N3 depend on. Plan: fix the premises as V1–V3, and
+      prove ② with a "local" argument that looks at one prime p at a time.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (V1–V3)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise V1 ─ p-adic valuations <span class="refchip">a restatement of unique prime factorization</span></div>
+      <p>
+        For each prime p a function v<sub>p</sub> : ℚ<sup>×</sup> → ℤ is defined (the k when we write t = p<sup>k</sup>·(u/w) with p ∤ uw), satisfying:
+      </p>
+      <div class="formula">
+        <div class="fline">(V1-1)  v<sub>p</sub>(st) = v<sub>p</sub>(s) + v<sub>p</sub>(t)</div>
+        <div class="fline">(V1-2)  v<sub>p</sub>(s + t) ≥ min{ v<sub>p</sub>(s), v<sub>p</sub>(t) }, with equality guaranteed when v<sub>p</sub>(s) ≠ v<sub>p</sub>(t)</div>
+        <div class="fline">(V1-3)  t ∈ ℤ ⟺ v<sub>p</sub>(t) ≥ 0 for every p  (t ∈ ℚ<sup>×</sup>)</div>
+        <div class="fline fc">Convention: v<sub>p</sub>(0) = +∞ (0 is "divisible infinitely many times" by every p). (V1-2) holds even including 0.</div>
+      </div>
+      <details class="sol">
+        <summary>Open the proof of the equality case in (V1-2)</summary>
+        <div class="sol-body">
+          <p>
+            Suppose v<sub>p</sub>(s) &lt; v<sub>p</sub>(t). If v<sub>p</sub>(s+t) &gt; v<sub>p</sub>(s), then
+            writing s = (s+t) − t, (V1-2) gives v<sub>p</sub>(s) ≥ min{ v<sub>p</sub>(s+t), v<sub>p</sub>(−t) } &gt; v<sub>p</sub>(s)
+            (both terms are strictly larger than v<sub>p</sub>(s)), a contradiction. So v<sub>p</sub>(s+t) = v<sub>p</sub>(s) = min.
+            "The least divisible term governs how the sum divides" ── the standard consequence of the ultrametric inequality.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise V2 ─ lowest terms and the height H <span class="refchip">AEC VIII §4</span></div>
+      <p>
+        t ∈ ℚ can be written as t = p/q (p, q ∈ ℤ, q ≥ 1, gcd(p,q) = 1) in <strong>exactly one way</strong>, and
+        we define H(t) := max{ |p|, |q| }. Relation to valuations: q = Π<sub>ℓ</sub> ℓ<sup>max{0, −v<sub>ℓ</sub>(t)}</sup>
+        (the denominator is the collection of "negative valuations").
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise V3 ─ setting up the curve <span class="refchip">Main IV, Section 03</span></div>
+      <p>
+        Fix E : y² = x³ + Ax + B (A, B ∈ ℤ, Δ ≠ 0). P = (x, y) ∈ E(ℚ) means
+        x, y ∈ ℚ satisfy this equation. h<sub>x</sub>(P) = log H(x(P)) (P ≠ O), h<sub>x</sub>(O) = 0.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>Basic properties of H and h<sub>x</sub> (gap ①)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>H(t) ≥ 1 for all t ∈ ℚ. Hence h<sub>x</sub>(P) = log H(x(P)) ≥ 0 (∀P).</p>
+        <p class="ps-why"><b>▸ Reason</b>  In the representation of V2, q ≥ 1, so max{|p|, |q|} ≥ 1. log is ≥ 0 on [1, ∞). At O, h<sub>x</sub>(O) = 0 ≥ 0 by convention. <strong>The descent theorem didn't need h ≥ 0 (N0), but having it simplifies the estimates everywhere.</strong></p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>h<sub>x</sub>(−P) = h<sub>x</sub>(P).</p>
+        <p class="ps-why"><b>▸ Reason</b>  −(x, y) = (x, −y)<span class="refchip">AEC III.2.3(a)</span>: the inverse doesn't change the x-coordinate. h<sub>x</sub> only looks at the x-coordinate, so the values agree. −O = O is consistent with the convention. Thanks to this symmetry, computing C₁′ = max C₁(−Q<sub>i</sub>) in the descent theorem is essentially the same as computing C₁(Q<sub>i</sub>) (a by-product of N2).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>There are finitely many rational numbers t with H(t) ≤ C, at most (2⌊C⌋ + 1)² of them.</p>
+        <p class="ps-why"><b>▸ Reason</b>  t ↦ (p, q) (the reduced representation of V2) is injective. If H(t) ≤ C then |p| ≤ C and |q| ≤ C, i.e. (p, q) lies in the square [−⌊C⌋, ⌊C⌋]² of the integer lattice. That square has (2⌊C⌋+1)² lattice points. With an injection, the count is at most the number of candidates for the image (set theory).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>The coordinate lemma ─ the denominators are d² and d³ (gaps ②③)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (shape of coordinates) <span class="refchip">used implicitly in AEC VIII §4</span></div>
+      <p>
+        Let P = (x, y) ∈ E(ℚ), P ≠ O. Then there is <strong>exactly one</strong> triple of integers a, b and d ≥ 1 with
+      </p>
+      <div class="formula">
+        <div class="fline">x = a/d²,  y = b/d³,  gcd(a, d) = gcd(b, d) = 1</div>
+      </div>
+      <p>In particular H(x(P)) = max{ |a|, d² }, and b² = a³ + Aad⁴ + Bd⁶ (an equation of integers).</p>
+    </div>
+
+    <p>The proof is just "fix one prime p and compare the p-parts of the denominators of x and y". The crux is that the curve's equation <strong>ties the valuations in a 2 : 3 ratio</strong>.</p>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Fix a prime p and suppose v := v<sub>p</sub>(x) &lt; 0. Then v<sub>p</sub>(x³) = 3v, and v<sub>p</sub>(Ax + B) ≥ v &gt; 3v.</p>
+        <p class="ps-why"><b>▸ Reason</b>  v<sub>p</sub>(x³) = 3v is (V1-1). v<sub>p</sub>(Ax) = v<sub>p</sub>(A) + v ≥ v (A ∈ ℤ gives v<sub>p</sub>(A) ≥ 0, (V1-3)), and v<sub>p</sub>(B) ≥ 0 &gt; v. So by (V1-2), v<sub>p</sub>(Ax+B) ≥ min{v, 0} = v. The last v &gt; 3v holds because v &lt; 0 (add 2v &lt; 0 to both sides). Even if a term vanishes because A = 0 or B = 0, v<sub>p</sub>(0) = +∞ ≥ v, so the argument goes through unchanged.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Therefore v<sub>p</sub>(y²) = v<sub>p</sub>(x³ + (Ax+B)) = 3v. That is, 2·v<sub>p</sub>(y) = 3v.</p>
+        <p class="ps-why"><b>▸ Reason</b>  In Step 1 the two terms have different valuations (3v &lt; v ≤ v<sub>p</sub>(Ax+B)), so the <strong>equality case</strong> of (V1-2) kicks in and the valuation of the sum equals the smaller one, 3v. v<sub>p</sub>(y²) = 2v<sub>p</sub>(y) is (V1-1). Note that if y = 0 the left side is +∞, contradicting 3v &lt; ∞, so v &lt; 0 automatically gives y ≠ 0.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>The left side of 2v<sub>p</sub>(y) = 3v is even, so v is even too. So v = −2e (e ≥ 1 an integer), and v<sub>p</sub>(y) = −3e.</p>
+        <p class="ps-why"><b>▸ Reason</b>  3v is even ⟺ v is even (3 is odd). Since v &lt; 0, e = −v/2 ≥ 1. v<sub>p</sub>(y) = 3v/2 = −3e. <strong>This is where it's settled that the exponents of the denominators come as a pair (2e, 3e).</strong></p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Conversely, at primes with v<sub>p</sub>(x) ≥ 0, v<sub>p</sub>(y) ≥ 0.</p>
+        <p class="ps-why"><b>▸ Reason</b>  2v<sub>p</sub>(y) = v<sub>p</sub>(x³+Ax+B) ≥ min{3v<sub>p</sub>(x), v<sub>p</sub>(A)+v<sub>p</sub>(x), v<sub>p</sub>(B)} ≥ 0 ((V1-2), each term ≥ 0). If y = 0, v<sub>p</sub>(0) = +∞ ≥ 0, no problem.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>Set e<sub>p</sub> := max{ 0, −v<sub>p</sub>(x)/2 }. Each e<sub>p</sub> is a nonnegative integer, and it is 0 except for the finitely many primes p appearing in the denominator of x. Define d := Π<sub>p</sub> p<sup>e<sub>p</sub></sup> ≥ 1.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Integrality is Step 3 (if v<sub>p</sub>(x) &lt; 0, then −v<sub>p</sub>(x)/2 = e ∈ ℤ). v<sub>p</sub>(x) ≥ 0 for all but finitely many p because the denominator of x in lowest terms has finitely many prime factors (V2). So d is defined as a finite product.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>a := x·d² and b := y·d³ are integers, and x = a/d², y = b/d³.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Check with (V1-3). v<sub>p</sub>(a) = v<sub>p</sub>(x) + 2e<sub>p</sub> is −2e<sub>p</sub> + 2e<sub>p</sub> = 0 if v<sub>p</sub>(x) &lt; 0, and v<sub>p</sub>(x) + 0 ≥ 0 if v<sub>p</sub>(x) ≥ 0. v<sub>p</sub>(b) = v<sub>p</sub>(y) + 3e<sub>p</sub> is −3e<sub>p</sub> + 3e<sub>p</sub> = 0 if v<sub>p</sub>(x) &lt; 0 (Step 3), and v<sub>p</sub>(y) ≥ 0 if v<sub>p</sub>(x) ≥ 0 (Step 4). The valuation is ≥ 0 at every prime, so they are integers.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>gcd(a, d) = gcd(b, d) = 1.</p>
+        <p class="ps-why"><b>▸ Reason</b>  At a prime p | d we have e<sub>p</sub> ≥ 1, i.e. v<sub>p</sub>(x) = −2e<sub>p</sub> &lt; 0, and by the computation in Step 6, v<sub>p</sub>(a) = 0 and v<sub>p</sub>(b) = 0. That is, the prime factors of d divide neither a nor b. This is the first half of gap ③.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>Uniqueness and the remaining claims:</strong> the representation is unique, H(x(P)) = max{|a|, d²}, and moreover b² = a³ + Aad⁴ + Bd⁶.</p>
+        <p class="ps-why"><b>▸ Reason</b>  gcd(a, d) = 1 ⇒ gcd(a, d²) = 1, so a/d² (d² ≥ 1) <strong>is itself the reduced representation</strong>. Uniqueness of the reduced representation (V2) determines a and d², d ≥ 1 makes d unique too, and b = y·d³ is unique as well. At the same time H(x(P)) = max{|a|, d²} follows immediately from the definition. The last equation is just substituting x = a/d², y = b/d³ into y² = x³+Ax+B and multiplying by d⁶: b²/d⁶ = a³/d⁶ + Aa/d² + B.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">Bonus: if y = 0 the denominator disappears (a seed of Lutz–Nagell)</div>
+      <p>
+        If y = 0 (a 2-torsion point), the contradiction in Step 2 forces v<sub>p</sub>(x) ≥ 0 at <strong>every</strong> prime,
+        that is, x ∈ ℤ and d = 1. The first step of the Lutz–Nagell theorem, "the coordinates of torsion points are integers"
+        <span class="refchip">AEC VIII.7.1–7.2</span> (main part, Section 06),
+        is already inside this lemma.
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Why 2 and 3 ─ the weights of the Weierstrass equation</div>
+      <p>
+        The equation y² = x³ + ⋯ becomes homogeneous if you give "x weight 2 and y weight 3" (2·3 = 3·2 = 6).
+        The coordinate lemma says these weights <strong>are stamped directly onto the exponents of the denominators</strong>.
+        In fact, the same phenomenon seen from inside the p-adics is the filtration of AEC Chapter VII,
+        E₁(ℚ<sub>p</sub>) ⊃ E₂(ℚ<sub>p</sub>) ⊃ ⋯ (the points with v<sub>p</sub>(x) = −2n, v<sub>p</sub>(y) = −3n)
+        <span class="refchip">around AEC VII.2</span>. The global theory of heights and the local theory
+        first shake hands over this "2 : 3".
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>A complete proof of property (c) (gap ④)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (height property (c)) <span class="refchip">AEC VIII.4.2(c)</span></div>
+      <p>For any constant C₃, { P ∈ E(ℚ) : h<sub>x</sub>(P) ≤ C₃ } is a finite set.</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Set C := e<sup>C₃</sup>. If h<sub>x</sub>(P) ≤ C₃ and P ≠ O, then H(x(P)) ≤ C.</p>
+        <p class="ps-why"><b>▸ Reason</b>  log H(x(P)) ≤ C₃, and exp is increasing. If C₃ &lt; 0, there is no P ≠ O satisfying the condition (Step 1 of Section 03: h<sub>x</sub> ≥ 0), so only the case C ≥ 1 matters below.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>There are finitely many candidates for the x-coordinate: #{ t ∈ ℚ : H(t) ≤ C } ≤ (2⌊C⌋+1)².</p>
+        <p class="ps-why"><b>▸ Reason</b>  Step 3 of Section 03.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Fix one x-coordinate; there are at most 2 points P ∈ E(ℚ) with that x-coordinate.</p>
+        <p class="ps-why"><b>▸ Reason</b>  P = (x, y) satisfies y² = x³+Ax+B. In the field ℚ there are at most two elements "whose square is c" (y₁² = y₂² ⇒ (y₁−y₂)(y₁+y₂) = 0 ⇒ y₂ = ±y₁: an integral domain has no zero divisors). So there are at most two candidates for y, ±y₀.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Summary: #{ P : h<sub>x</sub>(P) ≤ C₃ } ≤ 2(2⌊C⌋+1)² + 1 &lt; ∞.</p>
+        <p class="ps-why"><b>▸ Reason</b>  P ≠ O number at most "candidates for x (Step 2) × points per candidate (Step 3)" = 2(2⌊C⌋+1)², and finally we add the one point O. Finite × finite = finite.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">For general number fields ─ Northcott's finiteness</div>
+      <p>
+        Over ℚ, as shown, it's "just counting lattice points", but over a general number field K the candidates for coordinates become
+        "<strong>algebraic numbers</strong> of bounded height", and you need to control all the conjugates.
+        Even so, "there are finitely many algebraic numbers of bounded height and degree" holds ── this is Northcott's theorem
+        <span class="refchip">AEC VIII.5.11</span>, the general version of property (iii) that appeared on the map in Section 06 of the main part.
+        The skeleton of the proof is the same "count the coefficients" argument.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>Checking with an example ─ E : y² = x³ + 3, P = (1, 2) (gap ⑤)</h2>
+
+    <p>We look again at what's behind the table in Section 05 of the main part, through the eyes of the coordinate lemma. First compute 2P completely:</p>
+    <div class="formula">
+      <div class="fline">λ = (3x² + A)/(2y) = 3/4</div>
+      <div class="fline">x(2P) = λ² − 2x = 9/16 − 2 = −23/16,</div>
+      <div class="fline">y(2P) = λ(x(P) − x(2P)) − y(P) = (3/4)(1 + 23/16) − 2 = 117/64 − 128/64 = −11/64</div>
+    </div>
+
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Point</th><th>Coordinates</th><th>d</th><th>Checking the denominators</th></tr></thead>
+      <tbody>
+        <tr><td class="m">P</td><td class="m">(1, 2)</td><td class="m">1</td><td class="m">1 = 1², 1 = 1³</td></tr>
+        <tr><td class="m">2P</td><td class="m">(−23/16, −11/64)</td><td class="m">4</td><td class="m">16 = 4², 64 = 4³ ✓</td></tr>
+        <tr><td class="m">4P</td><td class="m">x = 2540833/7744</td><td class="m">88</td><td class="m">7744 = 88² ✓ (the denominator of y is 88³ = 681472)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">✓</div>
+      <div class="ps-b">
+        <p>Reading 2P with the valuation at p = 2: v₂(x(2P)) = v₂(−23/16) = −4 = −2·2, v₂(y(2P)) = v₂(−11/64) = −6 = −3·2.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The pair (−2e, −3e) = (−4, −6) with e₂ = 2 appears exactly ── the real thing behind Step 3's "2 : 3 tie". You can also check gcd(−23, 4) = gcd(−11, 4) = 1 (the gcd condition of the lemma).</p>
+      </div>
+    </div>
+
+    <p>
+      Notice too that <strong>we can predict the denominator 7744 of 4P is a perfect square before computing it</strong>.
+      Whatever integer the denominator G(−23, 16) of the duplication formula turns out to be, the coordinate lemma guarantees "once reduced, it's always the square of (some d)".
+      Indeed 7744 = 88², 88 = 2³·11. d goes from 4 to 88, about 22 times larger ──
+      this explosion of denominators is what the growth h<sub>x</sub>(2ⁿP) ≈ 4ⁿ (property (b), N3) really is.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ Next</div>
+      <p>
+        The foundation is set. In N2 we substitute (a/d², b/d³) into the addition formula to prove property (a), and
+        in N3 we prove property (b) with the duplication formula and two identities, each with zero leaps.
+        In both computations, "the denominators are d² and d³" keeps working as the reason the formulas stay within the world of integers.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/descent-step0.html">
+      <div class="p-dir">← PREV ─ Between-the-lines note N0</div>
+      <div class="p-title">A complete proof of the descent theorem</div>
+    </a>
+    <a class="next" href="/math-site/en/in/descent-step2.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N2</div>
+      <div class="p-title">A complete proof of property (a) ─ addition and height →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (descent and heights) N1/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII §4</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

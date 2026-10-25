@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 2 The Wall of Functions | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Wall of Functions&quot; boss battle tests your understanding of linear and quadratic functions. A challenge to get past what graphs really mean.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 2 The Wall of Functions | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Wall of Functions&quot; boss battle tests your understanding of linear and quadratic functions. A challenge to get past what graphs really mean.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_2.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_2.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_2.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_2.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_2.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ── 問題ジェネレータ（毎回 数値をランダム生成＝実質無限）── */
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gcd(a,b){ a=Math.abs(a);b=Math.abs(b); while(b){ var t=b; b=a%b; a=t; } return a||1; }
+function frac(n,d){ var g=gcd(n,d); n/=g; d/=g; return d===1?(''+n):(n+'/'+d); }
+function signed(b){ return b>=0?'+ '+b:'− '+(-b); }
+function gEval(){ var a=ri(2,6), b=ri(-6,9), x=ri(2,9), y=a*x+b;
+  return {q:'y = '+a+'x '+signed(b)+'. When x = '+x+', what is y?',
+    c:opts(y,[y+a,y-a,a*x,b]), a:0,
+    exp:'y = '+a+'×'+x+' '+signed(b)+' = '+y+'.'}; }
+function gSolve(){ var a=ri(2,7), x=ri(2,9), b=ri(1,12), r=a*x+b;
+  return {q:a+'x + '+b+' = '+r+'. Solve: x = ?',
+    c:opts(x,[x+1,x-1,r-b,r]), a:0,
+    exp:'Move the term over: '+a+'x = '+(a*x)+', divide both sides by '+a+': x = '+x+'.'}; }
+function gSolve2(){ var a=ri(3,7), c=ri(1,a-1), x=ri(2,8), b=ri(1,9), d=(a-c)*x+b;
+  return {q:a+'x + '+b+' = '+c+'x + '+d+'. Solve: x = ?',
+    c:opts(x,[x+1,x-1,d,b]), a:0,
+    exp:'Gather x on the left: '+(a-c)+'x = '+((a-c)*x)+'. x = '+x+'.'}; }
+function gProp(){ var a=ri(2,6), x=ri(2,8), y=a*x;
+  return {q:'y is proportional to x, and when x = 1, y = '+a+'. x = '+x+', what is y?',
+    c:opts(y,[y+a,y-a,a+x,x]), a:0,
+    exp:'The proportion formula is y = '+a+'x. '+a+'×'+x+' = '+y+'.'}; }
+function gInv(){ var x=pick([2,3,4,6]), y=pick([2,3,4,6]), k=x*y;
+  return {q:'Inverse proportion y = '+k+'/x. When x = '+x+', what is y?',
+    c:opts(y,[y+1,y-1,k-x,k]), a:0,
+    exp:'y = '+k+'/'+x+' = '+y+'. The product xy is always '+k+' (constant).'}; }
+function gProb(){ var n=ri(2,5), cnt=7-n;
+  return {q:'Roll one die. What is the probability of rolling '+n+' or higher?',
+    c:opts(frac(cnt,6),[frac(n,6),frac(cnt+1,6),frac(cnt-1,6)]), a:0,
+    exp:n+' or higher: '+cnt+' outcomes (out of 6). Probability: '+cnt+'/6 = '+frac(cnt,6)+'.'}; }
+function gAngle(){ var a=ri(40,80), b=ri(40,80), c=180-a-b;
+  return {q:'Two interior angles of a triangle are '+a+'° and '+b+'°. What is the third angle?',
+    c:opts(c+'°',[(c+10)+'°',(c-10)+'°',(a+b)+'°']), a:0,
+    exp:'The interior angles add up to 180°. 180 − '+a+' − '+b+' = '+c+'°.'}; }
+function gArea(){ var w=ri(4,12), h=ri(3,9);
+  return {q:'Rectangle: height '+h+' cm, width '+w+' cm. What is its area?',
+    c:opts((w*h)+' cm²',[(2*(w+h))+' cm²',(w+h)+' cm²',(w*h+w)+' cm²']), a:0,
+    exp:'Area = height × width = '+h+'×'+w+' = '+(w*h)+' cm².'}; }
+
+BossBattle({
+  no:2,
+  name:'The Wall of Functions',
+  sub:'The border between middle and high school',
+  kids:false,
+  intro:[
+    'Straight lines begin to bend.',
+    'The door to quadratic functions opens.',
+    '── The parabola dragon waits inside the graph.'
+  ],
+  theme:{main:'#4b9de8',glow:'rgba(75,157,232,.45)',dark:'#0a1a30',icon:'🐲'},
+  fleeHref:'/math-site/en/chu/map.html',
+  enterFlag:'ko',
+  /* 第一形態：一次関数・一次方程式・文字式（数値は毎回ランダム）*/
+  questions:[
+    gEval, gSolve, gProp, gArea,
+    {q:'What is the slope of the line y = 3x − 2?', c:['3','−2','2','x'], a:0,
+     exp:'In y = ax + b, a is the slope. When x goes up by 1, y goes up by 3.'},
+    {q:'What is the y-coordinate where y = 3x − 2 crosses the y-axis?', c:['−2','3','2','0'], a:0,
+     exp:'On the y-axis, x = 0. So y = 3×0 − 2 = −2. That\'s the intercept.'},
+    {q:'How do you write a × b × 3 using the rules for letters?', c:['3ab','ab3','3a × b','a3b'], a:0,
+     exp:'Number first, then letters in alphabetical order.'},
+    {q:'When x = 4, y = 2, what is 2x + y?', c:['10','8','12','6'], a:0,
+     exp:'2×4 + 2 = 10.'}
+  ],
+  /* 第二形態：比例・反比例・確率・図形 */
+  questions2:[
+    gInv, gProp, gProb, gAngle, gArea, gSolve,
+    {q:'For the inverse proportion y = 6/x, what is y when x = 2?', c:['3','12','4','8'], a:0,
+     exp:'y=6/2=3. In an inverse proportion the product xy is always constant (=6).'},
+    {q:'Toss 2 coins at once. What is the probability both land heads?', c:['1/4','1/2','1/3','3/4'], a:0,
+     exp:'(H,H)(H,T)(T,H)(T,T): 1 out of 4 outcomes. 1/4.'},
+    {q:'On a die numbered 1–6, what is the probability of an even number?', c:['1/2','1/3','1/6','2/3'], a:0,
+     exp:'The even numbers are 2, 4, 6: 3 outcomes. 3/6 = 1/2.'}
+  ],
+  /* 最終形態：方程式の応用・連立・確率 */
+  questions3:[
+    gSolve2, gSolve, gProb, gInv, gAngle,
+    {q:'What is the x-coordinate where y = 2x + 1 and y = −x + 7 meet?', c:['2','3','−2','6'], a:0,
+     exp:'2x+1=−x+7 → 3x=6 → x=2. The intersection = the solution of the simultaneous equations.'},
+    {q:'Solve 2x − 5 = x + 3: x = ?', c:['8','2','−2','4'], a:0,
+     exp:'Gather x on the left: x = 8.'},
+    {q:'You draw 1 ticket from 10, and 3 are winners. What is the probability of winning?', c:['3/10','1/3','7/10','3/7'], a:0,
+     exp:'3 winners / 10 total = 3/10.'},
+    {q:'The area of a parallelogram is base × ?', c:['height','Hypotenuse','diagonal','perimeter'], a:0,
+     exp:'Area of a parallelogram = base × height.'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+30;
+    var dmg=1-S.hpRatio;
+
+    /* 座標グリッド */
+    ctx.save();
+    ctx.strokeStyle='rgba(75,157,232,.13)'; ctx.lineWidth=1;
+    for(var gx=0;gx<=W;gx+=40){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for(var gy=0;gy<=H;gy+=40){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+    /* 軸 */
+    ctx.strokeStyle='rgba(150,200,255,.3)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    ctx.restore();
+
+    /* うしろを横切る一次関数の直線（尾） */
+    var k=Math.sin(t*0.6)*0.8;
+    ctx.save();
+    ctx.strokeStyle='rgba(120,210,255,.25)'; ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(0,cy-(-cx)*k);
+    ctx.lineTo(W,cy-(W-cx)*k);
+    ctx.stroke();
+    ctx.restore();
+
+    /* 放物線の竜（胴体） */
+    var a=0.0035+0.0012*Math.sin(t*1.1);
+    var headY=cy-46-Math.sin(t*1.5)*8; /* 頂点（頭の位置） */
+    var hurtC=S.hurt>0.3;
+    ctx.save();
+    ctx.shadowColor=hurtC?'rgba(255,120,120,.9)':'rgba(75,157,232,.8)'; ctx.shadowBlur=22;
+    ctx.strokeStyle=hurtC?'#ff9a8a':'#6cc1ff';
+    ctx.lineWidth=13-4*dmg;
+    ctx.lineCap='round';
+    ctx.beginPath();
+    for(var x=-230;x<=230;x+=6){
+      var y=a*x*x*(1+0.18*Math.sin(t*2+x*0.02));
+      if(x===-230) ctx.moveTo(cx+x,headY+y);
+      else ctx.lineTo(cx+x,headY+y);
+    }
+    ctx.stroke();
+    /* 体の節（うろこ） */
+    ctx.fillStyle=hurtC?'#ffd0c8':'#aadcff';
+    for(var sx=-200;sx<=200;sx+=50){
+      var sy=a*sx*sx*(1+0.18*Math.sin(t*2+sx*0.02));
+      ctx.beginPath(); ctx.arc(cx+sx,headY+sy,6,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* 頭（頂点に竜の顔） */
+    ctx.save();
+    ctx.translate(cx,headY);
+    ctx.shadowColor='rgba(75,157,232,.7)'; ctx.shadowBlur=18;
+    ctx.fillStyle=hurtC?'#ff8a75':'#2a6fb8';
+    ctx.beginPath(); ctx.arc(0,0,30,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    /* 角 */
+    ctx.strokeStyle='#9fd2ff'; ctx.lineWidth=5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-16,-22); ctx.lineTo(-26,-44); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(16,-22); ctx.lineTo(26,-44); ctx.stroke();
+    /* 目 */
+    var blink=(Math.sin(t*0.8+1)>0.96)?0.15:1;
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.ellipse(-11,-4,7,7*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(11,-4,7,7*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0a1a30';
+    ctx.beginPath(); ctx.arc(-11,-4,3*blink,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(11,-4,3*blink,0,Math.PI*2); ctx.fill();
+    /* 口 */
+    ctx.strokeStyle='#cfe8ff'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(0,8,10,0.15*Math.PI,0.85*Math.PI); ctx.stroke();
+    ctx.restore();
+
+    /* 浮遊する数式 */
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var eqs=[
+      {s:'y = ax² ',  x:cx-180, y:60,  f:26},
+      {s:'y = ax + b', x:cx+180, y:75,  f:22},
+      {s:'(0, 0)',    x:cx+95,  y:headY-50, f:16}
+    ];
+    eqs.forEach(function(e,i){
+      var p=0.5+0.5*Math.sin(t*1.6+i*2);
+      ctx.save();
+      ctx.shadowColor='rgba(120,200,255,'+p+')'; ctx.shadowBlur=12;
+      ctx.fillStyle='rgba(170,220,255,'+(0.5+0.4*p)+')';
+      ctx.font='italic 700 '+e.f+'px Georgia,serif';
+      ctx.fillText(e.s,e.x,e.y+Math.sin(t*1.2+i)*5);
+      ctx.restore();
+    });
+  },
+  victory:{
+    xp:300,
+    msg:'So you made it this far.<br>High-school math can get lonely on your own.<br>Having someone to work with makes all the difference. — Mr. Suda',
+    cta:{
+      label:'▶ Take the full course on Udemy',
+      href:'https://www.udemy.com/course/math-the-japanese-way-1/?referralCode=A692464DD56E41857725',
+      note:'Video lessons in English that explain math the Japanese way — starting from "why".'
+    },
+    doorHref:'/math-site/en/ko/map.html',
+    doorName:'High School Field',
+    note:'The seal is broken ── the door to the high-school zone opens…'
+  }
+});
+})();
+</script>
+</body>
+</html>

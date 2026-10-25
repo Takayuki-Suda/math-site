@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1-4 The Area Monster | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Area Monster&quot; battle wraps up shapes and area. A challenge to test your understanding.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 1-4 The Area Monster | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Area Monster&quot; battle wraps up shapes and area. A challenge to test your understanding.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_sho_4.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_sho_4.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_sho_4.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_sho_4.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_sho_4.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gRect(){ var w=ri(3,12), h=ri(2,9), A=w*h;
+  return {q:'Rectangle: height '+h+' cm, width '+w+' cm. What is its area?', c:opts(A+' cm²',[(2*(w+h))+' cm²',(w+h)+' cm²',(A+w)+' cm²']), a:0, exp:'height×width='+h+'×'+w+'='+A+' cm². Don\'t mix it up with the perimeter.'}; }
+function gSquare(){ var s=ri(3,12), A=s*s;
+  return {q:'Square with side '+s+' cm. What is its area?', c:opts(A+' cm²',[(4*s)+' cm²',(2*s)+' cm²',(A+s)+' cm²']), a:0, exp:'side×side='+s+'×'+s+'='+A+' cm².'}; }
+function gTri(){ var b=ri(3,12), h=2*ri(1,5), A=b*h/2;
+  return {q:'Triangle: base '+b+' cm, height '+h+' cm. What is its area?', c:opts(A+' cm²',[(b*h)+' cm²',(b+h)+' cm²',(A+b)+' cm²']), a:0, exp:'base×height÷2='+b+'×'+h+'÷2='+A+' cm². Don\'t forget ÷2.'}; }
+function gPeriR(){ var w=ri(3,12), h=ri(2,9), P=2*(w+h);
+  return {q:'Rectangle: height '+h+' cm, width '+w+' cm. What is its perimeter?', c:opts(P+' cm',[(w*h)+' cm',(w+h)+' cm',(P+2)+' cm']), a:0, exp:'(height+width)×2=('+h+'+'+w+')×2='+P+' cm.'}; }
+function gPeriS(){ var s=ri(3,12), P=4*s;
+  return {q:'Square with side '+s+' cm. What is its perimeter?', c:opts(P+' cm',[(s*s)+' cm',(2*s)+' cm',(P+4)+' cm']), a:0, exp:'side×4='+s+'×4='+P+' cm.'}; }
+
+BossBattle({
+  no:'1-4',
+  name:'The Area Monster',
+  sub:'Monster of shapes and area',
+  kids:true,
+  intro:['A monster living deep in the temple.','It is made of the areas of shapes.','"Find out how big my shapes are!"'],
+  theme:{main:'#2eb88a',glow:'rgba(46,184,138,.45)',dark:'#08261d',icon:'📐'},
+  fleeHref:'/math-site/en/sho/map_4.html',
+  enterFlag:null,
+  questions:[ gRect, gSquare, gTri, gPeriR, gPeriS, gRect ],
+  questions2:[ gRect, gSquare, gTri, gPeriR, gPeriS, gRect, gTri, gPeriR ],
+  questions3:[ gRect, gSquare, gTri, gPeriR, gPeriS, gTri ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+16, hurt=S.hurt>0.3, bob=Math.sin(t*1.6)*5, pulse=0.5+0.5*Math.sin(t*2);
+    ctx.save();
+    var ag=ctx.createRadialGradient(cx,cy,20,cx,cy,160);
+    ag.addColorStop(0,'rgba(46,184,138,'+(0.24*pulse)+')'); ag.addColorStop(1,'rgba(46,184,138,0)');
+    ctx.fillStyle=ag; ctx.fillRect(0,0,W,H); ctx.restore();
+    ctx.save(); ctx.translate(cx,cy+bob);
+    ctx.fillStyle='rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(0,110,90,16,0,0,7); ctx.fill();
+    /* 四角い体 */
+    ctx.fillStyle=hurt?'#ff9a8a':'#2eb88a';
+    ctx.beginPath(); ctx.moveTo(-78,-72); ctx.lineTo(78,-72); ctx.lineTo(78,78); ctx.lineTo(-78,78); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.25)'; ctx.lineWidth=3; ctx.strokeRect(-78,-72,156,150);
+    /* グリッド（方眼） */
+    ctx.strokeStyle='rgba(255,255,255,.14)'; ctx.lineWidth=1;
+    for(var i=-78+26;i<78;i+=26){ ctx.beginPath(); ctx.moveTo(i,-72); ctx.lineTo(i,78); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-78,i); ctx.lineTo(78,i); ctx.stroke(); }
+    var blink=(Math.sin(t*0.9)>0.95)?0.15:1;
+    ctx.fillStyle='#fff'; ctx.fillRect(-40,-30,28,28*blink); ctx.fillRect(12,-30,28,28*blink);
+    ctx.fillStyle='#123'; ctx.fillRect(-32,-22,12,12*blink); ctx.fillRect(20,-22,12,12*blink);
+    ctx.strokeStyle='#0a3a2a'; ctx.lineWidth=4; ctx.lineCap='round';
+    ctx.beginPath(); if(hurt){ ctx.moveTo(-22,40); ctx.lineTo(0,26); ctx.lineTo(22,40); } else { ctx.moveTo(-24,24); ctx.lineTo(0,40); ctx.lineTo(24,24); } ctx.stroke();
+    ctx.restore();
+    var syms=['▭','△','cm²','□','▱'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){ var a=t*0.7+i*Math.PI*2/syms.length, ox=cx+Math.cos(a)*152, oy=cy+Math.sin(a)*66, fr=Math.sin(a)>0;
+      ctx.save(); ctx.globalAlpha=fr?0.95:0.4; ctx.shadowColor='#7af0c8'; ctx.shadowBlur=12; ctx.fillStyle=hurt?'#ffd0c8':'#aef5d8'; ctx.font='900 '+(fr?28:20)+'px Georgia,serif'; ctx.fillText(s,ox,oy); ctx.restore(); });
+  },
+  victory:{
+    xp:110,
+    msg:'You saw through the areas of the shapes!<br>Learn the rules "height×width" and "÷2", and no shape is scary.<br>Next, on to the world of clocks and units. — Mr. Suda',
+    cta:null
+  }
+});
+})();
+</script>
+</body>
+</html>

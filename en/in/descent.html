@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descent and Heights ─ A Close Reading of AEC VIII §3–§4 | Math the Japanese Way</title>
+<meta name="description" content="A close reading of descent and height functions following AEC VIII §3–§4. Graduate-level notes explaining, down to the gaps between the lines, the argument that completes Mordell–Weil.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Descent and Heights ─ A Close Reading of AEC VIII §3–§4 | Math the Japanese Way">
+<meta property="og:description" content="A close reading of descent and height functions following AEC VIII §3–§4. Graduate-level notes explaining, down to the gaps between the lines, the argument that completes Mordell–Weil.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/descent.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'ĥ'; position:absolute; right:10px; top:-46px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .canvas-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; margin:26px 0; }
+  canvas { display:block; width:100%; border-radius:4px; }
+  .slider-row { display:flex; align-items:center; gap:14px; margin:14px 0 4px; }
+  .slider-row label { font-family:var(--mono); font-size:12px; color:var(--gold); white-space:nowrap; min-width:110px; }
+  .slider-row input[type=range] { flex:1; -webkit-appearance:none; height:2px; background:var(--border); border-radius:2px; outline:none; }
+  .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--gold); cursor:pointer; }
+  .slider-row .val { font-family:var(--mono); font-size:13px; color:var(--gold-soft); min-width:64px; text-align:right; }
+  .sim-note { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+
+  .notelink { display:block; font-family:var(--mono); font-size:12px; letter-spacing:1px; color:var(--green);
+    text-decoration:none; border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:12px 18px;
+    margin:-6px 0 30px; background:rgba(94,207,158,.05); transition:all .25s; line-height:1.8; }
+  .notelink:hover { border-color:var(--green); background:rgba(94,207,158,.12); }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/descent.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/descent.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/descent.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/descent.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves 4/5</div>
+    <h1>Descent and heights<br>─ Completing the Mordell–Weil theorem<br><span class="en">The Descent Procedure &amp; Heights</span></h1>
+    <p class="hero-sub">
+      "Finitely many kinds of remainder (weak MW)" + "multiplying by m always makes points bigger (height)" = "finitely generated".
+      We carry out a modern version of Fermat's infinite descent completely, following AEC VIII §3–§4.
+      In the second half we survey §5–§11 (general number fields, canonical height, torsion, rank).
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §3–§4 (close reading), §5–§11 (survey)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/aec.html">I The big map</a>
+      <a href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a class="cur" href="/math-site/en/in/descent.html">IV Descent</a>
+      <a href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>Why weak MW alone isn't enough <span class="refchip">AEC start of VIII §3</span></h2>
+    <p>First, let's fix the intuition with counterexamples. "A/mA finite ⇒ A finitely generated" is <strong>false</strong>.</p>
+    <ul>
+      <li><strong>A = ℝ</strong>: for any m ≥ 1, ℝ/mℝ = 0 (finite!). But ℝ is not finitely generated.</li>
+      <li><strong>A = E(ℚ<sub>p</sub>)</strong>: E(ℚ<sub>p</sub>) contains a subgroup of finite index ≅ ℤ<sub>p</sub><span class="refchip">AEC VII.6.3</span>.
+        ℤ<sub>p</sub>/mℤ<sub>p</sub> is finite (0 if p ∤ m), so E(ℚ<sub>p</sub>)/mE(ℚ<sub>p</sub>) is finite.
+        But E(ℚ<sub>p</sub>) is not finitely generated (ℤ<sub>p</sub> is uncountable).</li>
+    </ul>
+    <p>
+      The pathology common to both counterexamples is that "<strong>there are lots of elements divisible by m infinitely many times</strong>"
+      (in both ℝ and ℤ<sub>p</sub>, any element can be divided by m again and again).
+      To show this pathology doesn't occur for elliptic curves over number fields, we introduce "the size of a point" = the <strong>height</strong>, and
+      show that "the multiplication-by-m map multiplies heights by about m²".
+      There are only finitely many points of bounded size, so dividing forever becomes impossible ── that's the heart of descent.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">▲ This article has two layers (how to read it)</div>
+      <p>
+        The main part (this page) follows the <strong>design and key points</strong> of the proof. The
+        <strong>zero-leap full expansion</strong> of each component ── fixing the premises with numbers and attaching a "claim + reason" to every step ── has been
+        separated into four independent <strong>between-the-lines notes</strong>.
+        I recommend going back and forth: first read the main part through to grasp the overall shape, then dive into a note wherever the gaps bother you.
+      </p>
+      <div class="series-nav" style="margin-top:14px;">
+        <a href="/math-site/en/in/descent-step0.html">N0 Descent theorem</a>
+        <a href="/math-site/en/in/descent-step1.html">N1 Foundations of height</a>
+        <a href="/math-site/en/in/descent-step2.html">N2 Property (a) addition</a>
+        <a href="/math-site/en/in/descent-step3.html">N3 Property (b) doubling</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>The descent theorem <span class="en">Descent Theorem</span></h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (descent theorem) <span class="refchip">AEC VIII.3.1</span></div>
+      <p>Let A be an abelian group, and suppose a function h : A → ℝ (a height function) has the following three properties.</p>
+      <div class="formula">
+        <div class="fline">(i)  For each Q ∈ A there is a constant C₁ = C₁(Q) with: h(P + Q) ≤ 2h(P) + C₁  (∀P)</div>
+        <div class="fline">(ii)  There are an integer m ≥ 2 and a constant C₂ with: h(mP) ≥ m²h(P) − C₂  (∀P)</div>
+        <div class="fline">(iii)  For any constant C₃, { P ∈ A : h(P) ≤ C₃ } is a finite set</div>
+      </div>
+      <p>If moreover A/mA is finite for the m in (ii), then <strong>A is finitely generated</strong>.</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof (main line)</div>
+      <p>
+        Take representatives Q₁, …, Q<sub>r</sub> of the cosets of A/mA (the finiteness assumption). Starting from any P ∈ A,
+        repeat the operation "divide by m and subtract the remainder":
+      </p>
+      <div class="formula">
+        <div class="fline">P = mP₁ + Q<sub>i₁</sub>,  P₁ = mP₂ + Q<sub>i₂</sub>,  …,  P<sub>n−1</sub> = mP<sub>n</sub> + Q<sub>iₙ</sub></div>
+      </div>
+      <p>Estimate how the height changes at each step. For any j:</p>
+      <div class="formula">
+        <div class="fline">h(P<sub>j</sub>) ≤ (1/m²)( h(mP<sub>j</sub>) + C₂ )     (by (ii))</div>
+        <div class="fline">　　　 = (1/m²)( h(P<sub>j−1</sub> − Q<sub>i<sub>j</sub></sub>) + C₂ )</div>
+        <div class="fline">　　　 ≤ (1/m²)( 2h(P<sub>j−1</sub>) + C₁′ + C₂ )  (applying (i) to Q = −Q<sub>i</sub>)</div>
+        <div class="fline fc">C₁′ = max{ C₁(−Q<sub>i</sub>) : i = 1,…,r }. Both C₁′ and C₂ are constants independent of P</div>
+      </div>
+      <p>
+        So at each step the height becomes "about 2/m² times + a constant". If m ≥ 2, then 2/m² ≤ 1/2, so
+        this is a <strong>contraction</strong>. Using it repeatedly:
+      </p>
+      <div class="formula">
+        <div class="fline">h(P<sub>n</sub>) ≤ (2/m²)ⁿ h(P) + ( 1/m² + 2/m⁴ + ⋯ + 2ⁿ⁻¹/m²ⁿ )(C₁′ + C₂)</div>
+        <div class="fline">　　　 &lt; (2/m²)ⁿ h(P) + (C₁′ + C₂)/(m² − 2)</div>
+        <div class="fline">　　　 ≤ 2⁻ⁿ h(P) + (C₁′ + C₂)/2    (when m ≥ 2)</div>
+      </div>
+      <p>Taking n large enough, h(P<sub>n</sub>) ≤ 1 + (C₁′ + C₂)/2. On the other hand, tracing the chain of divisions backward,</p>
+      <div class="formula">
+        <div class="fline">P = mⁿP<sub>n</sub> + Σ<sub>j=1</sub><sup>n</sup> m<sup>j−1</sup> Q<sub>i<sub>j</sub></sub></div>
+      </div>
+      <p>so P is a linear combination of elements of the following set:</p>
+      <div class="formula">
+        <div class="fline">{ Q₁, …, Q<sub>r</sub> } ∪ { Q ∈ A : h(Q) ≤ 1 + (C₁′ + C₂)/2 }</div>
+      </div>
+      <p>By (iii) this is a finite set. So A is finitely generated.</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/descent-step0.html">🔬 Between-the-lines note N0 ─ this proof with zero leaps: all 10 steps, from making the double choice in the descent sequence explicit, the induction for the shrinking estimate, and handling negative h, to the reverse telescoping sum and pinning down the generating set →</a>
+
+    <h3>Height descent simulator</h3>
+    <p>
+      Let's watch the shrinking in the proof with our own eyes. The bars are the upper bounds on h(P<sub>j</sub>) guaranteed by the inequality above.
+      However large you make the initial height or the constant, check that <strong>it falls to the "floor" (the line 1 + (C₁′+C₂)/2) in a few steps</strong>.
+    </p>
+    <div class="canvas-wrap">
+      <div class="slider-row">
+        <label>h(P) initial height</label>
+        <input type="range" id="slH" min="5" max="500" step="5" value="200">
+        <span class="val" id="vH">200</span>
+      </div>
+      <div class="slider-row">
+        <label>C₁′+C₂ constant</label>
+        <input type="range" id="slC" min="1" max="60" step="1" value="12">
+        <span class="val" id="vC">12</span>
+      </div>
+      <div class="slider-row">
+        <label>m</label>
+        <input type="range" id="slM" min="2" max="5" step="1" value="2">
+        <span class="val" id="vM">2</span>
+      </div>
+      <canvas id="cDescent" height="260"></canvas>
+      <div class="sim-note">
+        Bars: upper bounds on h(P₀), h(P₁), h(P₂), … (the recursion h ↦ (2h + C)/m²).
+        Gold dotted line: the fixed point C/(m²−2) (the "floor" of the descent). There are only finitely many points below the floor (property (iii)), so the search for generators ends there.
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Relation to Fermat's infinite descent</div>
+      <p>
+        Fermat used it in the form "if there's a solution, you can make a smaller one → you can't get smaller forever, contradiction" (a proof of non-existence).
+        Mordell–Weil repurposes the same shrinking structure as a <strong>proof of generation</strong>: "any point falls to the floor in finitely many steps → the floor points and the remainders Q<sub>i</sub> generate everything".
+        "Infinite descent" producing not non-existence but finite generation ── historically, too, an interesting turning point.
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">A remark on effectivity <span class="refchip">AEC VIII.3.2</span></div>
+      <p>
+        To turn the descent theorem into an "algorithm", it's enough that three things can be computed: (1) each C₁(Q<sub>i</sub>), (2) C₂, (3) a list of the points below the floor.
+        For the heights on elliptic curves (next section), <strong>all of these can be computed effectively</strong>.
+        In other words, <strong>as long as you get generators of E(K)/mE(K), you can always compute generators of E(K)</strong>.
+        The ineffectivity of the Mordell–Weil theorem really is concentrated at the single point seen in Part 2, Remark 2 (determining E(K)/mE(K)).
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The height function over ℚ ─ definition and property (a)</h2>
+
+    <p>
+      All that's left is to build a function on E(ℚ) satisfying (i)(ii)(iii); together with weak MW for m = 2 (Part 2),
+      finite generation of E(ℚ) follows. Fix E : y² = x³ + Ax + B (A, B ∈ ℤ).
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">Definition (naive height) <span class="refchip">AEC VIII §4</span></div>
+      <p>For t = p/q ∈ ℚ (in lowest terms), H(t) = max{ |p|, |q| }. And</p>
+      <div class="formula">
+        <div class="fline">h<sub>x</sub> : E(ℚ) → ℝ,  h<sub>x</sub>(P) = log H(x(P))  (P ≠ O),  h<sub>x</sub>(O) = 0</div>
+      </div>
+      <p>A naive definition: the size of a point is "the number of digits of the larger of the numerator and denominator of its x-coordinate". Note h<sub>x</sub> ≥ 0.</p>
+    </div>
+
+    <p>
+      Property (iii) is clear: a rational number with H(t) ≤ C has numerator and denominator integers in [−C, C], so there are at most (2C+1)² of them,
+      and for each x there are at most two y<span class="refchip">AEC VIII.4.2(c)</span>.
+      The problem is (i)(ii), that is, <strong>reading off "how addition and doubling change the height" from the addition formula</strong>.
+    </p>
+
+    <a class="notelink" href="/math-site/en/in/descent-step1.html">🔬 Between-the-lines note N1 ─ foundations of height: a complete proof via p-adic valuations that "coordinates are always (a/d², b/d³)", basic properties of H, an exact count for (c), and a check of the example 2P = (−23/16, −11/64) →</a>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (properties of height) <span class="refchip">AEC VIII.4.2</span></div>
+      <div class="formula">
+        <div class="fline">(a)  h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁(P₀, A, B)</div>
+        <div class="fline">(b)  h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂(A, B)</div>
+        <div class="fline">(c)  { P : h<sub>x</sub>(P) ≤ C₃ } is finite</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof of (a) (main line)</div>
+      <p>
+        The cases P₀ = O and P ∈ {O, ±P₀} are handled by taking C₁ large, so exclude them.
+        In lowest terms we can write P = (a/d², b/d³), P₀ = (a₀/d₀², b₀/d₀³)
+        (the denominators of a Weierstrass equation always take this form: if x = u/v is in lowest terms, v = d² follows from the denominator of y²).
+        Rearranging the addition formula<span class="refchip">AEC III.2.3(d)</span> using the curve's equation:
+      </p>
+      <div class="formula">
+        <div class="fline">x(P + P₀) = ( (xx₀ + A)(x + x₀) + 2B − 2yy₀ ) / (x − x₀)²</div>
+        <div class="fline">　　　　 = ( (aa₀ + Ad²d₀²)(ad₀² + a₀d²) + 2Bd⁴d₀⁴ − 2bd·b₀d₀ ) / (ad₀² − a₀d²)²</div>
+      </div>
+      <p>
+        The numerator and denominator are expressions "of degree at most 2" in a, d², bd. Cancelling only lowers the height, so
+      </p>
+      <div class="formula">
+        <div class="fline">H(x(P+P₀)) ≤ C′ · max{ |a|², |d|⁴, |bd| }</div>
+      </div>
+      <p>
+        (C′ is a constant depending only on A, B, a₀, b₀, d₀).
+        Since H(x(P)) = max{|a|, |d|²}, |a|² and |d|⁴ have exactly the form H(x(P))².
+        <strong>The only troublemaker is |bd|</strong>. Here we use "P lies on the curve":
+        from b² = a³ + Aad⁴ + Bd⁶,
+      </p>
+      <div class="formula">
+        <div class="fline">|b| ≤ C″ max{ |a|³ᐟ², |d|³ }  ⇒  |bd| ≤ C″ max{ |a|³ᐟ²|d|, |d|⁴ } ≤ C″ max{ |a|², |d|⁴ }</div>
+        <div class="fline fc">The last inequality: if |a|¹ᐟ² ≥ |d| then |a|³ᐟ²|d| ≤ |a|², otherwise |a|³ᐟ²|d| &lt; |d|⁴</div>
+      </div>
+      <p>
+        So H(x(P+P₀)) ≤ C₁ max{|a|,|d|²}² = C₁ H(x(P))². Taking logarithms gives (a).
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/descent-step2.html">🔬 Between-the-lines note N2 ─ property (a) with zero leaps: handling the 3 exceptional points, every line of deriving the symmetric form, a term-by-term check of multiplying by d⁴d₀⁴, a complete proof of |bd| ≤ √(1+|A|+|B|)·M², and an explicit form of C₁ →</a>
+
+    <div class="why">
+      <div class="w-label">? The lesson of (a)</div>
+      <p>
+        The addition formula is a rational function of degree 2 in x, so "twice the height + a constant" is <em>almost</em> obvious ──
+        except that where the y-term (|bd|) mixes in, you need <strong>the curve's equation itself</strong> to bound y by x.
+        The moment the information "the point lies on the curve" turns into a quantitative estimate.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>The crux: doubling quadruples the height ─ property (b)</h2>
+
+    <p>
+      (b) is harder than (a). The reason is the direction of the inequality.
+      (a) only says "it doesn't get too big" (an upper bound), so we could ignore cancellation, but
+      (b) says "<strong>it doesn't get too small</strong>" (a lower bound), so
+      we have to <strong>control how much the fraction can cancel</strong>.
+    </p>
+    <p>Homogenize the duplication formula. With x = x(P) = p/q (in lowest terms):</p>
+    <div class="formula">
+      <div class="fline">x([2]P) = F(p, q) / G(p, q)</div>
+      <div class="fline">F(X, Z) = X⁴ − 2AX²Z² − 8BXZ³ + A²Z⁴</div>
+      <div class="fline">G(X, Z) = 4X³Z + 4AXZ³ + 4BZ⁴  (corresponding to 4y²·Z⁴)</div>
+    </div>
+    <p>
+      F(X,1) and G(X,1) are coprime polynomials (when Δ ≠ 0), so by the theory of resultants
+      there is an identity serving as "a certificate of coprimality". AEC writes it out explicitly:
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Sublemma (explicit identities) <span class="refchip">AEC VIII.4.3</span></div>
+      <p>Setting Δ' = 4A³ + 27B² (the discriminant without the factor −16), as identities in ℤ[A,B,X,Z]</p>
+      <div class="formula">
+        <div class="fline">f₁(X,Z)·F(X,Z) − g₁(X,Z)·G(X,Z) = 4Δ'·Z⁷</div>
+        <div class="fline">f₂(X,Z)·F(X,Z) − g₂(X,Z)·G(X,Z) = 4Δ'·X⁷</div>
+        <div class="fline fc">f₁ = 12X²Z + 16AZ³,  g₁ = 3X³ − 5AXZ² − 27BZ³  (f₂, g₂ are also explicit polynomials of degree 3)</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof of (b) (main line)</div>
+      <p>
+        If we take C₂ ≥ 4·max{ h<sub>x</sub>(T) : T ∈ E(ℚ)[2] }, the case [2]P = O is trivial, so assume [2]P ≠ O.
+        Let δ = gcd( F(p,q), G(p,q) ) be the amount of cancellation. Substituting (X,Z) = (p,q) into the identities:
+      </p>
+      <div class="formula">
+        <div class="fline">f₁(p,q)F(p,q) − g₁(p,q)G(p,q) = 4Δ'q⁷,  f₂(p,q)F(p,q) − g₂(p,q)G(p,q) = 4Δ'p⁷</div>
+      </div>
+      <p>
+        δ divides both left sides, so it divides both 4Δ'q⁷ and 4Δ'p⁷. Since gcd(p,q) = 1,
+        <strong>δ | 4Δ'</strong>. That is, at most |4Δ'| (a constant independent of P!) can cancel. Hence:
+      </p>
+      <div class="formula">
+        <div class="fline">H(x([2]P)) ≥ max{ |F(p,q)|, |G(p,q)| } / |4Δ'|</div>
+      </div>
+      <p>
+        All that remains is to bound max{|F|, |G|} from below by max{|p|,|q|}⁴. Again from the identities:
+      </p>
+      <div class="formula">
+        <div class="fline">|4Δ'q⁷| ≤ 2 max{|f₁|, |g₁|} · max{|F|, |G|},  |4Δ'p⁷| ≤ 2 max{|f₂|, |g₂|} · max{|F|, |G|}</div>
+      </div>
+      <p>
+        f₁, g₁, f₂, g₂ are polynomials of degree 3, so max{|f₁|,…,|g₂|} ≤ C·max{|p|,|q|}³. Putting it together,
+      </p>
+      <div class="formula">
+        <div class="fline">max{ |4Δ'p⁷|, |4Δ'q⁷| } ≤ 2C·max{|p|,|q|}³ · max{|F|, |G|}</div>
+        <div class="fline">⇒  max{|F|, |G|} / |4Δ'| ≥ (2C)⁻¹ max{|p|,|q|}⁴ = (2C)⁻¹ H(x(P))⁴</div>
+      </div>
+      <p>Taking logarithms gives h<sub>x</sub>([2]P) ≥ 4h<sub>x</sub>(P) − C₂.</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/descent-step3.html">🔬 Between-the-lines note N3 ─ property (b) with zero leaps: explicit forms of f₂ and g₂ (omitted in the main part) with a monomial-by-monomial verification table, every line of δ | 4Δ′, an explicit form C₂ = max{log 2κ, …}, and a numerical check on y² = x³+3 →</a>
+
+    <div class="why">
+      <div class="w-label">? Why "four times" doesn't break ── the essence of the argument</div>
+      <p>
+        The duplication formula is a rational map of degree 4, so it's no surprise the height is "at most four times".
+        What's nontrivial is that <strong>"almost exactly four times" is also guaranteed from below</strong>, and
+        the reason is that F and G have no common zero (= the curve is nonsingular, Δ ≠ 0).
+        The quantitative version of having no common zero is the identity in the sublemma, and in the form "the cancellation δ divides 4Δ'"
+        <strong>geometric nondegeneracy is translated into an arithmetic estimate</strong>.
+        This phenomenon, "a morphism of projective space multiplies heights by its degree", is promoted to general theory in AEC VIII.5.6.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Assembly: the Mordell–Weil theorem over ℚ</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem <span class="refchip">AEC VIII.4.1</span></div>
+      <p>If E/ℚ is an elliptic curve, then E(ℚ) is finitely generated.</p>
+    </div>
+    <div class="proof">
+      <div class="p-label">Proof</div>
+      <p>
+        By the weak Mordell–Weil theorem (Part 2, m = 2), E(ℚ)/2E(ℚ) is finite.
+        By (a)(b)(c) of VIII.4.2, h<sub>x</sub> satisfies the assumptions (i)(ii)(iii) (m = 2) of the descent theorem.
+        So by the descent theorem (VIII.3.1), E(ℚ) is finitely generated.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+    <p>
+      Note: the weak MW used here is only the case m = 2, and moreover <strong>we don't assume</strong> E[2] ⊂ E(ℚ)
+      (the reduction lemma in Part 2 takes care of the field extension). Savor how the two parts mesh.
+    </p>
+
+    <h3>Feeling "four times + O(1)" in numbers ─ E : y² = x³ + 3, P = (1, 2)</h3>
+    <p>Actually computing with the duplication formula (A = 0, B = 3):</p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Point</th><th>x-coordinate</th><th>h<sub>x</sub> (=log H)</th><th>Ratio to previous</th></tr></thead>
+      <tbody>
+        <tr><td class="m">P</td><td class="m">1</td><td class="m">log 1 = 0</td><td class="m">─</td></tr>
+        <tr><td class="m">2P</td><td class="m">−23/16</td><td class="m">log 23 ≈ 3.14</td><td class="m">─ (h=0, so the ratio is meaningless)</td></tr>
+        <tr><td class="m">4P</td><td class="m">2540833/7744</td><td class="m">log 2540833 ≈ 14.75</td><td class="m">14.75/3.14 ≈ 4.7</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      Hint for checking: x(2P) = (x⁴ − 24x)/(4x³ + 12); at x = 1, (1−24)/16 = −23/16.
+      Next F(−23,16) = (−23)⁴ − 24·(−23)·16³ = 2540833, G(−23,16) = 4(−23)³·16 + 12·16⁴ = 7744,
+      gcd = 1 (the common factor of 4Δ' = 972 = 2²·3⁵ and 7744 = 2⁶·11² is 4, but 2540833 is odd).
+      You can see the ratio settling toward 4, and drifting from 4 by just the "+O(1)".
+      Incidentally, from this sequence you can read off lim h<sub>x</sub>(2ⁿP)/4ⁿ ≈ 0.9, an approximation of the value of the <strong>canonical height</strong> in the next section.
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Survey (summary)</div>
+    <h2>Walking VIII §5–§11 with a map</h2>
+
+    <h3>§5–§6: extending to general number fields, and the "height machine"</h3>
+    <p>
+      Over a general number field K, height is defined by combining all the places (absolute values):
+      for P = [x₀ : … : x<sub>N</sub>] ∈ ℙᴺ(K), H<sub>K</sub>(P) = Π<sub>v</sub> max<sub>i</sub>|x<sub>i</sub>|<sub>v</sub><sup>n<sub>v</sub></sup>.
+      Thanks to the product formula it doesn't depend on the choice of coordinates. There are two key results:
+    </p>
+    <ul>
+      <li><strong>Northcott's finiteness</strong><span class="refchip">AEC VIII.5.11</span>: there are finitely many points of bounded height and degree. The general version of property (iii).</li>
+      <li><strong>The height machine</strong>: for an even function f ∈ K(E), h<sub>f</sub> is "almost a quadratic form"
+        (h<sub>f</sub>(P+Q) + h<sub>f</sub>(P−Q) = 2h<sub>f</sub>(P) + 2h<sub>f</sub>(Q) + O(1), the parallelogram law)<span class="refchip">AEC VIII.6.2</span>.
+        All the inequalities of type (i)(ii) follow from this, and <strong>the Mordell–Weil theorem over general number fields</strong>
+        <span class="refchip">AEC VIII.6.7</span> is proved with the same skeleton as §4.</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        §5–§6 are the chapter that "reforges what we computed by hand in §4 into a form that works for any number field and any projective embedding".
+        If you understand the skeleton in the case of ℚ (today's content), you can skim §5–§6 with confidence as "a generalization of the same argument".
+        It's enough to go deep when you need the canonical height (§9).
+      </p>
+    </div>
+
+    <h3>§7: the torsion subgroup ─ Lutz–Nagell and Mazur</h3>
+    <div class="box thm">
+      <div class="box-label">Theorem (Lutz–Nagell) <span class="refchip">AEC VIII.7.1–7.2</span></div>
+      <p>
+        Let E : y² = x³ + Ax + B (A,B ∈ ℤ) and P = (x,y) a torsion point (≠ O). Then
+        x, y ∈ ℤ, and either y = 0 or y² | 4A³ + 27B².
+      </p>
+    </div>
+    <p>
+      With this, E(ℚ)<sub>tors</sub> <strong>can be determined by finitely many divisibility checks</strong> (Exercise 5).
+      As a deeper fact, Mazur's theorem<span class="refchip">AEC VIII.7.5</span>: E(ℚ)<sub>tors</sub> is one of 15 kinds,
+      ℤ/Nℤ (N ≤ 10 or 12) or ℤ/2ℤ × ℤ/2Nℤ (N ≤ 4).
+      (The proof is beyond AEC. Knowing the statement is enough.)
+    </p>
+
+    <h3>§8: minimal discriminants, global minimal models</h3>
+    <p>
+      Over K = ℚ you can take a Weierstrass equation that is minimal at all primes simultaneously (a global minimal model)<span class="refchip">AEC VIII.8.2–8.3</span>
+      (over general number fields you can if the class number is 1). It backs up the "minimal equation" used when choosing S in Part 2. A summary is fine.
+    </p>
+
+    <h3>§9: the canonical height (Néron–Tate height)</h3>
+    <p>The "+O(1)" wobble in h<sub>x</sub> can be completely eliminated by a limit:</p>
+    <div class="formula">
+      <div class="fline">ĥ(P) = (1/2)·lim<sub>n→∞</sub> 4⁻ⁿ h<sub>x</sub>([2ⁿ]P)</div>
+      <div class="fline fc">(normalizations differ by a factor of 1/2 depending on convention. AEC VIII §9 defines it as the limit of h_f/deg f)</div>
+    </div>
+    <ul>
+      <li>ĥ becomes an <strong>exact quadratic form</strong>, and ĥ(P) = 0 ⟺ P is a torsion point<span class="refchip">AEC VIII.9.3</span>.</li>
+      <li>It is positive definite on E(K) ⊗ ℝ<span class="refchip">AEC VIII.9.6</span>.
+        The determinant of the bilinear form ⟨P,Q⟩ = ĥ(P+Q) − ĥ(P) − ĥ(Q) is the <strong>elliptic regulator</strong><span class="refchip">AEC VIII.9.7</span>,
+        which appears in the formula of the BSD conjecture.</li>
+      <li>The proof that the limit exists is an elementary argument called "Tate's telescoping trick" (we actually do it in Exercise 6).</li>
+    </ul>
+
+    <h3>§10–§11: the mystery of rank, Szpiro's conjecture (as reading)</h3>
+    <p>
+      For the rank r, basic open problems are still lined up: is the rank unbounded<span class="refchip">AEC VIII.10.1 (conjecture)</span>,
+      what is the "average" rank, and so on. §11 is a reading section on the equivalence of Szpiro's conjecture (an inequality between discriminant and conductor) and the ABC conjecture,
+      not needed for understanding Mordell–Weil<span class="refchip">AEC VIII §11</span>.
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7. 練習問題 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Exercises</div>
+    <h2>Exercises</h2>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 1</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          In the proof of the descent theorem we said "taking n large enough, h(P<sub>n</sub>) ≤ 1 + (C₁′+C₂)/2".
+          Given h(P) and C₁′+C₂, give one explicit n that guarantees this (take m = 2).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            The estimate is h(P<sub>n</sub>) ≤ 2⁻ⁿ h(P) + (C₁′+C₂)/2, so 2⁻ⁿ h(P) ≤ 1 is enough.
+            That is, any integer n ≥ log₂ h(P) works, for example n = max{0, ⌈log₂ h(P)⌉}.
+            You reach the floor in a number of steps equal to the log of the height (≈ the log of the number of digits) ── you can also read off that descent is "fast".
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 2</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          Using only height property (iii) (finiteness of bounded sets), show directly, without going through the descent theorem,
+          that the torsion subgroup of E(ℚ) is finite. (Hint: derive from (a)(b) that torsion points have bounded height.)
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            Let P be a torsion point of order k. Repeating (b) gives h<sub>x</sub>(2ⁿP) ≥ 4ⁿ h<sub>x</sub>(P) − C₂(1 + 4 + … + 4ⁿ⁻¹)
+            ≥ 4ⁿ( h<sub>x</sub>(P) − C₂/3 ). If h<sub>x</sub>(P) &gt; C₂/3 the left side diverges with n,
+            but {2ⁿP} is a finite set (contained in the cyclic group generated by P), so the heights are bounded, a contradiction.
+            So every torsion point satisfies h<sub>x</sub> ≤ C₂/3, and by (iii) there are finitely many torsion points.
+            ── This is a naive version of "ĥ(torsion point) = 0" (VIII.9.3).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 3</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          For E : y² = x³ + 3, P = (1,2), check the 4P row of the table in the text.
+          That is, compute F(−23,16) = 2540833 and G(−23,16) = 7744,
+          confirm gcd(2540833, 7744) = 1 using "δ | 4Δ' = 972", and conclude h<sub>x</sub>(4P) = log 2540833.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            F(X,Z) = X⁴ − 24XZ³ (since A=0, B=3, the terms −2AX²Z² and A²Z⁴ vanish):
+            F(−23,16) = 279841 + 24·23·4096 = 279841 + 2260992 = 2540833.
+            G(X,Z) = 4X³Z + 12Z⁴: G(−23,16) = −778688 + 786432 = 7744 = 2⁶·11².
+            δ | 4Δ' = 972 = 2²·3⁵ and δ | 7744 = 2⁶·11², so δ | 4.
+            F(−23,16) is odd (even + odd), so δ = 1.
+            So in lowest terms x(4P) = 2540833/7744; the numerator is larger, so h<sub>x</sub>(4P) = log 2540833 ≈ 14.75.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 4</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          For A = 0, B = 3, actually expand and verify the first identity of the sublemma (VIII.4.3),
+          f₁F − g₁G = 4Δ'Z⁷.
+          (f₁ = 12X²Z, g₁ = 3X³ − 81Z³, F = X⁴ − 24XZ³, G = 4X³Z + 12Z⁴, 4Δ' = 972.)
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            f₁F = 12X²Z(X⁴ − 24XZ³) = 12X⁶Z − 288X³Z⁴.<br>
+            g₁G = (3X³ − 81Z³)(4X³Z + 12Z⁴) = 12X⁶Z + 36X³Z⁴ − 324X³Z⁴ − 972Z⁷
+            = 12X⁶Z − 288X³Z⁴ − 972Z⁷.<br>
+            Taking the difference, f₁F − g₁G = 972Z⁷ = 4·243·Z⁷ = 4Δ'Z⁷ (Δ' = 27·9 = 243). ✓
+            Verifying it for general A, B is "a boring but sure computation" (in AEC's words, a tedious calculation).
+            Deriving f₁, g₁ yourself with Euclid's algorithm is also good practice.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 5</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          Use Lutz–Nagell (VIII.7.1–7.2) to show that the torsion subgroup of E : y² = x³ + 3 is trivial (= {O}), and
+          conclude from P = (1,2) and the Mordell–Weil theorem that rank E(ℚ) ≥ 1.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            4A³ + 27B² = 0 + 243 = 243 = 3⁵. A torsion point (x,y) ≠ O has x,y ∈ ℤ, and
+            if y = 0 then x³ = −3 (no integer solution). If y ≠ 0, y² | 243 gives y² ∈ {1, 9, 81},
+            i.e. y ∈ {±1, ±3, ±9}. These give x³ = y² − 3 ∈ {−2, 6, 78},
+            none of which is a perfect cube. So the only torsion point is O.
+            P = (1,2) ∈ E(ℚ) is not O, so it has infinite order. E(ℚ) ≅ ℤʳ (no torsion) with r ≥ 1.
+            (In fact r = 1 and P is a generator, but proving that needs the descent computations of Part 5.)
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 6</span><span class="diff d3">★★★ Advanced</span></div>
+      <div class="ex-body">
+        <p>
+          (Tate's telescoping trick = existence of the canonical height<span class="refchip">the core of AEC VIII.9.1</span>)
+          Let h = h<sub>x</sub>. First, (a): you may accept that there is a constant C with |h(2P) − 4h(P)| ≤ C (∀P),
+          from VIII.4.2(b) and "the upper bound h(2P) ≤ 4h(P) + C" (which comes from a crude estimate like (a)).
+          Then (b): show that the sequence aₙ = 4⁻ⁿ h(2ⁿP) is a Cauchy sequence, and
+          prove that the limit ĥ'(P) = lim aₙ exists and satisfies |ĥ'(P) − h(P)| ≤ C/3.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the outline of the solution</summary>
+        <div class="sol-body">
+          <p>
+            Estimate the difference of adjacent terms: |a<sub>n+1</sub> − a<sub>n</sub>| = 4⁻⁽ⁿ⁺¹⁾|h(2·2ⁿP) − 4h(2ⁿP)| ≤ C·4⁻⁽ⁿ⁺¹⁾.
+            So for n &lt; m, |a<sub>m</sub> − a<sub>n</sub>| ≤ C Σ<sub>k&gt;n</sub> 4⁻ᵏ = C·4⁻ⁿ/3 → 0, a Cauchy sequence.
+            Calling the limit ĥ'(P), |ĥ'(P) − a₀| ≤ Σ<sub>k≥1</sub> C·4⁻ᵏ = C/3, and a₀ = h(P), so the claim follows.
+          </p>
+          <p>
+            Supplement: the same telescoping estimate immediately gives ĥ'(2P) = 4ĥ'(P) <strong>with no error</strong>
+            (just shift the limit in the definition). The design idea of §9, "kill the +O(1) by a limit to get an exact quadratic form",
+            is condensed into this computation. Using the parallelogram law, a similar argument even shows ĥ' is a quadratic form
+            (the proof of AEC VIII.9.3).
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/kummer.html">
+      <div class="p-dir">← PREV ─ Part 3</div>
+      <div class="p-title">The Kummer pairing and Galois cohomology (AEC VIII §2)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/selmer.html">
+      <div class="p-dir">NEXT ─ Part 5</div>
+      <div class="p-title">Selmer and Tate–Shafarevich groups (AEC X §4) →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Graduate notes / The Arithmetic of Elliptic Curves series 4/5</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. VIII §3–§11</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+
+  /* ── 高さ降下シミュレータ ── */
+  var slH = document.getElementById('slH'), slC = document.getElementById('slC'), slM = document.getElementById('slM');
+  var vH = document.getElementById('vH'), vC = document.getElementById('vC'), vM = document.getElementById('vM');
+  var cv = document.getElementById('cDescent');
+
+  function draw(){
+    var h0 = parseFloat(slH.value), C = parseFloat(slC.value), m = parseInt(slM.value, 10);
+    vH.textContent = h0; vC.textContent = C; vM.textContent = m;
+
+    var dpr = window.devicePixelRatio || 1;
+    var W = cv.parentElement.clientWidth - 48;
+    var Hpx = 260;
+    cv.width = W * dpr; cv.height = Hpx * dpr;
+    cv.style.width = W + 'px'; cv.style.height = Hpx + 'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, Hpx);
+
+    var m2 = m * m;
+    var floor = C / (m2 - 2);           /* 不動点 */
+    var vals = [h0];
+    var steps = 14;
+    for (var i = 0; i < steps; i++) {
+      vals.push((2 * vals[i] + C) / m2);
+    }
+    var maxV = Math.max(h0, floor) * 1.12 + 1;
+    var pad = 30, baseY = Hpx - 28;
+    var bw = Math.min(38, (W - pad * 2) / vals.length - 8);
+
+    /* 床ライン */
+    var fy = baseY - (floor / maxV) * (baseY - 20);
+    ctx.strokeStyle = 'rgba(232,197,71,0.85)';
+    ctx.setLineDash([6, 5]);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(pad, fy); ctx.lineTo(W - 8, fy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(232,197,71,0.9)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillText('floor = C/(m²−2) ≈ ' + floor.toFixed(1), pad + 4, fy - 6);
+
+    /* 棒 */
+    for (var j = 0; j < vals.length; j++) {
+      var x = pad + j * ((W - pad * 2) / vals.length) + 4;
+      var bh = (vals[j] / maxV) * (baseY - 20);
+      var onFloor = vals[j] <= floor * 1.05 + 0.5;
+      ctx.fillStyle = onFloor ? 'rgba(94,207,158,0.75)' : 'rgba(232,197,71,0.55)';
+      ctx.fillRect(x, baseY - bh, bw, bh);
+      ctx.fillStyle = 'rgba(125,132,160,0.9)';
+      ctx.font = '10px JetBrains Mono, monospace';
+      if (j % 2 === 0 || vals.length < 10) ctx.fillText('P' + j, x + 2, baseY + 14);
+    }
+
+    /* 軸 */
+    ctx.strokeStyle = 'rgba(125,132,160,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad - 6, baseY); ctx.lineTo(W - 8, baseY); ctx.stroke();
+  }
+
+  [slH, slC, slM].forEach(function(s){ s.addEventListener('input', draw); });
+  window.addEventListener('resize', draw);
+  if (document.readyState === 'complete') { draw(); }
+  else { window.addEventListener('load', draw); }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selmer and Tate–Shafarevich Groups ─ A Close Reading of AEC X §4 | Math the Japanese Way</title>
+<meta name="description" content="A close reading of Selmer and Tate–Shafarevich groups following AEC X §4. Graduate-level notes capturing the obstruction to descent with cohomology.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Selmer and Tate–Shafarevich Groups ─ A Close Reading of AEC X §4 | Math the Japanese Way">
+<meta property="og:description" content="A close reading of Selmer and Tate–Shafarevich groups following AEC X §4. Graduate-level notes capturing the obstruction to descent with cohomology.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/selmer.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Ш'; position:absolute; right:0; top:-30px; font-family:var(--display);
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/selmer.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/selmer.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/selmer.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/selmer.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves 5/5</div>
+    <h1>Selmer groups and<br>Tate–Shafarevich groups<br><span class="en">The Selmer and Shafarevich–Tate Groups</span></h1>
+    <p class="hero-sub">
+      Where is the Mordell–Weil theorem "computable", and where does it become "uncomputable"?
+      Drawing that boundary precisely is the job of the Selmer group and Ш.
+      We read AEC X §4 closely and actually compute the Mordell–Weil group of one curve all the way through.
+      Finally we survey Ch. IX and the rest of Ch. X to close out the series.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. X §4 (close reading), X §1–§3, §5–§6 / Ch. IX (survey)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/aec.html">I The big map</a>
+      <a href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a href="/math-site/en/in/descent.html">IV Descent</a>
+      <a class="cur" href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>Resetting the problem ─ winning back the lost computability</h2>
+    <p>Let's sort out the situation established so far in the series.</p>
+    <ul>
+      <li>E(K) is finitely generated (Part 4). Moreover, as long as we know generators of E(K)/mE(K),
+        generators of E(K) can be computed <strong>effectively</strong> by descent<span class="refchip">AEC VIII.3.2 / Exercise 8.18</span>.</li>
+      <li>E(K)/mE(K) is finite and injects into the computable finite group H¹(G<sub><span class="ov">K</span>/K</sub>, E[m]; S)
+        (classes unramified outside S) (Parts 2 and 3).</li>
+      <li>But there is no method to decide "which elements of H¹ come from rational points"<span class="refchip">AEC VIII.1.8</span>.
+        This is the one ineffective point.</li>
+    </ul>
+    <p>
+      The idea of Chapter X is this: <strong>we can't decide "does it come from a rational point?", but
+      we can decide "could it come from a rational point locally?"</strong>.
+      That's because each completion K<sub>v</sub> is "an easy world to compute in", thanks to Hensel's lemma.
+      So we insert in between the group obtained by cutting H¹ with local conditions ── the Selmer group ── and
+      name the error left over Ш and study it head-on. That's the design of X §4.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02 ─ Preparation (summary)</div>
+    <h2>The tools of X §1–§3 ─ a dictionary called homogeneous spaces</h2>
+
+    <h3>X §1: complete 2-descent (you already know half of it)</h3>
+    <p>
+      This is about determining the image of "when E[2] ⊂ E(K), E(K)/2E(K) ↪ (K<sup>×</sup>/(K<sup>×</sup>)²)²,
+      P ↦ (x−e₁, x−e₂)", seen in Part 3 §7<span class="refchip">AEC X.1.1 / X.1.4</span>.
+      The key is that the image lands in pairs from the finite group
+    </p>
+    <div class="formula">
+      <div class="fline">K(S, m) = { b ∈ K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> : ord<sub>v</sub>(b) ≡ 0 (mod m) (∀v ∉ S) }</div>
+      <div class="fline fc">The same as T<sub>S</sub> in Part 2 STEP 3. S = {bad reduction} ∪ {v | 2} ∪ M<sub>K</sub><sup>∞</sup></div>
+    </div>
+    <p>
+      , and that whether (b₁,b₂) ∈ K(S,2)² lies in the image can be restated as <strong>the existence of a rational point on an auxiliary curve</strong>
+    </p>
+    <div class="formula">
+      <div class="fline">b₁z₁² − b₂z₂² = e₂ − e₁,  b₁z₁² − b₁b₂z₃² = e₃ − e₁</div>
+    </div>
+    <p>
+      <span class="refchip">AEC X.1.4</span>.
+      As an example AEC completely computes y² = x(x−2)(x−10) and shows its rank is 0<span class="refchip">AEC X.1.5</span>.
+      The form "computing E(K)/2E(K) = searching for rational points on finitely many auxiliary curves" is the prototype of this whole chapter.
+    </p>
+
+    <h3>X §2–§3: twists, homogeneous spaces, the Weil–Châtelet group</h3>
+    <p>
+      In Part 3 we said "H¹(G, E(<span class="ov">K</span>)) ≠ 0 is what makes the theory of elliptic curves hard".
+      X §3 gives this group a geometric meaning.
+    </p>
+    <div class="box dfn">
+      <div class="box-label">Definition (homogeneous space) <span class="refchip">AEC X §3</span></div>
+      <p>
+        A <strong>(principal) homogeneous space</strong> (torsor) for E/K is
+        a pair of a smooth curve C/K of genus 1 and a simply transitive action C × E → C defined over K.
+        The trivial example is C = E itself. Two homogeneous spaces are identified if K-isomorphic, and the set of equivalence classes is called
+        <strong>the Weil–Châtelet group WC(E/K)</strong>.
+      </p>
+    </div>
+    <p>We use only the following three facts (you may skim the proofs):</p>
+    <ul>
+      <li><strong>{C/K} is trivial ⟺ C(K) ≠ ∅</strong><span class="refchip">AEC X.3.3</span>.
+        "A torsor with a K-rational point can be identified with E."</li>
+      <li><strong>WC(E/K) ≅ H¹(G<sub><span class="ov">K</span>/K</sub>, E(<span class="ov">K</span>))</strong><span class="refchip">AEC X.3.6</span>.
+        The correspondence chooses a <span class="ov">K</span>-isomorphism θ : C → E and takes a cocycle of the form σ ↦ θ<sup>σ</sup>(p) − θ(p).</li>
+      <li>The Jacobian of C (Pic⁰(C)) gives back E<span class="refchip">AEC X.3.8</span>.
+        A dictionary: "a torsor of E = a genus-1 curve whose Jacobian is E".</li>
+    </ul>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Language of cohomology</th><th>Language of geometry</th></tr></thead>
+      <tbody>
+        <tr><td class="m">ξ ∈ H¹(G, E)</td><td>A genus-1 curve C/K (with Jacobian E)</td></tr>
+        <tr><td class="m">ξ = 0</td><td>C(K) ≠ ∅ (it has a rational point)</td></tr>
+        <tr><td class="m">res<sub>v</sub>(ξ) = 0 ∈ H¹(G<sub>v</sub>, E)</td><td>C(K<sub>v</sub>) ≠ ∅ (it has a v-adic point)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        X §2 (the general theory of twists) and the proofs of X §3 are parts you may pass through on a first reading carrying only the dictionary above (three items + table).
+        With the dictionary in hand you can follow every argument of §4. When you need the details of the theory of homogeneous spaces,
+        come back to AEC X §3.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The basic diagram and the definitions of the two groups <span class="refchip">AEC X §4</span></h2>
+
+    <p>
+      Let φ : E → E′ be an isogeny defined over K (E = E′, φ = [m] is the typical example.
+      We generalize because we really use it in "descent via 2-isogeny" (§5)).
+      From the short exact sequence 0 → E[φ] → E → E′ → 0, by the same procedure as Part 3, we get <strong>the global basic exact sequence</strong>:
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K)/φ(E(K)) →<sup>δ</sup> H¹(G<sub><span class="ov">K</span>/K</sub>, E[φ]) → WC(E/K)[φ] → 0  (∗)</div>
+    </div>
+    <p>
+      Doing the same at each place v (G<sub>v</sub> ⊂ G<sub><span class="ov">K</span>/K</sub> the decomposition group) gives <strong>the local version</strong>:
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K<sub>v</sub>)/φ(E(K<sub>v</sub>)) →<sup>δ</sup> H¹(G<sub>v</sub>, E[φ]) → WC(E/K<sub>v</sub>)[φ] → 0  (∗v)</div>
+    </div>
+    <p>And the commutative diagram tying the two together via restriction maps is the stage for every argument in this section:</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 780 260" role="img" aria-label="Commutative diagram of global and local">
+        <defs>
+          <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+        </defs>
+        <style>
+          .qt { font-family:'JetBrains Mono',monospace; font-size:13.5px; fill:#f0d888; }
+          .qs { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#7d84a0; }
+          .qe { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr5); }
+        </style>
+        <!-- global row -->
+        <text class="qt" x="20" y="60">0</text>
+        <text class="qt" x="58" y="60">E′(K)/φ(E(K))</text>
+        <text class="qt" x="300" y="60">H¹(G, E[φ])</text>
+        <text class="qt" x="530" y="60">WC(E/K)[φ]</text>
+        <text class="qt" x="740" y="60">0</text>
+        <path class="qe" d="M36,55 L52,55"/>
+        <path class="qe" d="M244,55 L292,55"/><text class="qs" x="258" y="46">δ</text>
+        <path class="qe" d="M456,55 L522,55"/>
+        <path class="qe" d="M692,55 L732,55"/>
+        <!-- local row -->
+        <text class="qt" x="20" y="205">0</text>
+        <text class="qt" x="40" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> E′(K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">)/φ(E(K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">))</tspan></text>
+        <text class="qt" x="300" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> H¹(G</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">, E[φ])</tspan></text>
+        <text class="qt" x="530" y="205">∏<tspan class="qs" dy="4">v</tspan><tspan dy="-4"> WC(E/K</tspan><tspan class="qs" dy="4">v</tspan><tspan dy="-4">)[φ]</tspan></text>
+        <text class="qt" x="740" y="205">0</text>
+        <path class="qe" d="M36,200 L52,200"/>
+        <path class="qe" d="M262,200 L292,200"/><text class="qs" x="268" y="191">δ</text>
+        <path class="qe" d="M486,200 L522,200"/>
+        <path class="qe" d="M712,200 L732,200"/>
+        <!-- vertical arrows -->
+        <path class="qe" d="M140,75 L140,185"/>
+        <path class="qe" d="M370,75 L370,185"/>
+        <path class="qe" d="M600,75 L600,185"/>
+        <text class="qs" x="378" y="135">res (restriction)</text>
+      </svg>
+      <div class="svg-cap">
+        Figure 1: the basic commutative diagram (∗∗) [AEC X §4]. The top row is the global (∗), the bottom row the product of the local (∗v).
+        Goal = determine the image of the top left (rational points). The bottom right (local WC) is computable thanks to Hensel's lemma.
+      </div>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Definition (Selmer group, Tate–Shafarevich group) <span class="refchip">AEC X §4</span></div>
+      <div class="formula">
+        <div class="fline">S<sup>(φ)</sup>(E/K) = ker{ H¹(G<sub><span class="ov">K</span>/K</sub>, E[φ]) → ∏<sub>v</sub> WC(E/K<sub>v</sub>) }  (the φ-Selmer group)</div>
+        <div class="fline">Ш(E/K) = ker{ WC(E/K) → ∏<sub>v</sub> WC(E/K<sub>v</sub>) }  (the Tate–Shafarevich group)</div>
+      </div>
+      <p>
+        Neither depends on the choice of extension of v to <span class="ov">K</span><span class="refchip">AEC X.4.1.1</span>.
+      </p>
+    </div>
+
+    <p>Read through the geometric dictionary (§2), the meaning of the definitions becomes vivid:</p>
+    <ul>
+      <li><strong>S<sup>(φ)</sup></strong> = "cohomology classes whose corresponding homogeneous space <strong>has a point over every completion</strong>".
+        That is, the collection of "classes that locally can't be told apart from those coming from rational points".</li>
+      <li><strong>Ш</strong> = "torsors that are <strong>locally trivial everywhere, yet globally nontrivial</strong>"<span class="refchip">AEC X.4.1.2</span>.
+        That is, the group that measures <strong>the failure of the Hasse principle (the local–global principle)</strong>. For curves of genus 0 (conics),
+        the counterpart of this group vanishes by the Hasse–Minkowski theorem, but in genus 1 it doesn't.</li>
+    </ul>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>The basic theorem ─ exact sequence and finiteness</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem <span class="refchip">AEC X.4.2</span></div>
+      <p>If φ : E/K → E′/K is an isogeny, then:</p>
+      <div class="formula">
+        <div class="fline">(a)  0 → E′(K)/φ(E(K)) → S<sup>(φ)</sup>(E/K) → Ш(E/K)[φ] → 0  is exact</div>
+        <div class="fline">(b)  S<sup>(φ)</sup>(E/K) is a finite group</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof of (a) (writing out the whole diagram chase)</div>
+      <p>
+        <strong>The image lands in Selmer:</strong> for P ∈ E′(K), δ(P) goes to 0 in WC(E/K) by exactness of the global sequence (∗).
+        By commutativity of the diagram, its image at each v (∈ WC(E/K<sub>v</sub>)) is also 0. So δ(P) ∈ S<sup>(φ)</sup>.
+      </p>
+      <p>
+        <strong>S<sup>(φ)</sup> → Ш[φ] can be defined:</strong> let c be the image in WC(E/K)[φ] of ξ ∈ S<sup>(φ)</sup>. Then
+        by commutativity each local image of c equals the local image of ξ, which is 0. So c ∈ Ш[φ].
+      </p>
+      <p>
+        <strong>Surjectivity:</strong> take any c ∈ Ш(E/K)[φ]. By exactness of the global sequence (∗) (the right end is surjective),
+        c is the image of some ξ ∈ H¹(G, E[φ]). The local images of ξ go to the local images of c = 0, so ξ ∈ S<sup>(φ)</sup>.
+      </p>
+      <p>
+        <strong>Exactness at S<sup>(φ)</sup>:</strong> ξ ∈ S<sup>(φ)</sup> goes to 0 in Ш[φ] ⟺ the image of ξ in WC(E/K) is 0
+        ⟺ (exactness of the global sequence) ξ ∈ im δ.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof of (b) (a replay of the weak MW argument)</div>
+      <p>
+        Let ξ ∈ S<sup>(φ)</sup>, and let v be a finite place where "v doesn't divide deg φ = m and E has good reduction".
+        We show <strong>ξ is unramified at v</strong>.
+      </p>
+      <p>
+        Since ξ ∈ S<sup>(φ)</sup>, ξ is trivial in WC(E/K<sub>v</sub>). By exactness of the local sequence (∗v),
+        there is P ∈ E(<span class="ov">K</span><sub>v</sub>) with ξ<sub>σ</sub> = P<sup>σ</sup> − P (∀σ ∈ G<sub>v</sub>),
+        and moreover P<sup>σ</sup> − P ∈ E[φ] ⊂ E[m]. Taking σ in the inertia group I<sub>v</sub>,
+        inertia doesn't move anything after reduction, so (P<sup>σ</sup> − P)˜ = Õ.
+        That is, P<sup>σ</sup> − P is a point that is "m-torsion and in the kernel of reduction", and
+        by VIII.1.4 (= VII.3.1, the weapon of Part 2 STEP 2) it's O.
+        So ξ<sub>σ</sub> = 0 (∀σ ∈ I<sub>v</sub>), and ξ is unramified at v.
+      </p>
+      <p>
+        Therefore S<sup>(φ)</sup> ⊂ H¹(G, E[φ]; S) (S = {bad reduction} ∪ {v | deg φ} ∪ M<sub>K</sub><sup>∞</sup>,
+        a finite set<span class="refchip">AEC X.4.4</span>. That E and E′ have the same bad primes [AEC VII.7.2] also comes into play here).
+        The rest is the following lemma.
+      </p>
+      <div class="qed">∎ (except for the lemma)</div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (finiteness of cohomology unramified outside S) <span class="refchip">AEC X.4.3</span></div>
+      <p>If M is a finite G<sub><span class="ov">K</span>/K</sub>-module and S a finite set of places, then
+      H¹(G<sub><span class="ov">K</span>/K</sub>, M; S) = { ξ : unramified outside S } is finite.</p>
+    </div>
+    <div class="proof">
+      <div class="p-label">Proof</div>
+      <p>
+        M is finite, so there is an open subgroup fixing every element of M. By inflation–restriction (Part 3)
+        we may replace K by a finite extension, and <strong>we may assume the action is trivial</strong>.
+        Then H¹(G, M; S) = Hom(G, M; S). Let m be the exponent of M, and
+        L/K "the maximal abelian extension of exponent m unramified outside S"; then
+        every homomorphism G → M unramified outside S factors through G<sub>L/K</sub>.
+        <strong>By VIII.1.6 (Part 2 STEP 3!) L/K is finite</strong>, so Hom(G<sub>L/K</sub>, M) is finite.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? "The proof of weak MW" and "the finiteness of Selmer groups" are the same theorem</div>
+      <p>
+        When φ = [m], the left end of the exact sequence in (a) is E(K)/mE(K), so the weak MW theorem follows from the finiteness in (b).
+        Conversely, the proof of (b) is a direct replay of Part 2's STEP 2 (unramifiedness) and STEP 3 (finiteness from field theory).
+        In other words, <strong>the "body" of the proof of the weak Mordell–Weil theorem is the finiteness of the Selmer group, and
+        nothing learned in Part 2 has been wasted</strong>. The whole series comes together here.
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">Selmer groups are computable <span class="refchip">AEC X.4.5</span></div>
+      <p>
+        H¹(G, E[φ]; S) is a computable finite group (by following Part 2 STEP 3 explicitly).
+        For each element ξ of it, "is ξ ∈ S<sup>(φ)</sup>?" means deciding whether the corresponding homogeneous space C<sub>ξ</sub>
+        has a K<sub>v</sub>-point for each v ∈ S, which reduces to <strong>finitely many congruence checks thanks to Hensel's lemma</strong>
+        (for v ∉ S, local points exist automatically by unramifiedness).
+        So S<sup>(φ)</sup>(E/K) can always, in principle, be computed.
+        What can't be computed is only Ш[φ] ── "global obstructions invisible locally".
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Descent via 2-isogeny ─ a tool for real computations <span class="refchip">AEC X.4.8–4.9</span></h2>
+
+    <p>
+      For a curve with a K-rational 2-torsion point T = (0,0), we can split [2] into "the composition of two isogenies of degree 2" and
+      lighten the descent computation. It can always be used when E(K)[2] ≠ 0, and it's the most important form in practice<span class="refchip">AEC X.4.9.2</span>.
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Proposition (descent via 2-isogeny) <span class="refchip">AEC X.4.9</span></div>
+      <div class="formula">
+        <div class="fline">E : y² = x³ + ax² + bx,  E′ : Y² = X³ − 2aX² + (a² − 4b)X</div>
+        <div class="fline">φ : E → E′,  φ(x,y) = ( y²/x², y(b − x²)/x² ),  ker φ = { O, (0,0) },  deg φ = 2</div>
+        <div class="fline">S = M<sub>K</sub><sup>∞</sup> ∪ { v : v(2) ≠ 0 or v(b) ≠ 0 or v(a²−4b) ≠ 0 }</div>
+      </div>
+      <p>For d ∈ K<sup>×</sup>, define the homogeneous space C<sub>d</sub> by</p>
+      <div class="formula">
+        <div class="fline">C<sub>d</sub> : dw² = d² − 2adz² + (a² − 4b)z⁴</div>
+      </div>
+      <p>; then there is an exact sequence</p>
+      <div class="formula">
+        <div class="fline">0 → E′(K)/φ(E(K)) →<sup>δ</sup> K(S,2) → WC(E/K)[φ]</div>
+        <div class="fline fc">δ(O) = 1,  δ((0,0)) = a² − 4b,  δ((X,Y)) = X (X ≠ 0) /  d ↦ {C<sub>d</sub>/K}</div>
+      </div>
+      <p>, and the Selmer group is</p>
+      <div class="formula">
+        <div class="fline">S<sup>(φ)</sup>(E/K) ≅ { d ∈ K(S,2) : C<sub>d</sub>(K<sub>v</sub>) ≠ ∅ (∀v ∈ S) }</div>
+      </div>
+      <p>Moreover ψ : C<sub>d</sub> → E′, ψ(z,w) = ( d/z², −dw/z³ ) satisfies δ(ψ(P)) ≡ d
+      when a point P ∈ C<sub>d</sub>(K) is found (a device for recovering points<span class="refchip">AEC X.4.6</span>).</p>
+    </div>
+
+    <p>
+      E′ has the same form as E, so <strong>the same proposition can be used for the dual isogeny φ̂ : E′ → E</strong>.
+      The results of the two descents combine into E(K)/2E(K) via the following exact sequence<span class="refchip">AEC X.4.7</span>:
+    </p>
+    <div class="formula">
+      <div class="fline">0 → E′(K)[φ̂] / φ(E(K)[2]) → E′(K)/φ(E(K)) →<sup>φ̂</sup> E(K)/2E(K) → E(K)/φ̂(E′(K)) → 0</div>
+      <div class="fline fc">(obtained by an elementary diagram chase using φ̂∘φ = [2])</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ A complete worked example</div>
+    <h2>Real computation: the Mordell–Weil group of E : y² = x³ − 6x² + 17x <span class="refchip">AEC X.4.10</span></h2>
+
+    <p>
+      a = −6, b = 17. The discriminant is Δ = −2⁹·17², so S = {∞, 2, 17},
+      ℚ(S,2) = {±1, ±2, ±17, ±34} (8 elements). The partner under the 2-isogeny is
+    </p>
+    <div class="formula">
+      <div class="fline">E′ : Y² = X³ + 12X² − 32X,  C<sub>d</sub> : dw² = d² + 12dz² − 32z⁴</div>
+    </div>
+
+    <h3>Determining the Selmer group on the φ side</h3>
+    <ul>
+      <li><strong>d = −2 ∈ S<sup>(φ)</sup></strong>: the image of (0,0) ∈ E′(ℚ) is δ(0,0) = a²−4b = −32 ≡ −2.
+        It comes from a rational point, so it automatically lies in Selmer.</li>
+      <li><strong>d = 2 ∈ S<sup>(φ)</sup> (and it comes from a rational point)</strong>: rewriting C₂ : 2w² = 4 + 24z² − 32z⁴
+        with z = Z/2 gives w² = 2 + 3Z² − Z⁴. <strong>By inspection, a rational point (Z, w) = (1, 2)</strong>,
+        i.e. (z,w) = (1/2, 2) ∈ C₂(ℚ). With the recovery device ψ,
+        ψ(1/2, 2) = (8, −32) ∈ E′(ℚ); check: δ(8,−32) = 8 ≡ 2. ✓</li>
+      <li><strong>d = 17 ∉ S<sup>(φ)</sup> (it dies 17-adically)</strong>: suppose C₁₇ : 17w² = 17² + 12·17z² − 32z⁴ has
+        a ℚ₁₇-point. Comparing valuations, noting that ord₁₇(17w²) is odd and ord₁₇(32z⁴) is even,
+        we need z, w ∈ ℤ₁₇. Then from the equation, in turn,
+        z ≡ 0, w ≡ 0 (mod 17), and finally 17² ≡ 0 (mod 17³), a contradiction. So C₁₇(ℚ₁₇) = ∅.</li>
+      <li><strong>The rest is handled automatically by the group structure</strong>: S<sup>(φ)</sup> is a subgroup of ℚ(S,2),
+        containing {1, 2, −2, −1} and not containing 17. If any of ±17, ±34 were in it, 17 would be too (multiplying by 2, −1).
+        So S<sup>(φ)</sup>(E/ℚ) = {±1, ±2} ≅ (ℤ/2)².</li>
+    </ul>
+    <p>
+      Moreover, since we found that all four elements of S<sup>(φ)</sup> come from points of E′(ℚ) (O, (0,0), (8,−32), and their sum),
+      the exact sequence (X.4.2a) gives <strong>Ш(E/ℚ)[φ] = 0</strong>. This is a lucky case.
+    </p>
+
+    <h3>The φ̂ side (from E′ to E)</h3>
+    <ul>
+      <li>C′<sub>d</sub> : dw² = d² − 24dz² + 272z⁴ (a′ = 12, b′ = −32, a′²−4b′ = 272).</li>
+      <li>The image of (0,0) ∈ E(ℚ): δ(0,0) = 272 ≡ 17. So 17 ∈ S<sup>(φ̂)</sup>.</li>
+      <li><strong>d &lt; 0 dies over the reals</strong>: if d &lt; 0 the left side dw² ≤ 0, while
+        the right side = d² − 24dz² + 272z⁴ has every term ≥ 0 and d² &gt; 0, so it's positive. C′<sub>d</sub>(ℝ) = ∅.</li>
+      <li><strong>d = 2 dies 2-adically</strong>: rewriting C′₂ with z = Z/2 gives 2w² = 4 − 12Z² + 17Z⁴.
+        If there were a ℚ₂-point we'd need Z, w ∈ ℤ₂, and mod 2 in turn Z ≡ 0, w ≡ 0,
+        and finally 4 ≡ 0 (mod 8), a contradiction.</li>
+      <li>In summary, S<sup>(φ̂)</sup>(E′/ℚ) = {1, 17} ≅ ℤ/2, and both come from rational points, so Ш(E′/ℚ)[φ̂] = 0.</li>
+    </ul>
+
+    <h3>Assembly</h3>
+    <div class="formula">
+      <div class="fline">E′(ℚ)/φ(E(ℚ)) ≅ (ℤ/2)²  (generated by (0,0), (8,−32))</div>
+      <div class="fline">E(ℚ)/φ̂(E′(ℚ)) ≅ ℤ/2  (generated by (0,0))</div>
+      <div class="fline">Substituting into the exact sequence of X.4.7 ⇒ E(ℚ)/2E(ℚ) ≅ (ℤ/2)²</div>
+    </div>
+    <p>
+      E(ℚ)[2] = {O, (0,0)} (x² − 6x + 17 has negative discriminant and no rational root), so
+      from dim₂ E(ℚ)/2E(ℚ) = rank + dim₂ E(ℚ)[2], rank = 1. Conclusion:
+    </p>
+    <div class="formula">
+      <div class="fline">E(ℚ) ≅ ℤ × ℤ/2ℤ</div>
+      <div class="fline fc">An example of a point of infinite order: (4, 6) ∈ E(ℚ) (64 − 96 + 68 = 36 = 6²)</div>
+    </div>
+    <p>
+      <strong>This is the entire process of "computing a Mordell–Weil group"</strong>.
+      The finiteness guaranteed by weak MW (Part 2) is actually determined with the computable container called the Selmer group, and
+      the descent theorem (Part 4) tells us "all that's left is to search for generators". Every part of the theory is in motion.
+    </p>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Is Ш really nontrivial? ─ failure of the Hasse principle <span class="refchip">AEC X.4.11</span></h2>
+
+    <p>
+      All the examples so far were "lucky", with Ш[φ] = 0. But Ш doesn't vanish in general.
+      The first examples in history are due to Lind (1940) and Reichardt (1942):
+    </p>
+    <div class="formula">
+      <div class="fline">C : 2w² = 1 − 17z⁴</div>
+      <div class="fline fc">has points over every ℚ<sub>p</sub> and ℝ, but no ℚ-points (proved in Exercise 5)</div>
+    </div>
+    <p>
+      This C is a homogeneous space of a suitable elliptic curve, and gives a nontrivial element (of order 2) of Ш.
+      A little later Selmer (1951) showed that the cubic curve
+    </p>
+    <div class="formula">
+      <div class="fline">3x³ + 4y³ + 5z³ = 0</div>
+    </div>
+    <p>
+      is an example of the same kind (an element of Ш of order 3 for the Jacobian of x³ + y³ + 60z³ = 0), and
+      studied large families. <strong>The name "Selmer group" comes from this work</strong>.
+    </p>
+
+    <h3>How far can we attack Ш? <span class="refchip">AEC X.4.12–4.14</span></h3>
+    <ul>
+      <li><strong>Refined descent</strong><span class="refchip">AEC X.4.12</span>:
+        using the image S<sup>(m,n)</sup> ⊂ S<sup>(m)</sup> of S<sup>(mⁿ)</sup>,
+        0 → E(K)/mE(K) → S<sup>(m,n)</sup> → m<sup>n−1</sup>Ш[mⁿ] → 0.
+        Raising n while running a search for rational points in parallel, the rank will eventually be determined unless Ш has "elements infinitely divisible by m".</li>
+      <li><strong>The Ш finiteness conjecture</strong><span class="refchip">AEC X.4.13</span>: the conjecture that Ш(E/K) is finite.
+        Proved in certain cases (analytic rank ≤ 1, etc.) by Kolyvagin and Rubin.
+        If finiteness is known, the procedure above always stops = <strong>computing Mordell–Weil groups becomes a complete algorithm</strong>.</li>
+      <li><strong>The Cassels pairing</strong><span class="refchip">AEC X.4.14</span>: there is an alternating bilinear pairing
+        Γ : Ш × Ш → ℚ/ℤ whose kernel consists only of divisible elements. In particular, <strong>if Ш is finite, its order is a perfect square</strong>.
+        An astonishing theorem: "such a beautiful constraint can be proved about the order of a group not even known to be finite".</li>
+    </ul>
+    <div class="why">
+      <div class="w-label">? A word about the BSD conjecture (the series' exit)</div>
+      <p>
+        The Birch–Swinnerton-Dyer conjecture<span class="refchip">AEC C.16.5</span> connects the rank r and Ш to
+        the behavior of the L-function L(E,s) at s = 1: ord<sub>s=1</sub> L(E,s) = r,
+        and #Ш and the regulator (Part 4 §9) appear in the formula for the leading coefficient.
+        The landscape of modern number theory is that all the objects learned in this series ── rank, ĥ, Ш ── gather into a single analytic formula.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08 ─ Survey (summary)</div>
+    <h2>Ch. IX integral points / the rest of Ch. X</h2>
+
+    <h3>Ch. IX: integral points (Siegel's theorem)</h3>
+    <p>
+      If Mordell–Weil is the structure theorem for "rational points", Ch. IX is the finiteness theorem for "<strong>integral points</strong>".
+      The main result is Siegel's theorem: a Weierstrass equation has finitely many S-integral points<span class="refchip">AEC IX §3–§4</span>.
+      The proof uses Diophantine approximation (Roth's theorem<span class="refchip">AEC IX §1, §8</span>) and,
+      remarkably, <strong>the Mordell–Weil theorem itself</strong> (divide points by m to improve the quality of approximation, a relative of descent).
+      The effective version via Baker's method<span class="refchip">AEC IX §5</span> and
+      Shafarevich's theorem "there are finitely many elliptic curves with good reduction outside S"<span class="refchip">AEC IX.6.1</span> are
+      also in this chapter.
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ Knowing where it fits is enough</div>
+      <p>
+        Ch. IX is an application of VIII and can be read independently of X §4.
+        For the purpose of this series (understanding VIII), understanding the single sentence
+        "Mordell–Weil combines with approximation theorems to give finiteness of integral points" is enough.
+      </p>
+    </div>
+
+    <h3>Ch. X §5–§6: twists in concrete terms</h3>
+    <p>
+      §5 is the general theory of twists as elliptic curves (quadratic twists E<sup>(d)</sup> : dy² = x³ + Ax + B, etc.)
+      <span class="refchip">AEC X.5.4</span>, and §6 is a large-scale worked example using them to analyze
+      the Mordell–Weil groups of the family Y² = X³ + DX for each D<span class="refchip">AEC X §6</span>.
+      If you understand up to §4, §6 is the best possible material as "a practice ground to test your skills".
+    </p>
+
+    <h3>Wrapping up the series ─ as one story</h3>
+    <div class="formula">
+      <div class="fline">The group of rational points E(K)</div>
+      <div class="fline">　→ Weak MW: E(K)/mE(K) is finite  [VIII §1–§2 = Parts 2 and 3]</div>
+      <div class="fline">　→ Heights and descent: E(K) is finitely generated  [VIII §3–§6 = Part 4]</div>
+      <div class="fline">　→ What can't be computed: the image of rational points inside Hom  [VIII.1.8]</div>
+      <div class="fline">　→ Pin it with local conditions: E(K)/mE(K) ⊂ S<sup>(m)</sup> (computable)  [X §4 = Part 5]</div>
+      <div class="fline">　→ The error term Ш = failure of the Hasse principle. Finiteness is conjectural  [X.4.13]</div>
+      <div class="fline">　→ Beyond it, BSD  [C §16]</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 練習問題 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Exercises</div>
+    <h2>Exercises</h2>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 1</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          Reconstruct, without looking at the text, the diagram chase deriving the exact sequence 0 → E′(K)/φ(E(K)) → S<sup>(φ)</sup> → Ш[φ] → 0 (X.4.2a)
+          from the basic diagram (∗∗). In particular, make explicit where the surjectivity at the right end of the global sequence (∗)
+          is used in the "surjectivity" argument.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            Reconstruct the four paragraphs of Section 04 in the text (the image lands / the map can be defined / surjectivity / exactness in the middle).
+            Surjectivity: for c ∈ Ш[φ] ⊂ WC(E/K)[φ], take a lift ξ using that H¹(G,E[φ]) → WC(E/K)[φ] in (∗) is <strong>surjective</strong>.
+            This surjectivity holds because in the long exact sequence the term after WC[φ] is the part going to φ times H¹(G,E) itself
+            (cutting out a Kummer-type exact sequence).
+            The local images of the lift are 0 because c ∈ Ш.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 2</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          Write out the argument for C₁₇(ℚ₁₇) = ∅ in Section 06 of the text (parity of 17-adic valuations), filling in every gap.
+          That is: assuming C₁₇ : 17w² = 17² + 12·17z² − 32z⁴ has (z,w) ∈ ℚ₁₇², show in order
+          (i) z, w ∈ ℤ₁₇ are necessary, (ii) z ≡ 0 (mod 17), (iii) w ≡ 0 (mod 17),
+          (iv) a contradiction.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            (i) If ord(z) &lt; 0, the valuation of the right side is 4·ord(z) (the −32z⁴ term dominates; ord₁₇(32)=0), which is even, while
+            the left side has 1 + 2·ord(w), which is odd, a contradiction. So z ∈ ℤ₁₇. Then the valuation of the right side is clearly ≥ 0, and
+            from the left side 1 + 2ord(w) ≥ 0 we get ord(w) ≥ 0 (valuations are integers), w ∈ ℤ₁₇.
+            (ii) Mod 17, 0 ≡ −32z⁴, and 32 is a unit, so z ≡ 0 (mod 17).
+            (iii) Substitute z = 17z₁: 17w² = 17² + 12·17³z₁² − 32·17⁴z₁⁴. Dividing by 17,
+            w² = 17 + 12·17²z₁² − 32·17³z₁⁴ ≡ 0 (mod 17), so w ≡ 0 (mod 17).
+            (iv) Substitute w = 17w₁ and divide by 17², giving the form 17w₁² = 1 + 12·17z₁²·…, so
+            mod 17, 0 ≡ 1, a contradiction. (There's more than one way to write it, but alternating parity of valuations with mod 17 is the skeleton.)
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 3</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          Carry out rigorously the part of Section 06 in the text described as "the rest is handled automatically by the group structure".
+          That is, from S<sup>(φ)</sup>(E/ℚ) being a subgroup of ℚ(S,2) = {±1,±2,±17,±34}
+          containing {1,−1,2,−2} and not containing 17, conclude S<sup>(φ)</sup> = {±1,±2}.
+          Also state in one line why S<sup>(φ)</sup> is a subgroup (the cohomological reason).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            S<sup>(φ)</sup> is the kernel of the group homomorphism H¹(G,E[φ]) → ∏<sub>v</sub>WC(E/K<sub>v</sub>), so it's a subgroup
+            (that's the one-line reason. In the language of homogeneous spaces alone the product structure is hard to see, but in cohomology it's obvious).
+            {±1, ±2} ⊂ S<sup>(φ)</sup> is as in the text (−2 and 2 are in, their product gives −1, and 1 is the identity).
+            If 17 ∈ S<sup>(φ)</sup>, that contradicts the assumption. If 34 ∈ S<sup>(φ)</sup>, then 34·2 = 68 ≡ 17 (mod squares)
+            is in, a contradiction. If −17, then −17·(−1) = 17, a contradiction. If −34, then −34·(−2) = 68 ≡ 17, a contradiction.
+            So all of {±17, ±34} are excluded, and S<sup>(φ)</sup> = {±1, ±2}.
+            Order 4 is legitimate for a subgroup of a group of order 8 (Lagrange).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 4</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          Check the recovery device ψ: for the rational point (z,w) = (1/2, 2) of C₂ in Section 06,
+          check that ψ(z,w) = (d/z², −dw/z³) (d = 2) gives (8, −32),
+          that this point really lies on E′ : Y² = X³ + 12X² − 32X,
+          and that δ(8,−32) = 8 ≡ 2 (mod (ℚ<sup>×</sup>)²).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            ψ(1/2, 2) = ( 2/(1/4), −2·2/(1/8) ) = (8, −32).
+            On the curve: 8³ + 12·8² − 32·8 = 512 + 768 − 256 = 1024 = (−32)². ✓
+            The formula for δ (X.4.9) is δ((X,Y)) = X (X ≠ 0), so δ(8,−32) = 8 = 2·4 ≡ 2. ✓
+            The philosophy of Selmer groups, "if a global point is found for a d satisfying the local conditions, that d really does come from a rational point",
+            is condensed in this small computation.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 5</span><span class="diff d3">★★★ Advanced</span></div>
+      <div class="ex-body">
+        <p>
+          (Lind–Reichardt: a proof of the failure of the Hasse principle<span class="refchip">AEC X.4.11</span>)
+          For C : 2w² = 1 − 17z⁴, show the following.
+        </p>
+        <p>
+          (1) C(ℝ) ≠ ∅ and C(ℚ₁₇) ≠ ∅.<br>
+          (2) C(ℚ₂) ≠ ∅, and C(ℚ<sub>p</sub>) ≠ ∅ for p ∤ 2·17.
+          (If needed you may use "the chart at z = ∞", 2w′² = z′⁴ − 17 (z′ = 1/z, w′ = w/z²).)<br>
+          (3) C(ℚ) = ∅. (Hint: reduce to 2u² = t⁴ − 17s⁴ (integers, gcd(t,s)=1),
+          show that 17 is a quadratic residue mod p for each prime factor p of u,
+          derive (p/17) = 1 by quadratic reciprocity, so that all of u is a quadratic residue mod 17,
+          and hence conclude that 2 is a <strong>fourth-power residue</strong> mod 17, giving a contradiction.)
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the outline of the solution</summary>
+        <div class="sol-body">
+          <p>
+            (1) ℝ: if |z| is small then 1 − 17z⁴ &gt; 0, so w can be found.
+            ℚ₁₇: with z = 0, w² = 1/2. 1/2 ≡ 9 (mod 17) is a quadratic residue (9 = 3²), so
+            by Hensel's lemma it lifts to w ∈ ℤ₁₇.
+          </p>
+          <p>
+            (2) ℚ₂: try z = 1/11 ∈ ℤ₂ (11 is a 2-adic unit): 1 − 17/11⁴ = 14624/14641,
+            w² = 7312/11⁴ = 16·457/11⁴. 457 ≡ 1 (mod 8), so 457 is a square in ℤ₂,
+            hence w = 4√457/121 ∈ ℚ₂ exists.
+            p ∤ 2·17: the reduction of C is a smooth curve of genus 1 over 𝔽<sub>p</sub> (think of the projective model gluing the two charts).
+            By the Hasse–Weil bound #C(𝔽<sub>p</sub>) ≥ p + 1 − 2√p &gt; 0 there is an 𝔽<sub>p</sub>-point, and
+            by smoothness it lifts by Hensel. Small p can also be checked by hand
+            (e.g. for p = 5 the z-chart has no solution, but the z′-chart has (z′,w′) = (0, 2): 2·4 = 8 ≡ −17 ≡ 3
+            … is the check −2 ≡ 3. Having to look at both charts is the educational trap of this problem).
+          </p>
+          <p>
+            (3) Suppose there's a rational point (z,w); set z = s/t (in lowest terms) and clear denominators:
+            2u² = t⁴ − 17s⁴ (we may take u = wt² ∈ ℤ, and u &gt; 0: if u = 0, 17 would be a fourth power, a contradiction).
+            gcd(t,s) = 1. 17 ∤ u: if 17 | u then t⁴ ≡ 0 (mod 17), so 17 | t, and then 17⁴ | 17s⁴ gives
+            17 | s, contradicting the gcd.
+            Any odd prime factor p of u (p ≠ 17): t⁴ ≡ 17s⁴ (mod p) and p ∤ s (otherwise p | t), so
+            17 ≡ (t/s)⁴: 17 is a fourth-power residue mod p, in particular a quadratic residue. Since 17 ≡ 1 (mod 4), reciprocity gives
+            (p/17) = (17/p) = 1. Also (2/17) = 1 (6² = 36 ≡ 2) and (−1/17) = 1 (17 ≡ 1 mod 4).
+            So every factor of u = ±2<sup>e</sup>·∏p<sub>i</sub> is a quadratic residue mod 17, and so is u itself:
+            u ≡ g<sup>2c</sup> (g a primitive root mod 17).
+            Then from 2u² ≡ t⁴ (mod 17), 2 ≡ t⁴·u⁻² = (fourth-power residue)·(fourth-power residue)⁻¹ is a fourth-power residue.
+            But the fourth-power residues mod 17 are {1, 4, 13, 16}, and 2 is not among them (2 has order 8). A contradiction.
+          </p>
+          <p>
+            In summary: C has points over every local field but no ℚ-points.
+            C gives a nontrivial element of order 2 in Ш of the corresponding elliptic curve (its Jacobian).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 6</span><span class="diff d3">★★★ Advanced</span></div>
+      <div class="ex-body">
+        <p>
+          (Selmer groups as an upper bound for rank) From the exact sequence for φ = [2],
+          0 → E(ℚ)/2E(ℚ) → S<sup>(2)</sup>(E/ℚ) → Ш(E/ℚ)[2] → 0, derive the ℤ/2-dimension equation
+        </p>
+        <p style="font-family:var(--mono); color:var(--gold-soft);">
+          dim₂ S<sup>(2)</sup> = rank E(ℚ) + dim₂ E(ℚ)[2] + dim₂ Ш[2]
+        </p>
+        <p>
+          . Further, accepting the Cassels pairing (X.4.14), derive "if Ш is finite, #Ш is a perfect square"
+          (Hint: think about the order of a finite abelian group with a nondegenerate alternating form).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the outline of the solution</summary>
+        <div class="sol-body">
+          <p>
+            First half: from E(ℚ) ≅ ℤʳ × T (T finite), E(ℚ)/2E(ℚ) ≅ (ℤ/2)ʳ × T/2T,
+            and dim₂ T/2T = dim₂ T[2] (for a finite abelian group, the cokernel of 2 and the 2-torsion have the same dimension:
+            check cyclic component by cyclic component via the structure theorem). So dim₂ E(ℚ)/2E(ℚ) = r + dim₂ E(ℚ)[2].
+            Counting dimensions in the exact sequence gives the claimed equation directly.
+            <strong>This equation is the precise meaning of "Selmer group = a computable upper bound for rank"</strong>:
+            dim₂ S<sup>(2)</sup> − dim₂ E(ℚ)[2] ≥ r, with equality ⟺ Ш[2] = 0.
+          </p>
+          <p>
+            Second half: if Ш is finite, the Cassels pairing Γ is nondegenerate on Ш (in a finite group the only divisible element is 0).
+            A finite abelian group A with a nondegenerate alternating bilinear form Γ : A × A → ℚ/ℤ
+            has the form A ≅ B × B, by constructing a symplectic basis (take each cyclic pair (x, y) with Γ(x,y) = 1/n and induct down to the orthogonal complement).
+            So #A = (#B)².
+            The same argument goes through for each p-component, so the order of each p-part is a square too.
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/descent.html">
+      <div class="p-dir">← PREV ─ Part 4</div>
+      <div class="p-title">Descent and heights (AEC VIII §3–§4)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/atec.html">
+      <div class="p-dir">NEXT ─ Final chapter</div>
+      <div class="p-title">Beyond ─ An invitation to Advanced Topics →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Graduate notes / The Arithmetic of Elliptic Curves series 5/5 (end)</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. X §4 (and IX, X §1–§3, §5–§6)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

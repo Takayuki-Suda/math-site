@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Arithmetic of Elliptic Curves ─ The Big Map (AEC I–VII) | Math the Japanese Way</title>
+<meta name="description" content="A one-page bird's-eye view of Silverman's AEC, Chapters I–VII. Graduate-level notes that map how the main theorems of elliptic curve theory connect.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="The Arithmetic of Elliptic Curves ─ The Big Map (AEC I–VII) | Math the Japanese Way">
+<meta property="og:description" content="A one-page bird's-eye view of Silverman's AEC, Chapters I–VII. Graduate-level notes that map how the main theorems of elliptic curve theory connect.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/aec.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--serif); font-weight:300; line-height:1.9;
+    min-height:100vh; overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0;
+  }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'E'; position:absolute; right:-10px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--display); font-size:clamp(2.1rem,5.6vw,3.6rem); font-weight:300; font-style:italic;
+    line-height:1.25; color:#fff; margin-bottom:14px; }
+  .hero h1 .jp { font-family:var(--serif); font-style:normal; font-weight:700; }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:620px; line-height:2.0; margin-bottom:8px; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a {
+    font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none;
+    color:var(--muted); border:1px solid var(--border); border-radius:999px; padding:6px 14px;
+    transition:all .25s; background:var(--surface);
+  }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.9rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip {
+    display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px;
+    color:var(--gold-dim); border:1px solid rgba(200,168,75,.35); border-radius:4px;
+    padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap;
+  }
+
+  .formula {
+    background:var(--surface2); border-left:3px solid var(--gold);
+    padding:16px 22px; margin:22px 0; border-radius:0 6px 6px 0;
+    font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft);
+    overflow-x:auto;
+  }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/aec.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/aec.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/aec.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/aec.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves 1/5</div>
+    <h1>The Arithmetic of<br>Elliptic Curves<br><span class="jp" style="font-size:.62em;">─ The big map and prerequisites</span></h1>
+    <p class="hero-sub">
+      A series of notes for reading J.H. Silverman's "The Arithmetic of Elliptic Curves" (2nd ed., GTM 106; <strong>AEC</strong> below)
+      with a single aim: <strong>to truly understand Chapter VIII (the Mordell–Weil theorem)</strong>.
+      This first part gives the big picture of AEC, and collects from Chapters I–VII only "the gear you need to reach the summit".
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. I–VII (summary of prerequisites)</p>
+    <div class="series-nav">
+      <a class="cur" href="/math-site/en/in/aec.html">I The big map</a>
+      <a href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a href="/math-site/en/in/descent.html">IV Descent</a>
+      <a href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1. 読み方 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The goal of this series, and how to read it</h2>
+
+    <p>
+      There is one destination: AEC <strong>Chapter VIII, "Elliptic Curves over Global Fields"</strong>,
+      in particular to understand the following four sections, down to the details of the proofs and "why each argument is needed".
+    </p>
+    <ul>
+      <li>§1 The Weak Mordell–Weil Theorem</li>
+      <li>§2 The Kummer Pairing via Cohomology</li>
+      <li>§3 The Descent Procedure</li>
+      <li>§4 The Mordell–Weil Theorem over ℚ</li>
+    </ul>
+    <p>
+      Then, on the same line, we go as far as AEC <strong>Chapter X §4, "The Selmer and Shafarevich–Tate Groups"</strong>, at the same depth.
+      Parts 2–5 of this series correspond to those four high points.
+    </p>
+    <p>
+      Chapters I–VII, IX and the rest of X, on the other hand, are treated as summaries, as <strong>prerequisites and outlook for climbing to the summit</strong>.
+      In the summaries the goal is "to be able to use the statements"; following the proofs is not required.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ The most important promise of these notes</div>
+      <p>
+        If you try to read AEC perfectly from page 1, you will almost certainly stall somewhere around Riemann–Roch in Chapter II.
+        In these notes <strong>we explicitly mark the places where you should "accept it for now and move on"</strong>.
+        When a green box (like this one) appears, it's a signal that you don't need to stop there.
+        Instead of understanding everything before moving on, work backward from the summit (Ch. VIII) and pick up only what you need.
+        That's how to read this series.
+      </p>
+    </div>
+
+    <p>
+      The corresponding place in the original is always given in the form <span class="refchip">AEC VIII.1.5</span>.
+      "Proposition VIII.1.5" means "the 5th item in §1 of Chapter VIII", following the numbering of the 2nd edition of AEC.
+      Whenever you want to know more, dive into that place in the original.
+    </p>
+  </div>
+
+  <!-- ════════ 2. ゴール ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Checking the goal ─ <span class="en">Mordell–Weil Theorem</span></h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (Mordell–Weil) <span class="refchip">AEC VIII, intro / VIII.6.7</span></div>
+      <p>
+        Let K be a number field (a finite extension of ℚ) and E/K an elliptic curve. Then the group of rational points E(K) is <strong>finitely generated</strong>. That is,
+      </p>
+      <div class="formula"><div class="fline">E(K) ≅ E(K)<sub>tors</sub> × ℤ<sup>r</sup></div>
+      <div class="fline fc">E(K)<sub>tors</sub>: the finite torsion subgroup  r: the rank</div></div>
+      <p>
+        can be written.
+      </p>
+    </div>
+
+    <p>
+      "All the rational points of a cubic curve are generated from finitely many points by addition alone" ── the statement is one line, but
+      the proof splits into two parts of completely different character<span class="refchip">AEC VIII intro</span>.
+    </p>
+    <ol>
+      <li><strong>The weak Mordell–Weil theorem</strong>: the quotient group E(K)/mE(K) is finite (VIII §1–§2).
+        What's used here is <em>algebraic number theory</em> ── reduction, ramification, finiteness of the class number, the S-unit theorem.</li>
+      <li><strong>Descent</strong>: using a height function h, show that the whole group is generated by "representatives of E(K)/mE(K) + points of small height" (VIII §3–§6).
+        What's used here is <em>Diophantine geometry (the theory of heights)</em>.</li>
+    </ol>
+    <p>
+      This two-stage structure is a direct descendant of Fermat's "infinite descent".
+      And when you push hard on "what gets in the way when you try to <strong>actually compute</strong> E(K)/mE(K)",
+      the Selmer group and the Tate–Shafarevich group Ш appear (Ch. X §4, Part 5).
+    </p>
+  </div>
+
+  <!-- ════════ 3. 地図 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The big map of AEC</h2>
+    <p>
+      Draw the dependencies between chapters and the route to climb becomes visible.
+      <strong>Gold marks the focus of this series</strong>; the rest are summarized as "getting your gear ready".
+    </p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 560" role="img" aria-label="AEC chapter dependency diagram">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+          <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .nbox { fill:#171a29; stroke:#3a4160; stroke-width:1; rx:8; }
+          .nbox-g { fill:rgba(232,197,71,0.10); stroke:#E8C547; stroke-width:1.6; rx:8; }
+          .nt { font-family:'JetBrains Mono',monospace; font-size:12px; fill:#aab1cc; }
+          .ntt { font-family:'Noto Serif JP',serif; font-size:14px; font-weight:700; fill:#e8eaf4; }
+          .ntt-g { font-family:'Noto Serif JP',serif; font-size:14.5px; font-weight:700; fill:#E8C547; }
+          .edge { stroke:#565d7d; stroke-width:1.3; fill:none; marker-end:url(#arr); }
+          .edge-g { stroke:#E8C547; stroke-width:2; fill:none; marker-end:url(#arrg); }
+          .lbl { font-family:'JetBrains Mono',monospace; font-size:10px; fill:#7d84a0; }
+        </style>
+
+        <!-- Level 1 -->
+        <rect class="nbox" x="40" y="20" width="180" height="52" rx="8"/>
+        <text class="nt" x="52" y="41">Ch. I</text>
+        <text class="ntt" x="52" y="60">Algebraic varieties</text>
+        <rect class="nbox" x="290" y="20" width="180" height="52" rx="8"/>
+        <text class="nt" x="302" y="41">Ch. II</text>
+        <text class="ntt" x="302" y="60">Algebraic curves, Riemann–Roch</text>
+        <path class="edge" d="M220,46 L290,46"/>
+
+        <!-- Level 2: III -->
+        <rect class="nbox" x="230" y="112" width="300" height="56" rx="8"/>
+        <text class="nt" x="244" y="134">Ch. III</text>
+        <text class="ntt" x="244" y="154">Geometry of elliptic curves (group law, isogenies, E[m])</text>
+        <path class="edge" d="M380,72 L380,112"/>
+
+        <!-- Level 3: IV V VI -->
+        <rect class="nbox" x="40" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="52" y="233">Ch. IV</text>
+        <text class="ntt" x="52" y="252">Formal groups (a p-adic microscope)</text>
+        <rect class="nbox" x="280" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="292" y="233">Ch. V</text>
+        <text class="ntt" x="292" y="252">Over finite fields (Hasse bound)</text>
+        <rect class="nbox" x="520" y="212" width="200" height="52" rx="8"/>
+        <text class="nt" x="532" y="233">Ch. VI</text>
+        <text class="ntt" x="532" y="252">Over ℂ (lattices, uniformization)</text>
+        <path class="edge" d="M290,168 L170,212"/>
+        <path class="edge" d="M380,168 L380,212"/>
+        <path class="edge" d="M470,168 L600,212"/>
+
+        <!-- Level 4: VII -->
+        <rect class="nbox" x="230" y="308" width="300" height="56" rx="8"/>
+        <text class="nt" x="244" y="330">Ch. VII</text>
+        <text class="ntt" x="244" y="350">Over local fields (reduction, Néron–Ogg–Shafarevich)</text>
+        <path class="edge" d="M140,264 L330,308"/>
+        <path class="edge" d="M380,264 L380,308"/>
+
+        <!-- Level 5: VIII -->
+        <rect class="nbox-g" x="200" y="410" width="360" height="60" rx="8"/>
+        <text class="nt" x="216" y="433" fill="#E8C547">Ch. VIII ★ Focus</text>
+        <text class="ntt-g" x="216" y="454">Over global fields ─ the Mordell–Weil theorem (weak MW + descent)</text>
+        <path class="edge-g" d="M380,364 L380,410"/>
+
+        <!-- Level 6 -->
+        <rect class="nbox" x="40" y="508" width="200" height="44" rx="8"/>
+        <text class="nt" x="52" y="527">Ch. IX</text>
+        <text class="ntt" x="52" y="544">Integral points (Siegel)</text>
+        <rect class="nbox" x="290" y="508" width="180" height="44" rx="8"/>
+        <text class="nt" x="302" y="527">Ch. X §1–3, 5–6</text>
+        <text class="ntt" x="302" y="544">Homogeneous spaces, twists</text>
+        <rect class="nbox-g" x="510" y="500" width="220" height="56" rx="8"/>
+        <text class="nt" x="524" y="522" fill="#E8C547">Ch. X §4 ★ Focus</text>
+        <text class="ntt-g" x="524" y="543">The Selmer group and Ш</text>
+        <path class="edge" d="M300,470 L170,508"/>
+        <path class="edge" d="M380,470 L380,508"/>
+        <path class="edge-g" d="M470,470 L590,500"/>
+      </svg>
+      <div class="svg-cap">
+        Figure 1: dependencies between the chapters of AEC. Ch. V and VI can be bypassed if you only want to read Ch. VIII (see below).
+        Ch. X §4 uses the cohomological language of Ch. VIII §2 and the dictionary of homogeneous spaces from Ch. X §3.
+      </div>
+    </div>
+
+    <p>From here on, going down the map from the top, we only pick up "what is shown" and "where in VIII it's used".</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 4. Ch I ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Summary</div>
+    <h2>Ch. I Algebraic Varieties <span class="en">Algebraic Varieties</span></h2>
+    <p>
+      This chapter sets the stage. Over a field K (with a fixed algebraic closure <span class="ov">K</span>),
+      it defines affine varieties, projective varieties and maps between them (rational maps and morphisms).
+      There are only three things to hold on to.
+    </p>
+    <ul>
+      <li><strong>Think of a variety as "a set of points over <span class="ov">K</span> + the information of which field it's defined over"</strong>.
+        Always distinguish V(K) (the K-rational points) from V = V(<span class="ov">K</span>). The Galois group G<sub><span class="ov">K</span>/K</sub> acts on
+        V(<span class="ov">K</span>), and its fixed points are V(K). This viewpoint takes center stage from Ch. VIII on.</li>
+      <li><strong>The function field K(V), dimension and nonsingularity</strong>. For elliptic curves we only use the case "dimension 1, nonsingular".</li>
+      <li><strong>On a projective variety, a rational map from a curve automatically extends to a morphism</strong>
+        (it is defined at the smooth points of the curve<span class="refchip">AEC II.2.1</span>).
+        This is why the group law can be defined even at points where "the formula doesn't seem to make sense".</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        No scheme theory is needed. AEC is written entirely in classical (Weil-style) algebraic geometry,
+        and the naive understanding "variety = solution set of equations, morphism = map written by polynomials" gets you all the way to Ch. VIII.
+        It's fine to move on even if the details of dimension theory or irreducibility are fuzzy.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5. Ch II ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Summary</div>
+    <h2>Ch. II Algebraic Curves <span class="en">Algebraic Curves</span></h2>
+    <p>
+      The general theory of nonsingular projective curves. It's the groundwork for establishing the structure of elliptic curves in Ch. III.
+      These are the results we use.
+    </p>
+    <ul>
+      <li><strong>A nonconstant morphism between curves is surjective, a finite-degree "covering"</strong>:
+        if φ : C₁ → C₂ is nonconstant, it is surjective<span class="refchip">AEC II.2.3</span>, and
+        its degree deg φ = [K(C₁) : φ*K(C₂)] is defined.
+        Ramification indices e<sub>φ</sub>(P), with Σ e<sub>φ</sub>(P) = deg φ (over each fiber)<span class="refchip">AEC II.2.6</span>.
+        This is what "the degree of an isogeny" really is.</li>
+      <li><strong>Divisors</strong>: D = Σ n<sub>P</sub>(P), with degree deg D = Σ n<sub>P</sub>.
+        A principal divisor div(f) has degree 0<span class="refchip">AEC II.3.1</span>.
+        Pic⁰(C) = (degree-0 divisors)/(principal divisors). This group is the "real body" of the group law on an elliptic curve.</li>
+      <li><strong>The Riemann–Roch theorem</strong><span class="refchip">AEC II.5.4</span>:
+        the genus g is defined, and ℓ(D) − ℓ(K<sub>C</sub> − D) = deg D − g + 1 holds.
+        For elliptic curves (genus 1) we only use this consequence:
+        <div class="formula" style="margin-top:12px;"><div class="fline">When g = 1: deg D ≥ 1 ⇒ ℓ(D) = deg D</div></div>
+        This alone gives both "a genus-1 curve can be written with a Weierstrass equation" and "E ≅ Pic⁰(E)".</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        The <strong>proof</strong> of Riemann–Roch can be a complete black box (AEC itself leaves the proof to other books).
+        "ℓ(D) = the dimension of the vector space of functions whose poles are bounded by D, and for genus 1 and positive degree, ℓ(D) = deg D" ──
+        if you can use this one line, you can follow Ch. III onward.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. Ch III ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Summary (detailed)</div>
+    <h2>Ch. III The Geometry of Elliptic Curves <span class="en">The Geometry of Elliptic Curves</span></h2>
+    <p>
+      Enter the star. The results of this chapter are <strong>used constantly</strong> in Ch. VIII, so we cover them more carefully than the other chapters.
+    </p>
+
+    <h3>(1) Weierstrass equations and the discriminant</h3>
+    <p>
+      An elliptic curve (genus 1 + base point O) can be written with a Weierstrass equation. If char K ≠ 2, 3,
+    </p>
+    <div class="formula">
+      <div class="fline">E : y² = x³ + Ax + B,  Δ = −16(4A³ + 27B²) ≠ 0</div>
+      <div class="fline fc">Δ ≠ 0 ⟺ nonsingular (an elliptic curve)  j = 6912A³/(4A³+27B²) (the j-invariant)</div>
+    </div>
+    <p>
+      The relation between nonsingularity and Δ is <span class="refchip">AEC III.1.4</span>.
+      In Ch. VII, Δ becomes the device that detects "at which primes the reduction goes bad".
+    </p>
+
+    <h3>(2) The group law ─ why it's associative</h3>
+    <p>
+      With the geometric addition "the three intersection points with a line add up to O", E(K) becomes an abelian group<span class="refchip">AEC III.2.2</span>.
+      The coordinate formulas for addition (the addition and duplication formulas) are in <span class="refchip">AEC III.2.3(d)</span>, and
+      <strong>the height computations of Ch. VIII §4 use these formulas directly</strong>. For y² = x³ + Ax + B:
+    </p>
+    <div class="formula">
+      <div class="fline">x(P + Q) = ((y₂−y₁)/(x₂−x₁))² − x₁ − x₂  (x₁ ≠ x₂)</div>
+      <div class="fline">x(2P) = (x⁴ − 2Ax² − 8Bx + A²) / (4x³ + 4Ax + 4B)  (duplication formula)</div>
+    </div>
+    <p>
+      The "real reason" for associativity is that the map
+    </p>
+    <div class="formula">
+      <div class="fline">E → Pic⁰(E),  P ↦ the class of (P) − (O)</div>
+    </div>
+    <p>
+      is a bijection<span class="refchip">AEC III.3.4</span>, and under this bijection geometric addition corresponds to the (trivially associative) addition in Pic⁰.
+      The view "the group of an elliptic curve = a divisor class group" also pays off in constructing the Weil pairing and in the homogeneous spaces of Ch. X.
+    </p>
+
+    <h3>(3) Isogenies, dual isogenies, [m]</h3>
+    <ul>
+      <li><strong>An isogeny</strong>: a nonconstant morphism φ : E₁ → E₂ sending O to O. It is automatically a group homomorphism<span class="refchip">AEC III.4.8</span>.</li>
+      <li><strong>The multiplication-by-m map [m] : E → E</strong> is an isogeny of degree m²<span class="refchip">AEC III.6.2(d)</span>. In particular, if m ≠ 0, [m] is nonconstant,
+        and so on <span class="ov">K</span>-points it is <strong>surjective</strong>. This surjectivity is the starting point of the Kummer exact sequence in Ch. VIII.</li>
+      <li><strong>Dual isogeny</strong>: there is φ̂ : E₂ → E₁ with φ̂∘φ = [deg φ]<span class="refchip">AEC III.6.1–6.2</span>.
+        This is the foundation for going back and forth between φ and φ̂ in "descent via 2-isogeny" in Ch. X §4.</li>
+    </ul>
+
+    <h3>(4) The m-torsion points E[m] ─ the star of Ch. VIII</h3>
+    <div class="box thm">
+      <div class="box-label">Theorem <span class="refchip">AEC III.6.4</span></div>
+      <p>When char K = 0 (or char K ∤ m)</p>
+      <div class="formula"><div class="fline">E[m] := ker [m] = { P ∈ E(<span class="ov">K</span>) : [m]P = O } ≅ ℤ/mℤ × ℤ/mℤ</div></div>
+      <p>
+        In particular E[m] is a <strong>finite group</strong> of order m², and G<sub><span class="ov">K</span>/K</sub> acts on it (because the coordinates are algebraic numbers).
+      </p>
+    </div>
+    <p>
+      Note that the points of E[m] are in general <strong>not</strong> K-rational.
+      "May we assume E[m] ⊂ E(K)?" becomes the first hurdle of Ch. VIII §1 (detailed in Part 2).
+    </p>
+
+    <h3>(5) The Tate module and the Weil pairing (know where they're used)</h3>
+    <p>
+      The Tate module T<sub>ℓ</sub>(E) = lim← E[ℓⁿ]<span class="refchip">AEC III §7</span> isn't used directly in Ch. VIII, but
+      as "a linear-algebra object bundling the E[m]" it provides the language of Galois representations.
+      The Weil pairing e<sub>m</sub> : E[m] × E[m] → μ<sub>m</sub><span class="refchip">AEC III.8.1</span> is
+      bilinear, alternating, nondegenerate and Galois-equivariant, and as a corollary
+      <strong>if E[m] ⊂ E(K), then μ<sub>m</sub> ⊂ K</strong> (the m-th roots of unity lie in K)<span class="refchip">AEC III.8.1.1</span>.
+      This is the basis for identifying E[m] with μ<sub>m</sub>×μ<sub>m</sub> in Part 3 (cohomology).
+    </p>
+
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        III §7 (Tate modules), §9 (endomorphism rings) and §10 (automorphism groups) are not essential for Ch. VIII.
+        It's fine to carry only E[m] ≅ (ℤ/m)² and the existence of the Weil pairing (and III.8.1.1) and move on.
+        For the theory of isogenies, "[m] is a surjective homomorphism of degree m², and there is a dual φ̂" is enough for now.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. Ch IV ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07 ─ Summary</div>
+    <h2>Ch. IV Formal Groups <span class="en">The Formal Group of an Elliptic Curve</span></h2>
+    <p>
+      The chapter that looks at an elliptic curve near O through "power-series glasses".
+      Taking the local coordinate z = −x/y at O, the group law can be written as a formal power series F(z₁, z₂) ∈ R[[z₁,z₂]].
+      This is called the <strong>formal group</strong> Ê of E<span class="refchip">AEC IV §1–§2</span>.
+    </p>
+    <p>
+      For Ch. VIII, only one point matters. Over the maximal ideal M of a complete discrete valuation ring (e.g. ℤ<sub>p</sub>),
+      consider the group Ê(M) of points of the formal group:
+    </p>
+    <div class="box thm">
+      <div class="box-label">Theorem (torsion in formal groups) <span class="refchip">AEC IV.6.1 / IV §6</span></div>
+      <p>
+        Over a complete discrete valuation ring with residue characteristic p, Ê(M) "has no torsion of order prime to p".
+        That is, if m is prime to p, there are no points of order m in Ê(M).
+      </p>
+    </div>
+    <p>
+      This is the tool for proving in Ch. VII that "the reduction map is injective on m-torsion" (VII.3.1, below),
+      and that VII.3.1 is exactly what's used at <strong>the crux of the proof of the weak Mordell–Weil theorem</strong> (the unramifiedness argument).
+      The chain of dependence is IV§6 → VII.3.1 → VIII.1.5b.
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        You can skip the general theory of formal groups (formal logarithms, heights, characteristic p).
+        "E₁ (the points that reduce to O) is controlled by the formal group, and it has no torsion prime to p" ── carry just this conclusion and move on.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8. Ch V, VI ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08 ─ Summary</div>
+    <h2>Ch. V Over Finite Fields / Ch. VI Over ℂ <span class="en">Finite Fields / Complex Numbers</span></h2>
+
+    <h3>Ch. V ─ Elliptic curves over finite fields</h3>
+    <p>
+      The centerpiece is Hasse's bound: for E/𝔽<sub>q</sub>,
+    </p>
+    <div class="formula"><div class="fline">| #E(𝔽<sub>q</sub>) − q − 1 | ≤ 2√q</div>
+    <div class="fline fc">[AEC V.1.1] "The number of rational points differs from q+1 by at most 2√q"</div></div>
+    <p>
+      It isn't used in the proof of Ch. VIII itself, but it's the background for getting a feel for the size of "the reduced curve Ẽ(k)" in Ch. VII,
+      and for guaranteeing the existence of 𝔽<sub>p</sub>-points in Part 5 (computing local conditions for Selmer groups).
+    </p>
+
+    <h3>Ch. VI ─ Elliptic curves over ℂ (lattices and uniformization)</h3>
+    <p>
+      Over ℂ there is an analytic isomorphism E(ℂ) ≅ ℂ/Λ (Λ a lattice) (the uniformization theorem<span class="refchip">AEC VI §5</span>).
+      Then the m-torsion points
+    </p>
+    <div class="formula"><div class="fline">E[m] ≅ (1/m)Λ / Λ ≅ ℤ/mℤ × ℤ/mℤ</div></div>
+    <p>
+      become <strong>visible to the eye</strong>. This is the best intuition for the structure given by the algebraic proof of III.6.4.
+      Cut the parallelogram (fundamental domain) into an m×m grid, and the grid points are E[m].
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        Ch. V and VI are not logical prerequisites for the proofs in Ch. VIII (AEC itself is organized so that "V and VI may be skipped").
+        Once you have the intuition for E[m] ≅ (ℤ/m)², that's enough.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 9. Ch VII ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09 ─ Summary (detailed)</div>
+    <h2>Ch. VII Elliptic Curves over Local Fields <span class="en">Elliptic Curves over Local Fields</span></h2>
+    <p>
+      Right before Ch. VIII, this is <strong>the most important prerequisite chapter</strong>.
+      Let K be a local field (e.g. a finite extension of ℚ<sub>p</sub>), R its ring of integers, k the residue field and π a uniformizer.
+    </p>
+
+    <h3>(1) Minimal Weierstrass equations and reduction</h3>
+    <p>
+      Changing coordinates to put the coefficients in R and making v(Δ) as small as possible gives a <strong>minimal Weierstrass equation</strong> (it exists<span class="refchip">AEC VII.1.3</span>).
+      Reducing the coefficients mod π gives a (possibly singular) curve Ẽ over k, and the <strong>reduction map</strong>
+      E(K) → Ẽ(k) is defined. Then:
+    </p>
+    <ul>
+      <li><strong>Good reduction</strong>: Ẽ is nonsingular (⟺ v(Δ) = 0 for a minimal equation).</li>
+      <li><strong>Bad reduction</strong>: Ẽ is singular. A node gives multiplicative reduction, a cusp gives additive reduction<span class="refchip">AEC VII §5</span>.</li>
+    </ul>
+    <p>There is an important filtration by subgroups<span class="refchip">AEC VII.2.1–2.2</span>:</p>
+    <div class="formula">
+      <div class="fline">E₁(K) ⊂ E₀(K) ⊂ E(K)</div>
+      <div class="fline fc">E₀ = points whose reduction is a nonsingular point  E₁ = points whose reduction is Õ (the kernel of reduction)</div>
+      <div class="fline">0 → E₁(K) → E₀(K) → Ẽ<sub>ns</sub>(k) → 0  (exact sequence)</div>
+      <div class="fline">E₁(K) ≅ Ê(M)  (isomorphic to the points of the formal group)</div>
+    </div>
+    <p>
+      Moreover [E(K) : E₀(K)] is finite (Kodaira–Néron<span class="refchip">AEC VII.6.1–6.2</span>; knowing the name is enough).
+    </p>
+
+    <h3>(2) The theorem at the crux of weak Mordell–Weil</h3>
+    <div class="box thm">
+      <div class="box-label">Theorem (reduction is injective on torsion) <span class="refchip">AEC VII.3.1</span></div>
+      <p>
+        If E/K has good reduction and m is prime to the residue characteristic char k, the reduction map is injective on the m-torsion:
+      </p>
+      <div class="formula"><div class="fline">E(K)[m] ↪ Ẽ(k)</div></div>
+      <p>
+        (Core of the proof: the kernel E₁(K) ≅ Ê(M) has no torsion prime to p = char k [IV §6].)
+      </p>
+    </div>
+    <p>
+      This theorem is the only nontrivial input to "the extension K([m]⁻¹E(K))/K is unramified outside S"<span class="refchip">AEC VIII.1.5b</span>, proved in Part 2.
+      You could almost say <strong>this is the one weapon to take from Ch. VII</strong>.
+    </p>
+
+    <h3>(3) The Néron–Ogg–Shafarevich criterion (outlook)</h3>
+    <p>
+      The criterion "good reduction ⟺ the inertia group acts trivially on the Tate module (or on enough m-torsion points)"<span class="refchip">AEC VII.7.1</span>.
+      As a corollary, "isogenous curves have good reduction at the same primes"<span class="refchip">AEC VII.7.2</span>.
+      The latter is quietly used in Part 5 (when taking the set of bad primes of a φ-isogeny for the finiteness of Selmer groups).
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ Don't stop here</div>
+      <p>
+        Once you understand the statement of VII.3.1 (and the one line about "why formal groups work"), you can enter Ch. VIII.
+        The Kodaira–Néron classification, Tate's algorithm and the details of E/E₀ aren't needed for this climb.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 10. チェックリスト ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Section 10</div>
+    <h2>Pre-departure checklist</h2>
+    <p>
+      Before entering Part 2 (the weak Mordell–Weil theorem), you're ready if the following 8 items are "usable as statements".
+      You don't need to understand their proofs.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>#</th><th>Fact used</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>E(K) is an abelian group. The addition and duplication formulas can be written explicitly</td><td class="m">AEC III.2.2, III.2.3(d)</td></tr>
+        <tr><td>2</td><td>E[m] ≅ (ℤ/m)² (a finite group of order m², acted on by G<sub><span class="ov">K</span>/K</sub>)</td><td class="m">AEC III.6.4</td></tr>
+        <tr><td>3</td><td>[m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) is surjective (m ≠ 0)</td><td class="m">AEC III.6.2 + II.2.3</td></tr>
+        <tr><td>4</td><td>E[m] ⊂ E(K) ⇒ μ<sub>m</sub> ⊂ K (corollary of the Weil pairing)</td><td class="m">AEC III.8.1.1</td></tr>
+        <tr><td>5</td><td>Good reduction + (m, char k)=1 ⇒ E(K)[m] ↪ Ẽ(k) injective</td><td class="m">AEC VII.3.1</td></tr>
+        <tr><td>6</td><td>Primes of a number field, completions, inertia groups, and what "the extension is unramified at v" means</td><td class="m"><a href="/math-site/en/in/ant.html#bank-local" style="color:inherit;">Appendix, shelf 3 (with Neukirch refs) →</a></td></tr>
+        <tr><td>7</td><td>Finiteness of the ideal class group, Dirichlet's S-unit theorem</td><td class="m"><a href="/math-site/en/in/ant.html#bank-finiteness" style="color:inherit;">Appendix, shelf 2 (with Neukirch refs) →</a></td></tr>
+        <tr><td>8</td><td>(Infinite) Galois theory: it's enough to think of G<sub><span class="ov">K</span>/K</sub> through its finite quotients</td><td class="m"><a href="/math-site/en/in/ant.html#bank-galois" style="color:inherit;">Appendix, shelf 4 (with Neukirch refs) →</a></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      Items 6, 7 and 8 are prerequisites from outside AEC. In particular the two finiteness theorems in 7
+      are used in exactly this form in "the arithmetic heart" of the weak Mordell–Weil theorem (Part 2 §6).
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ A last word to perfectionists</div>
+      <p>
+        Even if some of the checklist still feels shaky, I recommend starting to read Part 2 first.
+        Seeing "what is used where" first and then coming back makes studying the prerequisites faster too.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a class="next" href="/math-site/en/in/weakmw.html" style="margin-left:auto;">
+      <div class="p-dir">NEXT ─ Part 2</div>
+      <div class="p-title">The Weak Mordell–Weil Theorem (AEC VIII §1) →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Graduate notes / The Arithmetic of Elliptic Curves series 1/5</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106, Springer (AEC)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

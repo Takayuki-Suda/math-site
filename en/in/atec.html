@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond ─ An Invitation to Advanced Topics | Math the Japanese Way</title>
+<meta name="description" content="An invitation to the Advanced Topics that lie beyond the theory of elliptic curves. Graduate-level notes surveying an even deeper world of number theory.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Beyond ─ An Invitation to Advanced Topics | Math the Japanese Way">
+<meta property="og:description" content="An invitation to the Advanced Topics that lie beyond the theory of elliptic curves. Graduate-level notes surveying an even deeper world of number theory.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/atec.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'q'; position:absolute; right:10px; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:260px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+  .refchip.adv { color:var(--purple); border-color:rgba(176,138,224,.4); }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .iou { border:1px dashed rgba(232,197,71,.55); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(232,197,71,.04); }
+  .iou .i-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--gold); margin-bottom:8px; }
+  .iou p { font-size:0.9rem; color:#e8dcae; margin-bottom:0; line-height:1.95; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/atec.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/atec.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/atec.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/atec.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves, Final chapter</div>
+    <h1>The next invitation, received at the summit<br><span class="en">Advanced Topics in the Arithmetic of Elliptic Curves</span></h1>
+    <p class="hero-sub">
+      We proved the Mordell–Weil theorem, and with the Selmer group and Ш we saw as far as "the boundary of computability".
+      So does the story end here? ── It doesn't.
+      Each place this series passed by "accepting it for now"
+      turns into a whole chapter's worth of landscape in the sequel, <strong>GTM 151</strong>.
+      This final chapter is a map of that landscape as seen from the summit, and an invitation to the next climb.
+    </p>
+    <p class="hero-book">TEXT: Silverman, Advanced Topics in the Arithmetic of Elliptic Curves, GTM 151 (ATAEC below) ─ survey of all chapters</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/aec.html">I The big map</a>
+      <a href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a href="/math-site/en/in/descent.html">IV Descent</a>
+      <a href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a class="cur" href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>Taking stock of where we've reached ─ and a confession</h2>
+    <p>
+      A one-line look back at what we gained in Parts 1 to 5.
+    </p>
+    <ul>
+      <li><strong>E(K) is finitely generated</strong> (weak MW + heights and descent)<span class="refchip">AEC VIII</span></li>
+      <li>The ineffectivity of that proof is <strong>concentrated at one point: determining E(K)/mE(K)</strong><span class="refchip">AEC VIII.1.8</span></li>
+      <li>The devices that pin that point from both sides are <strong>the Selmer group (computable) and Ш (failure of the Hasse principle)</strong><span class="refchip">AEC X §4</span></li>
+      <li>We actually computed E(ℚ) ≅ ℤ × ℤ/2ℤ all the way for one curve<span class="refchip">AEC X.4.10</span></li>
+    </ul>
+    <p>
+      That's an impressive place to have reached. But to confess honestly, along the way through these five parts we
+      wrote a number of <strong>IOUs</strong>.
+      The places where a green "⏩ Don't stop here" box declared "accept it for now and move on",
+      the theorems we passed with "knowing the name is enough", the questions we closed just by writing "conjecture" ── all of them
+      remain unpaid.
+    </p>
+    <p>
+      Silverman himself wrote in the preface to the first edition of AEC that "many important topics had to be omitted",
+      and previewed those topics in an appendix at the end. The book written to make good on that preview is the sequel,
+      <strong>"Advanced Topics in the Arithmetic of Elliptic Curves" (GTM 151, 1994)</strong>.
+      In other words, this book isn't "another, harder book" ── it's <strong>the window where our IOUs get repaid</strong>.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>List of IOUs</h2>
+    <p>
+      Here are the IOUs actually written in this series, matched with where they get repaid.
+      Look through it while remembering <strong>where you yourself "accepted" and moved on</strong>.
+      Gold chips are references to AEC, purple chips to ATAEC.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>What the series accepted</th><th>Where</th><th>Repaid at</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>"[E(K) : E₀(K)] is finite (Kodaira–Néron). <strong>Knowing the name is enough</strong>"</td>
+          <td>Part 1, Ch. VII section</td>
+          <td class="m">ATAEC IV (Néron models)</td>
+        </tr>
+        <tr>
+          <td>Classifying the "types" of bad reduction, and how to compute conductors and Tamagawa numbers</td>
+          <td>Passed over in Parts 1 and 5</td>
+          <td class="m">ATAEC IV §8–§11 (Tate's algorithm, Ogg's formula)</td>
+        </tr>
+        <tr>
+          <td>For WC(E/K<sub>v</sub>) over a local field we only got as far as "decidable by Hensel". Its <strong>structure</strong> stayed unknown</td>
+          <td>Part 5, Section 04</td>
+          <td class="m">ATAEC V (the Tate curve, local duality)</td>
+        </tr>
+        <tr>
+          <td>The canonical height ĥ is defined only as a limit. How do you actually compute it?</td>
+          <td>Part 4, §9 (the telescoping trick)</td>
+          <td class="m">ATAEC VI (explicit formulas for local heights)</td>
+        </tr>
+        <tr>
+          <td>"Is the rank unbounded?" ── closed by writing "conjecture"</td>
+          <td>Part 4, §10–11 sections</td>
+          <td class="m">ATAEC III (elliptic surfaces and the specialization theorem)</td>
+        </tr>
+        <tr>
+          <td>We talked about the BSD conjecture, but <strong>the analytic continuation of L(E,s) stayed unproved</strong></td>
+          <td>Part 5, exit</td>
+          <td class="m">ATAEC I and II (Hecke theory / CM)</td>
+        </tr>
+        <tr>
+          <td>Why the computation for E : y² = x³ − x was "strangely clean" (L = ℚ(ζ₈)!)</td>
+          <td>Examples in Parts 2 and 3</td>
+          <td class="m">ATAEC II (complex multiplication)</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 470" role="img" aria-label="A map from the summit of AEC to the six doors of ATAEC">
+        <defs>
+          <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .ab { fill:#171a29; stroke:#3a4160; stroke-width:1; }
+          .abg { fill:rgba(232,197,71,0.10); stroke:#E8C547; stroke-width:1.6; }
+          .at1 { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#b08ae0; }
+          .at2 { font-family:'Noto Serif JP',serif; font-size:13.5px; font-weight:700; fill:#e8eaf4; }
+          .at3 { font-family:'Noto Serif JP',serif; font-size:11px; fill:#9aa1bd; }
+          .ae { stroke:#E8C547; stroke-width:1.5; fill:none; marker-end:url(#arrA); opacity:.8; }
+        </style>
+
+        <!-- summit -->
+        <rect class="abg" x="255" y="196" width="250" height="76" rx="10"/>
+        <text class="at1" x="273" y="222" fill="#E8C547">SUMMIT ─ this series</text>
+        <text class="at2" x="273" y="243">AEC Ch. VIII + X §4</text>
+        <text class="at3" x="273" y="262">Mordell–Weil / Selmer / Ш</text>
+
+        <!-- I -->
+        <rect class="ab" x="30" y="30" width="220" height="66" rx="8"/>
+        <text class="at1" x="44" y="53">ATAEC I</text>
+        <text class="at2" x="44" y="72">Modular functions and Hecke operators</text>
+        <text class="at3" x="44" y="88">Does L(E,s) even exist?</text>
+        <!-- II -->
+        <rect class="ab" x="510" y="30" width="220" height="66" rx="8"/>
+        <text class="at1" x="524" y="53">ATAEC II</text>
+        <text class="at2" x="524" y="72">Complex multiplication (CM)</text>
+        <text class="at3" x="524" y="88">The secret of y²=x³−x / class field theory</text>
+        <!-- III -->
+        <rect class="ab" x="16" y="200" width="200" height="66" rx="8"/>
+        <text class="at1" x="30" y="223">ATAEC III</text>
+        <text class="at2" x="30" y="242">Elliptic surfaces and specialization</text>
+        <text class="at3" x="30" y="258">Hunting ground for rank</text>
+        <!-- IV -->
+        <rect class="ab" x="544" y="200" width="200" height="66" rx="8"/>
+        <text class="at1" x="558" y="223">ATAEC IV</text>
+        <text class="at2" x="558" y="242">Néron models</text>
+        <text class="at3" x="558" y="258">The proof certificate for "name only" theorems</text>
+        <!-- V -->
+        <rect class="ab" x="30" y="374" width="220" height="66" rx="8"/>
+        <text class="at1" x="44" y="397">ATAEC V</text>
+        <text class="at2" x="44" y="416">The Tate curve</text>
+        <text class="at3" x="44" y="432">The revival of Hilbert 90, local duality</text>
+        <!-- VI -->
+        <rect class="ab" x="510" y="374" width="220" height="66" rx="8"/>
+        <text class="at1" x="524" y="397">ATAEC VI</text>
+        <text class="at2" x="524" y="416">Local height functions</text>
+        <text class="at3" x="524" y="432">Computing ĥ "for real"</text>
+
+        <!-- edges -->
+        <path class="ae" d="M310,196 L190,100"/>
+        <path class="ae" d="M450,196 L570,100"/>
+        <path class="ae" d="M255,232 L220,232"/>
+        <path class="ae" d="M505,232 L540,232"/>
+        <path class="ae" d="M310,272 L190,372"/>
+        <path class="ae" d="M450,272 L570,372"/>
+      </svg>
+      <div class="svg-cap">
+        Figure 1: six doors that open from the summit. The chapters of ATAEC can be read almost independently (see the dependency chart in the preface).
+        Whichever door you enter, the legs you built in AEC VIII and X will carry you.
+      </div>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">⏩ A note on numbering (a one-minute matter)</div>
+      <p>
+        The [AEC …] references in ATAEC (1994) use <strong>the numbering of the first edition (1986)</strong>. In a few places they differ from
+        the second edition (the basis of this series) (e.g. finiteness of E(K)/E₀(K) is cited as [AEC VII.5.1] in ATAEC,
+        but is VII.6.1 in the second edition). Even when they differ you can find them quickly by section title, so there's nothing to fear.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3. 扉IV ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Gate 1 ─ ATAEC Ch. IV</div>
+    <h2>Néron models ─ the proof certificate for the theorem we said "knowing the name is enough" about</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The IOU being repaid</div>
+      <p>
+        In Part 1 we wrote: "[E(K) : E₀(K)] is finite (Kodaira–Néron. <strong>Knowing the name is enough</strong>)".
+        And this fact is actually used in the proof of the Néron–Ogg–Shafarevich criterion<span class="refchip">AEC VII.7.1</span>.
+        In other words, <strong>the theoretical edifice of this series is built on a theorem we haven't proved</strong>.
+      </p>
+    </div>
+
+    <p>
+      ATAEC IV repays this debt head-on. And it repays it in grand style.
+      Over the ring of integers R of a local field, it builds "the best integral model" of an elliptic curve E/K ── the <strong>Néron model</strong> ── and
+      draws everything out of its universal property at once.
+    </p>
+    <div class="formula">
+      <div class="fline">E(K) ≅ 𝓔(R)  (Néron's universal mapping property: rational points always extend to points of the integral model)</div>
+      <div class="fline fc">𝓔 = the smooth part of the minimal regular model. ATAEC IV §5–§6</div>
+    </div>
+    <p>
+      The possible shapes of the special fiber (what it reduces to) are completely listed by <strong>the Kodaira–Néron classification</strong>:
+      I<sub>n</sub> (n-gon), II (cusp), III, IV, I<sub>n</sub><sup>*</sup>, IV<sup>*</sup>, III<sup>*</sup>, II<sup>*</sup>
+      <span class="refchip adv">ATAEC IV §8</span>.
+      And Silverman states plainly in ATAEC IV.9.2.1 ──
+      "this is exactly the result that was <strong>left without proof</strong> in AEC".
+      You can see the scene of the IOU being collected, in the original text.
+    </p>
+
+    <h3>Tate's algorithm ─ the classification becomes a "procedure"</h3>
+    <p>
+      A classification theorem alone is something to admire, but <strong>Tate's algorithm</strong> in ATAEC IV §9 is something to use.
+      Feed in a Weierstrass equation, and with finitely many congruence checks
+      the reduction type, a minimal equation, the conductor exponent f and the Tamagawa number c<sub>v</sub> = [E(K<sub>v</sub>) : E₀(K<sub>v</sub>)]
+      come out mechanically. When we said in Part 5 "check the local conditions at each prime of S",
+      this is the microscope for seeing what happens inside the bad primes.
+    </p>
+    <div class="box thm">
+      <div class="box-label">Ogg's formula <span class="refchip adv">ATAEC IV.11.1</span></div>
+      <p>For an elliptic curve E/K over a local field K, between the minimal discriminant, the conductor and the number m(E/K) of irreducible components of the special fiber,</p>
+      <div class="formula"><div class="fline">v<sub>K</sub>(𝔇<sub>E/K</sub>) = f(E/K) + m(E/K) − 1</div></div>
+      <p>holds.</p>
+    </div>
+    <p>
+      Discriminant (an analytic quantity) = conductor (the amount of ramification of the Galois representation) + number of components (a geometric quantity) − 1.
+      Quantities from three worlds balance in a single equation ── this is the completed form of the theory of "reduction" learned in Ch. VII.
+      And the Tamagawa numbers c<sub>v</sub> appearing in the refined formula of the BSD conjecture<span class="refchip">AEC C.16.5</span>
+      <strong>can't even be defined</strong> without the tools of this chapter.
+    </p>
+    <div class="why">
+      <div class="w-label">? A first serious encounter with scheme theory</div>
+      <p>
+        ATAEC IV is the most technical chapter in the book and uses the language of schemes and group schemes (the preface warns of this too).
+        But the destination is clear: "prove everything we accepted in AEC Ch. VII".
+        Because the motivation is so concrete, it's the best possible footing for learning abstract general theory.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 4. 扉V ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Gate 2 ─ ATAEC Ch. V</div>
+    <h2>The Tate curve ─ the revival of Hilbert 90</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The IOU being repaid</div>
+      <p>
+        Recall the comparison table in Part 3. For the multiplicative group the theory closes with H¹(G, <span class="ov">K</span><sup>×</sup>) = 0 (Hilbert 90), while
+        for elliptic curves H¹(G, E) ≠ 0 remains, giving birth to Ш. About that "≠ 0" group WC(E/K<sub>v</sub>),
+        in Part 5 all we could say was "each element can be decided by Hensel's lemma". <strong>What it is as a group</strong> was left as homework.
+      </p>
+    </div>
+
+    <p>
+      The star of ATAEC V is an astonishing discovery by Tate. Over ℂ there was the uniformization E(ℂ) ≅ ℂ/Λ
+      (Part 1, Ch. VI section). Rewritten with the exponential function, E(ℂ) ≅ ℂ<sup>×</sup>/q<sup>ℤ</sup> (q = e<sup>2πiτ</sup>).
+      Tate showed that this multiplicative form of uniformization <strong>holds just as well over p-adic fields</strong>.
+    </p>
+    <div class="box thm">
+      <div class="box-label">Theorem (the Tate curve) <span class="refchip adv">ATAEC V.3.1 / V.5.3</span></div>
+      <p>Let K be a p-adic field, q ∈ K<sup>×</sup>, |q| &lt; 1. There is an elliptic curve E<sub>q</sub> (the Tate curve) determined by q-expansion coefficients, and</p>
+      <div class="formula">
+        <div class="fline"><span class="ov">K</span><sup>×</sup>/q<sup>ℤ</sup> ≅ E<sub>q</sub>(<span class="ov">K</span>)  (an analytic isomorphism <strong>compatible with the Galois action</strong>)</div>
+        <div class="fline fc">Δ(E<sub>q</sub>) = q∏(1−qⁿ)²⁴,  j(E<sub>q</sub>) = 1/q + 744 + 196884q + ⋯</div>
+      </div>
+      <p>
+        Conversely, any E/K with non-integral j-invariant (|j(E)| &gt; 1) is isomorphic over K to some E<sub>q</sub> (when the reduction is split multiplicative),
+        and otherwise isomorphic over an extension of degree at most 2.
+      </p>
+    </div>
+    <p>
+      What matters is the phrase in bold. Uniformization over ℂ isn't compatible with Galois (you can't apply σ term by term to a convergent series), but
+      p-adic uniformization is<span class="refchip adv">ATAEC V.3.1.1</span>. So <strong>it can be used for number theory</strong>.
+      The structure of E as a Galois module splits into the multiplicative group <span class="ov">K</span><sup>×</sup> and
+      the "lattice" q<sup>ℤ</sup>. Then:
+    </p>
+    <div class="formula">
+      <div class="fline">Computing H¹(G<sub>v</sub>, E)  ⟶  Hilbert 90 + computing H²(G<sub>v</sub>, q<sup>ℤ</sup>) (local class field theory)</div>
+    </div>
+    <p>
+      ── The obstruction group that "didn't vanish" for elliptic curves, when passed through the Tate curve,
+      <strong>turns into an exercise in Hilbert 90 and local class field theory</strong>.
+      The moment the weapon lost in Part 3 comes back to life in the p-adic world. The consequence:
+    </p>
+    <div class="box thm">
+      <div class="box-label">Local duality (Tate) <span class="refchip adv">ATAEC V Exercise 5.14</span></div>
+      <div class="formula">
+        <div class="fline">WC(E/K<sub>v</sub>) ≅ Hom( E(K<sub>v</sub>), ℚ/ℤ )</div>
+      </div>
+      <p>
+        The local Weil–Châtelet group is nothing but the dual of the group of rational points
+        (the exercise does the non-integral j case; the general case is also due to Tate. Over the reals, WC(E/ℝ) is 0 or ℤ/2ℤ).
+      </p>
+    </div>
+    <p>
+      Remember how in Part 5 we grinded through C<sub>17</sub>(ℚ<sub>17</sub>) = ∅ with congruences.
+      Behind that computation stood a duality this neat.
+      The reason the Cassels pairing<span class="refchip">AEC X.4.14</span> exists on Ш
+      also traces back to this local duality. A chapter that lets you look at Part 5's landscape again from one level higher.
+    </p>
+  </div>
+
+  <!-- ════════ 5. 扉VI ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Gate 3 ─ ATAEC Ch. VI</div>
+    <h2>Local heights ─ computing ĥ "for real"</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The IOU being repaid</div>
+      <p>
+        In Part 4 §9 we defined the canonical height ĥ as lim 4⁻ⁿh<sub>x</sub>(2ⁿP), and
+        ran a numerical experiment with E : y² = x³ + 3, P = (1,2), "reading off lim ≈ 0.9".
+        But a definition by limit only gives slowly converging approximations.
+        <strong>How to compute ĥ exactly by a finite procedure</strong> was left as homework.
+      </p>
+    </div>
+
+    <p>
+      ATAEC VI's answer is "<strong>break the global height into local heights, prime by prime</strong>".
+    </p>
+    <div class="formula">
+      <div class="fline">ĥ(P) = Σ<sub>v</sub> n<sub>v</sub> λ̂<sub>v</sub>(P)  (local decomposition. <span class="refchip adv">ATAEC VI §2</span>)</div>
+      <div class="fline fc">λ̂<sub>v</sub> = the canonical local height at each prime v. Existence in VI §1, explicit formulas in VI §3–§4</div>
+    </div>
+    <p>
+      And each λ̂<sub>v</sub> has a <strong>closed explicit formula</strong>.
+      At finite primes of good reduction it's the elementary formula λ̂<sub>v</sub>(P) = ½·max{ v(x(P)⁻¹), 0 }·log q<sub>v</sub>.
+      For multiplicative reduction (type I<sub>n</sub>), a formula written in the Tate curve's parameter in which
+      the second Bernoulli polynomial B₂(t) = t² − t + 1/6 appears<span class="refchip adv">ATAEC VI §4</span>.
+      At archimedean places, a rapidly converging series using the σ function and q-expansions<span class="refchip adv">ATAEC VI §3</span>.
+      In other words, <strong>the p-adic uniformization opened by Door 2 (the Tate curve) turns into a formula for computing heights here</strong>. A place where you can hear the chapters click together.
+    </p>
+    <ul>
+      <li><strong>Searching for generators becomes practical</strong>: "listing the points below the floor" in the descent theorem (Part 4) needed
+        an explicit bound on |ĥ − h<sub>x</sub>|. The local decomposition reduces it to finite computations prime by prime.
+        The height computations in today's computer algebra systems (PARI, Sage, Magma) run on exactly the formulas of this chapter.</li>
+      <li><strong>You can experiment with BSD</strong>: compute the regulator<span class="refchip">AEC VIII.9.7</span> numerically and
+        match it against the L-function side ── numerical verification of the BSD conjecture first becomes possible with the techniques of this chapter.</li>
+    </ul>
+    <div class="goon">
+      <div class="g-label">⏩ This chapter is the "reward" slot</div>
+      <p>
+        ATAEC VI is the most self-contained chapter in the book, and can be grafted right after AEC VIII §9.
+        If you enjoyed Part 4, it's fine to skip the other chapters of ATAEC and start reading here.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. 扉III ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Gate 4 ─ ATAEC Ch. III</div>
+    <h2>Elliptic surfaces ─ the hunting ground for rank</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The IOU being repaid</div>
+      <p>
+        At the end of Part 4 we closed with the conjecture "Is the rank unbounded?<span class="refchip">AEC VIII.10.1</span>" left standing.
+        So <strong>how do you build</strong> curves of large rank? Is there a systematic way to hunt,
+        rather than searching coefficients blindly?
+      </p>
+    </div>
+
+    <p>
+      There is. You raise the stage by one level. A curve E/ℚ(t) whose coefficients are not numbers but <strong>functions of a variable t</strong> ── geometrically this is a surface (an <strong>elliptic surface</strong>), and
+      ATAEC III <strong>replays all of</strong> Mordell–Weil theory on it.
+      The weak MW theorem, heights, descent… a mountain of the same shape as the one we climbed in Parts 2–4 stands again in the world of function fields
+      <span class="refchip adv">ATAEC III §2–§6</span>. Since you've climbed it once, the second climb is faster.
+    </p>
+    <p>
+      And what connects the two worlds is <strong>specialization</strong>. Substituting rational numbers for t,
+      a family of curves over ℚ is born from the curve over ℚ(t). Then:
+    </p>
+    <div class="box thm">
+      <div class="box-label">Specialization theorem (Silverman) <span class="refchip adv">ATAEC III.11.4</span></div>
+      <p>
+        For a non-split elliptic surface 𝓔 → C, the specialization homomorphism σ<sub>t</sub> : E(K) → 𝓔<sub>t</sub>(k) is
+        injective for all t of sufficiently large height. In particular <strong>it is injective for all but finitely many t</strong>.
+      </p>
+    </div>
+    <p>
+      Behind it is Tate's theorem<span class="refchip adv">ATAEC III.11.1</span>
+      "t ↦ ĥ<sub>𝓔ₜ</sub>(P<sub>t</sub>) is a height function on the base curve + O(1)", and
+      the theory of heights learned in Part 4 becomes the engine of the proof as is. The consequence is dramatic:
+    </p>
+    <div class="formula">
+      <div class="fline">Build one curve of rank r over ℚ(t)  ⟹  get (almost) infinitely many curves of rank ≥ r over ℚ</div>
+    </div>
+    <p>
+      Néron used this method to show "there are infinitely many E/ℚ of rank ≥ 10"<span class="refchip adv">ATAEC III.11.4.2</span>,
+      Mestre built surfaces with E(ℚ(t)) of rank ≥ 12, Nagao ≥ 13. Individual curves of rank 19, 20, 21 were found
+      one after another by specialization ── that was the scoreboard in 1994 when ATAEC was written, and Silverman
+      closes the report with <em>"And the quest continues!"</em>.
+    </p>
+    <p>
+      And indeed the quest continued. The current record is <strong>rank ≥ 29</strong> by Elkies–Klagsbrun (2024).
+      Meanwhile a probabilistic heuristic suggesting "the rank is actually bounded (around 21)"
+      (Park–Poonen–Voight–Wood, 2019) has also appeared, and it's become <strong>an ongoing battlefield</strong> where experts disagree.
+      The "quest" of a 30-year-old textbook is continuing right now ── this chapter is the entrance to that frontier.
+    </p>
+    <div class="why">
+      <div class="w-label">? Where it meets geometry</div>
+      <p>
+        The second half of ATAEC III (§7–§10) introduces intersection theory on algebraic surfaces, and links the height pairing on E(K) to
+        the intersection form on the Néron–Severi group of the surface (the entrance to Shioda–Tate theory<span class="refchip adv">ATAEC III.9.7</span>).
+        The equation "arithmetic height = geometric intersection number" is also the entrance to the great highway leading to Arakelov geometry and Faltings' work.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. 扉II ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Gate 5 ─ ATAEC Ch. II</div>
+    <h2>Complex multiplication ─ the secret of y² = x³ − x</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The IOU being repaid</div>
+      <p>
+        The signature curve of this series, E : y² = x³ − x. When we computed L = ℚ([2]⁻¹E(ℚ)) in Part 2,
+        a "strangely beautiful field", the cyclotomic field ℚ(ζ₈), came out, and we acted surprised.
+        That was no coincidence. It was <strong>a magic trick with a secret behind it</strong>.
+      </p>
+    </div>
+
+    <p>
+      The secret: E : y² = x³ − x has the endomorphism (x, y) ↦ (−x, iy), so
+      End(E) = ℤ[i] ⊋ ℤ. This is <strong>complex multiplication (CM)</strong>.
+      ATAEC II shows that the arithmetic of curves with CM <strong>fuses completely with class field theory</strong>.
+    </p>
+    <div class="box thm">
+      <div class="box-label">The main theorems of CM theory <span class="refchip adv">ATAEC II.4.3 / II.5.6–5.7 / II.6.1</span></div>
+      <p>Let K be an imaginary quadratic field and E an elliptic curve with End(E) ≅ R<sub>K</sub> (the ring of integers). Then:</p>
+      <div class="formula">
+        <div class="fline">K( j(E) ) = the Hilbert class field of K  (the maximal unramified abelian extension)</div>
+        <div class="fline">K( j(E), h(E<sub>tors</sub>) ) = the maximal abelian extension of K  (h is a Weber function)</div>
+        <div class="fline">j(E) is an algebraic integer</div>
+      </div>
+    </div>
+    <p>
+      This is the imaginary quadratic version of the Kronecker–Weber theorem, "roots of unity generate the maximal abelian extension of ℚ".
+      The role played by torsion points of ℂ<sup>×</sup> in cyclotomic theory is taken over by <strong>torsion points of elliptic curves</strong> ──
+      the realization of what Kronecker called his "youthful dream".
+      In Part 2, adjoining the coordinates of E[2] produced the cyclotomic field ℚ(ζ₈)
+      because E has CM by ℤ[i] and its torsion points generate abelian extensions of ℚ(i).
+    </p>
+    <h3>What CM gives to BSD ─ analytic continuation of the L-function</h3>
+    <p>
+      There's an even deeper gift. Since the Galois representation of a CM curve is abelian,
+      a <strong>Grössencharacter</strong> (Hecke character) ψ<sub>E/L</sub> is attached to E
+      <span class="refchip adv">ATAEC II §9</span>, and by Deuring's theorem<span class="refchip adv">ATAEC II.10.5</span>
+    </p>
+    <div class="formula">
+      <div class="fline">L(E/L, s) = L(s, ψ) · L(s, ψ̄)  (a product of Hecke L-functions)</div>
+    </div>
+    <p>
+      it factors. The analytic continuation and functional equation of Hecke L-functions were proved classically<span class="refchip adv">ATAEC II.10.3</span>, so
+      <strong>for CM curves the analytic continuation of L(E,s) becomes a theorem</strong>.
+      This is the first territory where the BSD conjecture, raised at the exit of Part 5, at least "makes complete sense as a statement".
+      In fact, history moved from here: Coates–Wiles (1977) achieved the first major partial result on BSD, and
+      Rubin (1987) gave <strong>the first proof of the finiteness of Ш</strong> (the moment the conjecture in X.4.13 became a theorem!) ──
+      both for CM curves.
+    </p>
+    <div class="goon">
+      <div class="g-label">⏩ The only prerequisite is class field theory, and a review is included</div>
+      <p>
+        ATAEC II uses class field theory, but a summary of the facts you need is laid out in full in II §3.
+        For anyone who "knows the statements of class field theory but has no experience using them", CM theory is the best possible practice ground.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8. 扉I ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Gate 6 ─ ATAEC Ch. I</div>
+    <h2>Modular forms ─ does L(E,s) even "exist"?</h2>
+
+    <div class="iou">
+      <div class="i-label">✎ The biggest IOU</div>
+      <p>
+        At the end of Part 5 we raised the BSD conjecture ── "ord<sub>s=1</sub> L(E,s) = rank E(ℚ)".
+        But the Euler product of the L-function of E, by the Hasse bound |a<sub>p</sub>| ≤ 2√p (the Ch. V section of Part 1!),
+        <strong>converges only for Re(s) &gt; 3/2</strong>. s = 1 lies outside that.
+        In other words, with only the tools of AEC, BSD is "a sentence that doesn't yet have a meaning".
+        This is the biggest IOU this series left behind.
+      </p>
+    </div>
+
+    <p>
+      There is essentially only one known way to extend L(E,s) to s = 1:
+      <strong>show that L(E,s) is the L-function of a modular form</strong>.
+      ATAEC I sets up that "modular forms side". The modular group SL₂(ℤ), the modular curve X(1),
+      the q-expansion of the j-function, the infinite product for Δ(τ) (Jacobi's formula<span class="refchip adv">ATAEC I §8</span>),
+      and <strong>Hecke operators</strong><span class="refchip adv">ATAEC I §9–§10</span>. At the top stands Hecke's theorem.
+    </p>
+    <div class="box thm">
+      <div class="box-label">Theorem (Hecke) <span class="refchip adv">ATAEC I.11.4</span></div>
+      <p>
+        The L-series L(f, s) of a cusp form f of weight 2k continues analytically to the whole plane and
+        satisfies a functional equation under s ↔ 2k − s. If f is a simultaneous eigenform of the Hecke operators, L(f,s) has an Euler product.
+      </p>
+    </div>
+    <p>
+      With a single Mellin transform, the symmetry of the q-expansion (modularity) is translated into the functional equation of the L-function ──
+      a mechanism that produces analytic continuation this vividly is worth working through by hand at least once.
+      For the L-function of an elliptic curve to ride on this theory, you have to extend to "modular forms of level N (the congruence subgroup Γ₀(N))" and
+      show that E is modular ── that is, that L(E,s) = L(f,s) for some cusp form f of weight 2.
+      The preface of ATAEC (1994) left this topic to a sequel, writing
+      "<em>there is no question that this is currently the hottest topic in the field</em>".
+    </p>
+    <p>
+      We now know what happened right after.
+      <strong>Wiles and Taylor–Wiles (1995)</strong> proved modularity in the semistable case and deduced Fermat's Last Theorem, and
+      <strong>Breuil–Conrad–Diamond–Taylor (2001)</strong> completed the modularity of all elliptic curves over ℚ.
+      Now the analytic continuation of L(E,s) is (over ℚ) <strong>a theorem</strong>.
+      Furthermore, Gross–Zagier and Kolyvagin, standing on modularity, proved
+      "if the analytic rank is ≤ 1, the rank equality of BSD holds and Ш is finite".
+      What we wrote in one line in Part 5, "proved in certain cases by Kolyvagin and Rubin", is exactly this story.
+    </p>
+    <div class="why">
+      <div class="w-label">? Reading a 1994 textbook in the 2020s</div>
+      <p>
+        ATAEC is a book written "just before modularity was proved". The "hottest topic" sentence in the preface records
+        <strong>the calm just before the curtain rose</strong> on one of the great dramas in the history of mathematics.
+        Learn the Hecke theory of Γ(1) in this book, move on to level N with Knapp or Diamond–Shurman, and
+        stand at the entrance to Wiles' paper ── the trail that started from AEC really does connect to the highest peaks of modern number theory.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 歩き方 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09</div>
+    <h2>How to walk ─ routes by goal, and the first step</h2>
+    <p>
+      The six chapters of ATAEC depend on each other only lightly (the dependency chart in the preface shows only about I → II, III ⇢ IV), and
+      <strong>you can enter through any door</strong>. Considering the connections from this series, there are three recommended routes.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Goal</th><th>Route</th><th>Connects from</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Master computing Ш and BSD</strong> (straight ahead from this series)</td>
+          <td class="m">IV (Néron models) → V (the Tate curve) → VI (local heights)</td>
+          <td>Part 4 §9, Part 5</td>
+        </tr>
+        <tr>
+          <td><strong>To L-functions and modular forms</strong> (the analytic side of BSD)</td>
+          <td class="m">I (modular forms) → II (CM)</td>
+          <td>Exit of Part 5</td>
+        </tr>
+        <tr>
+          <td><strong>To rank and geometry</strong> (extending the theory of heights)</td>
+          <td class="m">III (elliptic surfaces) can be read on its own</td>
+          <td>Part 4</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>Three places to read first when you open ATAEC</h3>
+    <ol>
+      <li><strong>ATAEC IV, Remark 9.2.1</strong> ── the scene where the author himself collects the IOU, "left unproved in AEC".
+        The author's answer key for readers of this series.</li>
+      <li><strong>ATAEC III, Remark 11.4.2</strong> ── the history of hunting high-rank curves and
+        "And the quest continues!". Two pages long, and it will definitely get your blood pumping.</li>
+      <li><strong>The beginning of ATAEC V §3</strong> ── the definition of the Tate curve.
+        First, be amazed at how outrageous the claim "over a p-adic field an elliptic curve becomes ℚ<sub>p</sub><sup>×</sup>/q<sup>ℤ</sup>" is,
+        and at the fact that it's true. If you can be amazed, you've already started reading.</li>
+    </ol>
+    <div class="goon">
+      <div class="g-label">⏩ One last note to perfectionists</div>
+      <p>
+        ATAEC, like AEC, is not a book to read cover to cover in order.
+        The way of reading practiced in this series ── choose a summit, pick up only the gear you need, write explicit IOUs and move on ──
+        works as is. This time, choose the summit yourself.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 10. 結び ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Epilogue</div>
+    <h2>Closing ─ every answer you gain turns one question into three</h2>
+    <p>
+      In one line, the story of this series was "<strong>from a proof of finiteness to the boundary of computability</strong>".
+      And Part 5 ended where Ш came into view beyond that boundary.
+    </p>
+    <p>
+      Waiting in the sequel is mathematics that attacks that boundary from three directions.
+      <strong>Geometry</strong> (Néron models and elliptic surfaces give shape to reduction and rank),
+      <strong>analysis</strong> (modular forms breathe life into L-functions, and local heights make ĥ computable),
+      <strong>algebra</strong> (class field theory completely unlocks the arithmetic of CM curves).
+      The three directions aren't separate specialties; they meet again at a single focus, the BSD conjecture ──
+      the rank (Part 4), the regulator (ATAEC VI), Tamagawa numbers (ATAEC IV), Ш (Part 5),
+      and L(E,s) (ATAEC I and II). <strong>Every character you met in these notes gathers in a single equation</strong>.
+    </p>
+    <p>
+      Modularity has been proved. But BSD remains open, the finiteness of Ш remains open in general, and
+      on the boundedness of rank even opinions are divided ── in other words, <strong>the best problems in this field don't belong to anyone yet</strong>.
+      Having truly understood Chapters VIII and X of AEC, you're now standing right in front of those questions.
+    </p>
+    <p style="font-family:var(--display); font-style:italic; font-size:1.15rem; color:var(--gold-soft);">
+      And the quest continues! ── J.H. Silverman, ATAEC III.11.4.2
+    </p>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/selmer.html">
+      <div class="p-dir">← PREV ─ Part 5</div>
+      <div class="p-title">Selmer and Tate–Shafarevich groups (AEC X §4)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/ant.html">
+      <div class="p-dir">NEXT ─ Appendix</div>
+      <div class="p-title">The algebraic number theory arsenal (with Neukirch refs) →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Graduate notes / The Arithmetic of Elliptic Curves series, Final chapter</p>
+    <p>Based on: J.H. Silverman, Advanced Topics in the Arithmetic of Elliptic Curves, GTM 151, Springer (ATAEC) ─ survey of all chapters</p>
+    <p>Prerequisite: Parts 1–5 of this series (J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

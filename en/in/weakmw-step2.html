@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N2: A Complete Proof of Unramifiedness ─ Weak Mordell–Weil | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N2, completely proving why the Kummer pairing is unramified. Notes supporting the close reading of weak Mordell–Weil.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N2: A Complete Proof of Unramifiedness ─ Weak Mordell–Weil | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N2, completely proving why the Kummer pairing is unramified. Notes supporting the close reading of weak Mordell–Weil.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/weakmw-step2.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'I'; position:absolute; right:20px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step2.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/weakmw-step2.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step2.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/weakmw-step2.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Weak Mordell–Weil N2/N3</div>
+    <h1>A complete proof of unramifiedness<br><span class="en">Unramifiedness outside S, with every step justified</span></h1>
+    <p class="hero-sub">
+      "L/K is unramified outside S" ── this is where the gaps between the lines are widest in STEP 2 of the main part.
+      We construct the reduction map from primitive coordinates, prove its compatibility with the Galois action by hand,
+      and, by way of the criterion for unramifiedness via inertia groups, dispatch the issue of composite fields in one go.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.1.3–1.5 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/weakmw.html">Main II Weak MW</a>
+      <a href="/math-site/en/in/weakmw-step0.html">N0 Reduction lemma</a>
+      <a href="/math-site/en/in/weakmw-step1.html">N1 Kummer pairing</a>
+      <a class="cur" href="/math-site/en/in/weakmw-step2.html">N2 Unramifiedness</a>
+      <a href="/math-site/en/in/weakmw-step3.html">N3 Finiteness from field theory</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① <strong>Line-by-line reasons</strong> why S is a finite set (why "the coefficients are integral except at finitely many places")</li>
+      <li>② <strong>The construction itself</strong> of the reduction map P ↦ P̃ (primitive coordinates, well-definedness) ── the main part accepted its existence</li>
+      <li>③ <strong>A proof</strong> of the compatibility of reduction with the Galois action, (Q<sup>σ</sup>)˜ = Q̃<sup>σ̃</sup> ── the heart of the main part's computation, yet usually waved off as "obvious" in every book</li>
+      <li>④ <strong>The precise statement</strong> of "the inertia group acts trivially ⟺ unramified" (stated explicitly as a premise, with source)</li>
+      <li>⑤ A proof that K(Q)/K is <strong>finite</strong> (a prerequisite for talking about "ramification of a field extension" at all)</li>
+      <li>⑥ L may be <strong>the composite of infinitely many fields</strong> ── how to handle its unramifiedness</li>
+    </ul>
+    <p>
+      P1–P4 from N0 and Q1–Q4 from N1 remain in use. The assumption E[m] ⊂ E(K) is
+      <strong>used only in (a), not in (b)</strong> (stated in Section 08).
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (R1–R5)</h2>
+    <p>
+      We first line up all the inputs from algebraic number theory. Sources are Neukirch (shelf numbers in the appendix
+      <a href="/math-site/en/in/ant.html" style="color:var(--green);">Number theory arsenal</a>) and AEC.
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R1 ─ places, completions, ramification <span class="refchip">ANT I §8, II §8</span></div>
+      <p>
+        A finite place w of a number field M comes with a normalized valuation ord<sub>w</sub> : M<sup>×</sup> ↠ ℤ, a completion M<sub>w</sub>,
+        a ring of integers and a residue field k<sub>w</sub> (a finite field of characteristic p<sub>w</sub>).
+        For a finite extension M/K and w | v, the ramification index e(w/v) is defined, and on K<sup>×</sup>,
+        ord<sub>w</sub> = e(w/v)·ord<sub>v</sub>.
+        <strong>"M/K is unramified at v" means e(w/v) = 1 for every w above v</strong> (separability of the residue field extension is automatic since they're finite fields).
+        e may be computed in the completions: e(w/v) = e(M<sub>w</sub>/K<sub>v</sub>).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R2 ─ extensions to <span class="ov">K</span>, decomposition groups, inertia groups <span class="refchip">ANT I §9 / II §9</span></div>
+      <p>
+        An extension v̄ of v to <span class="ov">K</span> exists. Define the decomposition group and inertia group by
+      </p>
+      <div class="formula">
+        <div class="fline">D<sub>v̄/v</sub> = { σ ∈ G<sub><span class="ov">K</span>/K</sub> : v̄ ∘ σ = v̄ },  σ ∈ D induces σ̃ on the residue field k(v̄)</div>
+        <div class="fline">I<sub>v̄/v</sub> = { σ ∈ D<sub>v̄/v</sub> : σ̃ = id<sub>k(v̄)</sub> }</div>
+      </div>
+      <p>
+        . <strong>Relation in a tower</strong>: for K ⊂ K′ ⊂ <span class="ov">K</span> and w′ = v̄|<sub>K′</sub>,
+        D<sub>v̄/w′</sub> = D<sub>v̄/v</sub> ∩ G<sub><span class="ov">K</span>/K′</sub>, and likewise for I
+        (immediate from the definitions: the conditions "v̄∘σ = v̄" and "σ̃ = id" are the same; only the group being moved gets smaller).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R3 ─ the criterion for unramifiedness via inertia groups <span class="refchip">ANT I §9 (inertia field)</span></div>
+      <p>
+        Set T<sub>v̄</sub> := (the fixed field of I<sub>v̄/v</sub>) (the <strong>inertia field</strong>). For a finite extension M/K (M ⊂ <span class="ov">K</span>):
+      </p>
+      <div class="formula"><div class="fline">M ⊂ T<sub>v̄</sub>  ⟺  M/K is unramified at the place v̄|<sub>M</sub> (e = 1)</div></div>
+      <p>
+        Moreover, <strong>every</strong> place of M above v arises as the restriction v̄′|<sub>M</sub> of a suitable extension v̄′<span class="refchip">ANT II.8.1</span>.
+        So "M/K is unramified at v" ⟺ "M ⊂ T<sub>v̄′</sub> for every extension v̄′ of v".
+      </p>
+      <div class="goon">
+        <div class="g-label">▸ Why use this restatement (the device that resolves gap ⑥)</div>
+        <p>
+          Translated into the <strong>inclusion condition</strong> "is it contained in T<sub>v̄</sub>?",
+          unramifiedness of composite fields becomes trivial: if M₁ ⊂ T and M₂ ⊂ T then M₁M₂ ⊂ T (since it's an inclusion of fields).
+          Subextensions are trivial too: if M′ ⊂ M ⊂ T then M′ ⊂ T.
+          This one move is overwhelmingly stronger than fighting case by case with the multiplicativity of e. We reuse it in N3 as well.
+        </p>
+      </div>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R4 ─ local reduction theory <span class="refchip">AEC VII.2.1 / VII.3.1</span></div>
+      <p>
+        Let F be a completion of a number field at a finite place (a local field), with residue field k of characteristic p.
+        When E/F is given by a Weierstrass equation with F-integral coefficients and unit discriminant (= a model with good reduction):
+      </p>
+      <p>(i) The reduction map red : E(F) → Ẽ(k) is a <strong>group homomorphism</strong><span class="refchip">AEC VII.2.1</span> (good reduction, so E₀(F) = E(F)).</p>
+      <p>(ii) If p ∤ m, the restriction of red to E(F)[m] is <strong>injective</strong><span class="refchip">AEC VII.3.1(b)</span>.</p>
+      <details class="sol">
+        <summary>Open the outline of the reason for (ii) (formal groups)</summary>
+        <div class="sol-body">
+          <p>
+            The kernel E₁(F) = ker(red) is isomorphic to the formal group Ê(𝔪)<span class="refchip">AEC VII.2.2</span>.
+            In the formal group, the linear coefficient m of [m](T) = mT + (higher terms) is a unit since p ∤ m, so
+            [m] : Ê(𝔪) → Ê(𝔪) is an isomorphism by the formal inverse function theorem<span class="refchip">AEC IV.2.3</span>.
+            In particular Ê(𝔪) has no m-torsion. So E(F)[m] ∩ E₁(F) = {O},
+            i.e. restricting red to E(F)[m] has trivial kernel = injective.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R5 ─ compatibility with completion</div>
+      <p>
+        For a number field M and a finite place w, E(M) ⊂ E(M<sub>w</sub>), and
+        reduction defined using the valuation ring O<sub>(w)</sub> = {a ∈ M : ord<sub>w</sub>(a) ≥ 0} of M (Section 04) agrees on E(M) with
+        reduction defined using the ring of integers of M<sub>w</sub>.
+        Reason: O<sub>(w)</sub> is the intersection of M with the ring of integers of M<sub>w</sub>, and the residue fields are the same<span class="refchip">ANT II.4.3</span>.
+        Primitive coordinates are primitive whichever ring you view them in.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>S is a finite set (gap ①)</h2>
+
+    <div class="formula">
+      <div class="fline">S = { v : E has bad reduction at v } ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Fix one Weierstrass equation: coefficients a₁, …, a₆ ∈ K, discriminant Δ ≠ 0. For each coefficient a<sub>i</sub>, { v ∈ M<sub>K</sub><sup>0</sup> : v(a<sub>i</sub>) &lt; 0 } is finite.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The fractional ideal (a) of a ∈ K<sup>×</sup> factors uniquely into finitely many prime ideals<span class="refchip">ANT I §3</span>. v(a) ≠ 0 only for the v corresponding to those prime factors.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>{ v : v(Δ) ≠ 0 } is finite too. { v : v(m) ≠ 0 } is finite too. M<sub>K</sub><sup>∞</sup> has at most [K:ℚ] elements.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Same as Step 1 (Δ, m ∈ K<sup>×</sup>). The number of infinite places is the number of real embeddings + pairs of complex embeddings<span class="refchip">ANT I §5</span>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>At a finite place v ∉ S, the fixed equation has v-integral coefficients and v(Δ) = 0. Hence E has <strong>good reduction</strong> at v, and this equation itself is a good model.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If the coefficients are integral and the discriminant is a unit, the reduced equation is a Weierstrass equation over k<sub>v</sub> with discriminant Δ̃ = Δ mod 𝔪<sub>v</sub> ≠ 0, i.e. nonsingular = an elliptic curve. "A model with integral coefficients and unit discriminant exists ⟺ good reduction"<span class="refchip">AEC VII.5.1(b)</span>. (This model is also minimal at v: among integral models v(Δ) = 0 is the minimum value.)</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p><strong>Extending doesn't break it:</strong> if K′/K is finite, w | v and v ∉ S, the same equation has w-integral coefficients and w(Δ) = 0. That is, E/K′ also has good reduction at w, and the reduced curve is Ẽ<sub>v</sub> with its coefficients extended.</p>
+        <p class="ps-why"><b>▸ Reason</b>  For an element a of K, ord<sub>w</sub>(a) = e(w/v)·ord<sub>v</sub>(a) (R1). ord<sub>v</sub>(a<sub>i</sub>) ≥ 0 ⇒ ord<sub>w</sub>(a<sub>i</sub>) ≥ 0, and ord<sub>v</sub>(Δ) = 0 ⇒ ord<sub>w</sub>(Δ) = 0. Note that <strong>this holds even if it's ramified</strong> (e times 0 is still 0).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>Constructing the reduction map, and Galois compatibility (gaps ②③)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma N2-A (constructing the reduction map)</div>
+      <p>
+        Let M be a number field, w a finite place, O<sub>(w)</sub> = {a ∈ M : ord<sub>w</sub>(a) ≥ 0}, k the residue field.
+        Then a map red : ℙ²(M) → ℙ²(k) is well defined as follows:
+        take a representative of A = [x₀ : x₁ : x₂] with min<sub>i</sub> ord<sub>w</sub>(x<sub>i</sub>) = 0 (<strong>primitive coordinates</strong>), and set
+        red(A) := [x̄₀ : x̄₁ : x̄₂].
+        Moreover, if E is given by an equation with w-integral coefficients and unit discriminant, red(E(M)) ⊂ Ẽ(k).
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Primitive coordinates exist.</p>
+        <p class="ps-why"><b>▸ Reason</b>  For any representative (x₀,x₁,x₂) ≠ 0, n := min<sub>i</sub> ord<sub>w</sub>(x<sub>i</sub>) ∈ ℤ. There is π ∈ M with ord<sub>w</sub>(π) = 1 (ord<sub>w</sub> is surjective: R1), so multiplying by π<sup>−n</sup> makes min = 0.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Primitive coordinates are <strong>unique up to multiplication by a unit</strong>. Hence red(A) doesn't depend on the choice of representative.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Two sets of primitive coordinates differ by a factor λ ∈ M<sup>×</sup> (definition of projective coordinates). Both have min 0, so ord<sub>w</sub>(λ) = 0, i.e. λ is a unit. The reduction of a unit is an element of k<sup>×</sup>, so after reduction it's the same point in projective coordinates. Also min = 0 means at least one x̄<sub>i</sub> ≠ 0, i.e. (x̄) ≠ (0,0,0), so red(A) really is a point of ℙ²(k).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>If A ∈ E(M), then red(A) ∈ Ẽ(k).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The homogeneous equation F(x₀,x₁,x₂) = 0 of E has coefficients in O<sub>(w)</sub>. Passing through the ring homomorphism O<sub>(w)</sub> → k gives 0 = the reduction of F(x) = F̃(x̄). F̃ is the defining equation of Ẽ.</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Lemma N2-B (Galois compatibility) ── the core of gap ③</div>
+      <p>
+        Suppose further that M/K is Galois, E is defined over K, and σ ∈ G<sub>M/K</sub> satisfies w ∘ σ = w.
+        σ preserves O<sub>(w)</sub> and its maximal ideal, so it induces σ̃ : k → k on the residue field. Then for every A ∈ E(M),
+      </p>
+      <div class="formula"><div class="fline">red(A<sup>σ</sup>) = red(A)<sup>σ̃</sup></div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Taking primitive coordinates (x₀,x₁,x₂) of A, (x₀<sup>σ</sup>, x₁<sup>σ</sup>, x₂<sup>σ</sup>) are <strong>primitive</strong> coordinates of A<sup>σ</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  ord<sub>w</sub>(x<sub>i</sub><sup>σ</sup>) = (ord<sub>w</sub>∘σ)(x<sub>i</sub>) = ord<sub>w</sub>(x<sub>i</sub>) (assumption w∘σ = w). So the min stays 0. A<sup>σ</sup> ∈ E(M) because the coefficients of E are elements of K, invariant under σ (the same reasoning as P2 in N0).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>red(A<sup>σ</sup>) = [ (x₀<sup>σ</sup>)¯ : (x₁<sup>σ</sup>)¯ : (x₂<sup>σ</sup>)¯ ] = [ x̄₀<sup>σ̃</sup> : x̄₁<sup>σ̃</sup> : x̄₂<sup>σ̃</sup> ] = red(A)<sup>σ̃</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The first equality is Step 4 (we may compute the reduction with primitive coordinates: uniqueness in Lemma N2-A). The second is the definition of σ̃ (σ̃(ā) := (σa)¯, well defined because σ preserves the maximal ideal).</p>
+      </div>
+    </div>
+    <div class="qed">N2-A, N2-B ∎</div>
+
+    <div class="why">
+      <div class="w-label">? What these two lemmas mean</div>
+      <p>
+        The main part's one line "(Q<sup>σ</sup> − Q)˜ = Q̃<sup>σ</sup> − Q̃" is actually
+        <strong>a set of three: N2-A (well-definedness) + N2-B (compatibility) + R4(i) (homomorphism)</strong>.
+        Every textbook passes through it as "obvious", but once you go down to primitive coordinates it's all just computations with valuations.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Proof of the main theorem (b) ─ L/K is unramified outside S</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem <span class="refchip">AEC VIII.1.5(b)</span></div>
+      <p>Let L = K([m]<sup>−1</sup>E(K)). Then L/K is unramified outside S.</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><strong>Restating the goal:</strong> it's enough to show, for any v ∉ S and any extension v̄, that "K(Q) ⊂ T<sub>v̄</sub> for every Q ∈ [m]<sup>−1</sup>E(K)".</p>
+        <p class="ps-why"><b>▸ Reason</b>  If we can say this, L = (the composite of the K(Q)) ⊂ T<sub>v̄</sub>. Then every finite subextension M of L also has M ⊂ T<sub>v̄</sub>, so by R3 M is unramified at v̄|<sub>M</sub>. Since v̄ is arbitrary, it's unramified at every place above v (second half of R3), and since v ∉ S is arbitrary, it meets the definition of "unramified outside S" (= every finite subextension is unramified outside S). Gap ⑥ disappears here.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>K(Q)/K is finite, with [K(Q) : K] ≤ m² (gap ⑤).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The fiber [m]<sup>−1</sup>(P) of P := [m]Q ∈ E(K) is { Q + T : T ∈ E[m] }, exactly m² points (taking differences lands in ker[m] = E[m]: P1, P4). For any τ ∈ G<sub><span class="ov">K</span>/K</sub>, [m](Q<sup>τ</sup>) = P<sup>τ</sup> = P (P2), so Q<sup>τ</sup> is an element of this fiber. A K-embedding K(Q) ↪ <span class="ov">K</span> extends to an automorphism τ of <span class="ov">K</span> (Q4), and where the generators x(Q), y(Q) go is determined by Q<sup>τ</sup>, so the number of embeddings ≤ #fiber = m². In char 0, degree = number of embeddings (separability).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Fix arbitrary v ∉ S, an extension v̄, σ ∈ I<sub>v̄/v</sub>, and Q ∈ [m]<sup>−1</sup>E(K). <strong>Goal: Q<sup>σ</sup> = Q.</strong> Let M := the Galois closure of K(Q) (⊂ <span class="ov">K</span>); then M/K is finite Galois and contains the coordinates of Q and Q<sup>σ</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Existence and finiteness of the Galois closure are field theory (K(Q)/K is finite by Step 2). The coordinates of Q<sup>σ</sup> are conjugates of x(Q), y(Q), so they lie in the Galois closure.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Set w := v̄|<sub>M</sub>. E has good reduction at w, and the reduction map red : E(M<sub>w</sub>) → Ẽ(k<sub>w</sub>) is a group homomorphism. On E(M) it agrees with reduction via primitive coordinates (N2-A).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Good reduction: Section 03 Step 4 (v ∉ S, w | v). Homomorphism: R4(i). Agreement: R5.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>Setting R := Q<sup>σ</sup> − Q, R ∈ E(M)[m].</p>
+        <p class="ps-why"><b>▸ Reason</b>  Q, Q<sup>σ</sup> ∈ E(M) (Step 3), and E(M) is a group (P1). [m]R = [m](Q<sup>σ</sup>) − [m]Q = ([m]Q)<sup>σ</sup> − [m]Q (P2) = O, the last because [m]Q ∈ E(K) is fixed by σ (P2). <strong>E[m] ⊂ E(K) is not used here</strong>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>σ|<sub>M</sub> ∈ G<sub>M/K</sub> satisfies w∘(σ|<sub>M</sub>) = w, and the induced σ̃ is the identity on k<sub>w</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  σ(M) = M (M/K is Galois: normality). w∘σ|<sub>M</sub> = (v̄∘σ)|<sub>M</sub> = v̄|<sub>M</sub> = w (σ ∈ I ⊂ D, R2). The embedding of residue fields k<sub>w</sub> ⊂ k(v̄) is induced by the inclusion of valuation rings O<sub>(w)</sub> ⊂ O<sub>v̄</sub>, and σ̃ on k(v̄) is the identity (the definition of σ ∈ I<sub>v̄/v</sub>: R2), so its restriction σ̃ on k<sub>w</sub> is the identity too. This is a concrete form of the tower relation in R2, "the restriction of I<sub>v̄/v</sub> lies in the lower inertia group".</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>red(R) = red(Q<sup>σ</sup>) − red(Q) = red(Q)<sup>σ̃</sup> − red(Q) = red(Q) − red(Q) = Õ.</p>
+        <p class="ps-why"><b>▸ Reason</b>  First equality: red is a homomorphism (Step 4). Second: Galois compatibility N2-B (the conditions of Step 6 hold). Third: σ̃ = id (Step 6). This is the full expansion of the main part's one-line computation.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>The characteristic p of k<sub>w</sub> does not divide m.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If p | m, then v(m) ≥ v(p) ≥ 1 (v is a place above p: w | v | p), contradicting v(m) = 0 (v ∉ S).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>R = O, i.e. Q<sup>σ</sup> = Q.</p>
+        <p class="ps-why"><b>▸ Reason</b>  R ∈ E(M)[m] ⊂ E(M<sub>w</sub>)[m] (R5). By R4(ii) (its condition p ∤ m was checked in Step 8), red is injective on E(M<sub>w</sub>)[m]. red(R) = Õ = red(O) (Step 7), so R = O.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>Therefore I<sub>v̄/v</sub> fixes x(Q), y(Q), and K(Q) ⊂ T<sub>v̄</sub>. Since Q was arbitrary, theorem (b) follows by the restatement in Step 1.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Step 9 holds for any σ ∈ I<sub>v̄/v</sub> (σ was fixed arbitrarily in Step 3). Fixing a point ⇒ fixing its affine coordinates (same argument as P3 in N0). Definition of fixed field.</p>
+      </div>
+    </div>
+    <div class="qed">(b) ∎</div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>(a) L/K is abelian with exponent dividing m</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Use the injective homomorphism ρ : G<sub>L/K</sub> ↪ Hom(E(K)/mE(K), E[m]) from Step 18 of N1.</p>
+        <p class="ps-why"><b>▸ Reason</b>  N1 (at this stage E[m] ⊂ E(K) is assumed).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>The right side is an abelian group under "valuewise addition", and every element f satisfies m·f = 0.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Because the value group E[m] is abelian of exponent m ((m·f)(x) = [m](f(x)) = O).</p>
+      </div>
+    </div>
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>G<sub>L/K</sub> is isomorphic to a subgroup of an abelian group, so it's abelian, and every element has order dividing m (exponent | m).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The image of an injective homomorphism is a subgroup. Subgroups inherit commutativity and the exponent condition.</p>
+      </div>
+    </div>
+    <div class="qed">(a) ∎</div>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Summary, and which assumptions were used</h2>
+
+    <div class="box rem">
+      <div class="box-label">What we know about L/K at this point</div>
+      <ul style="margin-bottom:0;">
+        <li>An abelian extension whose Galois group has exponent dividing m ((a) ── <strong>uses</strong> E[m] ⊂ E(K))</li>
+        <li>Unramified outside the finite set S ((b) ── does <strong>not use</strong> E[m] ⊂ E(K). This fact is reused as is in Part 5 for the finiteness of Selmer groups)</li>
+        <li><strong>We haven't yet said it's finite</strong> ── saying that is the job of N3</li>
+      </ul>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? The precise meaning of "the local constrains the global"</div>
+      <p>
+        Lining the proof up step by step, the global field-theoretic conclusion "unramified" reduces completely to
+        <strong>just three equalities</strong> in Step 7 ── homomorphism, Galois compatibility, trivial action of inertia ── and
+        <strong>the injectivity from formal groups</strong> in Step 9.
+        R = Q<sup>σ</sup> − Q is squeezed between the information geometry makes invisible (Step 7) and the information geometry doesn't lose (Step 9), and
+        vanishes. That's what "good reduction forbids ramification" really is.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/weakmw-step1.html">
+      <div class="p-dir">← PREV ─ Between-the-lines note N1</div>
+      <div class="p-title">A complete proof of the Kummer pairing</div>
+    </a>
+    <a class="next" href="/math-site/en/in/weakmw-step3.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N3</div>
+      <div class="p-title">A complete proof of the field-theoretic finiteness →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the weak Mordell–Weil theorem) N2/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.1.3–1.5 / J. Neukirch, Algebraic Number Theory (ANT)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

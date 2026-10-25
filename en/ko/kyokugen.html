@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Limit lim(sinx/x)=1 | The Entrance to ε-δ - Math the Japanese Way</title>
+<meta name="description" content="&quot;It's 1 by intuition, but why?&quot; Re-examine the limit of sin x/x rigorously and step into the ε-δ method. A bridge between high school and university math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="The Limit lim(sinx/x)=1 | The Entrance to ε-δ - Math the Japanese Way">
+<meta property="og:description" content="&quot;It's 1 by intuition, but why?&quot; Re-examine the limit of sin x/x rigorously and step into the ε-δ method. A bridge between high school and university math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/ko/kyokugen.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #d4d4e0;
+    --text-muted: #6a6a80;
+    --accent: #c0392b;
+    --accent2: #e74c3c;
+    --gold: #c9a96e;
+    --gold2: #f0d080;
+    --blue: #4a9eff;
+    --green: #2ecc71;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-weight: 300;
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 背景グリッド */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(192,57,43,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,57,43,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ヒーロー */
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .hero-formula {
+    font-family: var(--mono);
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--gold);
+    margin-bottom: 28px;
+    letter-spacing: 2px;
+  }
+
+  .hero p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 540px;
+    line-height: 1.9;
+  }
+
+  /* セクション */
+  .section {
+    margin-bottom: 72px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-number {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section h2 {
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  .section p {
+    font-size: 0.97rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.9;
+  }
+
+  /* キャンバス */
+  .canvas-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 28px 0;
+    position: relative;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  /* スライダー */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0 8px;
+  }
+  .slider-row label {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gold);
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+  .slider-row .val {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gold2);
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* 数式ブロック */
+  .formula-block {
+    background: var(--surface2);
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-radius: 0 6px 6px 0;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--gold2);
+  }
+
+  /* 警告ブロック */
+  .warning-block {
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.4);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .warning-block .w-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .warning-block p {
+    color: #e8a89a;
+    font-size: 0.93rem;
+  }
+
+  /* 解決ブロック */
+  .resolve-block {
+    background: rgba(46, 204, 113, 0.06);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .resolve-block .r-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .resolve-block p {
+    color: #a8e8c0;
+    font-size: 0.93rem;
+  }
+
+  /* 表 */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: var(--mono);
+    font-size: 0.88rem;
+  }
+  .data-table th {
+    background: var(--surface2);
+    color: var(--gold);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    color: var(--text);
+  }
+  .data-table tr:hover td {
+    background: var(--surface);
+  }
+  .data-table .highlight td {
+    color: var(--accent2);
+  }
+
+  /* ε-δ インタラクティブ */
+  .epsdel-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 28px 0;
+  }
+  .epsdel-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:500px){ .epsdel-controls { grid-template-columns:1fr; } }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    transition: all 0.4s;
+  }
+  .status-bar.ok {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: var(--green);
+  }
+  .status-bar.ng {
+    background: rgba(192, 57, 43, 0.1);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    color: var(--accent2);
+  }
+
+  /* ナビゲーション */
+  .nav-dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+
+  /* 仕切り線 */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 56px 0;
+  }
+
+  /* タグ */
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .tag.high { background: rgba(201,169,110,0.15); color: var(--gold); border: 1px solid rgba(201,169,110,0.3); }
+  .tag.univ { background: rgba(74,158,255,0.12); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
+
+  /* フッター */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    margin-top: 80px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+  .footer p { margin-bottom: 6px; }
+
+  .conclusion-box {
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 40px 0;
+    background: rgba(201,169,110,0.04);
+    text-align: center;
+  }
+  .conclusion-box .big {
+    font-family: var(--display);
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-style: italic;
+    color: var(--gold2);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .conclusion-box p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/ko/kyokugen.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/ko/kyokugen.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/ko/kyokugen.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/ko/kyokugen.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<nav class="nav-dots" id="navDots"></nav>
+
+<div class="container">
+
+  <!-- ヒーロー -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Tracing the "cracks" in high school math</div>
+    <h1>Is this proof<br>really correct?</h1>
+    <div class="hero-formula">lim<sub style="font-size:0.6em">x→0</sub> (sin x / x) = 1</div>
+    <p>That proof you learned in high school. Draw a picture, squeeze it, and "look, it's 1".<br>
+    But wait. A quiet contradiction is hiding inside that proof.</p>
+  </div>
+
+  <!-- セクション1：高校の証明 -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The proof you learned in high school</h2>
+    <div class="tag high">High school math (Calculus)</div>
+    <p>First, let's check with numbers. How does sin x / x change as x approaches 0?</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>x (rad)</th><th>sin x</th><th>sin x / x</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1.0</td><td>0.84147</td><td>0.84147</td></tr>
+        <tr><td>0.5</td><td>0.47943</td><td>0.95886</td></tr>
+        <tr><td>0.1</td><td>0.09983</td><td>0.99833</td></tr>
+        <tr><td>0.01</td><td>0.00999</td><td>0.99998</td></tr>
+        <tr><td>0.001</td><td>0.00100</td><td>0.999999</td></tr>
+        <tr class="highlight"><td>→ 0</td><td>→ 0</td><td>→ <strong>1</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p>It really does approach 1. Now let's prove "why". Here is the textbook method.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="c1" height="300"></canvas>
+      <div style="margin-top:12px; font-family:var(--mono); font-size:11px; color:var(--text-muted); line-height:1.8;">
+        ▷ On the unit circle, when 0 &lt; x &lt; π/2:<br>
+        　area of △OAB &lt; area of sector OAB &lt; area of △OAT<br>
+        　(1/2)sin x &lt; (1/2)x &lt; (1/2)tan x
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label>Angle x =</label>
+      <input type="range" id="angleSlider" min="0.05" max="1.4" step="0.01" value="0.6">
+      <span class="val" id="angleVal">0.60 rad</span>
+    </div>
+
+    <div class="formula-block">
+      cos x &lt; sin x / x &lt; 1<br>
+      <br>
+      As x → 0, cos x → 1, so<br>
+      by the squeeze theorem,　lim(sin x / x) = 1　□
+    </div>
+
+    <p>Beautiful. Move x with the slider and you can see the sizes of the three shapes compare. It looks perfect.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- セクション2：亀裂 -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>The crack in the proof</h2>
+
+    <p>But stop here for a moment. This proof uses one thing "as if it were obvious".</p>
+
+    <div class="formula-block">
+      Area of sector OAB　=　(1/2) × r² × x　=　<strong>x/2</strong>　(when r = 1)
+    </div>
+
+    <p>Do you remember where you learned this formula?<br>
+    It comes from "area of a sector = π r² × (central angle / 2π)".<br>
+    And π comes from… the area of a circle.</p>
+
+    <div class="warning-block">
+      <div class="w-title">⚠ A circular structure</div>
+      <p>
+        The sector area formula　←　uses the circle area πr²<br>
+        The circle area πr²　←　uses ∫√(1-x²) dx<br>
+        ∫√(1-x²) dx　←　is computed by a trig substitution<br>
+        The substitution brings in　the derivative of sin<br>
+        The derivative of sin　←　uses lim(sin x / x) = 1<br>
+        <br>
+        ── In other words, it assumes "the very thing we want to prove".
+      </p>
+    </div>
+
+    <p>In high school we use "the area of a sector is just like this" as if it were obvious,
+    but dig into it rigorously and lim(sin x/x) = 1 is already showing its face.</p>
+
+    <div class="warning-block">
+      <div class="w-title">Another problem: what does "approach" mean?</div>
+      <p>
+        "As x approaches 0, sin x / x approaches 1" ──<br>
+        this word "approach" is actually never defined.<br>
+        How close is "close"?<br>
+        What does "gets arbitrarily close" mean mathematically?<br>
+        <br>
+        High school settles it with intuition, but this is where <strong>the entrance to university mathematics</strong> lies.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- セクション3：εδ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>Defining "approach" with numbers<br><span style="font-size:0.65em; font-style:italic; color:var(--text-muted);">The entrance to the ε-δ method</span></h2>
+    <div class="tag univ">University math (Analysis)</div>
+
+    <p>What does "f(x) converges to L as x→a" mean? At university, it is defined like this.</p>
+
+    <div class="formula-block">
+      <span style="color:#aaa">Definition (the ε-δ method)</span><br>
+      <br>
+      For every ε &gt; 0,<br>
+      there exists δ &gt; 0 such that<br>
+      if 0 &lt; |x - a| &lt; δ,　then　|f(x) - L| &lt; ε.<br>
+      <br>
+      In that case we write　lim<sub>x→a</sub> f(x) = L.
+    </div>
+
+    <p>In words: "However small an error ε you are asked for, you can always find a closeness δ that meets it."</p>
+    <p>Try it with the sliders below. This is the case f(x) = sin x / x, a = 0, L = 1.</p>
+
+    <div class="epsdel-wrap">
+      <div class="epsdel-controls">
+        <div>
+          <div class="slider-row">
+            <label>ε =</label>
+            <input type="range" id="epsSlider" min="0.01" max="0.5" step="0.01" value="0.1">
+            <span class="val" id="epsVal">0.10</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding-left:80px;">
+            Allowed error (how close to 1 is good enough)
+          </div>
+        </div>
+        <div>
+          <div class="slider-row">
+            <label>δ =</label>
+            <input type="range" id="delSlider" min="0.01" max="1.0" step="0.01" value="0.5">
+            <span class="val" id="delVal">0.50</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);padding-left:80px;">
+            Closeness of x (within this distance of 0)
+          </div>
+        </div>
+      </div>
+
+      <canvas id="c2" height="280"></canvas>
+
+      <div class="status-bar" id="epsdelStatus">
+        Checking...
+      </div>
+
+      <div style="margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--text-muted);line-height:1.8;">
+        Red band: the range |f(x) - 1| &lt; ε　/　Blue band: the range |x| &lt; δ<br>
+        If the graph inside the blue band stays completely inside the red band, "this δ works for this ε".
+      </div>
+    </div>
+
+    <p>As you make δ smaller, you can see with your own eyes that it can handle any ε.
+    That is the rigorous meaning of "convergence".</p>
+
+    <div class="resolve-block">
+      <div class="r-title">✓ A proof that avoids the circle (university version)</div>
+      <p>
+        In university analysis, sin x is <strong>defined from the start as a power series (its Taylor expansion)</strong>:<br>
+        sin x = x - x³/6 + x⁵/120 - …<br>
+        <br>
+        Then sin x / x = 1 - x²/6 + x⁴/120 - …<br>
+        → that it converges to 1 as x → 0 can be shown rigorously with ε-δ.<br>
+        <br>
+        No sector areas, no π at all. The circle disappears.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- セクション4：全体像 -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>From high school to university math</h2>
+
+    <div class="canvas-wrap">
+      <canvas id="c3" height="220"></canvas>
+    </div>
+
+    <div class="conclusion-box">
+      <div class="big">
+        "So was the high school proof wrong?"
+      </div>
+      <p>
+        It isn't wrong. It is intuitively correct and good enough in practice.<br>
+        But when you try to pin down "why it is correct", you need definitions for your words.<br>
+        <br>
+        What does "approach" mean?<br>
+        Trying to answer that question leads you to the ε-δ method.<br>
+        And the world of analysis opens up.
+      </p>
+    </div>
+
+    <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.9;">
+      Mathematics is not finished in high school. In fact, high school math is designed as
+      an <em>entrance</em> to deeper questions.
+      The moment you think "Why?" is the beginning of university mathematics.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>Visual math lessons / Takayuki Suda</p>
+    <p>High school limits → ε-δ method in analysis</p>
+  </div>
+
+</div>
+
+<script>
+// ===== ユーティリティ =====
+function px(canvas){ return window.devicePixelRatio || 1; }
+
+function setupCanvas(id, h){
+  const el = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const w = el.parentElement.clientWidth - 56;
+  el.width = w * dpr;
+  el.height = h * dpr;
+  el.style.width = w + 'px';
+  el.style.height = h + 'px';
+  const ctx = el.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w, h };
+}
+
+// ===== キャンバス1：単位円・はさみうち =====
+function drawC1(angle){
+  const {ctx, w, h} = setupCanvas('c1', 300);
+
+  const cx = w * 0.35, cy = h * 0.85, r = Math.min(w * 0.3, h * 0.75);
+  const x = angle;
+
+  ctx.clearRect(0,0,w,h);
+
+  // 三角形OABの面積を塗る（薄い緑）
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + r, cy);
+  ctx.lineTo(cx + r * Math.cos(x), cy - r * Math.sin(x));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(46,204,113,0.12)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(46,204,113,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 扇形（赤）
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, r, -x, 0, true);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(192,57,43,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(192,57,43,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 三角形OAT（タンジェント）薄い金
+  const tx = cx + r;
+  const ty = cy - r * Math.tan(x);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(tx, cy);
+  ctx.lineTo(tx, ty);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(201,169,110,0.1)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(201,169,110,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 円弧
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -x, 0, true);
+  ctx.strokeStyle = 'rgba(192,57,43,0.9)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 点
+  const bx = cx + r * Math.cos(x), by = cy - r * Math.sin(x);
+  [[cx, cy,'O'], [cx+r, cy,'A (1,0)'], [bx, by,'B'], [tx, ty,'T']].forEach(([px,py,lbl])=>{
+    ctx.beginPath();
+    ctx.arc(px, py, 3.5, 0, 2*Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.fillStyle = 'rgba(212,212,224,0.8)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillText(lbl, px + 5, py - 5);
+  });
+
+  // 垂線 sinx
+  ctx.beginPath();
+  ctx.moveTo(bx, cy);
+  ctx.lineTo(bx, by);
+  ctx.strokeStyle = 'rgba(46,204,113,0.8)';
+  ctx.setLineDash([4,4]);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 凡例
+  const leg = [
+    ['rgba(46,204,113,0.6)', `Area of △OAB = sin(x)cos(x)/2 ≈ ${(0.5*Math.sin(x)*Math.cos(x)).toFixed(4)}`],
+    ['rgba(192,57,43,0.8)',  `Area of sector OAB = x/2 = ${(x/2).toFixed(4)}`],
+    ['rgba(201,169,110,0.8)',`Area of △OAT = tan(x)/2 ≈ ${(0.5*Math.tan(x)).toFixed(4)}`],
+  ];
+  leg.forEach(([col, txt], i)=>{
+    ctx.fillStyle = col;
+    ctx.fillRect(w*0.62, 20 + i*28, 12, 12);
+    ctx.fillStyle = 'rgba(212,212,224,0.75)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillText(txt, w*0.62+18, 31 + i*28);
+  });
+
+  // sin x / x
+  ctx.fillStyle = 'var(--gold2)';
+  ctx.font = 'bold 13px JetBrains Mono, monospace';
+  ctx.fillStyle = '#f0d080';
+  ctx.fillText(`sin(x)/x = ${(Math.sin(x)/x).toFixed(6)}`, w*0.62, h - 16);
+}
+
+const angleSlider = document.getElementById('angleSlider');
+const angleVal = document.getElementById('angleVal');
+angleSlider.addEventListener('input', ()=>{
+  const v = parseFloat(angleSlider.value);
+  angleVal.textContent = v.toFixed(2) + ' rad';
+  drawC1(v);
+});
+
+// ===== キャンバス2：ε-δ可視化 =====
+function drawC2(){
+  const {ctx, w, h} = setupCanvas('c2', 280);
+  const eps = parseFloat(document.getElementById('epsSlider').value);
+  const del = parseFloat(document.getElementById('delSlider').value);
+
+  const mx = w * 0.5, my = h * 0.5;
+  const scaleX = w * 0.35, scaleY = h * 0.38;
+
+  ctx.clearRect(0,0,w,h);
+
+  // 軸
+  ctx.strokeStyle = 'rgba(100,100,120,0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, my); ctx.lineTo(w, my); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(mx, 0); ctx.lineTo(mx, h); ctx.stroke();
+
+  // ε 帯（赤）
+  const eyTop = my - eps * scaleY;
+  const eyBot = my + eps * scaleY;
+  ctx.fillStyle = 'rgba(192,57,43,0.12)';
+  ctx.fillRect(0, eyTop, w, eyBot - eyTop);
+  ctx.strokeStyle = 'rgba(192,57,43,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(0,eyTop); ctx.lineTo(w,eyTop); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,eyBot); ctx.lineTo(w,eyBot); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // δ 帯（青）
+  const dxL = mx - del * scaleX;
+  const dxR = mx + del * scaleX;
+  ctx.fillStyle = 'rgba(74,158,255,0.08)';
+  ctx.fillRect(dxL, 0, dxR - dxL, h);
+  ctx.strokeStyle = 'rgba(74,158,255,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(dxL,0); ctx.lineTo(dxL,h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(dxR,0); ctx.lineTo(dxR,h); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // f(x) = sinx/x のグラフ
+  ctx.beginPath();
+  let started = false;
+  let allOk = true;
+  for(let px2 = 0; px2 <= w; px2 += 1){
+    const xv = (px2 - mx) / scaleX;
+    let fv;
+    if(Math.abs(xv) < 1e-9) fv = 1;
+    else fv = Math.sin(xv) / xv;
+    const py2 = my - (fv - 1) * scaleY;
+
+    // δ帯内でεを外れていないかチェック
+    if(Math.abs(xv) < del && Math.abs(xv) > 1e-6){
+      if(Math.abs(fv - 1) >= eps) allOk = false;
+    }
+
+    if(!started){ ctx.moveTo(px2, py2); started = true; }
+    else ctx.lineTo(px2, py2);
+  }
+  ctx.strokeStyle = '#f0d080';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // y=1 の線
+  ctx.strokeStyle = 'rgba(240,208,128,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,6]);
+  ctx.beginPath(); ctx.moveTo(0,my); ctx.lineTo(w,my); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 軸ラベル
+  ctx.fillStyle = 'rgba(106,106,128,0.9)';
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillText('x', w - 14, my - 6);
+  ctx.fillText('f(x)', mx + 6, 14);
+  ctx.fillText('1', mx + 5, my - 4);
+
+  // ε, δ ラベル
+  ctx.fillStyle = 'rgba(192,57,43,0.9)';
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.fillText(`ε = ${eps.toFixed(2)}`, 8, eyTop - 4);
+  ctx.fillStyle = 'rgba(74,158,255,0.9)';
+  ctx.fillText(`δ = ${del.toFixed(2)}`, dxR + 4, 16);
+
+  // ステータス
+  const statusEl = document.getElementById('epsdelStatus');
+  if(allOk){
+    statusEl.className = 'status-bar ok';
+    statusEl.innerHTML = `✓ This δ works ── when |x| &lt; ${del.toFixed(2)}, |f(x)-1| &lt; ${eps.toFixed(2)} holds`;
+  } else {
+    statusEl.className = 'status-bar ng';
+    statusEl.innerHTML = `✗ δ is too big ── try making δ smaller`;
+  }
+}
+
+document.getElementById('epsSlider').addEventListener('input', ()=>{
+  document.getElementById('epsVal').textContent = parseFloat(document.getElementById('epsSlider').value).toFixed(2);
+  drawC2();
+});
+document.getElementById('delSlider').addEventListener('input', ()=>{
+  document.getElementById('delVal').textContent = parseFloat(document.getElementById('delSlider').value).toFixed(2);
+  drawC2();
+});
+
+// ===== キャンバス3：道筋図 =====
+function drawC3(){
+  const {ctx, w, h} = setupCanvas('c3', 220);
+  ctx.clearRect(0,0,w,h);
+
+  const steps = [
+    { x: 0.1, label: 'High school math', sub: 'Intuition, pictures, squeezing', col: '#c9a96e' },
+    { x: 0.38, label: 'The question of limits', sub: 'What does "approach" mean?', col: '#e74c3c' },
+    { x: 0.65, label: 'The ε-δ method', sub: 'Defining "closeness" with numbers', col: '#4a9eff' },
+    { x: 0.9, label: 'Analysis', sub: 'Power series, rigorous proofs', col: '#2ecc71' },
+  ];
+
+  const cy = h * 0.45;
+
+  // 線
+  steps.forEach((s, i)=>{
+    if(i < steps.length-1){
+      const nx = steps[i+1];
+      const x1 = s.x * w, x2 = nx.x * w;
+      const grad = ctx.createLinearGradient(x1, cy, x2, cy);
+      grad.addColorStop(0, s.col + '80');
+      grad.addColorStop(1, nx.col + '80');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x1 + 10, cy);
+      ctx.lineTo(x2 - 10, cy);
+      ctx.stroke();
+      // 矢印
+      ctx.fillStyle = nx.col + '80';
+      ctx.beginPath();
+      ctx.moveTo(x2 - 10, cy - 5);
+      ctx.lineTo(x2 - 2, cy);
+      ctx.lineTo(x2 - 10, cy + 5);
+      ctx.fill();
+    }
+  });
+
+  steps.forEach(s=>{
+    const sx = s.x * w;
+    // 円
+    ctx.beginPath();
+    ctx.arc(sx, cy, 8, 0, 2*Math.PI);
+    ctx.fillStyle = s.col;
+    ctx.fill();
+
+    // ラベル
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold 12px 'Noto Serif JP', serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(s.label, sx, cy - 22);
+    ctx.fillStyle = 'rgba(106,106,128,0.9)';
+    ctx.font = `10px 'JetBrains Mono', monospace`;
+    ctx.fillText(s.sub, sx, cy + 26);
+  });
+  ctx.textAlign = 'left';
+}
+
+// ===== スクロール監視 =====
+const sections = document.querySelectorAll('.section');
+const navDots = document.getElementById('navDots');
+sections.forEach((_, i)=>{
+  const d = document.createElement('div');
+  d.className = 'nav-dot';
+  d.onclick = ()=> document.getElementById('s'+i).scrollIntoView({behavior:'smooth'});
+  navDots.appendChild(d);
+});
+
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      const idx = [...sections].indexOf(e.target);
+      document.querySelectorAll('.nav-dot').forEach((d,i)=>{
+        d.classList.toggle('active', i===idx);
+      });
+    }
+  });
+},{threshold:0.15});
+sections.forEach(s=>obs.observe(s));
+
+// ===== 初期描画 =====
+window.addEventListener('load', ()=>{
+  drawC1(0.6);
+  drawC2();
+  drawC3();
+  // リサイズ対応
+  window.addEventListener('resize', ()=>{
+    drawC1(parseFloat(angleSlider.value));
+    drawC2();
+    drawC3();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 5 The Wall of Research | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Wall of Research&quot; boss battle takes on graduate-level math. A test at the gateway to research.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 5 The Wall of Research | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Wall of Research&quot; boss battle takes on graduate-level math. A test at the gateway to research.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_5.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Yusei+Magic&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:#020108;color:#f0f4ff;line-height:1.8;
+  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;overflow-x:hidden;}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.stage{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;padding:40px 20px 70px;text-align:center;}
+.flee{position:fixed;top:14px;left:16px;z-index:5;color:#667;text-decoration:none;font-size:.8rem;font-weight:700;}
+.flee:hover{color:#c8a84b;}
+
+.scene{max-width:640px;width:100%;display:none;}
+.scene.on{display:block;animation:scIn 1.1s ease;}
+@keyframes scIn{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+@keyframes glowPulse{from{text-shadow:0 0 22px rgba(140,160,255,.55),0 0 60px rgba(100,120,255,.3);}
+  to{text-shadow:0 0 40px rgba(160,180,255,.95),0 0 90px rgba(120,140,255,.5);}}
+@keyframes btnPulse{from{box-shadow:0 0 12px rgba(200,168,75,.35);}to{box-shadow:0 0 30px rgba(200,168,75,.9);}}
+@keyframes lineIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes doorL{to{transform:perspective(900px) rotateY(-104deg);}}
+@keyframes doorR{to{transform:perspective(900px) rotateY(104deg);}}
+@keyframes doorLight{0%{opacity:0;}55%{opacity:0;}100%{opacity:1;}}
+
+.boss-no{font-size:.75rem;font-weight:700;letter-spacing:.35em;color:#8a9cff;margin-bottom:10px;}
+.boss-name{font-size:clamp(2rem,9vw,3.2rem);font-weight:900;color:#dfe6ff;letter-spacing:.14em;
+  animation:glowPulse 2.6s ease-in-out infinite alternate;margin-bottom:8px;}
+.boss-sub{font-size:.8rem;color:#8899aa;letter-spacing:.2em;margin-bottom:26px;}
+.line{font-size:1.05rem;color:#cdd5ee;line-height:2.3;opacity:0;animation:lineIn .9s ease forwards;}
+.go-btn{display:inline-block;margin-top:32px;font-family:inherit;font-weight:900;font-size:1.05rem;color:#0a0820;
+  background:linear-gradient(90deg,#8a9cff,#c4ceff);border:none;border-radius:999px;padding:15px 44px;
+  cursor:pointer;animation:btnPulse 1.5s ease-in-out infinite alternate;}
+.go-btn:hover{filter:brightness(1.1);}
+.go-btn.gold{background:linear-gradient(90deg,#c8a84b,#e8c96b);color:#1a1040;}
+
+.prob-tag{display:inline-block;font-size:.72rem;font-weight:900;letter-spacing:.2em;border-radius:999px;
+  padding:5px 18px;margin-bottom:22px;}
+.prob-tag.open{color:#ff9a8a;border:1px solid rgba(255,120,100,.6);}
+.prob-tag.solved{color:#7adf9a;border:1px solid rgba(80,220,140,.6);}
+.prob-eq{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;
+  font-size:clamp(1.7rem,7.5vw,3rem);color:#eef2ff;margin-bottom:18px;
+  animation:glowPulse 2.4s ease-in-out infinite alternate;}
+.prob-name{font-size:clamp(1.15rem,5vw,1.6rem);font-weight:900;color:#c8a84b;margin-bottom:6px;letter-spacing:.1em;}
+.prob-years{font-size:.82rem;color:#8899aa;margin-bottom:18px;}
+.prob-desc{font-size:.95rem;color:#cdd5ee;line-height:2.2;}
+.prob-step{font-size:.7rem;color:#556;letter-spacing:.3em;margin-bottom:14px;}
+
+.t-msg{background:linear-gradient(135deg,#fdf3d7,#f6e3b0);color:#5a4314;border:2px solid #c8a84b;
+  border-radius:16px;padding:22px 24px;font-family:'Yusei Magic','Noto Sans JP',cursive;
+  font-size:1.08rem;line-height:2.2;text-align:left;box-shadow:0 8px 32px rgba(0,0,0,.5);
+  animation:lineIn .9s ease .4s backwards;}
+.door-zone{margin-top:34px;animation:lineIn .9s ease 1s backwards;}
+.door-note{font-size:.85rem;color:#cfd8ff;margin-bottom:14px;letter-spacing:.1em;}
+.door{position:relative;width:170px;height:200px;margin:0 auto;perspective:900px;}
+.door-light{position:absolute;inset:6px;background:radial-gradient(circle,#fff 0%,#cfd9ff 40%,#8a9cff 100%);
+  border-radius:10px 10px 0 0;opacity:0;animation:doorLight 2.4s ease .4s forwards;
+  box-shadow:0 0 60px rgba(160,180,255,.95);}
+.door-l,.door-r{position:absolute;top:6px;bottom:0;width:50%;
+  background:linear-gradient(135deg,#1c2240,#10142a);border:1px solid #4a5588;}
+.door-l{left:6px;border-radius:8px 0 0 0;transform-origin:left;animation:doorL 2s cubic-bezier(.6,.04,.3,1) .6s forwards;}
+.door-r{right:6px;border-radius:0 8px 0 0;transform-origin:right;animation:doorR 2s cubic-bezier(.6,.04,.3,1) .6s forwards;}
+.door-frame{position:absolute;inset:0;border:5px solid #3a4060;border-bottom-width:8px;border-radius:14px 14px 0 0;pointer-events:none;}
+.skip-link{display:block;margin-top:20px;font-size:.78rem;color:#556;text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
+.skip-link:hover{color:#99a;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_5.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_5.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_5.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_5.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<canvas id="sky"></canvas>
+<a class="flee" href="/math-site/en/in/map.html">← Back to the Graduate School Field</a>
+
+<div class="stage">
+
+  <!-- 導入 -->
+  <div class="scene on" id="sc0">
+    <div class="boss-no">BOSS 5 ─ FINAL</div>
+    <div class="boss-name">The Wall of Research</div>
+    <div class="boss-sub">─ The border between graduate school and research ─</div>
+    <div class="line" style="animation-delay:.6s;">Taking on questions with no known answer.</div>
+    <div class="line" style="animation-delay:1.5s;">That is research.</div>
+    <div class="line" style="animation-delay:2.6s;color:#8a9cff;">── This wall has no quiz.<br>There is just something I want you to see.</div>
+    <button class="go-btn" id="btn0" style="animation-delay:0s;">Stand before the wall</button>
+  </div>
+
+  <!-- 問題1：リーマン予想 -->
+  <div class="scene" id="sc1">
+    <div class="prob-step">FRONTIER 1 / 3</div>
+    <span class="prob-tag open">Unsolved ─ over 165 years since 1859</span>
+    <div class="prob-eq">ζ(s) = 0 &nbsp;⇒&nbsp; Re(s) = ½</div>
+    <div class="prob-name">The Riemann Hypothesis</div>
+    <div class="prob-years">Bernhard Riemann (1859) ─ Millennium Prize Problem</div>
+    <div class="prob-desc">
+      Where do the primes appear? The complete musical score is hidden in this one line.<br>
+      The conjecture that all the zeros of the zeta function lie on a single straight line.<br>
+      Humanity's greatest minds have tried for 165 years, and no one has proved it yet.
+    </div>
+    <button class="go-btn" id="btn1">See the next wall →</button>
+  </div>
+
+  <!-- 問題2：フェルマーの最終定理 -->
+  <div class="scene" id="sc2">
+    <div class="prob-step">FRONTIER 2 / 3</div>
+    <span class="prob-tag solved">Defeated in 1995 ─ it took 358 years</span>
+    <div class="prob-eq">xⁿ + yⁿ = zⁿ</div>
+    <div class="prob-name">Fermat's Last Theorem</div>
+    <div class="prob-years">Fermat (1637) → proved by Andrew Wiles (1995)</div>
+    <div class="prob-desc">
+      "For n ≥ 3 there are no solutions in natural numbers." One scribbled line took humanity 358 years.<br>
+      And at the heart of the proof was ── <strong style="color:#c8a84b;">elliptic curves</strong>.<br>
+      Only those who kept asking have broken down walls.
+    </div>
+    <button class="go-btn" id="btn2">See the next wall →</button>
+  </div>
+
+  <!-- 問題3：BSD予想 -->
+  <div class="scene" id="sc3">
+    <div class="prob-step">FRONTIER 3 / 3</div>
+    <span class="prob-tag open">Unsolved ─ Millennium Prize Problem ($1 million)</span>
+    <div class="prob-eq">y² = x³ + ax + b</div>
+    <div class="prob-name">The BSD Conjecture (Birch and Swinnerton-Dyer Conjecture)</div>
+    <div class="prob-years">Birch &amp; Swinnerton-Dyer (around 1965)</div>
+    <div class="prob-desc">
+      How many rational points lie on an elliptic curve?<br>
+      The conjecture says the answer is engraved in the curve's own voice, its "L-function".<br>
+      An even deeper abyss of the elliptic curves that defeated Fermat.<br>
+      <span style="color:#8a9cff;">And this is the world Mr. Suda is still researching today.</span>
+    </div>
+    <button class="go-btn" id="btn3">⚔️ Face the final wall →</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── 星空（流れる星と星雲） ── */
+var cv=document.getElementById('sky');
+var ctx=cv.getContext('2d');
+var stars=[];
+function resize(){
+  cv.width=innerWidth; cv.height=innerHeight;
+}
+resize();
+addEventListener('resize',resize);
+for(var i=0;i<180;i++){
+  stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.6+0.3,
+    tw:Math.random()*Math.PI*2,sp:0.00002+Math.random()*0.00006});
+}
+var t0=performance.now();
+(function loop(){
+  var t=(performance.now()-t0)/1000;
+  var W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  /* 星雲 */
+  var g1=ctx.createRadialGradient(W*0.25,H*0.3,0,W*0.25,H*0.3,W*0.5);
+  g1.addColorStop(0,'rgba(60,50,140,.16)'); g1.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+  var g2=ctx.createRadialGradient(W*0.75,H*0.7,0,W*0.75,H*0.7,W*0.45);
+  g2.addColorStop(0,'rgba(140,60,110,.10)'); g2.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+  /* 星 */
+  stars.forEach(function(s){
+    s.y=(s.y+s.sp)%1;
+    var a=0.35+0.65*Math.abs(Math.sin(t*1.2+s.tw));
+    ctx.globalAlpha=a;
+    ctx.fillStyle='#dfe6ff';
+    ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  requestAnimationFrame(loop);
+})();
+
+/* ── シーン進行 ── */
+function show(id){
+  ['sc0','sc1','sc2','sc3'].forEach(function(s){
+    document.getElementById(s).classList.remove('on');
+  });
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if(window.SND) SND.click();
+}
+document.getElementById('btn0').addEventListener('click',function(){ show('sc1'); });
+document.getElementById('btn1').addEventListener('click',function(){ show('sc2'); });
+document.getElementById('btn2').addEventListener('click',function(){ show('sc3'); });
+
+/* 3つのフロンティアを見せたあと、最後のボス戦へ。勝利で未解決問題の世界への扉が開く */
+var battleStarted=false;
+document.getElementById('btn3').addEventListener('click',function(){
+  if(battleStarted) return;
+  battleStarted=true;
+  if(window.SND) SND.click();
+  var stg=document.querySelector('.stage'); if(stg) stg.style.display='none';
+  var fl=document.querySelector('.flee'); if(fl) fl.style.display='none';
+  startBattle();
+});
+
+function startBattle(){
+  BossBattle({
+    no:5,
+    name:'The Wall of Research',
+    sub:'The border between graduate school and research',
+    kids:false,
+    intro:[
+      'You\'ve reached the very entrance to questions with no answer.',
+      'But you\'ve come this far ── so I can ask you.',
+      '── The final wall. The abyss of structure is looking back at you.'
+    ],
+    theme:{main:'#8a9cff',glow:'rgba(138,156,255,.45)',dark:'#0a0820',icon:'🌌'},
+    fleeHref:'/math-site/en/in/map.html',
+    enterFlag:null,
+    /* 第一形態：楕円曲線・ガロア理論・位相幾何の入口 */
+    questions:[
+      {q:'What structure does the set of rational points on the elliptic curve y² = x³ + ax + b have?',
+       c:['abelian group','field','non-commutative group','ordered set'], a:0,
+       exp:'With the addition that takes the third intersection of the line through two points, the rational points form an abelian group. This is the heart of elliptic curves.'},
+      {q:'[True/False] An elliptic curve is non-singular exactly when its discriminant Δ ≠ 0.',
+       c:['○ True','× False'], a:0,
+       exp:'If Δ = 0, a cusp or node appears and the smooth "curve" breaks.'},
+      {q:'Galois theory showed that the general equation of degree 5 or higher…',
+       c:['cannot be solved by radicals','has no solutions','can always be solved','cannot be solved in complex numbers'], a:0,
+       exp:'Because the symmetric group S₅ is not solvable, the general quintic cannot be solved with arithmetic and radicals alone.'},
+      {q:'What is the Euler characteristic χ = V − E + F of the sphere S²?',
+       c:['2','0','1','−2'], a:0,
+       exp:'For regular polyhedra V−E+F=2. Every surface homeomorphic to a sphere gives 2.'},
+      {q:'What is the fundamental group π₁(S¹) of the circle S¹?',
+       c:['ℤ','0 (trivial)','ℤ/2ℤ','ℝ'], a:0,
+       exp:'How many times a loop winds around = the winding number. It is isomorphic to the integers ℤ.'},
+      {q:'[True/False] The Euler characteristic of the torus T² is 0.',
+       c:['○ True','× False'], a:0,
+       exp:'For a closed surface of genus g, χ = 2 − 2g. The torus has g=1, so χ=0.'}
+    ],
+    /* 第二形態：構造の対応・深化 */
+    questions2:[
+      {q:'What does the Galois correspondence match one-to-one?',
+       c:['intermediate fields and subgroups of the Galois group','points and lines','integers and primes','open sets and closed sets'], a:0,
+       exp:'Intermediate fields of a field extension correspond to subgroups of the Galois group, reversing inclusion.'},
+      {q:'An equation is solvable by radicals ⇔ its Galois group is…',
+       c:['a solvable group','a commutative group','a simple group','the trivial group'], a:0,
+       exp:'The name "solvable group" comes from exactly this theorem.'},
+      {q:'What is the Galois group of the cyclotomic field ℚ(ζₙ)/ℚ?',
+       c:['isomorphic to (ℤ/nℤ)ˣ (abelian)','non-commutative group','the trivial group','Sₙ'], a:0,
+       exp:'Via the maps sending ζₙ to its primitive powers, it is isomorphic to (ℤ/nℤ)ˣ. It is always abelian.'},
+      {q:'[True/False] A space with trivial fundamental group is called simply connected. S² is simply connected.',
+       c:['○ True','× False'], a:0,
+       exp:'Any loop on S² can be shrunk to a point. π₁(S²)=0.'},
+      {q:'What is the Euler characteristic χ of an orientable closed surface of genus g?',
+       c:['2 − 2g','g','2g','g − 1'], a:0,
+       exp:'Sphere g=0 gives 2, torus g=1 gives 0, … decreasing by 2 each time.'},
+      {q:'The Mordell–Weil theorem says the group of rational points of an elliptic curve is…',
+       c:['a finitely generated abelian group','a finite group','a free group','always trivial'], a:0,
+       exp:'E(ℚ) ≅ ℤ^r × (finite group). This r is the "rank".'},
+      {q:'[True/False] In the addition of points on an elliptic curve, the point at infinity O plays the role of the identity.',
+       c:['○ True','× False'], a:0,
+       exp:'O is the identity of the group. P + O = P. It appears naturally in the projective plane.'},
+      {q:'What is an extension whose Galois group is abelian called?',
+       c:['abelian extension','solvable extension','normal extension','transcendental extension'], a:0,
+       exp:'An extension with a commutative Galois group. Cyclotomic fields are the classic example.'}
+    ],
+    /* 最終形態：最前線・未解決問題 */
+    questions3:[
+      {q:'What does the BSD conjecture try to connect, for an elliptic curve?',
+       c:['the rank and the order of vanishing of the L-function','the discriminant and the genus','the number of points and the volume','the coefficients and the degree'], a:0,
+       exp:'The order of the zero of L(E,s) at s=1 equals the rank of the group of rational points ── a Millennium Prize Problem.'},
+      {q:'[True/False] At the heart of the proof of Fermat\'s Last Theorem were elliptic curves (and their modularity).',
+       c:['○ True','× False'], a:0,
+       exp:'Wiles proved it by way of the Taniyama–Shimura conjecture (the modularity theorem).'},
+      {q:'Where does the Riemann Hypothesis say the nontrivial zeros of ζ(s) lie?',
+       c:['on the line with real part 1/2','on the line with real part 1','they are all real','only at the origin'], a:0,
+       exp:'The unsolved conjecture that they all lie on the critical line Re(s) = 1/2. It governs the distribution of primes.'},
+      {q:'[True/False] "Every continuous function is differentiable" is true.',
+       c:['× False','○ True'], a:0,
+       exp:'The Weierstrass function is continuous everywhere but differentiable nowhere. A counterexample that defies intuition.'},
+      {q:'Roughly speaking, what does it mean for two spaces to be "homotopy equivalent"?',
+       c:['they can be continuously deformed into each other','they have the same number of points','they have the same dimension','there is a bijection between them'], a:0,
+       exp:'A disk shrinks to a point = homotopy equivalent to a point. It captures essential shape, like whether there are holes.'},
+      {q:'In category theory, what basic properties must morphisms and composition satisfy?',
+       c:['associativity and identity morphisms','commutativity','existence of inverse morphisms','finiteness'], a:0,
+       exp:'A category has objects, morphisms and composition, with associativity and an identity morphism for each object. A language that cuts across fields.'}
+    ],
+    draw:function(ctx,W,H,t,S){
+      var cx=W/2, cy=H/2+6, dmg=1-S.hpRatio, hurtC=S.hurt>0.3;
+      /* 臨界線 Re(s)=1/2 と零点 */
+      ctx.save();
+      ctx.strokeStyle=hurtC?'rgba(255,140,140,.7)':'rgba(160,180,255,.5)';
+      ctx.lineWidth=2; ctx.shadowColor='rgba(140,160,255,.8)'; ctx.shadowBlur=16;
+      ctx.beginPath(); ctx.moveTo(cx,18); ctx.lineTo(cx,H-18); ctx.stroke();
+      for(var i=0;i<6;i++){
+        var zy=40+i*((H-80)/5)+Math.sin(t*1.3+i)*4, pz=0.5+0.5*Math.sin(t*2+i*1.2);
+        ctx.fillStyle=hurtC?'#ffb3a8':'#cdd9ff'; ctx.shadowBlur=10+10*pz;
+        ctx.beginPath(); ctx.arc(cx,zy,3+2*pz,0,Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+      /* 中央コア（壁＝特異点）*/
+      var pulse=0.6+0.4*Math.sin(t*2.4);
+      ctx.save();
+      var cg=ctx.createRadialGradient(cx,cy,4,cx,cy,72+14*pulse);
+      cg.addColorStop(0,hurtC?'#fff':'#eaf0ff');
+      cg.addColorStop(0.35,hurtC?'#ff9a8a':'#8a9cff');
+      cg.addColorStop(1,'rgba(60,50,140,0)');
+      ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(cx,cy,72+14*pulse,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      /* 軌道を巡る記号 */
+      var syms=['ζ','∂','Gal','π₁','∮','∞'];
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      syms.forEach(function(s,i){
+        var ang=t*(0.5+0.05*i)+i*Math.PI*2/syms.length;
+        var rx=200-((i%3)*26), ry=104-((i%3)*14);
+        var ox=cx+Math.cos(ang)*rx, oy=cy+Math.sin(ang)*ry, front=Math.sin(ang)>0;
+        ctx.save();
+        ctx.globalAlpha=front?0.95:0.4;
+        ctx.shadowColor='rgba(160,180,255,.85)'; ctx.shadowBlur=14;
+        ctx.fillStyle=hurtC?'#ffc4b8':'#cdd9ff';
+        ctx.font=(front?'900 30px':'700 22px')+' Georgia,serif';
+        ctx.fillText(s,ox,oy);
+        ctx.restore();
+      });
+      /* ダメージ：時空のグリッチ */
+      if(dmg>0.2){
+        ctx.save();
+        for(var g=0;g<Math.floor(dmg*5);g++){
+          var gy=(Math.sin(t*9+g*37)*0.5+0.5)*H;
+          ctx.strokeStyle='rgba(255,255,255,'+(0.08+0.18*Math.random()*dmg)+')';
+          ctx.lineWidth=1+Math.random()*2;
+          ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+        }
+        ctx.restore();
+      }
+      /* 下部の式 */
+      ctx.save();
+      ctx.fillStyle='rgba(160,180,255,'+(0.3+0.2*Math.sin(t*1.3))+')';
+      ctx.font='italic 700 18px Georgia,serif';
+      ctx.fillText('ζ(s)=0 ⇒ Re(s)=½  y²=x³+ax+b', cx, H-22);
+      ctx.restore();
+    },
+    victory:{
+      xp:600,
+      msg:'There are no answers beyond this point.<br>But only people who keep asking have moved mathematics forward.<br>Maybe you\'re one of them. — Mr. Suda',
+      cta:null,
+      doorHref:'/math-site/en/mikaiketsu.html',
+      doorName:'The World of Unsolved Problems',
+      note:'The last door opens ── into the world of unsolved problems'
+    }
+  });
+}
+
+/* 既に通過済みなら、導入にショートカットを出す */
+if(window.RPG&&RPG.bossCleared(5)){
+  var sc0=document.getElementById('sc0');
+  var a=document.createElement('a');
+  a.className='skip-link';
+  a.href='/math-site/en/mikaiketsu.html';
+  a.textContent='👑 You\'ve already crossed this wall ── go straight to the world of unsolved problems';
+  sc0.appendChild(a);
+}
+})();
+</script>
+</body>
+</html>

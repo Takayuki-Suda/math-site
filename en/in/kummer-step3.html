@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N3: The inf–res Exact Sequence and Unramifiedness ─ The Kummer Pairing | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N3, connecting the inf–res exact sequence and unramifiedness. The note that completes the close reading of the Kummer pairing.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N3: The inf–res Exact Sequence and Unramifiedness ─ The Kummer Pairing | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N3, connecting the inf–res exact sequence and unramifiedness. The note that completes the close reading of the Kummer pairing.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/kummer-step3.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'res'; position:absolute; right:-10px; top:-36px; font-family:var(--display); font-style:italic;
+    font-size:200px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+  .box.warn { border-color:rgba(224,104,122,.5); background:rgba(224,104,122,.05); }
+  .box.warn .box-label { color:var(--red); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:0.9rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step3.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/kummer-step3.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step3.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/kummer-step3.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ The Kummer pairing N3/N3</div>
+    <h1>The inf–res exact sequence and unramifiedness<br><span class="en">Inflation–Restriction and Unramified Classes</span></h1>
+    <p class="hero-sub">
+      We completely prove the inflation–restriction exact sequence the main part passed over as "a formal cocycle computation"
+      (this is also the complete solution to Exercise 4 of the main part). On top of that we fill in the commutativity of the commutative diagram for the reduction lemma (§05),
+      that "unramified" doesn't depend on the choice of extension (the <strong>conjugation lemma</strong>), and
+      a zero-leap reconstruction of Proposition VIII.2.1, completing the kummer between-the-lines notes.
+      The last section is the starting point of the bridge to the "local conditions" of Selmer groups (Main V).
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ App. B.2.4, Ch. VIII §2, Ch. X §4 / Neukirch, ANT I §9, II §9</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/kummer.html">Main III The Kummer pairing</a>
+      <a href="/math-site/en/in/kummer-step0.html">N0 Foundations of cohomology</a>
+      <a href="/math-site/en/in/kummer-step1.html">N1 The Kummer sequence</a>
+      <a href="/math-site/en/in/kummer-step2.html">N2 Hilbert 90</a>
+      <a class="cur" href="/math-site/en/in/kummer-step3.html">N3 inf–res and unramified</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① <strong>Constructing inf and res</strong> ── checking they're well-defined homomorphisms as maps (the map version of N0 §04's "descent")</li>
+      <li>② A complete proof of exactness at the 2 places of the <strong>inf–res exact sequence</strong> (AEC B.2.4). The main part only sketched the approach, as "Exercise 4"</li>
+      <li>③ <strong>Commutativity of the commutative diagram</strong> in §05 of the main part ── checking the two squares that support the "three-line proof" of the reduction lemma (VIII.1.1.1). That the λ<sub>P</sub> handmade in Part 2 is "an explicit form of the preimage under inf"</li>
+      <li>④ <strong>The conjugation lemma</strong> ── "unramified at v" doesn't depend on the choice of extension v̄. What's inside the sentence §06 of the main part passed over in parentheses (AEC X.4.1.1 / Exercise B.6)</li>
+      <li>⑤ A zero-leap reconstruction of <strong>Proposition VIII.2.1</strong> (the image of δ is unramified outside S) ── reconnecting parts already proved in weakmw N2 in the language of cohomology</li>
+      <li>⑥ The precise form of "cutting the global by local conditions", and <strong>laying the groundwork for Selmer groups (Main V)</strong> ── stating explicitly where the finiteness of H¹(G, E[m]; S) is proved</li>
+    </ul>
+    <p>
+      We fix the premises with the J series in §02. We carry over N0's R series, N1's D series,
+      and the parts from weakmw N2 (reduction and inertia).
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (J1–J4)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise J1 ─ setting up subgroups and quotients</div>
+      <p>
+        Let G be a profinite group and M a discrete G-module (N0 §04). In the inf–res theorem,
+        N ⊴ G is an <strong>open normal subgroup</strong> (every application in this series is of this kind.
+        A fact verified in N0 Step 9: M<sup>N</sup> becomes a G/N-module via m<sup>σN</sup> := m<sup>σ</sup> ──
+        <strong>normality of N</strong> is what makes changing representatives and well-definedness work).
+        res is an operation that doesn't need normality, so we define it for any <strong>closed subgroup</strong> H ≤ G
+        (the inertia group I<sub>v̄</sub> is this case).
+        In applications N = G<sub><span class="ov">K</span>/L</sub> (L/K finite Galois), and
+        G/N ≅ G<sub>L/K</sub><span class="refchip">weakmw N1 premise Q4 / ANT IV.1.2</span>.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise J2 ─ decomposition groups, inertia groups and conjugacy of extensions <span class="refchip">weakmw N2 premise R2 / ANT I §9, II §9</span></div>
+      <p>
+        Let v be a finite place of K and v̄ an extension of it to <span class="ov">K</span>.
+        The decomposition group D<sub>v̄/v</sub> = { σ : v̄∘σ = v̄ } and the inertia group I<sub>v̄/v</sub> ⊂ D<sub>v̄/v</sub>
+        (those inducing the identity on the residue field) are closed subgroups of G.
+        G acts transitively on the extensions of v<span class="refchip">ANT II.8.1 (in the limit to <span class="ov">K</span>)</span>, and
+        when v̄′ = v̄∘σ, directly from the definitions,
+      </p>
+      <div class="formula"><div class="fline">I<sub>v̄′/v</sub> = σ<sup>−1</sup> I<sub>v̄/v</sub> σ  (likewise for decomposition groups)</div></div>
+      <p>That is, <strong>changing the extension conjugates the inertia group</strong>.</p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise J3 ─ parts from weakmw N2 (reduction and inertia) <span class="refchip">weakmw N2 §04–§05 / AEC VIII.1.5(b)</span></div>
+      <p>
+        Let S := {places of bad reduction} ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup>.
+        weakmw N2 proved the following with zero leaps: <strong>if v ∉ S, v̄ is an extension, σ ∈ I<sub>v̄/v</sub>, and
+        [m]Q = P ∈ E(K), then Q<sup>σ</sup> = Q</strong> (§05 Steps 3–9.
+        The tools are the reduction map via primitive coordinates and its compatibility with Galois (§04), and
+        that E[m] maps injectively under reduction when there is good reduction and v ∤ m).
+        Moreover this argument doesn't use E[m] ⊂ E(K).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise J4 ─ the machines of N0 and N1</div>
+      <p>
+        Rules for computing with cocycles (N0 §03: in particular c<sub>e</sub> = 0 = Step 3), descent of continuous cocycles (N0 §04),
+        the six-term sequence (N0 §07), the Kummer exact sequence for elliptic curves and δ = κ (N1 §07–§08).
+        Notation as in N0 R1–R3 (right action, additive).
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>Constructing inf and res (gap ①)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><strong>Constructing res:</strong> for a closed subgroup H ≤ G, the restriction res : H¹(G, M) → H¹(H, M), [c] ↦ [c|<sub>H</sub>] is a well-defined group homomorphism.</p>
+        <p class="ps-why"><b>▸ Reason</b>  M is a discrete H-module by restricting the action (stabilizers are open in H too: intersections with open sets). c|<sub>H</sub> is a cocycle: the condition c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> holds in particular for pairs σ, τ ∈ H. Continuity: the restriction of a continuous map is continuous. The restriction of a coboundary is a coboundary (the same m works), so it's well defined as a map on classes. Homomorphism: restriction commutes with pointwise sums. Note that <strong>normality is used nowhere</strong> (a check needed for using it with inertia groups in §06).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p><strong>Constructing inf:</strong> for an open normal subgroup N ⊴ G, the pullback inf : H¹(G/N, M<sup>N</sup>) → H¹(G, M), (inf c̄)<sub>σ</sub> := c̄<sub>σN</sub> is a well-defined group homomorphism.</p>
+        <p class="ps-why"><b>▸ Reason</b>  That M<sup>N</sup> is a G/N-module was checked in N0 Step 9 (normality). Cocycle condition: (inf c̄)<sub>στ</sub> = c̄<sub>(σN)(τN)</sub> = (c̄<sub>σN</sub>)<sup>τN</sup> + c̄<sub>τN</sub> = ((inf c̄)<sub>σ</sub>)<sup>τ</sup> + (inf c̄)<sub>τ</sub> (just unwinding the definition m<sup>σN</sup> = m<sup>σ</sup> of the G/N action on M<sup>N</sup>). Continuity: inf c̄ is constant on each coset σN (an open set), i.e. locally constant. It preserves coboundaries: the pullback of c̄<sub>σN</sub> = m<sup>σN</sup> − m (m ∈ M<sup>N</sup>) is σ ↦ m<sup>σ</sup> − m, the G-coboundary of the same m. Homomorphism: pointwise.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>res ∘ inf = 0 (the composition vanishes ── half of the "⊇ side" of the exact sequence).</p>
+        <p class="ps-why"><b>▸ Reason</b>  For η ∈ N, (inf c̄)<sub>η</sub> = c̄<sub>ηN</sub> = c̄<sub>eN</sub> = 0. The last equality is "cocycles vanish at the identity" (N0 Step 3 applied to the quotient group G/N). That is, the restriction is not just a coboundary but <strong>the zero map itself</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Main</div>
+    <h2>The inf–res exact sequence (gap ②)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (inflation–restriction) <span class="refchip">AEC B.2.4</span></div>
+      <p>If G is a profinite group, N ⊴ G an open normal subgroup and M a discrete G-module, the following is exact:</p>
+      <div class="formula">
+        <div class="fline">0 → H¹(G/N, M<sup>N</sup>) →<sup>inf</sup> H¹(G, M) →<sup>res</sup> H¹(N, M)</div>
+      </div>
+      <p>(In Galois language with N = G<sub><span class="ov">K</span>/L</sub>: 0 → H¹(G<sub>L/K</sub>, M<sup>G<sub><span class="ov">K</span>/L</sub></sup>) → H¹(G<sub><span class="ov">K</span>/K</sub>, M) → H¹(G<sub><span class="ov">K</span>/L</sub>, M).)</p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p><strong>Injectivity of inf</strong> (exact at the left end).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Suppose inf c̄ is a coboundary of G, i.e. c̄<sub>σN</sub> = m<sup>σ</sup> − m (∀σ, for some m ∈ M). Plugging in η ∈ N, the left side is c̄<sub>eN</sub> = 0 (Step 3), so m<sup>η</sup> = m (∀η ∈ N), i.e. <strong>m ∈ M<sup>N</sup></strong>. Then σN ↦ m<sup>σN</sup> − m is the G/N-coboundary defined by the element m of M<sup>N</sup>, and it equals c̄. So [c̄] = 0.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p><strong>ker res ⊆ im inf</strong> (exact in the middle; the other direction is Step 3).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Suppose res[c] = 0: for some m ∈ M, c<sub>η</sub> = m<sup>η</sup> − m (∀η ∈ N). Setting c′ := c − (the coboundary of m), [c′] = [c] and <strong>c′|<sub>N</sub> = 0</strong>. We now examine c′. (a) <strong>Constant on left cosets</strong>: for η ∈ N, σ ∈ G, using the cocycle condition in the order (η, σ), c′<sub>ησ</sub> = (c′<sub>η</sub>)<sup>σ</sup> + c′<sub>σ</sub> = c′<sub>σ</sub>. (b) <strong>Values lie in M<sup>N</sup></strong>: using it in the order (σ, η), c′<sub>ση</sub> = (c′<sub>σ</sub>)<sup>η</sup> + c′<sub>η</sub> = (c′<sub>σ</sub>)<sup>η</sup>. On the other hand, by normality of N, ση ∈ σN = Nσ, so by (a) c′<sub>ση</sub> = c′<sub>σ</sub>. Equating, (c′<sub>σ</sub>)<sup>η</sup> = c′<sub>σ</sub> (∀η ∈ N). (c) By (a)(b), c̄<sub>σN</sub> := c′<sub>σ</sub> is a well-defined map G/N → M<sup>N</sup>, and the cocycle condition descends from that of c′ (the same check as N0 Step 9). Continuity: c′ is continuous (a difference of a continuous cocycle and a continuous coboundary), and G/N is finite discrete (N is open), so c̄ is automatically continuous. (d) By definition inf c̄ = c′. So [c] = [c′] = inf[c̄]. ∎</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>Returning the favor to N0 §04: this proves that "the union H¹<sub>cont</sub>(G, M) = ⋃<sub>U</sub> inf(H¹(G/U, M<sup>U</sup>)) <strong>increases without overlap</strong>".</p>
+        <p class="ps-why"><b>▸ Reason</b>  The homework announced in N0 §04's why box, "that inf is injective at the level of classes is a consequence of N3". The injectivity in Step 4 is what it contains. The compatibility of the two-stage inf for U ⊆ U′ (transitivity of inf) is just lining up the composed definitions c̄<sub>σU</sub> = c̄̄<sub>σU′</sub>, and that the values don't change when passing through an intermediate quotient also follows from the definitions.</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? What does this exact sequence compare with what?</div>
+      <p>
+        inf–res is <strong>a bridge between "information at the finite stage G/N" and "information at the infinite stage G"</strong>.
+        Injectivity at the left end says "classes that differ at the finite stage differ at the infinite stage too", and exactness in the middle says
+        "if a class at the infinite stage vanishes on N, it actually comes from the finite stage".
+        The reason Part 2 (hand computations in the finite group G<sub>L/K</sub>) and Part 3 (general theory with the absolute Galois group)
+        can go back and forth is condensed into these two claims.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>What the reduction lemma really is ─ checking the commutative diagram (gap ③)</h2>
+
+    <p>
+      Fix the setting of §05 in the main part: L/K a finite Galois extension, <strong>E[m] ⊂ E(L)</strong>,
+      N := G<sub><span class="ov">K</span>/L</sub> (open normal), G/N ≅ G<sub>L/K</sub>.
+      For M = E[m], M<sup>N</sup> = E[m] ∩ E(L) = E[m], so inf–res becomes
+    </p>
+    <div class="formula">
+      <div class="fline">0 → H¹(G<sub>L/K</sub>, E[m]) →<sup>inf</sup> H¹(G<sub><span class="ov">K</span>/K</sub>, E[m]) →<sup>res</sup> H¹(G<sub><span class="ov">K</span>/L</sub>, E[m])</div>
+    </div>
+    <p>
+      (the bottom row of the diagram in §05 of the main part). The top row is 0 → Φ → E(K)/mE(K) → E(L)/mE(L), with kernel Φ := ( E(K) ∩ mE(L) )/mE(K).
+      What we need to check is <strong>the commutativity of the two squares</strong>.
+    </p>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p><strong>The right square</strong>: res ∘ δ<sub>K</sub> = δ<sub>L</sub> ∘ (the natural map E(K)/mE(K) → E(L)/mE(L)).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Take P ∈ E(K) and choose one Q with [m]Q = P. A representative of δ<sub>K</sub>(P) is σ ↦ Q<sup>σ</sup> − Q (σ ∈ G<sub><span class="ov">K</span>/K</sub>), and its restriction to G<sub><span class="ov">K</span>/L</sub> is <strong>the same formula</strong> read for σ ∈ G<sub><span class="ov">K</span>/L</sub>. On the other hand, δ<sub>L</sub>(P), viewing P as an element of E(L), is also the same formula if we choose <strong>the same Q</strong> as the lift (the freedom of choice in N0 Step 13). The cocycles agree literally, so the classes agree.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>Constructing the left vertical arrow</strong>: if P ∈ E(K) ∩ mE(L), then δ<sub>K</sub>(P) ∈ ker res = im inf, and the explicit form of its preimage under inf is <strong>exactly Part 2's λ<sub>P</sub></strong>:</p>
+        <div class="formula"><div class="fline">λ<sub>P</sub> ∈ Z¹(G<sub>L/K</sub>, E[m]),  λ<sub>P</sub>(σ|<sub>L</sub>) = Q<sup>σ</sup> − Q  (Q ∈ E(L), [m]Q = P)</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  Since P ∈ mE(L), we can choose the lift Q <strong>inside E(L)</strong>. Then for σ ∈ G<sub><span class="ov">K</span>/L</sub>, Q<sup>σ</sup> = Q, so res δ<sub>K</sub>(P) = 0, and by exactness (Step 5) δ<sub>K</sub>(P) ∈ im inf. Moreover this representative cocycle has values Q<sup>σ</sup> − Q in E[m] (applying [m] gives P<sup>σ</sup> − P = O), and since Q's coordinates are elements of L, the action of σ is determined by its restriction σ|<sub>L</sub> alone (L/K is Galois, so Q<sup>σ</sup> ∈ E(L)). That is, it's well defined as a map on G<sub>L/K</sub>, and it agrees with the result of applying the construction of Step 5 (reading c′ coset by coset) to the present c. It's the same formula, symbol for symbol, as the λ<sub>P</sub> handmade in weakmw N0<span class="refchip">weakmw N0 §04 / AEC VIII.1.1.1</span>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p><strong>Checking the three-line proof of the reduction lemma</strong>: λ : Φ → H¹(G<sub>L/K</sub>, E[m]), P mod mE(K) ↦ [λ<sub>P</sub>] is a well-defined injection. The right side is a finite set. So Φ is finite.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Well-definedness and injectivity by diagram chasing: inf[λ<sub>P</sub>] = δ<sub>K</sub>(P) (Step 8), δ<sub>K</sub> is injective on E(K)/mE(K) (N1 Step 10), and inf is injective too (Step 4). So [λ<sub>P</sub>] = [λ<sub>P′</sub>] ⟺ δ<sub>K</sub>(P) = δ<sub>K</sub>(P′) ⟺ P ≡ P′ (mod mE(K)). Finiteness: G<sub>L/K</sub> and E[m] are both finite sets, so cocycles are among the maps from a finite set to a finite set, Z¹ ⊆ Map(G<sub>L/K</sub>, E[m]) is finite, and so is its quotient H¹. The finiteness of the kernel Φ, used in Part 2's reduction lemma (VIII.1.1.1) as "E(L)/mE(L) finite ⇒ E(K)/mE(K) finite", has been reproved in the language of cohomology.</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? What were Part 2's "hand computations" doing?</div>
+      <p>
+        The proof of injectivity of λ<sub>P</sub> in STEP 0 of Part 2 was carrying out "commutativity of the diagram + injectivity of inf + injectivity of δ", which we just saw,
+        all <strong>at once, with bare hands</strong>. The benefit of the general theory is division of labor:
+        injectivity splits into three parts, and each part (Step 4, N1 Step 10, Steps 7–8) can be reused in other situations.
+        "Unramified" from §06 on is exactly where that reuse happens.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>The conjugation lemma ─ "unramified" doesn't depend on the choice of extension (gap ④)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Definition (unramified cohomology classes, restated) <span class="refchip">AEC VIII §2</span></div>
+      <p>
+        Let v be a finite place of K, v̄ an extension, and I<sub>v̄/v</sub> ⊂ G its inertia group (J2; it's a closed subgroup, so the res of Step 1 can be used).
+        ξ ∈ H¹(G, M) is <strong>unramified at v</strong> if res<sub>I<sub>v̄/v</sub></sub>(ξ) = 0 ∈ H¹(I<sub>v̄/v</sub>, M).
+      </p>
+    </div>
+
+    <p>
+      It would be a problem if this definition depended on v̄. By J2 the inertia group of another extension is the conjugate σ<sup>−1</sup> I<sub>v̄/v</sub> σ,
+      so the following lemma is all there is to "it doesn't depend".
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (the conjugation lemma) <span class="refchip">the content of AEC X.4.1.1 / Exercise B.6</span></div>
+      <p>
+        Let c ∈ Z¹(G, M), H ≤ G a closed subgroup, σ ∈ G.
+        If c|<sub>H</sub> is a coboundary of H, then c|<sub>σ⁻¹Hσ</sub> is a coboundary of σ<sup>−1</sup>Hσ too.
+        Moreover the "witness" can be written explicitly: if c<sub>η</sub> = m<sup>η</sup> − m (∀η ∈ H), then
+      </p>
+      <div class="formula">
+        <div class="fline">with n := m<sup>σ</sup> − c<sub>σ</sub>,  c<sub>τ</sub> = n<sup>τ</sup> − n  (∀τ ∈ σ<sup>−1</sup>Hσ)</div>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>Proof: expand στ = ησ in two ways.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Take τ ∈ σ<sup>−1</sup>Hσ and set η := στσ<sup>−1</sup> ∈ H, so στ = ησ. Write c<sub>στ</sub> in two ways with the cocycle condition: (1) c<sub>στ</sub> = (c<sub>σ</sub>)<sup>τ</sup> + c<sub>τ</sub>. (2) c<sub>ησ</sub> = (c<sub>η</sub>)<sup>σ</sup> + c<sub>σ</sub> = (m<sup>η</sup> − m)<sup>σ</sup> + c<sub>σ</sub> = m<sup>ησ</sup> − m<sup>σ</sup> + c<sub>σ</sub> (the assumption and R1(i)(ii)). Equating and rearranging, c<sub>τ</sub> = m<sup>ησ</sup> − m<sup>σ</sup> + c<sub>σ</sub> − (c<sub>σ</sub>)<sup>τ</sup>. On the other hand, for n := m<sup>σ</sup> − c<sub>σ</sub>, n<sup>τ</sup> − n = m<sup>στ</sup> − (c<sub>σ</sub>)<sup>τ</sup> − m<sup>σ</sup> + c<sub>σ</sub>. Since στ = ησ, m<sup>στ</sup> = m<sup>ησ</sup>, and the two expressions agree. ∎ (One can also go through the inverse formula c<sub>σ⁻¹</sub> = −(c<sub>σ</sub>)<sup>σ⁻¹</sup> of N0 Step 4, but the two-way expansion above is shorter.)</p>
+      </div>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">Corollary (well-definedness of unramifiedness)</div>
+      <p>
+        For ξ = [c] ∈ H¹(G, M) and two extensions v̄, v̄′ of v,
+        res<sub>I<sub>v̄/v</sub></sub>(ξ) = 0 ⟺ res<sub>I<sub>v̄′/v</sub></sub>(ξ) = 0.
+        Reason: by J2 there is σ with I<sub>v̄′/v</sub> = σ<sup>−1</sup> I<sub>v̄/v</sub> σ, and
+        the condition "the restriction is a coboundary" is transported in both directions by the conjugation lemma
+        (⟸ is the same lemma with σ replaced by σ<sup>−1</sup>).
+        So "ξ is unramified at v" is a notion independent of the extension, and the parenthetical in the definition box of §06 in the main part
+        (AEC X.4.1.1 / Exercise B.6) is now verified.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Reconstructing Proposition VIII.2.1 (gap ⑤)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Proposition <span class="refchip">AEC VIII.2.1</span></div>
+      <p>
+        Let S = {bad reduction} ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup>.
+        Every class in the image of δ : E(K)/mE(K) → H¹(G, E[m]) is unramified at every finite place v not in S.
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p><strong>Turning the claim into cocycles:</strong> what we must show is "for v ∉ S and σ ∈ I<sub>v̄/v</sub>, c<sub>σ</sub> = Q<sup>σ</sup> − Q = O". If we can say this, the restriction is not just a coboundary but <strong>the zero cocycle</strong>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  A representative of δ(P) is c<sub>σ</sub> = Q<sup>σ</sup> − Q ([m]Q = P, N1 Step 13). By the corollary of §06, it's enough to choose one extension v̄. "0 as a cocycle" ⇒ "0 as a class" is the trivial direction. Note that the definition (§06) only requires vanishing up to a coboundary, but here the strong form (identically O) holds.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p><strong>Connecting the parts from weakmw N2:</strong> if v ∉ S and σ ∈ I<sub>v̄/v</sub>, then Q<sup>σ</sup> = Q. So the proposition follows.</p>
+        <p class="ps-why"><b>▸ Reason</b>  This is exactly the content of the main theorem of weakmw N2 §05 Steps 3–9 cited in J3: Q<sup>σ</sup> − Q ∈ E[m] (applying [m] gives P<sup>σ</sup> − P = O); by Galois compatibility of the reduction map (weakmw N2 §04) and "elements of inertia induce the identity on the residue field", the reduction red(Q<sup>σ</sup> − Q) = Õ; and for v ∉ S (good reduction and v ∤ m) E[m] maps injectively under reduction, so Q<sup>σ</sup> − Q = O. Every link in this chain has been verified with zero leaps in weakmw N2, and the assumption E[m] ⊂ E(K) is used nowhere (confirming the parenthetical in the proof in §06 of the main part). ∎</p>
+      </div>
+    </div>
+
+    <p>With this, the "compressed form" in §06 of the main part is verified, with all its parts:</p>
+    <div class="formula">
+      <div class="fline">E(K)/mE(K) ↪ H¹(G<sub><span class="ov">K</span>/K</sub>, E[m]; S) := { ξ : unramified at every finite place outside S }</div>
+      <div class="fc" style="padding-top:6px;">Injectivity is N1 Step 10; that the image lands in the right side is this section; and that the right side is a subgroup is clear as an intersection of kernels, since res is a homomorphism (Step 1).</div>
+    </div>
+
+    <div class="box warn">
+      <div class="box-label">What this note does not prove (scope declaration)</div>
+      <p>
+        The <strong>finiteness</strong> of the right side H¹(G, E[m]; S) is not proved here.
+        As the main part says, "what's inside is the argument of STEP 3 in Part 2 itself", and formally
+        it is cited and proved as AEC X.4.3 in Part 5 (Main V, Selmer and Ш)<span class="refchip">AEC X.4.3</span>.
+        On the weakmw side, its substance was weakmw N3 (the Kummer correspondence, finiteness of the class number, S-units).
+        In other words, the proof of finiteness <strong>already exists elsewhere in this series</strong> ── there's no new gap to add here.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>Laying the groundwork for Selmer groups ─ the language of local conditions (gap ⑥)</h2>
+
+    <p>
+      Looking back, all the tools built in this note serve a single pattern:
+      "<strong>restrict a global class to a local subgroup and impose a condition</strong>":
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Tool</th><th>Role</th><th>Proof in this note</th></tr></thead>
+      <tbody>
+        <tr><td class="m">res : H¹(G, M) → H¹(H, M)</td><td>A device to "impose" local conditions (H = I<sub>v̄</sub>, D<sub>v̄</sub>, G<sub><span class="ov">K</span>/L</sub>…)</td><td class="m">Step 1</td></tr>
+        <tr><td class="m">Conjugation lemma</td><td>Guarantees the condition depends only on "the place v" (not on the choice of extension)</td><td class="m">Step 10</td></tr>
+        <tr><td class="m">inf–res exact sequence</td><td>A device that pins down the "origin" of classes satisfying the condition at a finite stage</td><td class="m">Step 4–5</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      Selmer groups (Main V) are a refinement of this pattern. "Unramified" was a condition imposed by restricting to <strong>the inertia group I<sub>v</sub></strong>, while
+      Selmer groups impose it by restricting to <strong>the whole decomposition group G<sub>v</sub></strong>:
+    </p>
+    <div class="formula">
+      <div class="fline">S<sup>(m)</sup>(E/K) = { ξ ∈ H¹(G, E[m]) : for all v, res<sub>G<sub>v</sub></sub>(ξ) comes from local points E(K<sub>v</sub>)/mE(K<sub>v</sub>) }</div>
+      <div class="fline fc">"unramified" = vanishes on inertia  ⊂  "locally solvable" = lies in the image of δ at the level of decomposition groups (precise definitions and comparison in Main V §03–§04)</div>
+    </div>
+    <p>
+      The relation between the two conditions (for almost all v, "locally solvable ⇒ unramified", and with corrections at finitely many v the Selmer group fits into
+      the finite box H¹(G, E[m]; S)) is the skeleton of the finiteness proof in Main V (AEC X.4.2–X.4.3).
+      The homomorphism property of res, conjugation well-definedness and inf–res are used there <strong>without comment</strong> ──
+      and this note has justified that lack of comment.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">▸ The starting point of the bridge to the selmer series</div>
+      <p>
+        Main V (selmer.html) doesn't have between-the-lines notes yet. The first candidate when making them is
+        "comparing local conditions (unramified vs locally solvable) and the finiteness of X.4.2–X.4.3", and
+        its prerequisites are all in place in Steps 1, 4–5 and 10 of this page and in weakmw N3 (the substance of finiteness).
+        In other words, <strong>between-the-lines notes for the selmer series can start by connecting from this §08</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 9 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09</div>
+    <h2>Correspondence with the main part</h2>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Statement in the main part</th><th>Proof in this note</th></tr></thead>
+      <tbody>
+        <tr><td>§05 "Theorem (inflation–restriction) AEC B.2.4"</td><td class="m">Step 1–5</td></tr>
+        <tr><td>§05 diagram "the vertical arrows are injections coming from the Kummer exact sequence. The leftmost λ : P ↦ [λ<sub>P</sub>] is exactly the map handmade in Part 2"</td><td class="m">Step 7–9</td></tr>
+        <tr><td>§05 "the proof of the reduction lemma takes three lines"</td><td class="m">Step 9</td></tr>
+        <tr><td>§05 go-on box "the proof itself is a formal cocycle computation (Exercise 4)"</td><td class="m">Steps 3–5 (complete solution to Problem 4)</td></tr>
+        <tr><td>Parenthetical in the §06 definition "doesn't depend on the choice of extension (AEC X.4.1.1 / Exercise B.6)"</td><td class="m">Step 10 + the §06 corollary</td></tr>
+        <tr><td>§06 "Proposition AEC VIII.2.1" and the parenthetical in its proof (E[m] ⊂ E(K) not used)</td><td class="m">Step 11–12</td></tr>
+        <tr><td>§06 "the right side is finite (X.4.3, formally proved in Part 5)"</td><td class="m">§07 scope declaration (stating where the proof lives)</td></tr>
+        <tr><td>N0 §04 why box "that inf is… injective is a consequence of N3"</td><td class="m">Step 6</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">▸ The between-the-lines notes on the Kummer pairing are now complete</div>
+      <p>
+        With N0 (assembling the machine) → N1 (connecting to E) → N2 (connecting to the multiplicative group) → N3 (comparison with finite stages and local conditions),
+        every gap in §02–§07 of Main III now has two layers.
+        The next real fight is Main V (Selmer and Ш) ── §08 of this page is the entrance.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/kummer.html#s5">
+      <div class="p-dir">← Main part</div>
+      <div class="p-title">What the reduction lemma really is ─ inflation–restriction (back to §05)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/selmer.html">
+      <div class="p-dir">NEXT ─ to the real fight</div>
+      <div class="p-title">Main V Selmer and Ш →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the Kummer pairing and Galois cohomology) N3/N3</p>
+    <p>Based on: J.H. Silverman, AEC 2nd ed., GTM 106 ─ App. B.2.4, Ch. VIII §2, Ch. X §4 / J. Neukirch, ANT ─ I §9, II §9</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

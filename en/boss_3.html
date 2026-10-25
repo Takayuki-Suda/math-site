@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 3 The Wall of ε-δ | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Wall of ε-δ&quot; boss battle challenges your understanding of limits and ε-δ. A test at the gateway from high-school to university math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 3 The Wall of ε-δ | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Wall of ε-δ&quot; boss battle challenges your understanding of limits and ε-δ. A test at the gateway from high-school to university math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_3.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_3.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_3.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_3.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_3.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ── 問題ジェネレータ（毎回 数値をランダム生成＝実質無限）── */
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick, shuf=BossBattle.shuf;
+var SUP={0:'⁰',1:'',2:'²',3:'³',4:'⁴',5:'⁵',6:'⁶'};
+function powTerm(co,e){ if(e===0) return ''+co; if(e===1) return (co===1?'x':co+'x'); return (co===1?'x':co+'x')+SUP[e]; }
+function gQuad(){ var r1=ri(-6,6), r2=ri(-6,6), sum=r1+r2, prod=r1*r2, b=-sum;
+  var xt=b===0?'':(b>0?' + '+b+'x':' − '+(-b)+'x');
+  var ct=prod===0?'':(prod>0?' + '+prod:' − '+(-prod));
+  return {q:'x²'+xt+ct+' = 0. Solutions?',
+    c:opts('x = '+r1+', '+r2,['x = '+(-r1)+', '+(-r2),'x = '+r1+', '+(-r2),'x = '+(r1+1)+', '+(r2-1)]), a:0,
+    exp:'Two numbers that add to '+sum+' and multiply to '+prod+': '+r1+' and '+r2+'.'}; }
+function gTrig(){ var d=pick([30,45,60]), fn=pick(['sin','cos','tan']);
+  var T={30:{sin:'1/2',cos:'√3/2',tan:'1/√3'},45:{sin:'1/√2',cos:'1/√2',tan:'1'},60:{sin:'√3/2',cos:'1/2',tan:'√3'}};
+  var ans=T[d][fn], pv=shuf(['1/2','√3/2','1/√2','√3','1/√3','1'].filter(function(v){return v!==ans;}));
+  return {q:fn+' '+d+'° = ?', c:opts(ans,[pv[0],pv[1],pv[2]]), a:0,
+    exp:'Know the trig ratios for 30°, 45°, 60°. '+fn+' '+d+'° = '+ans+'.'}; }
+function gSeq(){ var a1=ri(1,9), d=ri(2,6), n=ri(4,9), an=a1+(n-1)*d;
+  return {q:'Arithmetic sequence: first term '+a1+', common difference '+d+'. What is term #'+n+'?',
+    c:opts(an,[an+d,an-d,a1+n*d,a1*n]), a:0,
+    exp:'aₙ = a₁ + (n−1)d = '+a1+' + '+(n-1)+'×'+d+' = '+an+'.'}; }
+function gSeqSum(){ var a1=ri(1,6), d=ri(1,5), n=2*ri(2,4), an=a1+(n-1)*d, S=n*(a1+an)/2;
+  return {q:'Arithmetic sequence: first term '+a1+', common difference '+d+', number of terms '+n+'. What is the sum?',
+    c:opts(S,[S+n,S-n,n*an,an]), a:0,
+    exp:'Sₙ = n(a₁+aₙ)/2 = '+n+'×('+a1+'+'+an+')/2 = '+S+'.'}; }
+function gDiff(){ var a=ri(1,5), b=ri(1,6), x=ri(1,5), fp=2*a*x+b;
+  return {q:'f(x) = '+a+'x² + '+b+'x. f′('+x+') = ?',
+    c:opts(fp,[fp+1,fp-1,a*x+b,2*a*x]), a:0,
+    exp:'f′(x) = '+(2*a)+'x + '+b+'. x = '+x+' substituted gives '+fp+'.'}; }
+function gDiffPow(){ var n=ri(2,5), a=ri(1,4);
+  return {q:'(d/dx) '+powTerm(a,n)+' = ?',
+    c:opts(powTerm(a*n,n-1),[powTerm(a,n-1),powTerm(a*n,n),powTerm(a*(n-1),n-1)]), a:0,
+    exp:powTerm(1,n)+' differentiates to '+powTerm(n,n-1)+'. Multiply by the coefficient '+a+': '+powTerm(a*n,n-1)+'.'}; }
+
+BossBattle({
+  no:3,
+  name:'The Wall of ε-δ',
+  sub:'The border between high school and university',
+  kids:false,
+  intro:[
+    'Intuition no longer works.',
+    'Rigor is required.',
+    '── What does "getting arbitrarily close" really mean? The guardian\'s eyes demand an answer.'
+  ],
+  theme:{main:'#9b59b6',glow:'rgba(155,89,182,.45)',dark:'#1c0f2a',icon:'👁️'},
+  fleeHref:'/math-site/en/ko/map.html',
+  enterFlag:'dai',
+  /* 第一形態：二次方程式・三角比・微分の入口（数値は毎回ランダム）*/
+  questions:[
+    gQuad, gTrig, gDiff, gSeq,
+    {q:'lim<sub>x→2</sub> x² = ?', c:['4','2','0','∞'], a:0,
+     exp:'x² is continuous at x = 2, so just substitute: 4.'},
+    {q:'Solutions of x² − 5x = 0?', c:['x = 0, 5','x = 5 only','x = 0 only','x = ±√5'], a:0,
+     exp:'x(x−5)=0. Dividing both sides by x loses the solution x=0.'},
+    {q:'sin²θ + cos²θ = ?', c:['1','0','2','tan θ'], a:0,
+     exp:'The basic trig identity. It follows from the coordinates of a point on the unit circle.'},
+    gSeqSum
+  ],
+  /* 第二形態：数列・微分・極限 */
+  questions2:[
+    gSeqSum, gDiffPow, gQuad, gTrig, gDiff,
+    {q:'lim<sub>n→∞</sub> 1/n = ?', c:['0','1','∞','does not exist'], a:0,
+     exp:'As n grows, 1/n gets as close to 0 as you like. The limit is 0.'},
+    {q:'lim<sub>x→0</sub> sin x / x = ?', c:['1','0','∞','−1'], a:0,
+     exp:'A super-important limit at the foundation of calculus. For small x, sin x ≈ x.'},
+    {q:'What is the 4th term of the geometric sequence 2, 6, 18, …?', c:['54','24','36','72'], a:0,
+     exp:'Common ratio 3. 18×3 = 54.'},
+    {q:'What is the derivative of f(x) = x³?', c:['3x²','x²','3x','x⁴/4'], a:0,
+     exp:'The derivative of xⁿ is n x^(n−1).'}
+  ],
+  /* 最終形態：ε-δ の論理・二次の応用 */
+  questions3:[
+    gQuad, gDiff,
+    {q:'lim<sub>x→1</sub> (x² − 1)/(x − 1) = ?', c:['2','0','1','does not exist'], a:0,
+     exp:'Cancel to get x+1 → 2. 0/0 is an "indeterminate form". Rewrite the expression to reveal what it really is.'},
+    {q:'In the ε-δ argument, which is given first?', c:['ε (the error is specified first)','δ (you choose it first)','both at the same time','either is fine'], a:0,
+     exp:'Whatever ε you\'re given, you find a δ to match it and hand it back. This order is the definition itself.'},
+    {q:'lim<sub>x→∞</sub> (1 + 1/x)<sup>x</sup> = ?', c:['e','1','∞','0'], a:0,
+     exp:'The definition of e = 2.718…, the base of the natural logarithm.'},
+    {q:'What is the limit of the sequence aₙ = (−1)ⁿ?', c:['does not exist','0','1','−1'], a:0,
+     exp:'It goes back and forth between 1 and −1 and doesn\'t converge. Oscillation = divergence.'},
+    {q:'Solutions of x² − 2x − 8 = 0?', c:['x = 4, −2','x = −4, 2','x = 8, −1','x = 2, 4'], a:0,
+     exp:'(x−4)(x+2)=0. Look for two numbers that multiply to −8 and add to −2.'},
+    {q:'lim<sub>x→0</sub> (e<sup>x</sup> − 1)/x = ?', c:['1','0','e','∞'], a:0,
+     exp:'This is exactly the definition of the derivative of e^x at x=0. The answer is 1.'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+8;
+    var dmg=1-S.hpRatio;
+    var hurtC=S.hurt>0.3;
+
+    /* 同心円（近傍）パルス */
+    ctx.save();
+    for(var i=0;i<4;i++){
+      var ph=(t*0.5+i*0.25)%1;
+      var rr=40+ph*150;
+      ctx.strokeStyle='rgba(155,89,182,'+(0.35*(1-ph))+')';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke();
+    }
+    ctx.restore();
+
+    /* 中央の巨大な眼 */
+    var look=Math.sin(t*0.7)*10;
+    var blink=(Math.sin(t*0.62)>0.95)?0.12:1;
+    ctx.save();
+    ctx.shadowColor=hurtC?'rgba(255,120,120,.9)':'rgba(155,89,182,.8)'; ctx.shadowBlur=30;
+    /* 白目 */
+    ctx.fillStyle=hurtC?'#ffd9d4':'#e8defc';
+    ctx.beginPath(); ctx.ellipse(cx,cy,86,52*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    /* 縁 */
+    ctx.strokeStyle=hurtC?'#ff8a75':'#7a3fa0'; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.ellipse(cx,cy,86,52*blink,0,0,Math.PI*2); ctx.stroke();
+    if(blink>0.5){
+      /* 虹彩 */
+      var ig=ctx.createRadialGradient(cx+look,cy,4,cx+look,cy,30);
+      ig.addColorStop(0,'#2a0f3a'); ig.addColorStop(0.55,hurtC?'#c0392b':'#8e44ad'); ig.addColorStop(1,'#3a1452');
+      ctx.fillStyle=ig;
+      ctx.beginPath(); ctx.arc(cx+look,cy,30,0,Math.PI*2); ctx.fill();
+      /* 瞳孔：縦に細い */
+      ctx.fillStyle='#0d0418';
+      ctx.beginPath(); ctx.ellipse(cx+look,cy,8,22,0,0,Math.PI*2); ctx.fill();
+      /* ハイライト */
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.beginPath(); ctx.arc(cx+look-9,cy-12,5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* 周回する ε と δ */
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var orbs=[
+      {ch:'ε', phase:0,        rx:185, ry:95,  size:74, col:'#d59bf0'},
+      {ch:'δ', phase:Math.PI,  rx:185, ry:95,  size:74, col:'#9bd0f0'}
+    ];
+    orbs.forEach(function(o){
+      var ang=t*0.9+o.phase;
+      var ox=cx+Math.cos(ang)*o.rx;
+      var oy=cy+Math.sin(ang)*o.ry;
+      var front=Math.sin(ang)>0;
+      var sc=front?1:0.78;
+      ctx.save();
+      ctx.globalAlpha=front?1:0.55;
+      ctx.shadowColor=o.col; ctx.shadowBlur=24;
+      ctx.fillStyle=hurtC?'#ffb3a8':o.col;
+      ctx.font='900 '+(o.size*sc)+'px Georgia,serif';
+      ctx.fillText(o.ch,ox,oy);
+      ctx.restore();
+    });
+
+    /* ダメージで眼の周囲に亀裂のような数式の乱れ */
+    if(dmg>0.4){
+      ctx.save();
+      ctx.strokeStyle='rgba(255,150,170,'+(dmg*0.5)+')';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx-86,cy-20); ctx.lineTo(cx-130,cy-50); ctx.lineTo(cx-120,cy-90); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+86,cy+10); ctx.lineTo(cx+135,cy+40); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* 下部に漂う定義の文 */
+    var defAlpha=0.35+0.25*Math.sin(t*1.4);
+    ctx.save();
+    ctx.fillStyle='rgba(213,155,240,'+defAlpha+')';
+    ctx.font='italic 700 19px Georgia,serif';
+    ctx.fillText('∀ε>0, ∃δ>0 : 0<|x−a|<δ ⇒ |f(x)−L|<ε', cx, H-26);
+    ctx.restore();
+  },
+  victory:{
+    xp:400,
+    msg:'If you\'re trying to climb this wall, you\'re the real deal.<br>University math is fascinating. — Mr. Suda',
+    cta:null,
+    doorHref:'/math-site/en/dai/map.html',
+    doorName:'University Field',
+    note:'The guardian steps aside ── the door to the university zone opens…'
+  }
+});
+})();
+</script>
+</body>
+</html>

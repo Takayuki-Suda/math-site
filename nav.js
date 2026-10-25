@@ -51,10 +51,34 @@
     if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
+  /* ── 言語切替（日本語 ⇄ English）──
+     英語版は /math-site/en/ 以下に同じ構成で置いてある。
+     ラベルはUnicodeエスケープ（英語版ビルドの翻訳対象にしないため）。 */
+  function injectLangSwitch(nav){
+    var list=nav.querySelector('.site-nav__list');
+    if(!list || nav.querySelector('.site-nav__item--lang')) return;
+    var p=location.pathname, en='/math-site/en/', base=en.slice(0,-3); /* 英語版ビルドのパス書き換えを受けない書き方 */
+    var isEn=p.indexOf(en)===0, href;
+    if(isEn){ href=base+p.slice(en.length); }
+    else if(p.indexOf(base)===0){ href=en+p.slice(base.length); }
+    else return;
+    var li=document.createElement('li');
+    li.className='site-nav__item site-nav__item--lang';
+    var a=document.createElement('a');
+    a.className='site-nav__link';
+    a.href=href+location.hash;
+    a.setAttribute('hreflang', isEn?'ja':'en');
+    a.setAttribute('lang', isEn?'ja':'en');
+    a.textContent=isEn?'日本語':'English';
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+
   function init(){
     var nav=document.querySelector('.site-nav');
     if(!nav) return;
     injectGradMenu(nav);
+    injectLangSwitch(nav);
     injectCSS();
 
     /* 固定パネルの位置（ナビの高さ）をCSS変数に反映 */

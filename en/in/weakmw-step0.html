@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N0: A Complete Proof of the Reduction Lemma ─ Weak Mordell–Weil | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N0, completely proving, without leaps, the reduction lemma used in the proof of the weak Mordell–Weil theorem. A close reading of graduate math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N0: A Complete Proof of the Reduction Lemma ─ Weak Mordell–Weil | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N0, completely proving, without leaps, the reduction lemma used in the proof of the weak Mordell–Weil theorem. A close reading of graduate math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/weakmw-step0.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Φ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step0.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/weakmw-step0.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/weakmw-step0.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/weakmw-step0.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Weak Mordell–Weil N0/N3</div>
+    <h1>A complete proof of the reduction lemma<br><span class="en">Reduction Lemma, with every step justified</span></h1>
+    <p class="hero-sub">
+      "We may assume E[m] ⊂ E(K)" ── we rebuild this one line of STEP 0 in the main part with zero leaps.
+      We first fix the premises we use with numbers, and make the "claim" and "reason" explicit for every step of the proof.
+      If the main part is a map, this note is a survey chart drawn down to the contour lines.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.1.1.1 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/weakmw.html">Main II Weak MW</a>
+      <a class="cur" href="/math-site/en/in/weakmw-step0.html">N0 Reduction lemma</a>
+      <a href="/math-site/en/in/weakmw-step1.html">N1 Kummer pairing</a>
+      <a href="/math-site/en/in/weakmw-step2.html">N2 Unramifiedness</a>
+      <a href="/math-site/en/in/weakmw-step3.html">N3 Finiteness from field theory</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <p>
+      The proof of STEP 0 in the main part is a correct blueprint, but in the following six places it relied on the reader filling things in mentally.
+      This note puts all of them on paper.
+    </p>
+    <ul>
+      <li>① <strong>Why</strong> "the natural map E(K)/mE(K) → E(L)/mE(L)" is well defined</li>
+      <li>② <strong>The set-theoretically precise form</strong> of the phrase "finite because it's squeezed between finite groups" (the first isomorphism theorem)</li>
+      <li>③ Making explicit the <strong>double choice</strong> needed to construct λ<sub>P</sub> (a coset representative, and its m-division point)</li>
+      <li>④ "A Galois-invariant point is K-rational" ── a precise proof going back to <strong>the relation between equality of points and equality of coordinates</strong></li>
+      <li>⑤ <strong>The reason</strong> [m] commutes with the Galois action (used implicitly three times in the proof)</li>
+      <li>⑥ A <strong>complete proof</strong> that "K(E[m])/K is a finite Galois extension", used in the corollary</li>
+    </ul>
+    <p>
+      Plan: first, in Section 02, we fix the premises as P1–P5. In the proof that follows,
+      we proceed while checking that every step follows only from "P1–P5, steps already shown, or pure computation".
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (P1–P5)</h2>
+    <p>
+      Only the things listed here are imported from outside. Each one's source is stated.
+      Put the other way, the proof that follows uses no "magic" beyond these.
+    </p>
+
+    <div class="box dfn">
+      <div class="box-label">Premise P1 ─ group structure of the point set <span class="refchip">AEC III.2.2 / III.3.6</span></div>
+      <p>
+        E(<span class="ov">K</span>) is an abelian group with identity O = [0:1:0], and
+        addition and inverses are given by <strong>morphisms with coefficients in K</strong>.
+        For an intermediate field K ⊂ F ⊂ <span class="ov">K</span>, E(F) is a subgroup.
+        [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) is repeated addition, so it's a group homomorphism.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise P2 ─ commutativity of the Galois action with addition</div>
+      <p>
+        σ ∈ G<sub><span class="ov">K</span>/K</sub> acts on E(<span class="ov">K</span>) by P = (x, y) ↦ P<sup>σ</sup> = (x<sup>σ</sup>, y<sup>σ</sup>), O<sup>σ</sup> = O, and
+      </p>
+      <div class="formula"><div class="fline">(P + Q)<sup>σ</sup> = P<sup>σ</sup> + Q<sup>σ</sup>,  (−P)<sup>σ</sup> = −P<sup>σ</sup>,  hence ([m]P)<sup>σ</sup> = [m](P<sup>σ</sup>)</div></div>
+      <p>
+        hold. Also, if P ∈ E(K) then P<sup>σ</sup> = P (its coordinates are in K, and σ fixes K).
+      </p>
+      <details class="sol">
+        <summary>Why they commute (open the proof)</summary>
+        <div class="sol-body">
+          <p>
+            The coordinates of the sum P + Q can be written as <strong>rational functions with coefficients in K</strong> of the coordinates of P and Q (the chord-and-tangent formulas: AEC III.2.3).
+            σ is a field homomorphism fixing K, so for a rational function f with coefficients in K, f(x₁,…)<sup>σ</sup> = f(x₁<sup>σ</sup>,…).
+            So the coordinates of (P+Q)<sup>σ</sup> = the addition formula passed through σ = the coordinates of P<sup>σ</sup> + Q<sup>σ</sup>.
+            The special cases (P = ±Q, cases involving O) work the same way since O = [0:1:0] is K-rational.
+            ([m]P)<sup>σ</sup> = [m](P<sup>σ</sup>) is just applying (P+Q)<sup>σ</sup> = P<sup>σ</sup>+Q<sup>σ</sup> m−1 times.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise P3 ─ Galois-invariant points are points over the lower field</div>
+      <p>
+        If M/F is a (finite or infinite) Galois extension, then E(M)<sup>G<sub>M/F</sub></sup> = E(F).
+      </p>
+      <details class="sol">
+        <summary>Open the proof (gap ④)</summary>
+        <div class="sol-body">
+          <p>
+            ⊇ is the last claim of P2. We show ⊆. Suppose P ∈ E(M) satisfies P<sup>σ</sup> = P for all σ.
+            If P = O, then O ∈ E(F) and we're done. If P ≠ O, P has affine coordinates (x, y), and
+            <strong>affine coordinates represent a point uniquely</strong>, so from "P<sup>σ</sup> = P as points"
+            follows "x<sup>σ</sup> = x and y<sup>σ</sup> = y as coordinates" (this is gap ④: with projective coordinates we could only say the ratios agree, but
+            the pair of affine coordinates is unique).
+            So x, y ∈ M<sup>G<sub>M/F</sub></sup> = F. The last equality is the fundamental theorem of Galois theory
+            (even in the infinite case, "the fixed field of a Galois extension is the base field" holds: field theory). Hence P ∈ E(F).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise P4 ─ the number of m-torsion points <span class="refchip">AEC III.6.2(d)</span></div>
+      <p>
+        When char K = 0, E[m] := ker( [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>) ) ≅ (ℤ/mℤ)².
+        In particular #E[m] = m², and E[m] is a finite subgroup of E(<span class="ov">K</span>).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise P5 ─ a standard fact of group theory (the first isomorphism theorem)</div>
+      <p>
+        If φ : A → B is a group homomorphism with N = ker φ, then A/N ≅ im φ.
+        So A splits into |im φ| cosets of N, and
+        if N and im φ are both finite, |A| = |N|·|im φ| and A is finite too.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The statement and the design of the proof</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (the reduction lemma) <span class="refchip">AEC VIII.1.1.1</span></div>
+      <p>
+        Let L/K be a finite Galois extension. If E(L)/mE(L) is finite, then E(K)/mE(K) is finite too.
+      </p>
+    </div>
+
+    <p>
+      Design: send the kernel Φ of the restriction map E(K)/mE(K) → E(L)/mE(L) injectively into the finite set
+      Map(G<sub>L/K</sub>, E[m]) (the set of <strong>all maps</strong> from G<sub>L/K</sub> to E[m]).
+      If the kernel and image are both finite, the whole thing is finite (P5) ── a two-stage approach.
+    </p>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Part 1</div>
+    <h2>Identifying the kernel Φ, and the precise form of the "squeeze"</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>mE(K) ⊆ mE(L). Hence the composite map E(K) ↪ E(L) ↠ E(L)/mE(L) sends the subgroup mE(K) to 0.</p>
+        <p class="ps-why"><b>▸ Reason</b>  An element of mE(K) has the form [m]R (R ∈ E(K)), and E(K) ⊆ E(L) (P1) gives R ∈ E(L), so [m]R ∈ mE(L).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>A group homomorphism φ : E(K)/mE(K) → E(L)/mE(L), φ(P mod mE(K)) = P mod mE(L), is induced and well defined.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The universal property of quotient groups: a homomorphism whose kernel contains mE(K) (Step 1) factors through the quotient E(K)/mE(K). This is what gap ① contains.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Φ := ker φ = ( E(K) ∩ mE(L) ) / mE(K).</p>
+        <p class="ps-why"><b>▸ Reason</b>  P mod mE(K) ∈ ker φ ⟺ P ∈ mE(L) (definition of φ) ⟺ P ∈ E(K) ∩ mE(L) (P was an element of E(K) to begin with).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>When E(L)/mE(L) is finite, <strong>if Φ is finite then E(K)/mE(K) is finite</strong>, and |E(K)/mE(K)| = |Φ|·|im φ| ≤ |Φ|·|E(L)/mE(L)|.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Apply P5 with A = E(K)/mE(K), N = Φ. im φ is a subset of the finite group E(L)/mE(L), so it's finite. This is the precise form of gap ②. From now on, the only goal is "Φ is finite".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Part 2</div>
+    <h2>Constructing the map λ ─ making the double choice explicit</h2>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>For each coset c ∈ Φ, choose one representative P<sub>c</sub> ∈ E(K) ∩ mE(L). Then choose one Q<sub>c</sub> ∈ E(L) with [m]Q<sub>c</sub> = P<sub>c</sub>. Fix these two choices from now on.</p>
+        <p class="ps-why"><b>▸ Reason</b>  A representative exists by the definition of cosets. Q<sub>c</sub> exists by the very definition of P<sub>c</sub> ∈ mE(L). This is gap ③: the argument from here on concerns the map c ↦ λ<sub>c</sub>, which depends on "the chosen P<sub>c</sub>, Q<sub>c</sub>", and the logic is complete with that (injectivity alone is enough for comparing cardinalities).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>Define λ<sub>c</sub> : G<sub>L/K</sub> → E(<span class="ov">K</span>) by λ<sub>c</sub>(σ) := Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Q<sub>c</sub> ∈ E(L), and G<sub>L/K</sub> acts on E(L) (P2 applied to L/K), so the right side makes sense.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>The values of λ<sub>c</sub> actually lie in E[m]. That is, λ<sub>c</sub> ∈ Map(G<sub>L/K</sub>, E[m]).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The following three-line computation. The reason for each equality is given on the right.</p>
+        <div class="formula">
+          <div class="fline">[m](Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub>) = [m](Q<sub>c</sub><sup>σ</sup>) − [m]Q<sub>c</sub> <span class="fc">← [m] is a homomorphism (P1)</span></div>
+          <div class="fline">　= ([m]Q<sub>c</sub>)<sup>σ</sup> − [m]Q<sub>c</sub> <span class="fc">← the action commutes with [m] (P2) = gap ⑤</span></div>
+          <div class="fline">　= P<sub>c</sub><sup>σ</sup> − P<sub>c</sub> = O <span class="fc">← P<sub>c</sub> ∈ E(K) and the last claim of P2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Part 3</div>
+    <h2>Injectivity and finiteness</h2>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>Injectivity:</strong> if λ<sub>c</sub> = λ<sub>c′</sub>, then c = c′. Below we break it into 8a–8d.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8a</div>
+      <div class="ps-b">
+        <p>By assumption, Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub> = Q<sub>c′</sub><sup>σ</sup> − Q<sub>c′</sub> for all σ ∈ G<sub>L/K</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  λ<sub>c</sub> = λ<sub>c′</sub> is equality as maps, i.e. agreement of values at every argument.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8b</div>
+      <div class="ps-b">
+        <p>Moving terms, (Q<sub>c</sub> − Q<sub>c′</sub>)<sup>σ</sup> = Q<sub>c</sub> − Q<sub>c′</sub> (∀σ ∈ G<sub>L/K</sub>).</p>
+        <p class="ps-why"><b>▸ Reason</b>  E(<span class="ov">K</span>) is an abelian group (P1), so terms can be moved freely. (A − B)<sup>σ</sup> = A<sup>σ</sup> − B<sup>σ</sup> is P2.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8c</div>
+      <div class="ps-b">
+        <p>Setting R := Q<sub>c</sub> − Q<sub>c′</sub>, R ∈ E(L) and it is G<sub>L/K</sub>-invariant. So R ∈ E(K).</p>
+        <p class="ps-why"><b>▸ Reason</b>  E(L) is a subgroup (P1), so the difference is also a point of E(L). Invariance is 8b. The conclusion is P3 applied with M = L, F = K (the assumption that L/K is Galois is used here).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8d</div>
+      <div class="ps-b">
+        <p>[m]R = P<sub>c</sub> − P<sub>c′</sub>. Since R ∈ E(K), P<sub>c</sub> − P<sub>c′</sub> ∈ mE(K), i.e. c = c′.</p>
+        <p class="ps-why"><b>▸ Reason</b>  [m]R = [m]Q<sub>c</sub> − [m]Q<sub>c′</sub> (P1: [m] is a homomorphism) = P<sub>c</sub> − P<sub>c′</sub> (the choice in Step 5). "c = c′" is the definition of equality in the quotient group E(K)/mE(K) (the difference lies in mE(K)).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>Map(G<sub>L/K</sub>, E[m]) is a finite set, of cardinality exactly (m²)<sup>[L:K]</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  |G<sub>L/K</sub>| = [L:K] &lt; ∞ (a finite Galois extension: field theory), #E[m] = m² (P4). There are |Y|<sup>|X|</sup> maps from a finite set X to a finite set Y.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>c ↦ λ<sub>c</sub> is an injection from Φ into Map(G<sub>L/K</sub>, E[m]) (Step 8). So |Φ| ≤ (m²)<sup>[L:K]</sup> &lt; ∞. Together with Step 4 this completes the proof of the lemma.</p>
+        <p class="ps-why"><b>▸ Reason</b>  With an injection, the cardinality is at most that of the codomain (set theory).</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">By-product: an explicit upper bound</div>
+      <div class="formula">
+        <div class="fline">|E(K)/mE(K)| ≤ m<sup>2[L:K]</sup> · |E(L)/mE(L)|</div>
+      </div>
+      <p>
+        Note that we get not only "it's finite" but a quantitative estimate too.
+        Explicit upper bounds for the Mordell–Weil rank (the supplement to STEP 3 of the main part) are built by stacking estimates of this kind.
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">What we didn't use (knowing the outline of the proof)</div>
+      <p>
+        <strong>Abelianness of G<sub>L/K</sub> is not needed</strong> (any finite Galois extension works).
+        <strong>Finiteness of L/K is used only in Step 9</strong>.
+        The assumption E[m] ⊂ E(K) is <strong>not used at all</strong> ── which is exactly why this lemma lets us
+        safely climb up to "the extension that makes E[m] rational".
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Corollary ─ we may assume E[m] ⊂ E(K)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Corollary</div>
+      <p>
+        Let L := K(E[m]) (the field obtained by adjoining to K the affine coordinates of all points of E[m]).
+        Then L/K is a finite Galois extension. Therefore, by the reduction lemma,
+        it is enough to prove the weak Mordell–Weil theorem in the case E[m] ⊂ E(K).
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>L/K is a finite extension.</p>
+        <p class="ps-why"><b>▸ Reason</b>  E[m] is a finite set (P4: m² points), and the coordinates of each point are elements of <span class="ov">K</span>, i.e. <strong>algebraic over K by definition</strong>. An extension generated by finitely many algebraic elements is finite (a standard fact of field theory). "Are they algebraic?" isn't even a question ── the coordinates of points of E(<span class="ov">K</span>) live inside the algebraic closure from the start. This is the first half of gap ⑥.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>G<sub><span class="ov">K</span>/K</sub> preserves the set E[m]: T ∈ E[m] ⇒ T<sup>σ</sup> ∈ E[m].</p>
+        <p class="ps-why"><b>▸ Reason</b>  [m](T<sup>σ</sup>) = ([m]T)<sup>σ</sup> (P2) = O<sup>σ</sup> = O (P2: O is K-rational).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>L/K is normal, and hence (being separable too, since char 0) Galois.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Any K-embedding τ : L → <span class="ov">K</span> extends to an automorphism σ of <span class="ov">K</span> (the isomorphism extension theorem: field theory). By Step 2, σ permutes E[m], so it preserves the set of generators {x(T), y(T) : T ∈ E[m]} as a set. So τ(L) = K(σ(generators)) = K(generators) = L. "The image under every embedding is L" is the definition of normality.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>If we show E(L)/mE(L) is finite (E/L is an elliptic curve satisfying E[m] ⊂ E(L)), then by the reduction lemma E(K)/mE(K) is finite too.</p>
+        <p class="ps-why"><b>▸ Reason</b>  By Steps 1–3, L/K is a finite Galois extension. E[m] ⊂ E(L) is just how L was made. E[m] doesn't change when the coefficient field is extended (it's a set defined inside <span class="ov">K</span>).</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="why">
+      <div class="w-label">? What is λ? ─ a bridge to Part 3</div>
+      <p>
+        λ<sub>c</sub>(σ) = Q<sub>c</sub><sup>σ</sup> − Q<sub>c</sub> is, in the language of Part 3, a <strong>1-cocycle</strong> of G<sub>L/K</sub> with values in E[m]
+        (the action on E[m] need not be trivial, so in general it's not a homomorphism).
+        This time we could get by with the naive argument "it injects into the set of maps Map" because <strong>all we needed was a cardinality estimate</strong>.
+        When you want structure too (which λ actually occur?), you need the cohomology group H¹.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/weakmw.html">
+      <div class="p-dir">← Main part</div>
+      <div class="p-title">The weak Mordell–Weil theorem (back to STEP 0)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/weakmw-step1.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N1</div>
+      <div class="p-title">A complete proof of the Kummer pairing →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the weak Mordell–Weil theorem) N0/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.1.1.1</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

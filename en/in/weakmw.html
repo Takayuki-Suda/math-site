@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Weak Mordell–Weil Theorem ─ A Close Reading of AEC VIII §1 | Math the Japanese Way</title>
+<meta name="description" content="A close reading of the weak Mordell–Weil theorem following AEC VIII §1. Graduate-level notes explaining the finiteness of E(K)/mE(K), filling in the gaps between the lines.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="The Weak Mordell–Weil Theorem ─ A Close Reading of AEC VIII §1 | Math the Japanese Way">
+<meta property="og:description" content="A close reading of the weak Mordell–Weil theorem following AEC VIII §1. Graduate-level notes explaining the finiteness of E(K)/mE(K), filling in the gaps between the lines.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/weakmw.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'κ'; position:absolute; right:0; top:-50px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  .ex-box { border:1px solid rgba(176,138,224,.45); border-radius:8px; margin:26px 0; background:var(--surface); overflow:hidden; }
+  .ex-head { display:flex; align-items:center; gap:12px; padding:14px 22px; background:rgba(176,138,224,.07); border-bottom:1px solid rgba(176,138,224,.25); }
+  .ex-num { font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--purple); font-weight:700; }
+  .diff { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .diff.d1 { color:var(--green); border-color:rgba(94,207,158,.5); }
+  .diff.d2 { color:var(--gold); border-color:rgba(232,197,71,.5); }
+  .diff.d3 { color:var(--red); border-color:rgba(224,104,122,.5); }
+  .ex-body { padding:18px 22px 8px; }
+  .ex-body p { font-size:0.93rem; }
+  details.sol { margin:0 22px 18px; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+
+  .notelink { display:block; font-family:var(--mono); font-size:12px; letter-spacing:1px; color:var(--green);
+    text-decoration:none; border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:12px 18px;
+    margin:-6px 0 30px; background:rgba(94,207,158,.05); transition:all .25s; line-height:1.8; }
+  .notelink:hover { border-color:var(--green); background:rgba(94,207,158,.12); }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/weakmw.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/weakmw.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/weakmw.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/weakmw.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves 2/5</div>
+    <h1>The weak Mordell–Weil theorem<br><span class="en">The Weak Mordell–Weil Theorem</span></h1>
+    <p class="hero-sub">
+      E(K)/mE(K) is finite ── this single claim packs in reduction (local theory), the Galois action,
+      and both great finiteness theorems of algebraic number theory.
+      In this Part 2 we read the proof of AEC VIII §1 step by step, filling in the gaps between the lines.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §1 (close reading)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/aec.html">I The big map</a>
+      <a class="cur" href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a href="/math-site/en/in/descent.html">IV Descent</a>
+      <a href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The claim, and where it fits</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (weak Mordell–Weil) <span class="refchip">AEC VIII.1.1</span></div>
+      <p>Let K be a number field, E/K an elliptic curve, and m ≥ 2 an integer. Then</p>
+      <div class="formula"><div class="fline">E(K)/mE(K)  is a finite group</div></div>
+    </div>
+
+    <p>
+      First, let's be clear about what this theorem <strong>does not say</strong>. "E(K)/mE(K) is finite" alone does not give "E(K) is finitely generated". For example, ℝ/mℝ = 0 is the trivial group for every m, yet ℝ is not finitely generated. Likewise, for an elliptic curve E(ℚ<sub>p</sub>) over a p-adic field, E(ℚ<sub>p</sub>)/mE(ℚ<sub>p</sub>) is finite, but E(ℚ<sub>p</sub>) is not finitely generated<span class="refchip">AEC VIII §3 opening / VII.6.3</span>. What is missing is a mechanism that rules out "points divisible by m again and again", and that is supplied by height functions and descent (Part 4).
+    </p>
+    <p>
+      In other words, the Mordell–Weil theorem is a two-stage rocket, "weak MW (this part) + descent (Part 4)", and this time we launch the first stage.
+    </p>
+
+    <div class="why">
+      <div class="w-label">? Why the quotient group E(K)/mE(K)?</div>
+      <p>
+        Because the input that descent (Theorem VIII.3.1 in Part 4) requires is exactly "A/mA is finite". Descent is an argument that "shrinks an arbitrary point P by repeatedly subtracting its remainder mod m (= a coset representative)", so it cannot even start unless there are finitely many kinds of remainders. Weak MW guarantees that "finiteness of remainders".
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Blueprint of the proof</h2>
+    <p>
+      The proof has 4 steps. We first look at the whole, then dive into each step.
+    </p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 760 640" role="img" aria-label="Structure diagram of the proof of the weak Mordell-Weil theorem">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+          <marker id="arr2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#E8C547"/>
+          </marker>
+        </defs>
+        <style>
+          .b { fill:#171a29; stroke:#3a4160; stroke-width:1; }
+          .bg { fill:rgba(232,197,71,0.09); stroke:#E8C547; stroke-width:1.5; }
+          .bs { fill:#12141f; stroke:#565d7d; stroke-width:1; stroke-dasharray:4 3; }
+          .t1 { font-family:'JetBrains Mono',monospace; font-size:11px; fill:#c8a84b; }
+          .t2 { font-family:'Noto Serif JP',serif; font-size:13.5px; font-weight:700; fill:#e8eaf4; }
+          .t3 { font-family:'Noto Serif JP',serif; font-size:11.5px; fill:#9aa1bd; }
+          .e { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr2); }
+          .eg { stroke:#E8C547; stroke-width:1.8; fill:none; marker-end:url(#arr2g); }
+        </style>
+
+        <rect class="b" x="40" y="18" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="42">STEP 0 ─ Reduction lemma〔VIII.1.1.1〕</text>
+        <text class="t2" x="56" y="63">We may pass to a finite extension of the field</text>
+        <text class="t3" x="56" y="82">⇒ it suffices to prove it assuming E[m] ⊂ E(K)</text>
+
+        <rect class="b" x="40" y="136" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="160">STEP 1 ─ Kummer pairing〔VIII.1.2〕</text>
+        <text class="t2" x="56" y="181">κ : E(K)/mE(K) × G(L/K) → E[m] is a perfect pairing</text>
+        <text class="t3" x="56" y="200">⇒ translates "E(K)/mE(K) finite" ⟺ "extension L/K finite"</text>
+
+        <rect class="b" x="40" y="254" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="278">STEP 2 ─ Properties of the extension L/K〔VIII.1.5〕</text>
+        <text class="t2" x="56" y="299">L/K is abelian of exponent m and unramified outside S</text>
+        <text class="t3" x="56" y="318">S = primes of bad reduction ∪ primes dividing m ∪ infinite primes (a finite set)</text>
+
+        <rect class="b" x="40" y="372" width="500" height="78" rx="8"/>
+        <text class="t1" x="56" y="396">STEP 3 ─ Finiteness from field theory〔VIII.1.6〕</text>
+        <text class="t2" x="56" y="417">Such an extension is always of finite degree</text>
+        <text class="t3" x="56" y="436">Kummer theory + finiteness of the class number + Dirichlet's S-unit theorem</text>
+
+        <rect class="bg" x="40" y="500" width="500" height="64" rx="8"/>
+        <text class="t1" x="56" y="526" fill="#E8C547">Conclusion〔VIII.1.1〕</text>
+        <text class="t2" x="56" y="548" fill="#E8C547">E(K)/mE(K) is finite  ∎</text>
+
+        <path class="e" d="M290,96 L290,136"/>
+        <path class="e" d="M290,214 L290,254"/>
+        <path class="e" d="M290,332 L290,372"/>
+        <path class="eg" d="M290,450 L290,500"/>
+
+        <rect class="bs" x="580" y="254" width="164" height="78" rx="8"/>
+        <text class="t1" x="592" y="280">Local input</text>
+        <text class="t3" x="592" y="300">Good reduction ⇒ reduction of</text>
+        <text class="t3" x="592" y="318">m-torsion is injective〔VII.3.1〕</text>
+        <path class="e" d="M580,293 L544,293"/>
+
+        <rect class="bs" x="580" y="372" width="164" height="78" rx="8"/>
+        <text class="t1" x="592" y="398">Global input</text>
+        <text class="t3" x="592" y="418">finiteness of the class number</text>
+        <text class="t3" x="592" y="436">S-unit theorem</text>
+        <path class="e" d="M580,411 L544,411"/>
+      </svg>
+      <div class="svg-cap">
+        Figure 1: Structure of the proof of the weak Mordell–Weil theorem. The dotted boxes are "deep theorems brought in from outside". The originality of the proof lies in the "translation" of STEPS 1–2; the source of finiteness is the classical number theory of STEP 3.
+      </div>
+    </div>
+
+    <p>
+      In one sentence: <strong>translate the finiteness problem for rational points into a finiteness problem for a field extension (Kummer pairing), show with reduction theory that this extension is "well-behaved" (unramified), and use classical number theory to guarantee that there are only finitely many well-behaved extensions (class number and units)</strong> ── that is the whole route.
+    </p>
+
+    <div class="goon">
+      <div class="g-label">▲ This article has two layers (how to read it)</div>
+      <p>
+        The main part (this page) follows the <strong>design and key points</strong> of the proof. The <strong>gap-free full expansion</strong> of each step ── numbered, fixed prerequisites and a "claim + reason" attached to every step ── has been split off into <strong>4 separate between-the-lines notes</strong>. We recommend reading through the main part first to grasp the overall shape, then diving into a note wherever a gap bothers you.
+      </p>
+      <div class="series-nav" style="margin-top:14px;">
+        <a href="/math-site/en/in/weakmw-step0.html">N0 Reduction lemma</a> <a href="/math-site/en/in/weakmw-step1.html">N1 Kummer pairing</a> <a href="/math-site/en/in/weakmw-step2.html">N2 Unramifiedness</a> <a href="/math-site/en/in/weakmw-step3.html">N3 Finiteness from field theory</a>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3. STEP 0 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03 ─ Step 0</div>
+    <h2>Reduction lemma ─ we may assume E[m] ⊂ E(K)</h2>
+
+    <p>
+      The Kummer pairing we are about to use is far easier to handle when "the points of E[m] are K-rational". But for a general E/K, E[m] ⊄ E(K). So first we show that <strong>replacing the field by a finite Galois extension does not change whether the theorem holds</strong>.
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (the reduction lemma) <span class="refchip">AEC VIII.1.1.1</span></div>
+      <p>
+        Let L/K be a finite Galois extension. If E(L)/mE(L) is finite, then E(K)/mE(K) is also finite.
+      </p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof (main line)</div>
+      <p>
+        The inclusion E(K) ⊂ E(L) induces a natural map E(K)/mE(K) → E(L)/mE(L). Call its kernel Φ:
+      </p>
+      <div class="formula"><div class="fline">Φ = ( E(K) ∩ mE(L) ) / mE(K)</div></div>
+      <p>
+        (the "K-rational points that become divisible by m once we go up to L"). <strong>It suffices to show that Φ is finite</strong>. Indeed, then by the exact sequence 0 → Φ → E(K)/mE(K) → E(L)/mE(L), E(K)/mE(K) is sandwiched between the finite group Φ and the finite group E(L)/mE(L), so it is finite.
+      </p>
+      <p>
+        For each element P of Φ (mod mE(K)), choose one point Q<sub>P</sub> ∈ E(L) with [m]Q<sub>P</sub> = P, and define the map
+      </p>
+      <div class="formula"><div class="fline">λ<sub>P</sub> : G<sub>L/K</sub> → E[m],  λ<sub>P</sub>(σ) = Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub></div></div>
+      <p>
+        First, check that the values really land in E[m]: [m](Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub>) = ([m]Q<sub>P</sub>)<sup>σ</sup> − [m]Q<sub>P</sub> = P<sup>σ</sup> − P = O. The last equality holds because P is K-rational and σ fixes K.
+      </p>
+      <p>
+        <strong>Key claim: P ↦ λ<sub>P</sub> is injective</strong> (as a map from Φ). Suppose λ<sub>P</sub> = λ<sub>P′</sub>. Then for every σ ∈ G<sub>L/K</sub>, (Q<sub>P</sub> − Q<sub>P′</sub>)<sup>σ</sup> = Q<sub>P</sub> − Q<sub>P′</sub>. So Q<sub>P</sub> − Q<sub>P′</sub> is G<sub>L/K</sub>-invariant, and by Galois theory Q<sub>P</sub> − Q<sub>P′</sub> ∈ E(K). Multiplying by m, P − P′ = [m](Q<sub>P</sub> − Q<sub>P′</sub>) ∈ mE(K), that is, P ≡ P′ (mod mE(K)). Injectivity is shown.
+      </p>
+      <p>
+        But G<sub>L/K</sub> and E[m] are both finite sets, so the set of maps Map(G<sub>L/K</sub>, E[m]) is finite. Φ injects into it, so Φ is finite.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/weakmw-step0.html">🔬 Between-the-lines note N0 ─ this proof with zero gaps: fixing prerequisites P1–P5, all 10 steps + reasons, and a full proof of the corollary "we may assume E[m] ⊂ E(K)" →</a>
+
+    <div class="why">
+      <div class="w-label">? Where is the "variable" in this proof?</div>
+      <p>
+        The key is a single point: "the <strong>Galois-orbit displacement</strong> Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub> of an m-th division point Q<sub>P</sub> of P remembers the information of P (mod mE(K))". In the language of Part 3, this λ<sub>P</sub> is exactly a <strong>1-cocycle</strong>. AEC also remarks, "λ<sub>P</sub> is an example of a 1-cocycle; see (VIII §2)". The argument we just did by hand will be organized in Part 3 into the general theory of the inflation–restriction exact sequence.
+      </p>
+    </div>
+
+    <p>
+      Now, E[m] is a finite set of order m², and the coordinates of each point are algebraic numbers in <span class="ov">K</span><span class="refchip">AEC III.6.4</span>. So L = K(E[m]) (the field obtained by adjoining the coordinates of all m-torsion points) is a finite extension, and since G<sub><span class="ov">K</span>/K</sub> preserves E[m] as a set ([m]P = O is a Galois-invariant condition), L/K is Galois. By the reduction lemma, <strong>from now on it suffices to prove the theorem assuming E[m] ⊂ E(K)</strong>. This assumption is in force for the rest of §1.
+    </p>
+  </div>
+
+  <!-- ════════ 4. STEP 1 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04 ─ Step 1</div>
+    <h2>Kummer pairing ─ translating rational points into field extensions</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Definition (the Kummer pairing) <span class="refchip">AEC VIII §1</span></div>
+      <p>Assume E[m] ⊂ E(K). For P ∈ E(K) and σ ∈ G<sub><span class="ov">K</span>/K</sub>, choose any point Q ∈ E(<span class="ov">K</span>) with [m]Q = P, and</p>
+      <div class="formula"><div class="fline">κ(P, σ) = Q<sup>σ</sup> − Q</div></div>
+      <p>define it as above. (The existence of Q follows from the surjectivity of [m] : E(<span class="ov">K</span>) → E(<span class="ov">K</span>)<span class="refchip">AEC III.6.2 + II.2.3</span>.)</p>
+    </div>
+
+    <p>
+      Intuitively, κ(P, σ) measures "<strong>the Galois twist that appears when you try to divide P by m</strong>". If P is divisible inside K (P ∈ mE(K)), Q can be chosen K-rational, so there is no twist. If not, Q lives in a genuine extension field, and the difference by which σ moves Q shows up in E[m] ── that is the picture.
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Proposition (basic properties of the Kummer pairing) <span class="refchip">AEC VIII.1.2</span></div>
+      <p>(a) κ is well-defined.  (b) κ is bilinear.  (c) The left kernel is mE(K).  (d) The right kernel is G<sub><span class="ov">K</span>/L</sub>, where</p>
+      <div class="formula"><div class="fline">L = K([m]<sup>−1</sup>E(K)) = "the field obtained by adjoining all Q ∈ E(<span class="ov">K</span>) with [m]Q ∈ E(K)"</div></div>
+      <p>Hence κ induces a <strong>perfect pairing</strong></p>
+      <div class="formula"><div class="fline">E(K)/mE(K) × G<sub>L/K</sub> → E[m]</div></div>
+      <p>.</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof (main line, with comments)</div>
+      <p>
+        <strong>(a) Well-definedness.</strong> First, κ(P,σ) ∈ E[m]: [m](Q<sup>σ</sup> − Q) = P<sup>σ</sup> − P = O (P is K-rational). Next, independence of the choice of Q: any other choice has the form Q + T (T ∈ E[m]) (since the difference vanishes when multiplied by m). Then
+      </p>
+      <div class="formula"><div class="fline">(Q+T)<sup>σ</sup> − (Q+T) = Q<sup>σ</sup> − Q + (T<sup>σ</sup> − T) = Q<sup>σ</sup> − Q</div></div>
+      <p>
+        In the last equality we <strong>used E[m] ⊂ E(K)</strong>: T is K-rational, so T<sup>σ</sup> = T. The assumption we arranged with the reduction lemma is already paying off here.
+      </p>
+      <p>
+        <strong>(b) Bilinearity.</strong> Linearity in P is clear from the definition (choose the Q's additively). In σ: for σ, τ ∈ G<sub><span class="ov">K</span>/K</sub>,
+      </p>
+      <div class="formula">
+        <div class="fline">κ(P, στ) = Q<sup>στ</sup> − Q = (Q<sup>σ</sup> − Q)<sup>τ</sup> + (Q<sup>τ</sup> − Q) = κ(P,σ)<sup>τ</sup> + κ(P,τ)</div>
+      </div>
+      <p>
+        Here κ(P,σ) ∈ E[m] ⊂ E(K), so it is fixed by τ; hence κ(P,στ) = κ(P,σ) + κ(P,τ). <strong>Once again E[m] ⊂ E(K) is doing the work</strong>. This computation shows that "κ(P,·) is in general not a homomorphism but a 1-cocycle, and it becomes a homomorphism only when E[m] is rational" ── foreshadowing the viewpoint of Part 3 (cohomology).
+      </p>
+      <p>
+        <strong>(c) Left kernel = mE(K).</strong> If P = [m]Q with Q ∈ E(K), then Q<sup>σ</sup> = Q, so κ(P,·) ≡ O. Conversely, if κ(P,σ) = O for every σ, then Q<sup>σ</sup> = Q (∀σ ∈ G<sub><span class="ov">K</span>/K</sub>), so Q ∈ E(K), and therefore P = [m]Q ∈ mE(K).
+      </p>
+      <p>
+        <strong>(d) Right kernel = G<sub><span class="ov">K</span>/L</sub>.</strong> If σ fixes L, then every Q (with [m]Q ∈ E(K)) is a point over L, so Q<sup>σ</sup> = Q, i.e. κ(·,σ) ≡ O. Conversely, if κ(P,σ) = O for every P, then Q<sup>σ</sup> = Q for every Q with [m]Q ∈ E(K). Since L is generated by the coordinates of such Q, σ fixes L.
+      </p>
+      <p>
+        Finally, L/K is Galois: G<sub><span class="ov">K</span>/K</sub> preserves the set [m]<sup>−1</sup>E(K) ([m]Q ∈ E(K) ⇒ [m]Q<sup>σ</sup> = ([m]Q)<sup>σ</sup> ∈ E(K)), so L is closed under conjugation. And by (d), σ ↦ κ(·,σ) gives an injective homomorphism
+      </p>
+      <div class="formula"><div class="fline">G<sub>L/K</sub> ↪ Hom( E(K), E[m] )</div></div>
+      <p>and the perfect-pairing claim follows.</p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/weakmw-step1.html">🔬 Between-the-lines note N1 ─ all 20 steps of (a)–(d) expanded: the convention for composing actions, descending to the quotient, the two injections, and a table of every place E[m] ⊂ E(K) is used →</a>
+
+    <div class="box rem">
+      <div class="box-label">The "translation" obtained at this point</div>
+      <p>
+        By the general theory of perfect pairings, E(K)/mE(K) injects into Hom(G<sub>L/K</sub>, E[m]). Since E[m] is finite:
+      </p>
+      <div class="formula"><div class="fline">E(K)/mE(K) is finite ⟺ the extension L/K is finite</div></div>
+      <p>
+        All that remains is to show that "L = K([m]<sup>−1</sup>E(K)) is a finite extension of K". <strong>The problem about rational points has become a problem about fields</strong> ── that is what STEP 1 achieves.
+      </p>
+    </div>
+
+    <h3>Correspondence with classical Kummer theory (a dictionary of analogies)</h3>
+    <p>
+      This is where the name "Kummer pairing" comes from. The classical Kummer theory of fields containing μ<sub>m</sub> ⊂ K and the theory we just built are completely parallel<span class="refchip">AEC VIII.1.2.1</span>.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Classical Kummer theory (multiplicative group)</th><th>Elliptic-curve version (this part)</th></tr></thead>
+      <tbody>
+        <tr><td class="m">K<sup>×</sup> and the m-th power map x ↦ x<sup>m</sup></td><td class="m">E(K) and the multiplication-by-m map [m]</td></tr>
+        <tr><td class="m">Assume μ<sub>m</sub> (m-th roots of unity) ⊂ K</td><td class="m">Assume E[m] (m-torsion points) ⊂ E(K)</td></tr>
+        <tr><td class="m">K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup></td><td class="m">E(K)/mE(K)</td></tr>
+        <tr><td class="m">The field K′ obtained by adjoining <sup>m</sup>√a</td><td class="m">The field L obtained by adjoining [m]<sup>−1</sup>E(K)</td></tr>
+        <tr><td class="m">(a,σ) ↦ (<sup>m</sup>√a)<sup>σ</sup> / <sup>m</sup>√a ∈ μ<sub>m</sub></td><td class="m">(P,σ) ↦ Q<sup>σ</sup> − Q ∈ E[m]</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      Note that when E[m] ⊂ E(K), μ<sub>m</sub> ⊂ K follows automatically from a corollary of the Weil pairing<span class="refchip">AEC III.8.1.1</span>, so the hypothesis of the elliptic version contains that of the classical version. In Part 3 this dictionary is promoted to the language of cohomology.
+    </p>
+  </div>
+
+  <!-- ════════ 5. STEP 2 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05 ─ Step 2</div>
+    <h2>Properties of the extension L/K ─ ramification is forbidden outside S</h2>
+
+    <p>First, we fix the set of primes that can cause trouble.</p>
+    <div class="formula">
+      <div class="fline">S = { v : E has bad reduction at v } ∪ { v : v(m) ≠ 0 } ∪ M<sub>K</sub><sup>∞</sup></div>
+      <div class="fline fc">M<sub>K</sub><sup>∞</sup> = the set of infinite primes (archimedean absolute values)</div>
+    </div>
+    <p>
+      It is essential that S is a <strong>finite set</strong>: once we fix a Weierstrass equation, for all but finitely many v the coefficients are v-integral and v(Δ) = 0, and E has good reduction there<span class="refchip">AEC VIII.1.3</span>. There are finitely many primes dividing m, and finitely many infinite primes.
+    </p>
+
+    <p>Let us restate, in the form we will use, the weapon brought over from Ch. VII.</p>
+    <div class="box thm">
+      <div class="box-label">Proposition (reduction of m-torsion is injective) <span class="refchip">AEC VIII.1.4 = VII.3.1(b)</span></div>
+      <p>
+        Let v be a finite prime with v(m) = 0, and suppose E has good reduction at v. Then the reduction map
+      </p>
+      <div class="formula"><div class="fline">E(K<sub>v</sub>)[m] → Ẽ<sub>v</sub>(k<sub>v</sub>)</div></div>
+      <p>is injective. (Its kernel E₁ is controlled by the formal group, which has no torsion prime to m〔AEC IV §6, VII.2.2〕.)</p>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Proposition (properties of L) <span class="refchip">AEC VIII.1.5</span></div>
+      <p>Let L = K([m]<sup>−1</sup>E(K)).</p>
+      <p>(a) L/K is an abelian extension, and the exponent of its Galois group divides m.</p>
+      <p>(b) L/K is unramified outside S. That is, if v ∉ S, then L/K is unramified at v.</p>
+    </div>
+
+    <div class="proof">
+      <div class="p-label">Proof (main line, with comments)</div>
+      <p>
+        <strong>(a)</strong> follows immediately from the injection G<sub>L/K</sub> ↪ Hom(E(K), E[m]) of STEP 1. The right-hand side is an abelian group in which m times every element vanishes (because the values lie in E[m]), so G<sub>L/K</sub> is also abelian of exponent m.
+      </p>
+      <p>
+        <strong>(b)</strong> This is the crux. Take v ∉ S, choose one Q with [m]Q ∈ E(K), and set K′ = K(Q). L is the compositum of such fields K′, so <strong>it suffices to show that each K′/K is unramified at v</strong> (a compositum of unramified extensions is unramified).
+      </p>
+      <p>
+        Let v′ be a prime of K′ above v, and take any element σ of the inertia group I<sub>v′/v</sub> ⊂ G<sub><span class="ov">K</span>/K</sub>. "K′/K is unramified at v′" means "the inertia group acts trivially on K′", so <strong>we only need to show that σ does not move Q</strong>.
+      </p>
+      <p>
+        Since v ∉ S, E has good reduction at v (the same Weierstrass equation is minimal and nonsingular at v′ too), and there is a reduction map E(K′<sub>v′</sub>) → Ẽ(k′<sub>v′</sub>). By the very definition of the inertia group, σ acts trivially on the residue field k′<sub>v′</sub>. Therefore
+      </p>
+      <div class="formula">
+        <div class="fline">(Q<sup>σ</sup> − Q)˜ = Q̃<sup>σ</sup> − Q̃ = Q̃ − Q̃ = Õ  (after reduction the displacement is invisible)</div>
+      </div>
+      <p>
+        On the other hand, [m](Q<sup>σ</sup> − Q) = ([m]Q)<sup>σ</sup> − [m]Q = O ([m]Q is K-rational), so Q<sup>σ</sup> − Q ∈ E[m]. So Q<sup>σ</sup> − Q is "<strong>an m-torsion point that also lies in the kernel of reduction</strong>". Since v(m) = 0, VIII.1.4 applies, and the only such point is O:
+      </p>
+      <div class="formula"><div class="fline">Q<sup>σ</sup> − Q = O,  that is, Q<sup>σ</sup> = Q</div></div>
+      <p>
+        Hence the inertia group fixes Q, and K′ = K(Q) is unramified at v. Since this holds for every v ∉ S and every v′ above v, (b) follows.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/weakmw-step2.html">🔬 Between-the-lines note N2 ─ fully expanded: construction of the reduction map (primitive coordinates) and proof of Galois compatibility, the unramifiedness criterion via inertia groups, and the finiteness of S →</a>
+
+    <div class="why">
+      <div class="w-label">? What is so remarkable about this argument?</div>
+      <p>
+        "Ramification of L/K" is purely global, field-theoretic information. It is forbidden by <strong>the geometric fact that "on the reduced curve, the inertia group cannot move anything"</strong> ── the local (reduction at each prime) constrains the global (the shape of the field extension), a typical pattern of arithmetic geometry. Note that the proof of (b) does not use the assumption E[m] ⊂ E(K) (AEC also points this out). This fact will be reused as is in Part 5 when we prove the finiteness of the Selmer group.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6. STEP 3 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06 ─ Step 3</div>
+    <h2>Finiteness from field theory ─ the heart of number theory</h2>
+
+    <div class="box thm">
+      <div class="box-label">Proposition <span class="refchip">AEC VIII.1.6</span></div>
+      <p>
+        Let K be a number field, S ⊂ M<sub>K</sub> a finite set containing M<sub>K</sub><sup>∞</sup>, and m ≥ 2. Let L/K be "the largest abelian extension of exponent m unramified outside S". Then L/K is a finite extension.
+      </p>
+    </div>
+
+    <p>The proof has 5 stages. Pay attention to which classical theorem is at work in each stage.</p>
+
+    <div class="proof">
+      <div class="p-label">Proof (main line, with comments)</div>
+      <p>
+        <strong>(i) We may assume μ<sub>m</sub> ⊂ K.</strong> Let K′ = K(μ<sub>m</sub>) and let S′ be the set of primes above S. If the proposition holds for K′, then LK′/K′ is abelian of exponent m and unramified outside S′, hence finite, so L/K is finite too. From now on assume μ<sub>m</sub> ⊂ K.
+      </p>
+      <p>
+        <strong>(ii) We may enlarge S.</strong> Enlarging S only makes L bigger, so it suffices to prove it for a larger S. So, using the <strong>finiteness of the ideal class group</strong>, we add to S the primes dividing representative ideals a₁, …, a<sub>h</sub> of the class group, so that the ring of S-integers
+      </p>
+      <div class="formula"><div class="fline">R<sub>S</sub> = { a ∈ K : v(a) ≥ 0 (∀v ∉ S) }</div></div>
+      <p>
+        becomes a <strong>principal ideal domain (PID)</strong>. We also add the primes dividing m, so that v(m) = 0 (∀v ∉ S).
+      </p>
+      <p>
+        <strong>(iii) Kummer theory.</strong> In a field of characteristic 0 containing μ<sub>m</sub>, the maximal abelian extension of exponent m is obtained by "adjoining m-th roots of all elements" (see a field theory textbook, or AEC Exercise 8.4). So L is "the largest subfield unramified outside S" of K(<sup>m</sup>√a : a ∈ K<sup>×</sup>). We determine which <sup>m</sup>√a give unramified extensions. For v ∉ S we have v(m) = 0, and the discriminant of the polynomial X<sup>m</sup> − a is ±m<sup>m</sup>a<sup>m−1</sup>, so:
+      </p>
+      <div class="formula">
+        <div class="fline">K<sub>v</sub>(<sup>m</sup>√a)/K<sub>v</sub> is unramified ⟺ ord<sub>v</sub>(a) ≡ 0 (mod m)</div>
+      </div>
+      <p>
+        Hence L is generated only by m-th roots of elements of the following set:
+      </p>
+      <div class="formula">
+        <div class="fline">T<sub>S</sub> = { a ∈ K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> : ord<sub>v</sub>(a) ≡ 0 (mod m) (∀v ∉ S) }</div>
+        <div class="fline">L = K(<sup>m</sup>√a : a ∈ T<sub>S</sub>)</div>
+      </div>
+      <p>
+        It remains to show that <strong>T<sub>S</sub> is a finite set</strong>; then by Kummer theory [L : K] is also finite.
+      </p>
+      <p>
+        <strong>(iv) S-units surject onto T<sub>S</sub>.</strong> Consider the natural map R<sub>S</sub><sup>×</sup> → T<sub>S</sub>. Let a ∈ K<sup>×</sup> represent an element of T<sub>S</sub>. The condition ord<sub>v</sub>(a) ≡ 0 (mod m) (∀v∉S) means "the ideal aR<sub>S</sub> is the m-th power of an ideal of R<sub>S</sub>" (prime ideals of R<sub>S</sub> ⟷ v ∉ S). Since R<sub>S</sub> is a PID, there is b ∈ K<sup>×</sup> with aR<sub>S</sub> = b<sup>m</sup>R<sub>S</sub>; setting u = a/b<sup>m</sup>, we get u ∈ R<sub>S</sub><sup>×</sup>, and a and u are in the same class in K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup>. Hence we get a surjection
+      </p>
+      <div class="formula"><div class="fline">R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ↠ T<sub>S</sub></div></div>
+      <p>(it is in fact an isomorphism, but surjectivity is enough).</p>
+      <p>
+        <strong>(v) Dirichlet's S-unit theorem.</strong> R<sub>S</sub><sup>×</sup> is finitely generated (concretely μ(K) × ℤ<sup>#S−1</sup>), so R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> is finite, and hence T<sub>S</sub> is finite. This completes the proof.
+      </p>
+      <div class="qed">∎</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/weakmw-step3.html">🔬 Between-the-lines note N3 ─ fully expanded: both directions of the local unramifiedness criterion "ord<sub>v</sub>(a) ≡ 0 (mod m)", every line of the PID reduction, and the derivation of the equality [L<sub>K,S</sub>:K] = m<sup>#S</sup> →</a>
+
+    <div class="box rem">
+      <div class="box-label">A quantitative supplement (a sense of efficiency)</div>
+      <p>
+        From the structure theorem in (v), |R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup>| = m<sup>#S</sup> (when μ<sub>m</sub> ⊂ K), so for the enlarged S we get the explicit upper bound [L : K] ≤ m<sup>#S</sup>. In other words, the weak MW theorem even gives an <strong>explicit upper bound</strong> of the form "the order of E(K)/mE(K) is at most m<sup>2·(some computable number)</sup>".
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Why do we need both the "class number" and the "units"?</div>
+      <p>
+        Elements of T<sub>S</sub> are subject only to the condition "all valuations are multiples of m". To rewrite them in the form "m-th power × unit", we need both <strong>the ability to take m-th roots at the level of ideals (being a PID = having killed the class group)</strong> and <strong>the remaining unit part being of finite type (the S-unit theorem)</strong>. Finiteness of the class number controls "the gap between ideals and elements", and the unit theorem controls "the invertible part of elements" ── the two great finiteness theorems of algebraic number theory are each used exactly once, in different roles. A beautiful division of labor.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 7. 組み立て ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Completing the proof, and two noteworthy remarks</h2>
+
+    <div class="proof">
+      <div class="p-label">Proof of the weak Mordell–Weil theorem (assembly)</div>
+      <p>
+        By the reduction lemma (STEP 0), assume E[m] ⊂ E(K). Let L = K([m]<sup>−1</sup>E(K)). By the perfect pairing (STEP 1), E(K)/mE(K) is finite if and only if G<sub>L/K</sub> is finite. By STEP 2, L/K is abelian of exponent m and unramified outside the finite set S. By STEP 3, such an extension is of finite degree. Hence E(K)/mE(K) is finite.
+      </p>
+      <div class="qed">∎ (AEC VIII.1.1)</div>
+    </div>
+
+    <a class="notelink" href="/math-site/en/in/weakmw-step3.html#s9">🔬 Between-the-lines note N3 §09 ─ the "zero-gap" assembly joining N0–N3, and a complete list of the external theorems the proof cites →</a>
+
+    <h3>Remark 1: an alternative proof via Minkowski <span class="refchip">AEC VIII.1.7</span></h3>
+    <p>
+      Instead of STEP 3, one can use the Minkowski–Hermite theorem, "there are only finitely many extensions of K of bounded degree unramified outside S". Indeed, the Galois conjugates of Q ∈ [m]<sup>−1</sup>E(K) all have the form Q + T (T ∈ E[m]), so the degree is uniformly bounded by [K(Q) : K] ≤ m², and finitely many candidates for K(Q) ⇒ the compositum L is finite. This viewpoint gives another intuition for "why it is finite" (<strong>boundedness of discriminants</strong>).
+    </p>
+
+    <h3>Remark 2: what exactly is "not computable"? <span class="refchip">AEC VIII.1.8</span></h3>
+    <p>
+      In fact G<sub>L/K</sub> is <strong>completely computable</strong> (if you trace the proof above explicitly). Then all elements of the right-hand side of the injection E(K)/mE(K) ↪ Hom(G<sub>L/K</sub>, E[m]) can be written down as well. The only thing that cannot be computed is <strong>deciding "which elements of the right-hand side actually come from rational points"</strong>. All of the ineffectivity of the Mordell–Weil theorem is concentrated here, and the Selmer group was invented to attack exactly this point (Part 5). Be sure to keep this remark in mind before moving on to Part 5.
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 8. 実例 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>Checking everything on an example ─ E : y² = x³ − x, m = 2</h2>
+
+    <p>
+      We carry the abstract theory all the way through on one curve. K = ℚ, m = 2. This curve has Δ = 64, and E[2] = {O, (0,0), (1,0), (−1,0)} is <strong>entirely ℚ-rational</strong>, so the theory runs right away without the reduction lemma. Moreover, E(ℚ) consists of exactly these 4 points (rank 0; this can be proved by the methods of Part 5, so we accept it here).
+    </p>
+    <div class="formula">
+      <div class="fline">S = {2, ∞}  (Δ = 64, so the only bad reduction is at 2; m = 2 also divides only 2)</div>
+    </div>
+
+    <h3>Actually computing L = ℚ([2]⁻¹E(ℚ))</h3>
+    <p>
+      For each P ∈ E(ℚ), we find a solution Q of [2]Q = P. The duplication formula<span class="refchip">AEC III.2.3(d)</span>, with A = −1, B = 0, gives:
+    </p>
+    <div class="formula"><div class="fline">x([2]Q) = (x² + 1)² / ( 4(x³ − x) )  (x = x(Q))</div></div>
+    <p>
+      For example, take P = (1, 0). Rearranging x([2]Q) = 1 gives x⁴ − 4x³ + 2x² + 4x + 1 = 0. This folds beautifully into a square:
+    </p>
+    <div class="formula">
+      <div class="fline">x⁴ − 4x³ + 2x² + 4x + 1 = (x² − 2x − 1)²  ⇒  x = 1 ± √2</div>
+      <div class="fline">y² = x³ − x = 2(1+√2)²  ⇒  y = ±√2(1+√2)  (when x = 1+√2)</div>
+    </div>
+    <p>
+      So the halves of (1,0) live in ℚ(√2). Computing the other points the same way:
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>P ∈ E(ℚ)</th><th>Q (one solution of [2]Q = P)</th><th>K(Q)</th></tr></thead>
+      <tbody>
+        <tr><td class="m">O</td><td class="m">Q ∈ E[2] ⊂ E(ℚ)</td><td class="m">ℚ</td></tr>
+        <tr><td class="m">(0, 0)</td><td class="m">(i, 1−i), etc.</td><td class="m">ℚ(i)</td></tr>
+        <tr><td class="m">(1, 0)</td><td class="m">(1+√2, √2(1+√2)), etc.</td><td class="m">ℚ(√2)</td></tr>
+        <tr><td class="m">(−1, 0)</td><td class="m">(−1+√2, i√2(√2−1)), etc.</td><td class="m">ℚ(i, √2)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="formula"><div class="fline">L = ℚ(i, √2),  G<sub>L/ℚ</sub> ≅ (ℤ/2ℤ)²</div></div>
+
+    <h3>Comparing with the theory's predictions</h3>
+    <ul>
+      <li><strong>Abelian of exponent 2?</strong> Gal ≅ (ℤ/2)². ✓</li>
+      <li><strong>Unramified outside S = {2,∞}?</strong> ℚ(i,√2) = ℚ(ζ₈) (the field of 8th roots of unity), whose discriminant is a power of 2. The only ramified finite prime is 2. ✓ Exactly as the theory (VIII.1.5b) says.</li>
+      <li><strong>Is it a perfect pairing?</strong> |E(ℚ)/2E(ℚ)| = 4, |G<sub>L/ℚ</sub>| = 4, E[2] ≅ (ℤ/2)². A 4×4 pairing with values in (ℤ/2)², with both kernels vanishing ── the sizes match too. ✓</li>
+    </ul>
+    <p>
+      The abstract L = K([m]<sup>−1</sup>E(K)) turns out in practice to be such a small, concrete field (the cyclotomic field ℚ(ζ₈)!). With this feeling in hand, you won't be surprised in Part 5 when finite sets like K(S,2) = {±1, ±2} appear.
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 9. 練習問題 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Exercises</div>
+    <h2>Exercises</h2>
+    <p>
+      ★ = basic (checking definitions and proofs), ★★ = standard (work it out by hand), ★★★ = advanced (build the argument yourself). Every problem has a solution or an outline. Aim to try on your own for 15 minutes first.
+    </p>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 1</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          In the proof that the Kummer pairing is well-defined (VIII.1.2a), the assumption E[m] ⊂ E(K) was used essentially in exactly one place. Identify that place. Also, if this assumption is dropped, as what kind of object does κ(P,σ) survive? (Hint: how does the value change depending on the choice of Q?)
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            It was used in the part "for another choice Q + T (T ∈ E[m]), T<sup>σ</sup> = T". Because E[m] ⊂ E(K), σ fixes T. If the assumption is dropped, replacing Q by Q + T changes the value of κ to (Q+T)<sup>σ</sup> − (Q+T) = (Q<sup>σ</sup> − Q) + (T<sup>σ</sup> − T), a shift by T<sup>σ</sup> − T. Since σ ↦ T<sup>σ</sup> − T is a coboundary (a trivial 1-cocycle), κ(P,·) is no longer well-defined as a "map", but it survives as <strong>a well-defined cohomology class of 1-cocycles</strong>. This is why δ : E(K)/mE(K) → H¹(G, E[m]) can be defined in the general situation in Part 3.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 2</span><span class="diff d1">★ Basic</span></div>
+      <div class="ex-body">
+        <p>
+          Without looking at the text, reconstruct on your own the argument λ<sub>P</sub> = λ<sub>P′</sub> ⇒ P ≡ P′ (mod mE(K)) from the proof of the reduction lemma. In particular, state explicitly where you use the fact that "a Galois-invariant <span class="ov">K</span>-point is a K-point".
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            λ<sub>P</sub>(σ) = λ<sub>P′</sub>(σ) ⟺ Q<sub>P</sub><sup>σ</sup> − Q<sub>P</sub> = Q<sub>P′</sub><sup>σ</sup> − Q<sub>P′</sub> ⟺ (Q<sub>P</sub> − Q<sub>P′</sub>)<sup>σ</sup> = Q<sub>P</sub> − Q<sub>P′</sub>. This holds for all σ ∈ G<sub>L/K</sub>. Since Q<sub>P</sub>, Q<sub>P′</sub> ∈ E(L), their difference is also a point of E(L), and a G<sub>L/K</sub>-invariant L-point is a K-point (by Galois theory its coordinates descend to K). So R := Q<sub>P</sub> − Q<sub>P′</sub> ∈ E(K). Since [m]R = P − P′, we get P − P′ ∈ mE(K).
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 3</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          The proof of unramifiedness (VIII.1.5b) needed the condition v(m) = 0 (v does not divide m). If this condition fails (p = char k<sub>v</sub> divides m), which step of the proof breaks down? Explain in the language of formal groups (AEC IV §6).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            The step that breaks is "Q<sup>σ</sup> − Q ∈ E[m] ∩ (kernel of reduction) ⇒ Q<sup>σ</sup> − Q = O" (the application of VIII.1.4). The kernel of reduction E₁ is isomorphic to the formal group Ê(M), and Ê(M) has no torsion of order <strong>prime</strong> to p, but <strong>it can have torsion of p-power order</strong> (e.g. over a ramified extension of ℚ<sub>p</sub>). If p | m, E[m] has a p-part, so there can be points other than O that are "m-torsion and in the kernel of reduction", and injectivity is no longer guaranteed. In fact, when m = p, K([p]⁻¹E(K))/K can ramify even above a prime p of good reduction. This is why we put "the primes dividing m" into S.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 4</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          Let E : y² = x³ − x and P = (−1, 0). Derive the quartic equation satisfied by the x-coordinate of Q with [2]Q = P, check that it is (x² + 2x − 1)², and determine the coordinates of Q and the field ℚ(Q) (that is, fill in the last row of the table in the text yourself).
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            By the duplication formula, (x²+1)² / (4(x³−x)) = −1, which rearranges to x⁴ + 4x³ + 2x² − 4x + 1 = 0. Comparing expansions confirms (x² + 2x − 1)² = x⁴ + 4x³ + 2x² − 4x + 1 (expanding (x²+2x−1)²: x⁴+4x³+4x²−2x²−4x+1). So x = −1 ± √2. For x = −1+√2, y² = x³ − x = x(x−1)(x+1) = (−1+√2)(−2+√2)(√2) = −2(√2−1)² &lt; 0 (negative over the reals), so y = ± i√2(√2−1). Hence Q = (−1+√2, i√2(√2−1)) and ℚ(Q) = ℚ(i, √2) (a degree-4 extension). For this P alone, the half point lies in neither ℚ(i) nor ℚ(√2), and the compositum is needed.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 5</span><span class="diff d2">★★ Standard</span></div>
+      <div class="ex-body">
+        <p>
+          In the proof of VIII.1.6 we built a surjection R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ↠ T<sub>S</sub>, and AEC remarks that "it is in fact an isomorphism". Prove injectivity. That is, show that if u ∈ R<sub>S</sub><sup>×</sup> is an m-th power in K<sup>×</sup> (u = b<sup>m</sup>, b ∈ K<sup>×</sup>), then b ∈ R<sub>S</sub><sup>×</sup>.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the solution</summary>
+        <div class="sol-body">
+          <p>
+            For every v ∉ S, m·ord<sub>v</sub>(b) = ord<sub>v</sub>(b<sup>m</sup>) = ord<sub>v</sub>(u) = 0 (since u is an S-unit). So ord<sub>v</sub>(b) = 0 for all v ∉ S, and b ∈ R<sub>S</sub><sup>×</sup>. In other words, if u lies in (K<sup>×</sup>)<sup>m</sup>, it already lies in (R<sub>S</sub><sup>×</sup>)<sup>m</sup>, so the kernel is trivial. Together with surjectivity, R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ≅ T<sub>S</sub>.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="ex-box">
+      <div class="ex-head"><span class="ex-num">Problem 6</span><span class="diff d3">★★★ Advanced</span></div>
+      <div class="ex-body">
+        <p>
+          (Complete the alternative proof via Minkowski<span class="refchip">AEC VIII.1.7</span>.) Assume E[m] ⊂ E(K). For Q ∈ [m]<sup>−1</sup>E(K), prove the degree bound [K(Q) : K] ≤ m². Then, granting the Hermite–Minkowski theorem "there are only finitely many extensions of bounded degree unramified outside S", deduce that L = K([m]<sup>−1</sup>E(K)) is of finite degree.
+        </p>
+      </div>
+      <details class="sol">
+        <summary>Open the outline of the solution</summary>
+        <div class="sol-body">
+          <p>
+            <strong>Degree bound:</strong> for σ ∈ G<sub><span class="ov">K</span>/K</sub>, [m](Q<sup>σ</sup> − Q) = ([m]Q)<sup>σ</sup> − [m]Q = O, so Q<sup>σ</sup> ∈ { Q + T : T ∈ E[m] }. So Q has at most #E[m] = m² Galois conjugates, and the minimal polynomial of (the coordinates of) Q has degree at most m². Hence [K(Q) : K] ≤ m².
+          </p>
+          <p>
+            <strong>Finiteness:</strong> each K(Q) is unramified outside S by the same argument as VIII.1.5b (that argument does not use E[m] ⊂ E(K)). By Hermite–Minkowski there are only finitely many extensions of degree ≤ m² unramified outside S, so the candidate fields K(Q₁), …, K(Q<sub>t</sub>) are finite in number. L is their compositum, so [L : K] ≤ Π [K(Q<sub>i</sub>) : K] &lt; ∞.
+          </p>
+          <p>
+            <strong>Comparison:</strong> the proof in the text (Kummer theory) derives finiteness from the structure "abelian of exponent m", whereas this one pushes through using only "uniform boundedness of the degree". Note that both need "unramifiedness" (STEP 2) in common.
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/aec.html">
+      <div class="p-dir">← PREV ─ Part 1</div>
+      <div class="p-title">Overall map and prerequisites (AEC I–VII)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/kummer.html">
+      <div class="p-dir">NEXT ─ Part 3</div>
+      <div class="p-title">Kummer pairing and Galois cohomology (AEC VIII §2) →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ graduate materials / Arithmetic of Elliptic Curves series 2/5</p>
+    <p>Source text: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Ch. VIII §1</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

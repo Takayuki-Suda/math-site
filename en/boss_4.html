@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 4 The Wall of Abstraction | Math the Japanese Way</title>
+<meta name="description" content="The &quot;Wall of Abstraction&quot; boss battle challenges your understanding of university math and abstract algebra. A test to get over the wall of abstraction.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 4 The Wall of Abstraction | Math the Japanese Way">
+<meta property="og:description" content="The &quot;Wall of Abstraction&quot; boss battle challenges your understanding of university math and abstract algebra. A test to get over the wall of abstraction.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_4.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_4.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_4.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_4.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_4.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* 正八面体の頂点（回転投影用） */
+var VERTS=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+var EDGES=[[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[4,3],[3,5],[5,2]];
+
+/* ── 問題ジェネレータ（毎回 数値をランダム生成）── */
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gGcd(a,b){ a=Math.abs(a);b=Math.abs(b); while(b){ var t=b; b=a%b; a=t; } return a||1; }
+function gDet(){ var a=ri(-3,4),b=ri(-3,4),c=ri(-3,4),d=ri(-3,4), det=a*d-b*c;
+  return {q:'Matrix ( '+a+' '+b+' / '+c+' '+d+' ). What is det?',
+    c:opts(det,[det+1,det-1,a*d+b*c,a*c-b*d]), a:0,
+    exp:'A 2×2 determinant is ad − bc = '+a+'×'+d+' − '+b+'×'+c+' = '+det+'.'}; }
+function gTrace(){ var a=ri(-4,6),b=ri(-3,4),c=ri(-3,4),d=ri(-4,6), tr=a+d;
+  return {q:'Matrix ( '+a+' '+b+' / '+c+' '+d+' ). What is the trace (sum of the diagonal)?',
+    c:opts(tr,[tr+1,tr-1,a*d,a-d]), a:0,
+    exp:'The trace is the sum of the diagonal entries = '+a+' + '+d+' = '+tr+'.'}; }
+function gOrder(){ var n=pick([4,5,6,7,8,9,10,12]), m=ri(1,n-1), g=gGcd(n,m), ord=n/g;
+  return {q:'In the cyclic group ℤ/'+n+'ℤ, the element '+m+' has what order?',
+    c:opts(ord,[ord+1,ord-1,n,m]), a:0,
+    exp:'The order of an element a is n/gcd(n,a) = '+n+'/gcd('+n+','+m+') = '+n+'/'+g+' = '+ord+'.'}; }
+
+BossBattle({
+  no:4,
+  name:'The Wall of Abstraction',
+  sub:'The border between university and graduate school',
+  kids:false,
+  intro:[
+    'The numbers disappear.',
+    'Only structure remains.',
+    '── Addition and multiplication are now just shadows called "operations".'
+  ],
+  theme:{main:'#2ee6c8',glow:'rgba(46,230,200,.4)',dark:'#04201c',icon:'💠'},
+  fleeHref:'/math-site/en/dai/map.html',
+  enterFlag:null,
+  /* 第一形態：群の公理・線形代数の入口・○×（行列の数値は毎回ランダム）*/
+  questions:[
+    gDet, gTrace,
+    {q:'Which is <strong>not</strong> part of the definition (axioms) of a group (G, ·)?',
+     c:['commutativity','associativity','existence of an identity','existence of inverses'], a:0,
+     exp:'The group axioms are three: associativity, identity, inverses (+ the operation is closed). A group that is also commutative is specially called an "abelian group".'},
+    {q:'[True/False] If the determinant of a square matrix is 0, it has no inverse.', c:['○ True','× False'], a:0,
+     exp:'det = 0 ⇔ not invertible ⇔ no inverse matrix.'},
+    {q:'What is the identity of (ℤ, +)?', c:['0','1','−1','does not exist'], a:0,
+     exp:'a + 0 = a holds for every integer. The identity for addition is 0.'},
+    {q:'What is a "basis" of a vector space?', c:['a linearly independent spanning set','a mutually orthogonal set','a set of unit vectors','a set containing the zero vector'], a:0,
+     exp:'It spans everything with nothing wasted. These two conditions make "coordinates" possible.'}
+  ],
+  /* 第二形態：部分群・準同型・線形代数・位相 */
+  questions2:[
+    gDet, gOrder,
+    {q:'Which equation does a group homomorphism f: G → H satisfy?',
+     c:['f(ab) = f(a)f(b)','f(ab) = f(a) + f(b)','f(a⁻¹) = f(a)','f(e) = 0'], a:0,
+     exp:'A map that preserves the structure of the operation. The very definition of "carrying structure across".'},
+    {q:'An n×n matrix is invertible ⇔ ?', c:['rank = n','det = 0','0 is an eigenvalue','it is symmetric'], a:0,
+     exp:'Full rank ⇔ invertible ⇔ det ≠ 0.'},
+    {q:'In the definition of a topological space, what must the family of open sets satisfy?',
+     c:['closed under arbitrary unions and finite intersections','closed under countable intersections','closed under complements','has a total order'], a:0,
+     exp:'Axioms for open sets: contain ∅ and the whole space, closed under arbitrary unions and finite intersections.'},
+    {q:'[True/False] Any linearly independent set of vectors is automatically a basis.', c:['× False','○ True'], a:0,
+     exp:'It must also span. Only independent AND spanning makes a basis.'},
+    {q:'Lagrange\'s theorem: the order of a subgroup H is…',
+     c:['a divisor of |G|','a multiple of |G|','always prime','coprime to |G|'], a:0,
+     exp:'|H| divides |G|, because the cosets split G into exactly equal parts.'},
+    {q:'What is the definition of a compact space (in a general topological space)?',
+     c:['every open cover has a finite subcover','it is closed and bounded','every sequence converges','a distance can be defined'], a:0,
+     exp:'"From any open cover you can pick finitely many that still cover." In ℝⁿ this is equivalent to closed and bounded (Heine–Borel).'}
+  ],
+  /* 最終形態：準同型定理・正規部分群・固有値・位相 */
+  questions3:[
+    gOrder, gDet,
+    {q:'Homomorphism theorem: for f: G → H, G/Ker f ≅ ?', c:['Im f','H','Ker f','G'], a:0,
+     exp:'Divide out the crushed part (the kernel) and you get something isomorphic to the image. One of the most used theorems in algebra.'},
+    {q:'What is the definition of a normal subgroup N?', c:['∀g ∈ G, gNg⁻¹ = N','N is commutative','N is finite','N = G'], a:0,
+     exp:'A subgroup invariant under conjugation. Only then is there an operation on the quotient group G/N.'},
+    {q:'Which equation relates an eigenvalue λ and an eigenvector v ≠ 0?', c:['Av = λv','Av = v + λ','Av = 0','Aλ = v'], a:0,
+     exp:'A vector whose direction doesn\'t change when multiplied by A, just scaled by λ: that\'s an eigenvector.'},
+    {q:'[True/False] The sphere S² and the torus T² are homeomorphic.', c:['× False','○ True'], a:0,
+     exp:'They have different numbers of holes (genus). Euler characteristics 2 and 0 tell them apart.'},
+    {q:'What is the topological definition of a continuous map?', c:['the preimage of an open set is open','the image of an open set is open','it is injective','it is bijective'], a:0,
+     exp:'f⁻¹(open) is open. That is the essential definition of continuity.'},
+    {q:'A group of order p (a prime) is…?', c:['isomorphic to the cyclic group ℤ/pℤ','always non-commutative','not a simple group','does not exist'], a:0,
+     exp:'By Lagrange\'s theorem every element has order 1 or p. Any element other than the identity generates the whole group.'},
+    {q:'What is the correct rebuttal to "every group is commutative"?', c:['give one counterexample, S₃','it\'s true since no contradiction follows from the axioms','give three examples','take a majority vote'], a:0,
+     exp:'A universal statement falls with a single counterexample. S₃ is the smallest one. That\'s how mathematical arguments work.'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+6;
+    var dmg=1-S.hpRatio;
+    var hurtC=S.hurt>0.3;
+    var R=92+6*Math.sin(t*1.2);
+
+    /* 回転する八面体ワイヤーフレーム */
+    var ax=t*0.7, ay=t*0.45;
+    var proj=VERTS.map(function(v){
+      var x=v[0],y=v[1],z=v[2];
+      /* y軸回転 */
+      var x1=x*Math.cos(ay)+z*Math.sin(ay);
+      var z1=-x*Math.sin(ay)+z*Math.cos(ay);
+      /* x軸回転 */
+      var y2=y*Math.cos(ax)-z1*Math.sin(ax);
+      var z2=y*Math.sin(ax)+z1*Math.cos(ax);
+      var s=1/(1.9-z2*0.55);
+      return {x:cx+x1*R*1.6*s, y:cy+y2*R*1.6*s, z:z2};
+    });
+    ctx.save();
+    EDGES.forEach(function(e){
+      var p1=proj[e[0]],p2=proj[e[1]];
+      var depth=(p1.z+p2.z)/2;
+      var al=0.35+0.4*(depth+1)/2;
+      ctx.strokeStyle=hurtC?'rgba(255,140,120,'+al+')':'rgba(46,230,200,'+al+')';
+      ctx.lineWidth=1.5+1.6*(depth+1)/2;
+      ctx.shadowColor=hurtC?'rgba(255,120,100,.8)':'rgba(46,230,200,.7)';
+      ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+    });
+    /* 頂点 */
+    proj.forEach(function(p){
+      var al=0.5+0.5*(p.z+1)/2;
+      ctx.fillStyle=hurtC?'rgba(255,200,190,'+al+')':'rgba(200,255,245,'+al+')';
+      ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.arc(p.x,p.y,3+2*(p.z+1)/2,0,Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+
+    /* 中心の特異点（コア） */
+    var pulse=0.6+0.4*Math.sin(t*3);
+    ctx.save();
+    var cg=ctx.createRadialGradient(cx,cy,2,cx,cy,26+10*pulse);
+    cg.addColorStop(0,hurtC?'#fff':'#eafffb');
+    cg.addColorStop(0.4,hurtC?'#ff9a8a':'#2ee6c8');
+    cg.addColorStop(1,'rgba(46,230,200,0)');
+    ctx.fillStyle=cg;
+    ctx.beginPath(); ctx.arc(cx,cy,26+10*pulse,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    /* 軌道を巡る記号たち */
+    var syms=['G','e','a⁻¹','⊕','≅','∀','∃','φ'];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    syms.forEach(function(s,i){
+      var ang=t*(0.4+0.06*i)+i*Math.PI*2/syms.length;
+      var rx=205-((i%3)*28), ry=105-((i%3)*16);
+      var ox=cx+Math.cos(ang)*rx;
+      var oy=cy+Math.sin(ang)*ry;
+      var front=Math.sin(ang)>0;
+      ctx.save();
+      ctx.globalAlpha=(front?0.95:0.4);
+      ctx.shadowColor='rgba(46,230,200,.85)'; ctx.shadowBlur=14;
+      ctx.fillStyle=hurtC?'#ffc4b8':'#bdfff2';
+      ctx.font=(front?'900 30px':'700 22px')+' Georgia,serif';
+      ctx.fillText(s,ox,oy);
+      ctx.restore();
+    });
+
+    /* ダメージ：空間のグリッチ（水平の乱れ線） */
+    if(dmg>0.2){
+      ctx.save();
+      for(var g2=0;g2<Math.floor(dmg*5);g2++){
+        var gy2=(Math.sin(t*9+g2*37)*0.5+0.5)*H;
+        ctx.strokeStyle='rgba(255,255,255,'+(0.1+0.2*Math.random()*dmg)+')';
+        ctx.lineWidth=1+Math.random()*2;
+        ctx.beginPath(); ctx.moveTo(0,gy2); ctx.lineTo(W,gy2); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* 下部の公理 */
+    ctx.save();
+    ctx.fillStyle='rgba(189,255,242,'+(0.3+0.2*Math.sin(t*1.3))+')';
+    ctx.font='italic 700 17px Georgia,serif';
+    ctx.fillText('(a·b)·c = a·(b·c)  a·e = a  a·a⁻¹ = e', cx, H-24);
+    ctx.restore();
+  },
+  victory:{
+    xp:500,
+    msg:'Welcome to the sea of abstraction.<br>From here on, it\'s a lonely fight. — Mr. Suda',
+    cta:null,
+    doorHref:'/math-site/en/in/map.html',
+    doorName:'Graduate School Field',
+    note:'Beyond the structures, the final wall comes into view ──'
+  }
+});
+})();
+</script>
+</body>
+</html>

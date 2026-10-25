@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N2: Hilbert 90 and the Connection to the Multiplicative Group ─ The Kummer Pairing | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N2, completely proving Hilbert's Theorem 90 and the connection to the multiplicative group. Graduate-level notes.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N2: Hilbert 90 and the Connection to the Multiplicative Group ─ The Kummer Pairing | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N2, completely proving Hilbert's Theorem 90 and the connection to the multiplicative group. Graduate-level notes.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/kummer-step2.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'90'; position:absolute; right:-10px; top:-36px; font-family:var(--display); font-style:italic;
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+  .box.warn { border-color:rgba(224,104,122,.5); background:rgba(224,104,122,.05); }
+  .box.warn .box-label { color:var(--red); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:0.9rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step2.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/kummer-step2.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step2.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/kummer-step2.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ The Kummer pairing N2/N3</div>
+    <h1>Hilbert 90 and the connection to the multiplicative group<br><span class="en">Hilbert 90, the Weil Pairing, and Square Classes</span></h1>
+    <p class="hero-sub">
+      We completely prove Hilbert 90, which the main part cited in one line as "a monument of classical field theory", from Dedekind's independence lemma
+      to the profinite version (AEC B.2.5). Then, from the properties of the Weil pairing, we assemble
+      E[m] ≅ μ<sub>m</sub> × μ<sub>m</sub> (when E[m] ⊂ E(K)), and
+      go as far as why the "x − e<sub>i</sub>" map of §07 in the main part is a homomorphism ── an identity about lines ──
+      building every bridge between E[m] and the multiplicative group.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Ch. VIII §2, App. B.2.5, Ch. III §8, Ch. X §1 / Neukirch, ANT IV §3</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/kummer.html">Main III The Kummer pairing</a>
+      <a href="/math-site/en/in/kummer-step0.html">N0 Foundations of cohomology</a>
+      <a href="/math-site/en/in/kummer-step1.html">N1 The Kummer sequence</a>
+      <a class="cur" href="/math-site/en/in/kummer-step2.html">N2 Hilbert 90</a>
+      <a href="/math-site/en/in/kummer-step3.html">N3 inf–res and unramified</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① That <span class="ov">K</span><sup>×</sup> and μ<sub>m</sub> fit the framework of "discrete G-modules" ── the second half of the homework announced in N0 §04 (the first half, E(<span class="ov">K</span>), is N1 §03)</li>
+      <li>② Checking the short exact sequence of the multiplicative group 1 → μ<sub>m</sub> → <span class="ov">K</span><sup>×</sup> → <span class="ov">K</span><sup>×</sup> → 1, and the multiplicative version of the six-term sequence</li>
+      <li>③ A complete proof of the <strong>finite version of Hilbert 90</strong> (H¹(G<sub>L/K</sub>, L<sup>×</sup>) = 1) ── the key is Dedekind's independence lemma</li>
+      <li>④ Lifting from the finite version to the main part's claim H¹(G<sub><span class="ov">K</span>/K</sub>, <span class="ov">K</span><sup>×</sup>) = 0 ── the first job for N0 §04's continuous cocycle theorem</li>
+      <li>⑤ Properties of the Weil pairing (cited), and a proof of the corollary "E[m] ⊂ E(K) ⇒ μ<sub>m</sub> ⊂ K"</li>
+      <li>⑥ When E[m] ⊂ E(K), <strong>E[m] ≅ μ<sub>m</sub> × μ<sub>m</sub> (as G-modules)</strong> ── what's inside the isomorphism §07 of the main part wrote in one line as "choosing a basis T₁, T₂"</li>
+      <li>⑦ Making m = 2 completely concrete: why "x − e<sub>i</sub>" defines a homomorphism ── <strong>an identity about lines</strong> (verified with sympy)</li>
+    </ul>
+    <p>
+      We fix the premises with the W series in §02. We carry over N0's machine (the six-term sequence, the continuous cocycle theorem) and
+      N1's procedures (cutting out, [m]<sub>*</sub> = multiplication by m).
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (W1–W4)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise W1 ─ multiplicative notation and μ<sub>m</sub></div>
+      <p>
+        K is a field of characteristic 0 (a number field in mind); <span class="ov">K</span> and G := G<sub><span class="ov">K</span>/K</sub> are as in N1's D1.
+        The star of this note, <span class="ov">K</span><sup>×</sup>, is a <strong>multiplicative group</strong>, so we read N0's additive notation through the following dictionary:
+      </p>
+      <div class="table-wrap">
+      <table class="cmp">
+        <thead><tr><th>Additive (N0, N1)</th><th>Multiplicative (this note)</th></tr></thead>
+        <tbody>
+          <tr><td class="m">0,  m + n,  −m</td><td class="m">1,  m·n,  m<sup>−1</sup></td></tr>
+          <tr><td class="m">multiplication by m  [m]</td><td class="m">m-th power  z ↦ z<sup>m</sup></td></tr>
+          <tr><td class="m">cocycle condition  c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub></td><td class="m">c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> · c<sub>τ</sub></td></tr>
+          <tr><td class="m">coboundary  σ ↦ m<sup>σ</sup> − m</td><td class="m">σ ↦ β<sup>σ</sup>/β</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>
+        μ<sub>m</sub> := { z ∈ <span class="ov">K</span><sup>×</sup> : z<sup>m</sup> = 1 }. In char 0, X<sup>m</sup> − 1 is separable
+        (no common root with its derivative mX<sup>m−1</sup>), so #μ<sub>m</sub> = m, and moreover μ<sub>m</sub> is cyclic of order m
+        (a finite subgroup of the multiplicative group of a field is cyclic ── a standard fact about roots of unity).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise W2 ─ the correspondence of infinite Galois theory <span class="refchip">ANT IV.1.2</span></div>
+      <p>
+        Open normal subgroups U of G and finite Galois extensions L/K inside <span class="ov">K</span>
+        correspond one-to-one via U = G<sub><span class="ov">K</span>/L</sub> (the main theorem with the Krull topology), and
+        restriction gives G/U ≅ G<sub>L/K</sub><span class="refchip">weakmw N1 premise Q4</span>.
+        The fixed field is <span class="ov">K</span><sup>U</sup> = L, and therefore
+        (<span class="ov">K</span><sup>×</sup>)<sup>U</sup> = L<sup>×</sup> (just removing 0).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise W3 ─ the Weil pairing <span class="refchip">AEC III.8.1</span></div>
+      <p>Let E/K be an elliptic curve, m ≥ 2, char 0. There is a pairing (the Weil pairing) with the following properties:</p>
+      <div class="formula"><div class="fline">e<sub>m</sub> : E[m] × E[m] → μ<sub>m</sub></div></div>
+      <p>
+        (a) <strong>Bilinear</strong>: e<sub>m</sub>(S₁+S₂, T) = e<sub>m</sub>(S₁,T)·e<sub>m</sub>(S₂,T), and likewise in the second variable.
+        (b) <strong>Alternating</strong>: e<sub>m</sub>(T, T) = 1 (hence e<sub>m</sub>(S,T) = e<sub>m</sub>(T,S)<sup>−1</sup>).
+        (c) <strong>Nondegenerate</strong>: if e<sub>m</sub>(S, T) = 1 for all T ∈ E[m], then S = O.
+        (d) <strong>Galois equivariant</strong>: e<sub>m</sub>(S, T)<sup>σ</sup> = e<sub>m</sub>(S<sup>σ</sup>, T<sup>σ</sup>).
+        The construction uses the theory of divisors and functions (AEC III §8). In this note we use <strong>only the properties</strong>.
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise W4 ─ the machines of N0 and N1</div>
+      <p>
+        The six-term sequence and exactness at 5 places (N0 §07), descending continuous cocycles to a finite stage (N0 §04),
+        the cutting-out procedure and "induced map = multiplication by m (multiplicative version: m-th power)" (N1 Steps 9–12).
+        Applying them to the multiplicative group goes through the dictionary in W1.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The multiplicative group fits the machine's framework too (gaps ①②)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p><span class="ov">K</span><sup>×</sup> and μ<sub>m</sub> are discrete G-modules.</p>
+        <p class="ps-why"><b>▸ Reason</b>  σ is a field automorphism, so (ab)<sup>σ</sup> = a<sup>σ</sup>b<sup>σ</sup> and 1<sup>σ</sup> = 1, i.e. each σ is a group automorphism of <span class="ov">K</span><sup>×</sup> (R1(i) via the dictionary in W1). The composition convention (ii) and the identity (iii) are the field action itself. Discreteness: a ∈ <span class="ov">K</span><sup>×</sup> is algebraic over K, so its stabilizer contains the open subgroup G<sub><span class="ov">K</span>/K(a)</sub> (the same argument as N1 Step 2). μ<sub>m</sub> is G-stable: (z<sup>σ</sup>)<sup>m</sup> = (z<sup>m</sup>)<sup>σ</sup> = 1<sup>σ</sup> = 1. It's finite (#μ<sub>m</sub> = m, W1), hence discrete.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>The following is a short exact sequence of discrete G-modules:</p>
+        <div class="formula"><div class="fline">1 → μ<sub>m</sub> → <span class="ov">K</span><sup>×</sup> →<sup>m-th power</sup> <span class="ov">K</span><sup>×</sup> → 1</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  z ↦ z<sup>m</sup> is a homomorphism (the multiplicative group is abelian). G-equivariant: (z<sup>m</sup>)<sup>σ</sup> = (z<sup>σ</sup>)<sup>m</sup> (a field homomorphism). The kernel is μ<sub>m</sub> (definition). Surjective: for a ∈ <span class="ov">K</span><sup>×</sup>, X<sup>m</sup> − a has a root α in the algebraically closed field <span class="ov">K</span>, and since a ≠ 0, α ≠ 0, i.e. α ∈ <span class="ov">K</span><sup>×</sup>. The inclusion μ<sub>m</sub> ⊆ <span class="ov">K</span><sup>×</sup> is a G-equivariant injection (G-stability in Step 1).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>The six-term sequence (multiplicative version) and cutting out. Applying N0 §07 through the dictionary in W1 and substituting (<span class="ov">K</span><sup>×</sup>)<sup>G</sup> = K<sup>×</sup>:</p>
+        <div class="formula">
+          <div class="fline">1 → μ<sub>m</sub>(K) → K<sup>×</sup> →<sup>m-th power</sup> K<sup>×</sup> →<sup>δ</sup> H¹(G, μ<sub>m</sub>) → H¹(G, <span class="ov">K</span><sup>×</sup>) →<sup>(m-th power)*</sup> H¹(G, <span class="ov">K</span><sup>×</sup>)</div>
+        </div>
+        <p>By the same cutting-out procedure as N1 §07:</p>
+        <div class="formula">
+          <div class="fline">1 → K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> →<sup>δ</sup> H¹(G, μ<sub>m</sub>) → H¹(G, <span class="ov">K</span><sup>×</sup>)[m] → 1,  δ(a) = [ σ ↦ α<sup>σ</sup>/α ] (α<sup>m</sup> = a)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  (<span class="ov">K</span><sup>×</sup>)<sup>G</sup> = K<sup>×</sup> is just <span class="ov">K</span><sup>G</sup> = K (N1 D1) with 0 removed. μ<sub>m</sub>(K) := μ<sub>m</sub> ∩ K<sup>×</sup>. The formula for δ is the construction of N0 Step 11 with "an m-th root α" chosen as the lift (the multiplicative version of b<sup>σ</sup> − b is α<sup>σ</sup>/α)<span class="refchip">AEC VIII.2.2</span>. That the induced map (m-th power)<sub>*</sub> agrees with "the m-th power of classes in H¹", and exactness at the 3 places of the cut-out sequence, follow from the proofs of N1 Steps 9–12 with just a change of symbols (the only properties used were "the operation on Z¹ is pointwise" and "exactness at 5 places"; additivity was never used).</p>
+      </div>
+    </div>
+
+    <p>
+      Only one job remains: proving that the obstruction at the right end, H¹(G, <span class="ov">K</span><sup>×</sup>), <strong>vanishes</strong>.
+      This is Hilbert's Theorem 90. The key to the proof lies not in cohomology but in <strong>classical linear algebra</strong>.
+    </p>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>Dedekind's independence lemma (the key to gap ③)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (linear independence of characters: Dedekind–Artin) <span class="refchip">Lang, Algebra VI §4</span></div>
+      <p>
+        Let H be a group, L a field, and χ₁, …, χ<sub>n</sub> : H → L<sup>×</sup> <strong>distinct</strong> group homomorphisms (characters).
+        χ₁, …, χ<sub>n</sub> are linearly independent over L: if a₁χ₁(h) + ⋯ + a<sub>n</sub>χ<sub>n</sub>(h) = 0
+        for all h ∈ H, then a₁ = ⋯ = a<sub>n</sub> = 0.
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Assume a shortest nontrivial relation and derive a contradiction (minimal counterexample in n).</p>
+        <p class="ps-why"><b>▸ Reason</b>  Among the nontrivial relations (coefficients not all 0), take one with <strong>the fewest nonzero coefficients</strong>. Dropping terms with coefficient 0 and renumbering, we may assume a₁, …, a<sub>n</sub> ≠ 0. If n = 1, substituting h = e gives a₁χ₁(e) = a₁·1 = 0, a contradiction. So n ≥ 2. Since χ₁ ≠ χ<sub>n</sub>, there is h₀ ∈ H with χ₁(h₀) ≠ χ<sub>n</sub>(h₀).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>Use h₀ to shorten the relation by one ── a contradiction.</p>
+        <p class="ps-why"><b>▸ Reason</b>  For any h, substitute h₀h into the relation: Σ a<sub>i</sub>χ<sub>i</sub>(h₀)χ<sub>i</sub>(h) = Σ a<sub>i</sub>χ<sub>i</sub>(h₀h) = 0. On the other hand, multiply the original relation by χ<sub>n</sub>(h₀): Σ a<sub>i</sub>χ<sub>n</sub>(h₀)χ<sub>i</sub>(h) = 0. Taking the difference, the i = n term cancels: Σ<sub>i≤n−1</sub> a<sub>i</sub>(χ<sub>i</sub>(h₀) − χ<sub>n</sub>(h₀))χ<sub>i</sub>(h) = 0 (∀h). The coefficient of the first term, a₁(χ₁(h₀) − χ<sub>n</sub>(h₀)), is nonzero, so this is a nontrivial relation with fewer than n nonzero coefficients. This contradicts minimality. ∎</p>
+      </div>
+    </div>
+
+    <p>
+      The form we apply: if L/K is a finite Galois extension, distinct τ ∈ G<sub>L/K</sub> are
+      distinct characters L<sup>×</sup> → L<sup>×</sup> (they preserve multiplication), so they're linearly independent over L.
+      That is, as long as the coefficients c<sub>τ</sub> ∈ L<sup>×</sup> are all nonzero, the function
+      z ↦ Σ<sub>τ</sub> c<sub>τ</sub>·z<sup>τ</sup> is not identically 0.
+    </p>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>The finite version of Hilbert 90 (gap ③)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (Hilbert's Theorem 90, finite version) <span class="refchip">ANT IV.3.5</span></div>
+      <p>Let L/K be a finite Galois extension and <span style="text-decoration:overline">G</span> := G<sub>L/K</sub>. Then:</p>
+      <div class="formula"><div class="fline">H¹( G<sub>L/K</sub>, L<sup>×</sup> ) = 1  (every 1-cocycle is a coboundary σ ↦ β<sup>σ</sup>/β)</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p><strong>Preparing to average:</strong> take c ∈ Z¹(G<sub>L/K</sub>, L<sup>×</sup>). For some a ∈ L<sup>×</sup>,</p>
+        <div class="formula"><div class="fline">b := Σ<sub>τ ∈ G<sub>L/K</sub></sub> c<sub>τ</sub> · a<sup>τ</sup> ≠ 0</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  The coefficients c<sub>τ</sub> are elements of L<sup>×</sup>, i.e. all nonzero. By the lemma of §04 (the form we apply), z ↦ Σ c<sub>τ</sub>z<sup>τ</sup> is not identically 0 on L<sup>×</sup>, so there is a ∈ L<sup>×</sup> with b ≠ 0. The sum is finite (G<sub>L/K</sub> is a finite group), so b ∈ L.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p><strong>Compute the Galois orbit of b with the cocycle condition:</strong> b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> · b (∀σ).</p>
+        <p class="ps-why"><b>▸ Reason</b>  b<sup>σ</sup> = Σ<sub>τ</sub> c<sub>τ</sub><sup>σ</sup> · a<sup>τσ</sup> (the action is a field homomorphism; (a<sup>τ</sup>)<sup>σ</sup> = a<sup>τσ</sup> is the right-action convention). Reading the cocycle condition (dictionary in W1) for the pair (τ, σ): c<sub>τσ</sub> = c<sub>τ</sub><sup>σ</sup> · c<sub>σ</sub>, i.e. c<sub>τ</sub><sup>σ</sup> = c<sub>τσ</sub> · c<sub>σ</sub><sup>−1</sup>. Substituting, b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> Σ<sub>τ</sub> c<sub>τσ</sub> a<sup>τσ</sup>. τ ↦ τσ is a bijection of G<sub>L/K</sub> (right translation in the group), so the sum equals b: b<sup>σ</sup> = c<sub>σ</sub><sup>−1</sup> b.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p><strong>Conclusion:</strong> setting β := b<sup>−1</sup>, c<sub>σ</sub> = β<sup>σ</sup>/β. That is, c is a coboundary, and H¹ = 1.</p>
+        <p class="ps-why"><b>▸ Reason</b>  β<sup>σ</sup>/β = (b<sup>σ</sup>)<sup>−1</sup>/b<sup>−1</sup> = b/b<sup>σ</sup> = b/(c<sub>σ</sub><sup>−1</sup>b) = c<sub>σ</sub> (Step 7). b ∈ L<sup>×</sup>, so β ∈ L<sup>×</sup>. Every cocycle is a coboundary, so H¹(G<sub>L/K</sub>, L<sup>×</sup>) = 1. ∎</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Relation to the classical form (the norm theorem for cyclic extensions)</div>
+      <p>
+        When G<sub>L/K</sub> = ⟨σ⟩ is cyclic, a cocycle is determined by a single value c<sub>σ</sub>, and
+        the cocycle condition turns into "N<sub>L/K</sub>(c<sub>σ</sub>) = 1". Then the theorem says
+        "an element of norm 1 has the form β<sup>σ</sup>/β" ── the claim listed as "the classical form" on shelf 4 of ant.html.
+        Hilbert's original paper (Satz 90 of the Zahlbericht) had this form. The b in the proof above is an averaging called
+        a "Poincaré series", and the trick is to borrow the <strong>addition</strong> of the field to solve a problem about the multiplicative group.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>Lifting to the profinite version, and the isomorphism δ (gap ④)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (Hilbert 90, profinite version) <span class="refchip">AEC B.2.5</span></div>
+      <div class="formula"><div class="fline">H¹( G<sub><span class="ov">K</span>/K</sub>, <span class="ov">K</span><sup>×</sup> ) = 0 (= 1 written multiplicatively)</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>Proof: drop a continuous cocycle to a finite stage and apply §05.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Let c be a continuous cocycle. <span class="ov">K</span><sup>×</sup> is a discrete G-module (Step 1), so the theorem of N0 §04 applies: there is an open normal subgroup U such that c is the inflation of c̄ ∈ Z¹(G/U, (<span class="ov">K</span><sup>×</sup>)<sup>U</sup>). By W2, U = G<sub><span class="ov">K</span>/L</sub> (L/K finite Galois), G/U ≅ G<sub>L/K</sub>, (<span class="ov">K</span><sup>×</sup>)<sup>U</sup> = L<sup>×</sup>. So c̄ ∈ Z¹(G<sub>L/K</sub>, L<sup>×</sup>). By the theorem of §05 there is β ∈ L<sup>×</sup> with c̄<sub>σ̄</sub> = β<sup>σ̄</sup>/β. Inflation sends coboundaries to coboundaries: c<sub>σ</sub> = c̄<sub>σU</sub> = β<sup>σ|<sub>L</sub></sup>/β = β<sup>σ</sup>/β (since β ∈ L, the action of σ is determined by its restriction σ|<sub>L</sub>). So [c] = 0. ∎</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Consequence (the connecting homomorphism becomes an isomorphism) <span class="refchip">AEC VIII.2.2</span></div>
+      <div class="formula">
+        <div class="fline">δ : K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> ≅ H¹(G, μ<sub>m</sub>),  δ(a) = [ σ ↦ α<sup>σ</sup>/α ]  (α<sup>m</sup> = a)</div>
+      </div>
+      <p>
+        The right end H¹(G, <span class="ov">K</span><sup>×</sup>)[m] of the exact sequence cut out in Step 3 became 0, so
+        the injection δ is also surjective. <strong>The "theory of m-th roots" for the multiplicative group closes up in K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup></strong>
+        ── every entry in the left column of the comparison table in §04 of the main part is now verified.
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Where the same proof fails to run for elliptic curves</div>
+      <p>
+        The heart of the proof in §05 was the <strong>averaging</strong> b = Σ c<sub>τ</sub>a<sup>τ</sup>,
+        the operation "use elements c<sub>τ</sub> of the multiplicative group as coefficients and sum with the field's addition".
+        E(<span class="ov">K</span>) has neither "multiplying by coefficients" nor "the field's addition" ── only addition of points.
+        So the same averaging can't be defined, and in fact H¹(G, E) does not vanish in general (bottom right of the table in §04 of the main part).
+        That one "≠ 0" cell is the expression of a structural reason: <strong>you can't average</strong>.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07</div>
+    <h2>Connecting E[m] to μ<sub>m</sub> with the Weil pairing (gaps ⑤⑥)</h2>
+
+    <p>
+      From here on in this section we assume <strong>E[m] ⊂ E(K)</strong> (the same setting as §07 of the main part;
+      for m = 2 it's equivalent to "all the e<sub>i</sub> are in K").
+    </p>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p><strong>Corollary:</strong> if E[m] ⊂ E(K), then μ<sub>m</sub> ⊂ K<sup>×</sup>. <span class="refchip">AEC III.8.1.1</span></p>
+        <p class="ps-why"><b>▸ Reason</b>  Take a basis T₁, T₂ ∈ E[m] (E[m] ≅ (ℤ/mℤ)², N1 D3). Set ζ := e<sub>m</sub>(T₁, T₂), and let d (d | m) be the order of ζ. For any S = [a]T₁ + [b]T₂, bilinearity (a) and alternation (b) give e<sub>m</sub>([d]T₁, S) = e<sub>m</sub>(T₁, T₁)<sup>da</sup> · e<sub>m</sub>(T₁, T₂)<sup>db</sup> = 1 · (ζ<sup>d</sup>)<sup>b</sup> = 1. By nondegeneracy (c), [d]T₁ = O. T₁ has order exactly m (it's a basis element), so m | d, hence d = m. That is, ζ is a primitive m-th root of unity and μ<sub>m</sub> = ⟨ζ⟩ (W1: μ<sub>m</sub> is cyclic of order m). By Galois equivariance (d) and T<sub>i</sub> ∈ E(K), ζ<sup>σ</sup> = e<sub>m</sub>(T₁<sup>σ</sup>, T₂<sup>σ</sup>) = e<sub>m</sub>(T₁, T₂) = ζ (∀σ), i.e. ζ ∈ <span class="ov">K</span><sup>G</sup> = K. So μ<sub>m</sub> = ⟨ζ⟩ ⊂ K<sup>×</sup>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>The map w : E[m] → μ<sub>m</sub> × μ<sub>m</sub>,  S ↦ ( e<sub>m</sub>(S, T₁), e<sub>m</sub>(S, T₂) ) is <strong>an isomorphism of G-modules</strong>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Homomorphism: bilinearity (a) in the first variable. Injective: if w(S) = (1,1), then for any T = [a]T₁+[b]T₂, e<sub>m</sub>(S,T) = e<sub>m</sub>(S,T₁)<sup>a</sup>e<sub>m</sub>(S,T₂)<sup>b</sup> = 1, and nondegeneracy (c) gives S = O. Bijective: injective + both sides have the same order m² (#E[m] = m², #(μ<sub>m</sub>×μ<sub>m</sub>) = m²). G-equivariant: w(S<sup>σ</sup>) = (e<sub>m</sub>(S<sup>σ</sup>, T₁), …) = (e<sub>m</sub>(S<sup>σ</sup>, T₁<sup>σ</sup>), …) = (e<sub>m</sub>(S, T₁)<sup>σ</sup>, …) = w(S)<sup>σ</sup> (T<sub>i</sub> is K-rational so fixed + equivariance (d)). Note that under the present assumption G acts trivially on both sides (E[m] ⊂ E(K), μ<sub>m</sub> ⊂ K: Step 10), so equivariance also holds as "between trivial actions" ── what's inside the parenthetical in §07 of the main part, "as G-modules. μ₂ = {±1} has trivial action, so it's just (ℤ/2)²".</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>An isomorphism induces an isomorphism on H¹, and a direct product splits component by component. Conclusion:</p>
+        <div class="formula"><div class="fline">H¹(G, E[m]) ≅<sup>w*</sup> H¹(G, μ<sub>m</sub> × μ<sub>m</sub>) ≅ H¹(G, μ<sub>m</sub>)² ≅ ( K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> )²</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  First isomorphism: the construction of f<sub>*</sub> (N0 Step 10) preserves composition and identity ── (g∘f)<sub>*</sub>[c] = [(g∘f)∘c] = g<sub>*</sub>f<sub>*</sub>[c], and (id)<sub>*</sub> = id is clear pointwise from the definition. So (w<sup>−1</sup>)<sub>*</sub>∘w<sub>*</sub> = (w<sup>−1</sup>∘w)<sub>*</sub> = id, likewise in the other order, and w<sub>*</sub> is an isomorphism. Second isomorphism: a cocycle of a direct product module is a pair of components c = (c′, c″), and the cocycle condition, coboundaries and continuity can all be read component by component, so the map induced by the projections, [c] ↦ ([c′], [c″]), is an isomorphism (the inverse is assembling the pair). Third isomorphism: the consequence of §06, used twice.</p>
+      </div>
+    </div>
+
+    <div class="box thm">
+      <div class="box-label">Consequence (the identification in §07 of the main part) </div>
+      <p>When E[m] ⊂ E(K), the δ of the Kummer exact sequence in N1 gives an injective homomorphism</p>
+      <div class="formula"><div class="fline">E(K)/mE(K) ↪ ( K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> )²</div></div>
+      <p>
+        . For m = 2, μ₂ = {±1} ⊂ K always holds, so
+        the only assumption is "e₁, e₂, e₃ ∈ K". This is the complete justification of
+        H¹(G, E[2]) ≅ K<sup>×</sup>/(K<sup>×</sup>)² × K<sup>×</sup>/(K<sup>×</sup>)² in §07 of the main part.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>Making m = 2 concrete ─ why "x − e<sub>i</sub>" is a homomorphism (gap ⑦)</h2>
+
+    <p>
+      Let E : y² = f(x) = (x − e₁)(x − e₂)(x − e₃), e<sub>i</sub> ∈ K, T<sub>i</sub> = (e<sub>i</sub>, 0).
+      Why is the map φ = (φ₁, φ₂) of §07 in the main part, φ<sub>i</sub>(P) = x(P) − e<sub>i</sub> (general points; special values by the rule in §07), a
+      <strong>homomorphism</strong>? ── Everything rests on the following elementary identity.
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (an identity about lines; verified with sympy)</div>
+      <p>
+        Let y = λx + ν be the line through P₁, P₂ ∈ E (neither is O) (the tangent when P₁ = P₂), and
+        P₃ := −(P₁ + P₂) ≠ O. Writing x<sub>j</sub> := x(P<sub>j</sub>), for <strong>any e</strong>:
+      </p>
+      <div class="formula">
+        <div class="fline">(x₁ − e)(x₂ − e)(x₃ − e) = (λe + ν)² − f(e)</div>
+        <div class="fline fc">In particular for e = e<sub>i</sub> (a root of f):  (x₁ − e<sub>i</sub>)(x₂ − e<sub>i</sub>)(x₃ − e<sub>i</sub>) = (λe<sub>i</sub> + ν)²  = a square</div>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p>Proof of the identity.</p>
+        <p class="ps-why"><b>▸ Reason</b>  g(x) := f(x) − (λx + ν)² is a monic cubic. <strong>Chord case</strong> (x₁ ≠ x₂): P₁, P₂ are points of E on the line, so y<sub>j</sub> = λx<sub>j</sub> + ν and y<sub>j</sub>² = f(x<sub>j</sub>), hence g(x₁) = g(x₂) = 0. By the relation between roots and coefficients (comparing the x² coefficients) the third root is λ² + (e₁+e₂+e₃) − x₁ − x₂, which agrees with x(P₁+P₂) from the addition formula<span class="refchip">AEC III.2.3</span>. Since x(−P) = x(P), x₃ = x(P₁+P₂) is this third root. <strong>Tangent case</strong> (P₁ = P₂, y₁ ≠ 0, λ = f′(x₁)/(2y₁)): besides g(x₁) = 0, g′(x₁) = f′(x₁) − 2λ(λx₁+ν) = f′(x₁) − 2λy₁ = 0, so x₁ is a double root, and the third root is x₃ = x([2]P₁). In either case g(x) = (x − x₁)(x − x₂)(x − x₃). Now substitute x = e: g(e) = (e−x₁)(e−x₂)(e−x₃) = −(x₁−e)(x₂−e)(x₃−e). Rearranging gives the claimed formula. For e = e<sub>i</sub>, f(e<sub>i</sub>) = 0.</p>
+        <details class="sol">
+          <summary>Rigorous verification with sympy (approach and results)</summary>
+          <div class="sol-body">
+            <p>
+              Chord: with x₁, x₂, y₁, y₂, e₁, e₂, e₃, e as indeterminates, set λ = (y₂−y₁)/(x₂−x₁), ν = y₁ − λx₁,
+              x₃ = λ² + (e₁+e₂+e₃) − x₁ − x₂. Clearing denominators in the difference
+              (x₁−e)(x₂−e)(x₃−e) − {(λe+ν)² − f(e)} and reducing modulo the relations y₁² − f(x₁), y₂² − f(x₂) gives <strong>identically 0</strong>.
+              The displayed form with e = e₁, e₂, e₃ substituted is likewise 0.
+            </p>
+            <p>
+              Tangent: with λ = f′(x₁)/(2y₁), x₃ = λ² + (e₁+e₂+e₃) − 2x₁,
+              reducing (x₁−e)²(x₃−e) − {(λe+ν)² − f(e)} by y₁² − f(x₁) → <strong>identically 0</strong>.
+              We also confirmed the consistency of the special-value rule, (e₁−e₂)(e₁−e₃) ÷ {(e₁−e₃)/(e₁−e₂)} = (e₁−e₂)² (a perfect square).
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">14</div>
+      <div class="ps-b">
+        <p>φ<sub>i</sub> is a homomorphism (general position). When none of P₁, P₂, P₁+P₂ is O or a 2-torsion point:</p>
+        <div class="formula"><div class="fline">φ<sub>i</sub>(P₁) · φ<sub>i</sub>(P₂) · φ<sub>i</sub>(P₁+P₂) = (x₁−e<sub>i</sub>)(x₂−e<sub>i</sub>)(x₃−e<sub>i</sub>) = (λe<sub>i</sub>+ν)² ≡ 1</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  x(P₁+P₂) = x(−(P₁+P₂)) = x₃, so the left equality is a definition. The middle is Step 13 (if P₁, P₂ ∈ E(K) then λ, ν ∈ K: rational functions of the coordinates for a chord, f′(x₁)/(2y₁) for a tangent. If x₁ = x₂ and P₁ ≠ P₂, then P₂ = −P₁ and P₁+P₂ = O, which isn't this case). λe<sub>i</sub>+ν ≠ 0 because "P₁+P₂ is not a 2-torsion point" (if it were 0, x₃ = e<sub>i</sub> would be a double or triple intersection). In K<sup>×</sup>/(K<sup>×</sup>)² every class is its own inverse (t² ≡ 1), so product ≡ 1 is equivalent to φ<sub>i</sub>(P₁+P₂) = φ<sub>i</sub>(P₁)φ<sub>i</sub>(P₂). Cases involving O: trivial from φ<sub>i</sub>(O) = 1 and P + O = P. Case P₂ = −P₁: φ<sub>i</sub>(P₁)φ<sub>i</sub>(−P₁) = (x₁−e<sub>i</sub>)² ≡ 1 ✓.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">15</div>
+      <div class="ps-b">
+        <p>2E(K) lies in the kernel ── and the "square root" can even be written explicitly:</p>
+        <div class="formula"><div class="fline">x([2]P) − e<sub>i</sub> = ( (λe<sub>i</sub>+ν)/(x(P)−e<sub>i</sub>) )²  (tangent y = λx+ν, x(P) ≠ e<sub>i</sub>)</div></div>
+        <p class="ps-why"><b>▸ Reason</b>  Step 13 in the tangent case: (x₁−e<sub>i</sub>)²(x₃−e<sub>i</sub>) = (λe<sub>i</sub>+ν)², x₃ = x([2]P). Just divide both sides by (x₁−e<sub>i</sub>)². Formally, φ<sub>i</sub>([2]P) = φ<sub>i</sub>(P)² ≡ 1 also follows from the homomorphism property (Step 14) alone (the target is a group of exponent 2), but this explicit formula is the source of "the computability of 2-descent" ── it's thanks to this formula that L = ℚ(√−1, √2) could be <strong>computed by hand</strong> in Part 2.</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? Where the special-value rule comes from</div>
+      <p>
+        At points with y ≠ 0, (x−e₁)(x−e₂)(x−e₃) = y² ≡ 1, i.e. <strong>the product of the square classes of the 3 components is always 1</strong>.
+        At T₁ = (e₁, 0) the first component x−e₁ becomes 0 and can't be used, but from the relation product ≡ 1
+        we can substitute "the product of the other two components": φ₁(T₁) = (e₁−e₂)(e₁−e₃).
+        The rule (e₁−e₃)/(e₁−e₂) in §07 of the main part differs from this only by a factor of (e₁−e₂)², so it's <strong>the same square class</strong>
+        (confirmed with sympy). You can see the rule is not "an arbitrary convention" but a necessity of the identity.
+      </p>
+    </div>
+
+    <div class="box rem">
+      <div class="box-label">What this note verified, and the remaining citations <span class="refchip">AEC X.1.1 / X.1.4</span></div>
+      <p>
+        Verified so far: the mechanism by which φ<sub>i</sub> (including the special-value rule) defines a homomorphism, 2E(K) ⊆ ker φ,
+        consistency of the special-value rule, and agreement with the example in Part 2 (the table and checks in §07 of the main part).
+        Two citations remain: <strong>(1)</strong> the case analysis for well-definedness covering every degenerate case
+        (the proof of AEC X.1.4), and <strong>(2)</strong> that this φ <strong>agrees as a map</strong> with the identification w<sub>*</sub>∘δ of §07
+        ── the argument computing the Weil pairing e₂(S, T<sub>i</sub>) with the function x − e<sub>i</sub> (the proof of AEC X.1.1). (2) is formally cited in Part 5 (Selmer groups).
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 9 ════════ -->
+  <div class="section" id="s9">
+    <div class="section-number">Section 09</div>
+    <h2>Correspondence with the main part</h2>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Statement in the main part</th><th>Proof in this note</th></tr></thead>
+      <tbody>
+        <tr><td>§04 "Let's do exactly the same procedure with the multiplicative group… cutting out"</td><td class="m">Step 1–3</td></tr>
+        <tr><td>§04 "Theorem (Hilbert's Theorem 90) AEC B.2.5"</td><td class="m">Steps 4–9 (Dedekind → finite version → profinite version)</td></tr>
+        <tr><td>§04 "Therefore the connecting homomorphism becomes an isomorphism"</td><td class="m">§06 consequence box</td></tr>
+        <tr><td>The structural reason for the bottom-right of the §04 comparison table, "H¹(G, E) ≠ 0 (in general)"</td><td class="m">§06 why box (averaging can't be defined)</td></tr>
+        <tr><td>§07 "choosing a basis T₁, T₂, E[2] ≅ μ₂ × μ₂ (as G-modules)"</td><td class="m">Steps 10–12 (for general m)</td></tr>
+        <tr><td>§07 "why x − e<sub>i</sub>?", "source of the rule: X.1.4"</td><td class="m">Steps 13–15 + why box (special-value rule)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">▸ The one gap left in the Kummer pairing is "unramified"</div>
+      <p>
+        N0–N2 have filled the gaps in §02, §03, §04 and §07 of the main part. What remains is §05–§06
+        ── the full expansion of the inflation–restriction exact sequence and unramified cohomology ── planned as N3.
+        For the real fight (defining Selmer groups and their finiteness), go to Main V. The isomorphisms in §06 and §07 of this note
+        go into full operation there, when building "finite boxes" of the form K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup>.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/kummer.html#s4">
+      <div class="p-dir">← Main part</div>
+      <div class="p-title">Kummer theory for fields and Hilbert 90 (back to §04)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/selmer.html">
+      <div class="p-dir">NEXT ─ to the real fight</div>
+      <div class="p-title">Main V Selmer and Ш →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the Kummer pairing and Galois cohomology) N2/N3</p>
+    <p>Based on: J.H. Silverman, AEC 2nd ed., GTM 106 ─ Ch. VIII §2, App. B.2.5, Ch. III §8, Ch. X §1 / J. Neukirch, ANT ─ IV §3</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

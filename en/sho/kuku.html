@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/sho/kuku.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/sho/kuku.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/sho/kuku.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/sho/kuku.html"><!--/hreflang-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Times Table | Understand Multiplication Instead of Memorizing - Math the Japanese Way</title>
+<meta name="description" content="Before memorizing the times table, discover what multiplication means and the patterns in the table. It becomes easier to remember. Explained by Takayuki Suda, a former elementary school teacher in Japan.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="The Times Table | Understand Multiplication Instead of Memorizing - Math the Japanese Way">
+<meta property="og:description" content="Before memorizing the times table, discover what multiplication means and the patterns in the table. It becomes easier to remember. Explained by Takayuki Suda, a former elementary school teacher in Japan.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/sho/kuku.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fffbf2;
+    --ink: #2a1f0e;
+    --grid-bg: #fff;
+    --header-bg: #2a1f0e;
+    --header-fg: #fff;
+    --accent: #e8523a;
+    --highlight-row: #fff3cd;
+    --highlight-col: #d4ecd4;
+    --highlight-cell: #e8523a;
+    --cell-hover: #fde8c8;
+    --tile-on: #e8523a;
+    --tile-off: #e8e0d4;
+    --shadow: rgba(42,31,14,.10);
+  }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 0 0 32px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 580px; margin: 0 auto; padding: 24px 12px 0; }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+    padding: 28px 20px 24px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 4px 16px rgba(49,27,146,0.35);
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .header p {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    color: rgba(255,255,255,0.9);
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+  }
+  .lead { font-size: .88rem; color: #666; margin-bottom: 16px; }
+
+  /* ── 答えパネル ── */
+  .answer-panel {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+  }
+  .answer-eq {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    flex: 1;
+  }
+  .answer-eq .r { color: #f9c74f; }
+  .answer-eq .c { color: #90e0a0; }
+  .answer-eq .ans { color: var(--accent); }
+  .answer-tiles {
+    display: grid;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .tile {
+    width: 13px; height: 13px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  /* ── 表 ── */
+  .table-wrap {
+    background: var(--grid-bg);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 6px 20px var(--shadow);
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td, th {
+    width: 44px; height: 44px;
+    text-align: center;
+    font-size: .92rem;
+    font-weight: 700;
+    border: 2px solid #e8e0d4;
+    cursor: pointer;
+    user-select: none;
+  }
+  th {
+    background: var(--header-bg);
+    color: var(--header-fg);
+    font-size: .85rem;
+    cursor: default;
+    border-color: #444;
+  }
+  th.corner { background: transparent; border-color: transparent; }
+  td { background: #f5f0e8; }
+  td:hover { background: #f5c97a; }
+  td.hl-row { background: var(--highlight-row); }
+  td.hl-col { background: var(--highlight-col); }
+  td.hl-both {
+    background: var(--highlight-cell);
+    color: #fff;
+    outline: 3px solid #c0321c;
+    outline-offset: -1px;
+  }
+
+  /* ── ヒント ── */
+  .hint-box {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid #e0d8cc;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 14px;
+    font-size: .85rem;
+    color: #555;
+    line-height: 1.7;
+  }
+  .hint-box b { color: var(--ink); }
+
+  /* ── 九九クイズモード ── */
+  @keyframes starFall{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  @keyframes flashGold{0%{opacity:0}15%{opacity:.3}100%{opacity:0}}
+  @keyframes praiseIn{0%{transform:scale(.4);opacity:0}65%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+  .quiz-launch{display:block;width:100%;margin:20px 0 0;padding:18px;background:linear-gradient(135deg,#311b92 0%,#e8523a 100%);color:#fff;border:none;border-radius:16px;font-size:1.2rem;font-weight:900;letter-spacing:.08em;cursor:pointer;font-family:inherit;box-shadow:0 6px 22px rgba(49,27,146,.4);transition:transform .15s,box-shadow .15s;}
+  .quiz-launch:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(49,27,146,.5);}
+  .quiz-launch:active{transform:translateY(0);}
+  .qmode{margin-top:14px;background:#fff;border:3px solid #311b92;border-radius:18px;padding:20px;display:none;}
+  .qmode.open{display:block;}
+  .qm-prog-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .qm-bar{flex:1;height:14px;background:#e8e0d4;border-radius:7px;overflow:hidden;}
+  .qm-bar-fill{height:100%;background:linear-gradient(90deg,#311b92,#e8523a);border-radius:7px;transition:width .35s;}
+  .qm-score{font-size:.9rem;font-weight:700;white-space:nowrap;color:var(--ink);}
+  .qm-question{font-size:2.4rem;font-weight:900;text-align:center;color:var(--ink);letter-spacing:.12em;margin:8px 0 14px;min-height:3rem;}
+  .qm-display{background:var(--ink);border-radius:10px;padding:12px 18px;min-height:58px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;}
+  .qm-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .qpad{padding:16px 0;background:#f5f0e8;border:2px solid #e0d8cc;border-radius:12px;font-size:1.5rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .1s,transform .1s;}
+  .qpad:hover{background:#fde8c8;} .qpad:active{transform:scale(.92);}
+  .qpad.clr{background:#fde8e4;border-color:#e8523a;color:#c8401e;}
+  .qpad.ok{background:var(--ink);color:#f9c74f;border-color:var(--ink);font-size:1rem;letter-spacing:.06em;}
+  .qpad.ok:hover{background:#3d3320;}
+  .qm-feedback{min-height:64px;text-align:center;font-size:1rem;font-weight:700;padding:6px 0;line-height:1.7;}
+  .qm-praise{font-size:2rem;font-weight:900;color:#e8523a;display:block;animation:praiseIn .4s ease;margin-bottom:4px;}
+  .qm-next{display:none;width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;}
+  .qm-next:hover{background:#3d3320;}
+  .qm-badge-box{text-align:center;padding:18px 16px;background:linear-gradient(135deg,#1a237e,#311b92);border-radius:14px;color:#fff;margin-top:14px;display:none;}
+  .qm-badge-box.show{display:block;}
+  .qm-badge-icon{font-size:2.8rem;display:block;margin-bottom:6px;}
+  .qm-badge-lbl{font-size:1rem;font-weight:700;}
+</style>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="header">
+  <h1>✖️ The Times Table</h1>
+  <p>The times table is "the area of a grid". Touch the table and get a feel for how it works, all the way up to 9×9 = 81.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- 答えパネル -->
+  <div class="answer-panel">
+    <div class="answer-eq" id="eq">
+      <span>← Try touching a square</span>
+    </div>
+    <div class="answer-tiles" id="tiles"></div>
+  </div>
+
+  <!-- 九九の表 -->
+  <div class="table-wrap">
+    <table id="kuku">
+      <thead>
+        <tr>
+          <th class="corner">×</th>
+          <script>for(let c=1;c<=9;c++) document.write(`<th>${c}</th>`);</script>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ヒント -->
+  <div class="hint-box" id="hint">
+    <b>Think in terms of area</b><br>
+    For example, 3×4 is the area of a rectangle "3 tall and 4 wide". Count the tiles and there are 12! Multiplication works the same way as the area of a grid.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // 表を生成
+  const tbody = document.getElementById("tbody");
+  for(let r=1; r<=9; r++){
+    const tr = document.createElement("tr");
+    // 行ヘッダ
+    const th = document.createElement("th");
+    th.textContent = r;
+    tr.appendChild(th);
+    for(let c=1; c<=9; c++){
+      const td = document.createElement("td");
+      td.textContent = r * c;
+      td.dataset.r = r;
+      td.dataset.c = c;
+      td.addEventListener("mouseenter", () => highlight(r, c));
+      td.addEventListener("click",      () => highlight(r, c));
+      td.addEventListener("mouseleave", clearHighlight);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  function highlight(r, c){
+    clearHighlight();
+    document.querySelectorAll("#kuku td").forEach(td => {
+      const tr2 = parseInt(td.dataset.r), tc = parseInt(td.dataset.c);
+      if(tr2 === r && tc === c) td.classList.add("hl-both");
+      else if(tr2 === r)        td.classList.add("hl-row");
+      else if(tc === c)         td.classList.add("hl-col");
+    });
+
+    // 答えパネル
+    const ans = r * c;
+    const eq = document.getElementById("eq");
+    eq.innerHTML =
+      `<span class="r">${r}</span> × <span class="c">${c}</span> = <span class="ans">${ans}</span>`;
+
+    // タイル（r行 × c列のグリッド）
+    const tilesEl = document.getElementById("tiles");
+    tilesEl.innerHTML = "";
+    tilesEl.style.gridTemplateColumns = `repeat(${c}, 13px)`;
+    for(let i=0; i < r * c; i++){
+      const t = document.createElement("div");
+      t.className = "tile";
+      tilesEl.appendChild(t);
+    }
+
+    // ヒント
+    const hint = document.getElementById("hint");
+    hint.innerHTML = `<b>Think in terms of area</b><br>
+      <span style="color:#c8401e;font-weight:700">${r}</span> × <span style="color:#2a6e2a;font-weight:700">${c}</span> is the area of a rectangle "${r} tall and ${c} wide".
+      There are <b>${ans} tiles</b> lined up!`;
+  }
+
+  function clearHighlight(){
+    document.querySelectorAll("#kuku td").forEach(td => {
+      td.classList.remove("hl-row","hl-col","hl-both");
+    });
+  }
+
+})();
+</script>

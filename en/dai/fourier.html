@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intro to Fourier Analysis | Understanding Waves by Breaking Them Apart - Math the Japanese Way</title>
+<meta name="description" content="Any wave can be written as a sum of sine waves. Learn the ideas behind Fourier series and the Fourier transform with pictures.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Intro to Fourier Analysis | Understanding Waves by Breaking Them Apart - Math the Japanese Way">
+<meta property="og:description" content="Any wave can be written as a sum of sine waves. Learn the ideas behind Fourier series and the Fourier transform with pictures.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/dai/fourier.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+  :root{--bg:#0a0d14;--bg2:#111827;--bg3:#1a2035;--blue:#4fc3f7;--green:#69f0ae;--red:#ff6b6b;--gold:#ffd54f;--purple:#ce93d8;--white:#e8eaf6;--muted:#7986a0;--line:rgba(255,255,255,0.08);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--white);padding:0 0 60px;line-height:1.8;overflow-x:hidden;}
+  .header{background:linear-gradient(135deg,#0a0d14,#0a1428);padding:32px 20px 28px;text-align:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+  .header::before{content:'∿';position:absolute;font-size:200px;font-weight:900;color:rgba(79,195,247,0.04);top:-30px;right:-10px;pointer-events:none;line-height:1;}
+  .header h1{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:8px;}
+  .header h1 .accent{color:var(--blue);}
+  .header p{font-size:0.88rem;color:var(--muted);}
+  .section{max-width:680px;margin:32px auto 0;padding:0 20px;}
+  .sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;color:var(--blue);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .num-badge{width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0;}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card.blue-top::before{background:linear-gradient(90deg,var(--blue),#0288d1);}
+  .card.green-top::before{background:linear-gradient(90deg,var(--green),#00bfa5);}
+  .card.gold-top::before{background:linear-gradient(90deg,var(--gold),#ff9800);}
+  .card.purple-top::before{background:linear-gradient(90deg,var(--purple),#7b1fa2);}
+  .card.red-top::before{background:linear-gradient(90deg,var(--red),#c62828);}
+  .card-desc{font-size:0.86rem;color:var(--muted);line-height:1.9;margin-bottom:14px;}
+  svg{width:100%;height:auto;display:block;}
+  .sl-row{display:flex;align-items:center;gap:10px;font-size:0.84rem;margin:10px 0 4px;flex-wrap:wrap;}
+  .sl-label{font-weight:700;color:var(--blue);min-width:80px;}
+  .sl-wrap{flex:1;min-width:100px;}
+  input[type=range]{width:100%;accent-color:var(--blue);height:5px;}
+  .sl-val{font-size:1rem;font-weight:900;color:var(--blue);min-width:44px;text-align:right;}
+  .msg{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;font-size:0.84rem;line-height:1.85;margin-top:12px;color:var(--white);}
+  .msg b{color:var(--gold);}
+  .msg .g{color:var(--green);font-weight:700;}
+  .summary{background:linear-gradient(135deg,#0a0d14,#0a1428);border:1px solid rgba(79,195,247,0.3);border-radius:18px;padding:24px 20px;margin-top:32px;text-align:center;}
+  .summary h3{font-size:1.1rem;font-weight:900;color:var(--blue);margin-bottom:14px;}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+  .s-item{background:var(--bg3);border-radius:12px;padding:12px 14px;text-align:left;border-left:3px solid var(--blue);}
+  .s-item .s-eq{font-size:0.9rem;font-weight:900;color:var(--blue);margin-bottom:4px;}
+  .s-item .s-desc{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+  .footer-note{text-align:center;margin-top:40px;padding:0 20px;font-size:0.78rem;color:var(--muted);}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/dai/fourier.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/dai/fourier.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/dai/fourier.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/dai/fourier.html"><!--/hreflang-->
+</head>
+<body>
+<style>
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="header">
+  <h1>Ruins IV ― The Library of <span class="accent">Frequencies</span></h1>
+  <p>Sealed skill "Fourier Expansion" ── any wave can be broken into a sum of pure tones. Decode the shelves of Fourier series, frequency decomposition and the Fourier transform.</p>
+</div>
+
+<!-- パート0：正弦波の重ね合わせ -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">0</span>Superposition of waves</div>
+  <div class="card blue-top">
+    <div class="card-desc">Any periodic function can be written as a sum of sine waves. Change the amplitude and frequency with the sliders and see for yourself.</div>
+    <svg id="figWaves" viewBox="0 0 360 160"></svg>
+    <div class="sl-row">
+      <div class="sl-label">Wave 1 amplitude</div>
+      <div class="sl-wrap"><input type="range" id="slA1" min="0" max="50" value="40"></div>
+      <div class="sl-val" id="dA1">1.0</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">Wave 2 amplitude</div>
+      <div class="sl-wrap"><input type="range" id="slA2" min="0" max="50" value="20"></div>
+      <div class="sl-val" id="dA2">0.5</div>
+    </div>
+    <div class="sl-row">
+      <div class="sl-label">Wave 3 amplitude</div>
+      <div class="sl-wrap"><input type="range" id="slA3" min="0" max="50" value="13"></div>
+      <div class="sl-val" id="dA3">0.33</div>
+    </div>
+    <div class="msg" id="msgWaves"></div>
+  </div>
+</div>
+
+<!-- パート1：矩形波のフーリエ級数 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">1</span>Approximating a square wave with a Fourier series</div>
+  <div class="card green-top">
+    <div class="card-desc">
+      A square wave can be written as a Fourier series.<br>
+      f(x) = (4/π)[sin(x) + sin(3x)/3 + sin(5x)/5 + ...]
+    </div>
+    <svg id="figSquare" viewBox="0 0 360 180"></svg>
+    <div class="sl-row">
+      <div class="sl-label">Number of terms N</div>
+      <div class="sl-wrap"><input type="range" id="slN" min="1" max="20" value="3"></div>
+      <div class="sl-val" id="dN">3</div>
+    </div>
+    <div class="msg" id="msgSquare"></div>
+  </div>
+</div>
+
+<!-- パート2：周波数スペクトル -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>Frequency spectrum</div>
+  <div class="card gold-top">
+    <div class="card-desc">
+      The Fourier transform turns the "time domain" into the "frequency domain".<br>
+      Let's look at the spectrum of a square wave as a bar chart.
+    </div>
+    <svg id="figSpectrum" viewBox="0 0 360 160"></svg>
+    <div class="msg" id="msgSpectrum"></div>
+  </div>
+</div>
+
+<!-- パート3：連続フーリエ変換 -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>Intuition for the Fourier transform</div>
+  <div class="card purple-top">
+    <div class="card-desc">
+      The Fourier transform of a Gaussian e^(−ax²) is also a Gaussian.<br>
+      A signal that is "narrow in time" is "wide in frequency" (the root of the uncertainty principle).
+    </div>
+    <svg id="figGauss" viewBox="0 0 360 160"></svg>
+    <div class="sl-row">
+      <div class="sl-label">Spread a</div>
+      <div class="sl-wrap"><input type="range" id="slSig" min="2" max="30" value="10"></div>
+      <div class="sl-val" id="dSig">1.0</div>
+    </div>
+    <div class="msg" id="msgGauss"></div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <h3>The heart of Fourier analysis</h3>
+    <div class="summary-grid">
+      <div class="s-item">
+        <div class="s-eq">Fourier series</div>
+        <div class="s-desc">Write a periodic function as an infinite sum of sine waves. The coefficients come from inner products (integrals).</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--green)">
+        <div class="s-eq" style="color:var(--green)">Square wave</div>
+        <div class="s-desc">(4/π)Σ sin((2k−1)x)/(2k−1). Only odd-order sine waves appear.</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--gold)">
+        <div class="s-eq" style="color:var(--gold)">Fourier transform</div>
+        <div class="s-desc">F(ω)=∫f(t)e^(−iωt)dt. From time to frequency. The inverse transform brings it back.</div>
+      </div>
+      <div class="s-item" style="border-left-color:var(--purple)">
+        <div class="s-eq" style="color:var(--purple)">Uncertainty principle</div>
+        <div class="s-desc">Δt·Δω ≥ 1/2. Time resolution and frequency resolution trade off against each other.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">Takayuki Suda · Math the Japanese Way</div>
+
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg';
+const PI=Math.PI;
+function pe(svg,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  if(txt!==undefined)e.textContent=txt;
+  svg.appendChild(e);return e;
+}
+
+// パート0：波の重ね合わせ
+function drawWaves(){
+  const a1=parseInt(document.getElementById('slA1').value)/40;
+  const a2=parseInt(document.getElementById('slA2').value)/40;
+  const a3=parseInt(document.getElementById('slA3').value)/40;
+  document.getElementById('dA1').textContent=a1.toFixed(2);
+  document.getElementById('dA2').textContent=a2.toFixed(2);
+  document.getElementById('dA3').textContent=a3.toFixed(2);
+  const svg=document.getElementById('figWaves');svg.innerHTML='';
+  const W=360,H=160,cy=H/2,u=H*0.38;
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.1)','stroke-width':1});
+  const colors=['#4fc3f7','#69f0ae','#ffd54f','#ff6b6b'];
+  const amps=[a1,a2,a3];
+  const freqs=[1,2,3];
+  for(let wi=0;wi<3;wi++){
+    const pts=[];
+    for(let px=0;px<W;px++){
+      const x=px/W*4*PI;
+      const y=amps[wi]*Math.sin(freqs[wi]*x);
+      pts.push(`${px},${cy-y*u}`);
+    }
+    pe(svg,'polyline',{points:pts.join(' '),stroke:colors[wi],'stroke-width':1,'stroke-opacity':0.4,fill:'none'});
+  }
+  // 合成波
+  const ptsS=[];
+  for(let px=0;px<W;px++){
+    const x=px/W*4*PI;
+    const y=a1*Math.sin(x)+a2*Math.sin(2*x)+a3*Math.sin(3*x);
+    ptsS.push(`${px},${cy-y*u}`);
+  }
+  pe(svg,'polyline',{points:ptsS.join(' '),stroke:'#fff','stroke-width':2.5,fill:'none'});
+  document.getElementById('msgWaves').innerHTML=
+    `<b>Combined wave</b> (white) = `+
+    `<span style="color:#4fc3f7">${a1.toFixed(2)}sin(x)</span> + `+
+    `<span style="color:#69f0ae">${a2.toFixed(2)}sin(2x)</span> + `+
+    `<span style="color:#ffd54f">${a3.toFixed(2)}sin(3x)</span><br>`+
+    `Change the amplitude of each component with the sliders and the shape of the combined wave changes.`;
+}
+
+// パート1：矩形波
+function drawSquare(){
+  const N=parseInt(document.getElementById('slN').value);
+  document.getElementById('dN').textContent=N;
+  const svg=document.getElementById('figSquare');svg.innerHTML='';
+  const W=360,H=180,cy=H/2,u=H*0.38;
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.1)','stroke-width':1});
+  // 理想矩形波
+  const ptsSq=[];
+  for(let px=0;px<W;px++){
+    const x=px/W*4*PI-2*PI;
+    const y=x>0&&x<PI||x<-PI?1:-1;
+    ptsSq.push(`${px},${cy-y*u*0.9}`);
+  }
+  pe(svg,'polyline',{points:ptsSq.join(' '),stroke:'rgba(105,240,174,0.25)','stroke-width':1.5,'stroke-dasharray':'4,3',fill:'none'});
+  // フーリエ近似
+  const ptsF=[];
+  for(let px=0;px<W;px++){
+    const x=px/W*4*PI-2*PI;
+    let y=0;
+    for(let k=1;k<=N;k++)y+=Math.sin((2*k-1)*x)/(2*k-1);
+    y*=4/PI;
+    ptsF.push(`${px},${cy-y*u*0.9}`);
+  }
+  pe(svg,'polyline',{points:ptsF.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
+  document.getElementById('msgSquare').innerHTML=
+    `Approximated with N = <b>${N}</b> terms.<br>`+
+    `f(x) ≈ (4/π)[sin(x) + sin(3x)/3 + ... + sin(${2*N-1}x)/${2*N-1}]<br>`+
+    (N>=10?`<span class="g">From 10 terms on it gets quite close to a square wave. Notice the Gibbs phenomenon at the edges!</span>`:
+      N>=5?`With 5 terms the shape starts to show. The edges are still rounded.`:
+      `Add more terms and it gets closer to a square wave.`);
+}
+
+// パート2：スペクトル
+function drawSpectrum(){
+  const N=parseInt(document.getElementById('slN').value);
+  const svg=document.getElementById('figSpectrum');svg.innerHTML='';
+  const W=360,H=160,bx=30,by=H-20,maxH=H-30;
+  pe(svg,'line',{x1:bx,y1:by,x2:W-10,y2:by,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  for(let k=1;k<=15;k++){
+    const amp=k%2===1?4/(PI*(k)):0;
+    const barH=amp*maxH*0.8;
+    const bw=16;
+    const bxk=bx+k*20;
+    const col=k<=N&&k%2===1?'#ffd54f':'rgba(255,255,255,0.12)';
+    pe(svg,'rect',{x:bxk-bw/2,y:by-barH,width:bw,height:barH,fill:col,rx:3});
+    pe(svg,'text',{x:bxk,y:by+12,'text-anchor':'middle','font-size':8,fill:'rgba(255,255,255,0.4)'},k);
+    if(k%2===1&&k<=N) pe(svg,'text',{x:bxk,y:by-barH-4,'text-anchor':'middle','font-size':7,fill:'#ffd54f'},`1/${k}`);
+  }
+  pe(svg,'text',{x:bx-5,y:by-maxH*0.8,'font-size':9,fill:'rgba(255,255,255,0.4)'},'|aₙ|');
+  pe(svg,'text',{x:W-30,y:by+12,'font-size':8,fill:'rgba(255,255,255,0.3)'},'Frequency');
+  document.getElementById('msgSpectrum').innerHTML=
+    `A square wave has only <b>odd-order</b> frequency components.<br>`+
+    `The amplitude decays in inverse proportion to the frequency n (1/n).<br>`+
+    `Using terms up to N (<span style="color:#ffd54f">gold</span> = active components).`;
+}
+
+// パート3：ガウス
+function drawGauss(){
+  const sig=parseInt(document.getElementById('slSig').value)/10;
+  document.getElementById('dSig').textContent=sig.toFixed(1);
+  const svg=document.getElementById('figGauss');svg.innerHTML='';
+  const W=360,H=160,cy=H/2,cx=W/2;
+  pe(svg,'line',{x1:0,y1:cy,x2:W,y2:cy,stroke:'rgba(255,255,255,0.1)','stroke-width':1});
+  // 時間域
+  const ptsT=[];
+  for(let px=0;px<W/2-5;px++){
+    const t=(px-W/4)/(W/4)*4;
+    const y=Math.exp(-sig*t*t);
+    ptsT.push(`${px},${cy-y*(H*0.38)}`);
+  }
+  pe(svg,'polyline',{points:ptsT.join(' '),stroke:'#4fc3f7','stroke-width':2,fill:'none'});
+  pe(svg,'text',{x:W/4,y:20,'text-anchor':'middle','font-size':9,fill:'#4fc3f7'},'Time domain e^(−at²)');
+  // 周波数域（フーリエ変換もガウス、シグマの逆数）
+  const sigF=1/(2*sig+0.01);
+  const ptsF=[];
+  for(let px=W/2+5;px<W;px++){
+    const f=(px-3*W/4)/(W/4)*4;
+    const y=Math.exp(-sigF*f*f*0.8);
+    ptsF.push(`${px},${cy-y*(H*0.38)}`);
+  }
+  pe(svg,'polyline',{points:ptsF.join(' '),stroke:'#ce93d8','stroke-width':2,fill:'none'});
+  pe(svg,'text',{x:3*W/4,y:20,'text-anchor':'middle','font-size':9,fill:'#ce93d8'},'Frequency domain (after FT)');
+  pe(svg,'line',{x1:W/2,y1:10,x2:W/2,y2:H-10,stroke:'rgba(255,255,255,0.15)','stroke-width':1,'stroke-dasharray':'4,3'});
+  pe(svg,'text',{x:W/2+2,y:cy-5,'font-size':14,'font-weight':900,fill:'#ffd54f'},'⟷');
+  document.getElementById('msgGauss').innerHTML=
+    `a = <b>${sig.toFixed(1)}</b><br>`+
+    `Time domain <span style="color:#4fc3f7">narrow</span> (large a) → frequency domain <span style="color:#ce93d8">wide</span><br>`+
+    `Time domain <span style="color:#4fc3f7">wide</span> (small a) → frequency domain <span style="color:#ce93d8">narrow</span><br>`+
+    `<b>Uncertainty principle: Δt × Δω ≥ 1/2</b> (same root as ΔxΔp≥ℏ/2 in quantum mechanics)`;
+}
+
+document.getElementById('slA1').addEventListener('input',drawWaves);
+document.getElementById('slA2').addEventListener('input',drawWaves);
+document.getElementById('slA3').addEventListener('input',drawWaves);
+document.getElementById('slN').addEventListener('input',()=>{drawSquare();drawSpectrum();});
+document.getElementById('slSig').addEventListener('input',drawGauss);
+
+drawWaves();drawSquare();drawSpectrum();drawGauss();
+})();
+</script>
+</body>
+</html>

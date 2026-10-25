@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOSS 1 The Wall of Algebra | Math the Japanese Way</title>
+<meta name="description" content="A boss battle that wraps up algebra in middle-school math. A challenge to test your understanding.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="BOSS 1 The Wall of Algebra | Math the Japanese Way">
+<meta property="og:description" content="A boss battle that wraps up algebra in middle-school math. A challenge to test your understanding.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/boss_chu_1.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#06040e;color:#f0f4ff;line-height:1.8;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;}
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/boss_chu_1.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/boss_chu_1.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/boss_chu_1.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/boss_chu_1.html"><!--/hreflang-->
+</head>
+<body>
+<script src="/math-site/en/rpg.js"></script>
+<script src="/math-site/en/sound.js"></script>
+<script src="/math-site/en/boss.js"></script>
+<script>
+(function(){
+'use strict';
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* ── 問題ジェネレータ（毎回 数値をランダム生成＝実質むげん）── */
+var ri=BossBattle.ri, opts=BossBattle.opts, pick=BossBattle.pick;
+function gAdd(){ var a=ri(12,49), b=ri(11,39), s=a+b;
+  return {q:a+' + '+b+' = ?', c:opts(s,[s+1,s-1,s+10,s-10]), a:0,
+    exp:a+' plus '+b+' makes '+s+'. Line up the place values and add.'}; }
+function gSub(){ var a=ri(35,89), b=ri(11,29), d=a-b;
+  return {q:a+' − '+b+' = ?', c:opts(d,[d+1,d-1,d+10,a+b]), a:0,
+    exp:a+' minus '+b+' makes '+d+'.'}; }
+function gMul(){ var a=ri(3,9), b=ri(3,9), p=a*b;
+  return {q:a+' × '+b+' = ?', c:opts(p,[p+a,p-b,p+1,a+b]), a:0,
+    exp:a+' taken '+b+' times makes '+p+'. Remember your times tables.'}; }
+function gDiv(){ var b=ri(2,9), q=ri(2,9), a=b*q;
+  return {q:a+' ÷ '+b+' = ?', c:opts(q,[q+1,q-1,a-b,a]), a:0,
+    exp:a+': '+b+' per group gives '+q+' groups.'}; }
+function gEval(){ var k=ri(2,6), x=ri(2,9), v=k*x;
+  return {q:'x = '+x+'. What is '+k+'x?', c:opts(v,[v+x,v-x,k+x,x]), a:0,
+    exp:k+'x means '+k+'×x. '+k+'×'+x+' = '+v+'.'}; }
+function gFrac(){ var d=ri(4,9), n1=ri(1,d-2), n2=ri(1,d-1-n1), s=n1+n2;
+  return {q:n1+'/'+d+' + '+n2+'/'+d+' = ?',
+    c:opts(s+'/'+d,[s+'/'+(d+d),(n1*n2)+'/'+d,(s-1)+'/'+d]), a:0,
+    exp:'The denominators are the same, so add the numerators. '+n1+'+'+n2+'='+s+', giving '+s+'/'+d+'.'}; }
+function gRect(){ var w=ri(3,9), h=ri(2,8), s=w*h;
+  return {q:'Rectangle: height '+h+' cm, width '+w+' cm. What is its area?',
+    c:opts(s+' cm²',[(2*(w+h))+' cm²',(w+h)+' cm²',(s+w)+' cm²']), a:0,
+    exp:'Area of a rectangle = height × width = '+h+'×'+w+' = '+s+' cm².'}; }
+function gTri(){ var b=ri(3,10), h=2*ri(1,4), s=b*h/2;
+  return {q:'Triangle: base '+b+' cm, height '+h+' cm. What is its area?',
+    c:opts(s+' cm²',[(b*h)+' cm²',(b+h)+' cm²',(s+1)+' cm²']), a:0,
+    exp:'For a triangle, don\'t forget ÷2. '+b+'×'+h+'÷2 = '+s+' cm².'}; }
+function gEq(){ var a=ri(2,5), x=ri(2,9), b=ri(1,9), r=a*x+b;
+  return {q:a+'x + '+b+' = '+r+'. What is x?', c:opts(x,[x+1,x-1,r-b,b]), a:0,
+    exp:'First subtract '+b+': '+a+'x = '+(a*x)+'.'+a+' divides both sides: x = '+x+'.'}; }
+
+BossBattle({
+  no:1,
+  name:'The Wall of Algebra',
+  sub:'The border between elementary and middle school',
+  kids:true,
+  intro:[
+    'The world of only numbers is ending.',
+    'x and y have appeared.',
+    '…But don\'t be scared. A letter is just "a box anything can go in."'
+  ],
+  theme:{main:'#e8884b',glow:'rgba(232,136,75,.45)',dark:'#2a1408',icon:'🗿'},
+  fleeHref:'/math-site/en/sho/map.html',
+  enterFlag:'chu',
+  /* 第一形態：たし・ひき・かけ・わり＋文字式の入口（数値は毎回ランダム）*/
+  questions:[
+    gAdd, gSub, gMul, gDiv, gEval, gRect,
+    {q:'x + x = ?', c:['2x','x²','2','x'], a:0,
+     exp:'There are two of the same x, so it\'s "2x". x² means x×x.'},
+    {q:'How do you write a × 3 using the rules for letters?', c:['3a','a3','a+3','3×a'], a:0,
+     exp:'The rule is: leave out the "×" and write the number in front.'},
+    {q:'How do you write y ÷ 2 using the rules for letters?', c:['y/2','2/y','y−2','2y'], a:0,
+     exp:'Division is written as a fraction. y/2 means "half of y".'}
+  ],
+  /* 第二形態：分数・図形・分配法則・同類項 */
+  questions2:[
+    gFrac, gRect, gTri, gEval, gMul, gAdd,
+    {q:'3(x + 2) = ?', c:['3x + 6','3x + 2','x + 6','3x + 5'], a:0,
+     exp:'Multiply everything inside the brackets by 3. 3×x and 3×2 give 3x+6.'},
+    {q:'5x − 2x = ?', c:['3x','3','7x','3x²'], a:0,
+     exp:'5 x\'s take away 2 x\'s leaves 3. So 3x.'},
+    {q:'2a + 3b + a = ?', c:['3a + 3b','5ab','6ab','2a + 4b'], a:0,
+     exp:'You can only combine a\'s with a\'s and b\'s with b\'s. 2a+a=3a.'},
+    {q:'When x = −2, what is 3x?', c:['−6','6','1','−5'], a:0,
+     exp:'3 × (−2) = −6. Multiplying by a negative number.'}
+  ],
+  /* 最終形態：方程式のとびら（数値は毎回ランダム）*/
+  questions3:[
+    gEq, gSub, gDiv, gFrac, gMul,
+    {q:'x + 5 = 12. What is x?', c:['7','17','5','12'], a:0,
+     exp:'Subtract 5 from both sides: x = 7. That\'s what "solving an equation" means!'},
+    {q:'2x = 10. What is x?', c:['5','20','8','2'], a:0,
+     exp:'Divide both sides by 2: x = 5.'},
+    {q:'When x = −3, what is x²?', c:['9','−9','6','−6'], a:0,
+     exp:'(−3)×(−3) = 9. Negative × negative is positive!'},
+    {q:'Two consecutive integers are n and…?', c:['n + 1','2n','n − n','n²'], a:0,
+     exp:'After 7 comes 8 (=7+1). So after n comes n+1.'},
+    {q:'You buy 3 candies at x yen each and pay 100 yen. How much change?', c:['100 − 3x yen','3x − 100 yen','100 + 3x yen','97x yen'], a:0,
+     exp:'Money paid − price. 100 − 3x yen.'},
+    {q:'x/2 = 6. What is x?', c:['12','3','6','8'], a:0,
+     exp:'Multiply both sides by 2: x = 12.'}
+  ],
+  draw:function(ctx,W,H,t,S){
+    var cx=W/2, cy=H/2+14;
+    var bob=Math.sin(t*1.3)*5;
+    var dmg=1-S.hpRatio;
+    ctx.save();
+    ctx.translate(cx,cy+bob);
+
+    /* 影 */
+    ctx.fillStyle='rgba(0,0,0,.5)';
+    ctx.beginPath(); ctx.ellipse(0,118,150,16,0,0,Math.PI*2); ctx.fill();
+
+    /* 石の壁本体 */
+    ctx.fillStyle='#4a4038';
+    roundRect(ctx,-152,-108,304,216,14); ctx.fill();
+    ctx.strokeStyle='#2c2620'; ctx.lineWidth=4;
+    roundRect(ctx,-152,-108,304,216,14); ctx.stroke();
+    /* 石のブロック目地 */
+    ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.lineWidth=3;
+    for(var r=1;r<4;r++){
+      ctx.beginPath(); ctx.moveTo(-152,-108+r*54); ctx.lineTo(152,-108+r*54); ctx.stroke();
+    }
+    for(var rr=0;rr<4;rr++){
+      var off=(rr%2)*50;
+      for(var c=0;c<3;c++){
+        var bx=-152+off+(c+1)*76;
+        if(bx>-150&&bx<150){
+          ctx.beginPath(); ctx.moveTo(bx,-108+rr*54); ctx.lineTo(bx,-108+(rr+1)*54); ctx.stroke();
+        }
+      }
+    }
+    /* ハイライト */
+    ctx.fillStyle='rgba(255,255,255,.05)';
+    roundRect(ctx,-152,-108,304,40,14); ctx.fill();
+
+    /* ダメージのひび */
+    if(dmg>0){
+      ctx.strokeStyle='rgba(255,'+(S.hurt>0?90:170)+',70,'+(0.3+dmg*0.55)+')';
+      ctx.lineWidth=2.5;
+      ctx.beginPath();
+      ctx.moveTo(-60,-108); ctx.lineTo(-44,-60); ctx.lineTo(-70,-20);
+      if(dmg>0.3){ ctx.lineTo(-50,30); ctx.lineTo(-80,80); }
+      ctx.stroke();
+      if(dmg>0.5){
+        ctx.beginPath();
+        ctx.moveTo(70,-108); ctx.lineTo(55,-50); ctx.lineTo(85,0); ctx.lineTo(60,60); ctx.lineTo(78,108);
+        ctx.stroke();
+      }
+      if(dmg>0.7){
+        ctx.beginPath();
+        ctx.moveTo(-152,-30); ctx.lineTo(-100,-10); ctx.lineTo(-130,40);
+        ctx.stroke();
+      }
+    }
+
+    /* 目（おこった石の目） */
+    var blink=(Math.sin(t*0.9)>0.96)?0.15:1;
+    var eyeC=S.hurt>0.3?'#fff':'#ffce54';
+    ctx.save();
+    ctx.shadowColor='#ffae34'; ctx.shadowBlur=18;
+    ctx.fillStyle=eyeC;
+    ctx.beginPath(); ctx.ellipse(-52,-72,15,11*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(52,-72,15,11*blink,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    /* まゆ（怒り） */
+    ctx.strokeStyle='#221c16'; ctx.lineWidth=7; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-74,-92); ctx.lineTo(-34,-82); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(74,-92); ctx.lineTo(34,-82); ctx.stroke();
+
+    /* 刻まれた文字（光るルーン） */
+    var runes=[
+      {ch:'x', x:-90, y:-8,  s:46},
+      {ch:'y', x:0,   y:-18, s:52},
+      {ch:'a', x:92,  y:-8,  s:44},
+      {ch:'+', x:-48, y:62,  s:38},
+      {ch:'=', x:52,  y:62,  s:38}
+    ];
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    runes.forEach(function(rn,i){
+      var pulse=0.55+0.45*Math.sin(t*2.2+i*1.4);
+      ctx.save();
+      ctx.shadowColor='rgba(255,160,80,'+pulse+')'; ctx.shadowBlur=16+8*pulse;
+      ctx.fillStyle='rgba(255,'+(150+Math.floor(70*pulse))+',90,'+(0.75+0.25*pulse)+')';
+      ctx.font='900 '+rn.s+'px Georgia,serif';
+      ctx.fillText(rn.ch,rn.x,rn.y+Math.sin(t*1.8+i)*3);
+      ctx.restore();
+    });
+
+    /* 腕（左右の岩のこぶし） */
+    var punch=Math.sin(t*1.6)*6;
+    ctx.fillStyle='#443a32';
+    ctx.beginPath(); ctx.arc(-185,10+punch,30,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(185,10-punch,30,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#2c2620'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(-185,10+punch,30,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(185,10-punch,30,0,Math.PI*2); ctx.stroke();
+
+    ctx.restore();
+  },
+  victory:{
+    xp:200,
+    msg:'The door to middle-school math has opened.<br>If you\'d like to keep going together, you\'re always welcome.<br>I\'ll be waiting. — Mr. Suda',
+    cta:{
+      label:'▶ Take the full course on Udemy',
+      href:'https://www.udemy.com/course/math-the-japanese-way-1/?referralCode=A692464DD56E41857725',
+      note:'Video lessons in English that explain math the Japanese way — starting from "why".'
+    },
+    doorHref:'/math-site/en/chu/map.html',
+    doorName:'Middle School Field',
+    note:'The seal is broken ── the door to the middle-school zone opens…'
+  }
+});
+})();
+</script>
+</body>
+</html>

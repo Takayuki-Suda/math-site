@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N0: Foundations of Group Cohomology ─ The Kummer Pairing | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N0, carefully laying out the foundations of group cohomology needed to understand the Kummer pairing. A close reading of graduate math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N0: Foundations of Group Cohomology ─ The Kummer Pairing | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N0, carefully laying out the foundations of group cohomology needed to understand the Kummer pairing. A close reading of graduate math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/kummer-step0.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'Z¹'; position:absolute; right:-10px; top:-36px; font-family:var(--display); font-style:italic;
+    font-size:230px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+  .box.warn { border-color:rgba(224,104,122,.5); background:rgba(224,104,122,.05); }
+  .box.warn .box-label { color:var(--red); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  .svg-wrap { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; margin:26px 0; }
+  .svg-wrap svg { width:100%; height:auto; display:block; }
+  .svg-cap { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:12px; line-height:1.8; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step0.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/kummer-step0.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/kummer-step0.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/kummer-step0.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ The Kummer pairing N0/N3</div>
+    <h1>Foundations of group cohomology<br><span class="en">H⁰, H¹ and the Six-Term Sequence, fully assembled</span></h1>
+    <p class="hero-sub">
+      We fully assemble from its parts the machine the main part described in one line as "a short exact sequence sprouts an exact sequence".
+      The group structure of Z¹ and B¹, descending continuous cocycles to a finite stage, the well-definedness of the connecting homomorphism δ,
+      and exactness of the six-term sequence at <strong>all five places</strong> ── verified without skipping a single line.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ Appendix B §1–§2 (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/kummer.html">Main III The Kummer pairing</a>
+      <a class="cur" href="/math-site/en/in/kummer-step0.html">N0 Foundations of cohomology</a>
+      <a href="/math-site/en/in/kummer-step1.html">N1 The Kummer sequence</a>
+      <a href="/math-site/en/in/kummer-step2.html">N2 Hilbert 90</a>
+      <a href="/math-site/en/in/kummer-step3.html">N3 inf–res and unramified</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① That the cocycles Z¹ and coboundaries B¹ <strong>form groups</strong> ── only once this is checked can the quotient H¹ = Z¹/B¹ be defined as a group</li>
+      <li>② A complete proof that "if the action is trivial, H¹ = Hom(G, M)" (the main part only states the result)</li>
+      <li>③ The precise meaning of "<strong>continuous cocycles</strong>" for profinite groups, and a proof that "if continuous, it always factors through some finite Galois extension" ── what's inside the one sentence in the main part, "from now on this convention is implicit"</li>
+      <li>④ That a G-homomorphism f : M → N induces a map f<sub>*</sub> on H¹ (what the last two arrows of the exact sequence really are)</li>
+      <li>⑤ Well-definedness of the connecting homomorphism δ (changing the lift only produces a difference of coboundaries), and that δ is a <strong>group homomorphism</strong></li>
+      <li>⑥ Exactness of the six-term sequence ── verifying it at <strong>5 places</strong>. The main part only showed how δ is built and merely stated exactness</li>
+    </ul>
+    <p>
+      This note doesn't use elliptic curves at all. It's purely "assembling the machine".
+      Connecting the machine to elliptic curves is the job of <a href="/math-site/en/in/kummer-step1.html" style="color:var(--green);">N1</a>, and
+      connecting it to the multiplicative group is the job of <a href="/math-site/en/in/kummer-step2.html" style="color:var(--green);">N2</a>.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (R1–R3)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R1 ─ G-modules and the right-action convention</div>
+      <p>
+        Let G be a group and M an abelian group (written additively). M is a <strong>G-module</strong> if
+        for each σ ∈ G a map m ↦ m<sup>σ</sup> is given, satisfying:
+      </p>
+      <div class="formula">
+        <div class="fline">(i)  (m + n)<sup>σ</sup> = m<sup>σ</sup> + n<sup>σ</sup>  (each σ is a group homomorphism)</div>
+        <div class="fline">(ii)  m<sup>στ</sup> = (m<sup>σ</sup>)<sup>τ</sup>  (composition is read as a right action)</div>
+        <div class="fline">(iii)  m<sup>e</sup> = m</div>
+      </div>
+      <p>
+        (ii) is the same convention as premise Q3 in the weak MW notes<span class="refchip">weakmw N1 premise Q3</span>,
+        matching AEC's exponent notation. From (i)(ii) we also get (−m)<sup>σ</sup> = −m<sup>σ</sup> and 0<sup>σ</sup> = 0
+        (homomorphisms preserve inverses and the identity).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R2 ─ short exact sequences of G-modules</div>
+      <p>
+        A sequence of G-modules and G-equivariant homomorphisms (group homomorphisms satisfying f(m<sup>σ</sup>) = f(m)<sup>σ</sup>)
+      </p>
+      <div class="formula"><div class="fline">0 → A →<sup>φ</sup> B →<sup>ψ</sup> C → 0</div></div>
+      <p>
+        is a <strong>short exact sequence</strong> if: φ is injective, ψ is surjective, and im φ = ker ψ.
+        From now on we identify A with a G-submodule of B via its image under φ and write A ⊆ B without comment
+        (then the kernel of ψ is exactly A).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise R3 ─ notation</div>
+      <p>
+        A map c : G → M is written with subscripts, c<sub>σ</sub> := c(σ).
+        The set of c satisfying the cocycle condition c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> is written Z¹(G, M), and
+        the set of those that can be written c<sub>σ</sub> = m<sup>σ</sup> − m for some m ∈ M is written B¹(G, M).
+        H⁰(G, M) := M<sup>G</sup> (the invariant subgroup ── that it's a sub"group" is clear from (i)),
+        H¹(G, M) := Z¹/B¹ (that the quotient can be defined is checked in §03).
+        The topological condition when G is profinite is stated precisely in §04.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>Rules for computing with cocycles (gaps ①②)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Z¹(G, M) is an abelian group under the pointwise sum (c + d)<sub>σ</sub> := c<sub>σ</sub> + d<sub>σ</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  The sum satisfies the cocycle condition: (c+d)<sub>στ</sub> = c<sub>στ</sub> + d<sub>στ</sub> = (c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub>) + (d<sub>σ</sub><sup>τ</sup> + d<sub>τ</sub>) = (c<sub>σ</sub> + d<sub>σ</sub>)<sup>τ</sup> + (c+d)<sub>τ</sub>. The last equality is R1(i). The zero map is a cocycle (0 = 0<sup>τ</sup> + 0). −c is also a cocycle (flip the sign of both sides and use (−m)<sup>τ</sup> = −m<sup>τ</sup>). Associativity and commutativity are inherited pointwise from M.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>B¹(G, M) ⊆ Z¹(G, M), and B¹ is a subgroup. Therefore the quotient H¹ = Z¹/B¹ can be defined as a group (gap ① resolved).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The coboundary defined by m satisfies the cocycle condition: (m<sup>σ</sup> − m)<sup>τ</sup> + (m<sup>τ</sup> − m) = m<sup>στ</sup> − m<sup>τ</sup> + m<sup>τ</sup> − m = m<sup>στ</sup> − m. Here we used R1(i)(ii). It's a subgroup: the difference of the coboundary of m and the coboundary of n is the coboundary of m − n.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Every cocycle vanishes at the identity: c<sub>e</sub> = 0.</p>
+        <p class="ps-why"><b>▸ Reason</b>  c<sub>e</sub> = c<sub>e·e</sub> = c<sub>e</sub><sup>e</sup> + c<sub>e</sub> = c<sub>e</sub> + c<sub>e</sub> (R1(iii)). Subtract c<sub>e</sub> from both sides.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Value at an inverse: c<sub>σ⁻¹</sub> = −(c<sub>σ</sub>)<sup>σ⁻¹</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  0 = c<sub>e</sub> = c<sub>σσ⁻¹</sub> = c<sub>σ</sub><sup>σ⁻¹</sup> + c<sub>σ⁻¹</sub> (Step 3 and the cocycle condition). Just move the term over. This formula is used in the conjugation lemma of N3.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>If the action of G is trivial (m<sup>σ</sup> = m), then H¹(G, M) = Hom(G, M) (gap ② resolved).</p>
+        <p class="ps-why"><b>▸ Reason</b>  The cocycle condition becomes c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> = c<sub>σ</sub> + c<sub>τ</sub>, equivalent to "c is a group homomorphism G → M". So Z¹ = Hom(G, M). The only coboundary is c<sub>σ</sub> = m<sup>σ</sup> − m = m − m = 0, so B¹ = 0. Hence H¹ = Hom(G, M)/0 = Hom(G, M). It's also immediate from the definitions that the group structure on Z¹ (Step 1) agrees with the pointwise sum on Hom.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>Profinite groups and continuous cocycles (gap ③)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Topological convention (discrete G-modules)</div>
+      <p>
+        Let G be a profinite group (= an inverse limit of finite groups; it's compact, and the open normal subgroups U form a neighborhood base of the identity), and
+        M an abelian group with the <strong>discrete topology</strong>. The action is continuous if
+        the stabilizer { σ : m<sup>σ</sup> = m } of each m ∈ M contains an open subgroup of G.
+        Equivalently: M = ⋃<sub>U</sub> M<sup>U</sup> (U running over open normal subgroups).
+        We require cocycles to be continuous as maps c : G → M.
+        G<sub><span class="ov">K</span>/K</sub> with E[m], E(<span class="ov">K</span>), <span class="ov">K</span><sup>×</sup> all fit this framework
+        (because each point's coordinates lie in a finite extension; verified in N1 and N2).
+      </p>
+    </div>
+
+    <p>
+      Coboundaries are automatically continuous: σ ↦ m<sup>σ</sup>, with U an open subgroup contained in the stabilizer of m,
+      is constant on the cosets Uσ (m<sup>ησ</sup> = (m<sup>η</sup>)<sup>σ</sup> = m<sup>σ</sup>, η ∈ U),
+      i.e. locally constant. The issue is on the cocycle side, and the following is the main theorem of this section.
+    </p>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (continuous cocycles come from a finite stage) <span class="refchip">what the implicit convention of AEC App. B §2 contains</span></div>
+      <p>
+        Let c ∈ Z¹(G, M) be a continuous cocycle. Then there is an open normal subgroup U such that:
+        c is constant on each coset σU, c<sub>η</sub> = 0 (∀η ∈ U), all the values c<sub>σ</sub> lie in M<sup>U</sup>, and
+        c is the pullback (inflation) of a cocycle c̄ ∈ Z¹(G/U, M<sup>U</sup>) of the finite group G/U. Therefore
+      </p>
+      <div class="formula"><div class="fline">H¹<sub>cont</sub>(G, M) = ⋃<sub>U</sub> inf( H¹(G/U, M<sup>U</sup>) )  (an increasing union, U running over open normal subgroups)</div></div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>A common open normal subgroup U can be taken, and c is constant on each coset σU.</p>
+        <p class="ps-why"><b>▸ Reason</b>  M is discrete, so the single point {c<sub>σ</sub>} is open. By continuity c⁻¹({c<sub>σ</sub>}) is an open set containing σ, and from the basic neighborhood system of a profinite group's topology, σV<sub>σ</sub> ⊆ c⁻¹({c<sub>σ</sub>}) for some open normal subgroup V<sub>σ</sub>. {σV<sub>σ</sub>}<sub>σ∈G</sub> is an open cover of G, and G is compact, so there is a finite subcover σ₁V₁, …, σ<sub>k</sub>V<sub>k</sub>. Let U := V₁ ∩ ⋯ ∩ V<sub>k</sub> (a finite intersection of open normal subgroups is open normal). Any σ lies in some σ<sub>i</sub>V<sub>i</sub>, and σU ⊆ σ<sub>i</sub>V<sub>i</sub>V<sub>i</sub> = σ<sub>i</sub>V<sub>i</sub> (V<sub>i</sub> is a group). c is constant with value c<sub>σᵢ</sub> on σ<sub>i</sub>V<sub>i</sub>, so it's constant on σU too. U is normal, so σU = Uσ (left and right cosets coincide).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>c<sub>η</sub> = 0 (∀η ∈ U).</p>
+        <p class="ps-why"><b>▸ Reason</b>  η ∈ U = eU, c is constant on eU, and its value there is c<sub>e</sub> = 0 (Step 3).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>All values lie in the invariant part: c<sub>σ</sub> ∈ M<sup>U</sup> (∀σ ∈ G).</p>
+        <p class="ps-why"><b>▸ Reason</b>  For η ∈ U, the cocycle condition: c<sub>ση</sub> = c<sub>σ</sub><sup>η</sup> + c<sub>η</sub> = c<sub>σ</sub><sup>η</sup> (Step 7). On the other hand ση ∈ σU, so c<sub>ση</sub> = c<sub>σ</sub> (Step 6). Hence c<sub>σ</sub><sup>η</sup> = c<sub>σ</sub>.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p>c̄<sub>σU</sub> := c<sub>σ</sub> defines a well-defined c̄ ∈ Z¹(G/U, M<sup>U</sup>), and its pullback equals c.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Well-definedness is Step 6 (constant on cosets). Before that, M<sup>U</sup> is a G/U-module: for m ∈ M<sup>U</sup>, σ ∈ G, check m<sup>σ</sup> ∈ M<sup>U</sup> ── for η ∈ U, (m<sup>σ</sup>)<sup>η</sup> = m<sup>ση</sup> = m<sup>η′σ</sup> (η′ := σησ⁻¹ ∈ U, <strong>normality of U</strong>) = (m<sup>η′</sup>)<sup>σ</sup> = m<sup>σ</sup>. Moreover, replacing σ by ση in the same class gives m<sup>ση</sup> = (m<sup>σ</sup>)<sup>η</sup> = m<sup>σ</sup>, so the action m<sup>σU</sup> := m<sup>σ</sup> doesn't depend on the choice of representative. Descent of the cocycle condition: c̄<sub>(σU)(τU)</sub> = c<sub>στ</sub> = c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub> = (c̄<sub>σU</sub>)<sup>τU</sup> + c̄<sub>τU</sub> (the values lie in M<sup>U</sup> by Step 8). Agreement of the pullback: (inf c̄)<sub>σ</sub> = c̄<sub>σU</sub> = c<sub>σ</sub>, by definition.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="why">
+      <div class="w-label">? This theorem is the whole of the "implicit convention"</div>
+      <p>
+        The sentence repeated throughout the main part and the weak MW part, "we only consider cocycles that factor through a finite Galois extension",
+        is precisely the statement of this theorem. The cohomology of a profinite group is nothing but <strong>an increasing union of cohomologies of finite groups</strong> ──
+        which is why Part 2's "hand computations in the finite group G<sub>L/K</sub>" and Part 3's "general theory with the absolute Galois group" can go back and forth without contradiction.
+        That inf is <strong>injective</strong> at the level of classes (so the union increases "without overlap")
+        is a consequence of the inflation–restriction exact sequence in N3.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Functoriality ─ constructing f<sub>*</sub> (gap ④)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>A G-equivariant homomorphism f : M → N induces a group homomorphism f<sub>*</sub> : H¹(G, M) → H¹(G, N), [c] ↦ [f∘c]. Likewise on H⁰, f(M<sup>G</sup>) ⊆ N<sup>G</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  f∘c is a cocycle: (f∘c)<sub>στ</sub> = f(c<sub>σ</sub><sup>τ</sup> + c<sub>τ</sub>) = f(c<sub>σ</sub>)<sup>τ</sup> + f(c<sub>τ</sub>) (f is additive and G-equivariant). It preserves coboundaries: f(m<sup>σ</sup> − m) = f(m)<sup>σ</sup> − f(m), i.e. the coboundary of m goes to the coboundary of f(m). So it's well defined as a map on classes. Being a homomorphism follows pointwise from additivity of f. Continuity: if M is discrete, f∘c is a composition of continuous maps (every map from a discrete space is continuous). On the H⁰ side: m<sup>σ</sup> = m ⇒ f(m)<sup>σ</sup> = f(m<sup>σ</sup>) = f(m).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>The connecting homomorphism δ (gap ⑤)</h2>
+
+    <p>
+      Let 0 → A → B →<sup>ψ</sup> C → 0 be a short exact sequence (R2), and take c ∈ C<sup>G</sup>.
+      We break the construction the main part described in three lines into things to verify.
+    </p>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p><strong>Construction:</strong> choose one lift b ∈ B (ψ(b) = c) and set d<sub>σ</sub> := b<sup>σ</sup> − b. Then d<sub>σ</sub> ∈ A.</p>
+        <p class="ps-why"><b>▸ Reason</b>  A lift exists by surjectivity of ψ (R2). ψ(d<sub>σ</sub>) = ψ(b<sup>σ</sup>) − ψ(b) = ψ(b)<sup>σ</sup> − ψ(b) = c<sup>σ</sup> − c = 0 (G-equivariance of ψ and c ∈ C<sup>G</sup>). So d<sub>σ</sub> ∈ ker ψ = A (R2).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">12</div>
+      <div class="ps-b">
+        <p>d is a cocycle with values in A: d ∈ Z¹(G, A).</p>
+        <p class="ps-why"><b>▸ Reason</b>  b<sup>στ</sup> − b = (b<sup>σ</sup> − b)<sup>τ</sup> + (b<sup>τ</sup> − b) (the same identity as Step 2, R1(i)(ii)). All values lie in A (Step 11), and A is a G-submodule, so this can be read as an equation inside A. Continuity: σ ↦ b<sup>σ</sup> is locally constant (the same argument as for coboundaries at the start of §04), so d is continuous.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">13</div>
+      <div class="ps-b">
+        <p><strong>Well-definedness:</strong> choosing another lift b′ changes d only by a coboundary of A. Hence δ(c) := [d] ∈ H¹(G, A) doesn't depend on the lift (gap ⑤ resolved).</p>
+        <p class="ps-why"><b>▸ Reason</b>  ψ(b′) = ψ(b) = c gives a := b′ − b ∈ ker ψ = A. d′<sub>σ</sub> − d<sub>σ</sub> = (b′<sup>σ</sup> − b′) − (b<sup>σ</sup> − b) = a<sup>σ</sup> − a. Since a ∈ A, this is an element of B¹(G, A).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">14</div>
+      <div class="ps-b">
+        <p>δ : C<sup>G</sup> → H¹(G, A) is a group homomorphism.</p>
+        <p class="ps-why"><b>▸ Reason</b>  Choose lifts b₁, b₂ of c₁, c₂ ∈ C<sup>G</sup>; then b₁ + b₂ is a lift of c₁ + c₂ (ψ is a homomorphism). Computing with this choice, (b₁+b₂)<sup>σ</sup> − (b₁+b₂) = d₁<sub>σ</sub> + d₂<sub>σ</sub>. By Step 13 the value of δ doesn't depend on the choice of lift, so δ(c₁+c₂) = [d₁] + [d₂] = δ(c₁) + δ(c₂).</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 7 ════════ -->
+  <div class="section" id="s7">
+    <div class="section-number">Section 07 ─ Main</div>
+    <h2>The six-term sequence ─ exactness at 5 places (gap ⑥)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Theorem (the low-degree long exact sequence) <span class="refchip">AEC App. B §2</span></div>
+      <p>If 0 → A → B →<sup>ψ</sup> C → 0 is a short exact sequence of G-modules, the following is exact:</p>
+      <div class="formula">
+        <div class="fline">0 → A<sup>G</sup> →<sup>φ</sup> B<sup>G</sup> →<sup>ψ</sup> C<sup>G</sup> →<sup>δ</sup> H¹(G,A) →<sup>φ*</sup> H¹(G,B) →<sup>ψ*</sup> H¹(G,C)</div>
+      </div>
+      <p>(It holds just as well in the setting of profinite groups, discrete modules and continuous cocycles. A note on continuity is added to the reason for each step.)</p>
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 780 130" role="img" aria-label="The six-term sequence and its five places to check exactness">
+        <style>
+          .st { font-family:'JetBrains Mono',monospace; font-size:14px; fill:#f0d888; }
+          .ss { font-family:'JetBrains Mono',monospace; font-size:10.5px; fill:#7d84a0; }
+          .sn { font-family:'JetBrains Mono',monospace; font-size:12px; fill:#5ecf9e; }
+          .se { stroke:#565d7d; stroke-width:1.4; fill:none; marker-end:url(#arr0); }
+        </style>
+        <defs>
+          <marker id="arr0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#565d7d"/>
+          </marker>
+        </defs>
+        <text class="st" x="14" y="60">0</text>
+        <path class="se" d="M32,55 L52,55"/>
+        <text class="st" x="58" y="60">A<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M96,55 L124,55"/><text class="ss" x="103" y="46">φ</text>
+        <text class="st" x="130" y="60">B<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M168,55 L196,55"/><text class="ss" x="175" y="46">ψ</text>
+        <text class="st" x="202" y="60">C<tspan class="ss" dy="-6">G</tspan></text>
+        <path class="se" d="M240,55 L268,55"/><text class="ss" x="247" y="46">δ</text>
+        <text class="st" x="274" y="60">H¹(G,A)</text>
+        <path class="se" d="M348,55 L378,55"/><text class="ss" x="352" y="46">φ*</text>
+        <text class="st" x="384" y="60">H¹(G,B)</text>
+        <path class="se" d="M458,55 L488,55"/><text class="ss" x="462" y="46">ψ*</text>
+        <text class="st" x="494" y="60">H¹(G,C)</text>
+        <text class="sn" x="66" y="92">⑮</text>
+        <text class="sn" x="138" y="92">⑯</text>
+        <text class="sn" x="210" y="92">⑰</text>
+        <text class="sn" x="298" y="92">⑱</text>
+        <text class="sn" x="408" y="92">⑲</text>
+        <text class="ss" x="14" y="118">Circled numbers are the Step numbers below. At each position we check "kernel = image of the previous map".</text>
+      </svg>
+      <div class="svg-cap">Figure 1: the six-term sequence. There are 5 places to check exactness (we make no claim at the right end H¹(G,C) ── measuring the "continuation" there is H², which these notes don't need).</div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">15</div>
+      <div class="ps-b">
+        <p><strong>Exact at A<sup>G</sup></strong> (= injectivity of φ|<sub>A<sup>G</sup></sub>). Also check φ(A<sup>G</sup>) ⊆ B<sup>G</sup> and ψ(B<sup>G</sup>) ⊆ C<sup>G</sup>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  φ is injective on all of A (R2), so it's injective on the subset A<sup>G</sup> too. Checking where things land: if a ∈ A<sup>G</sup>, then φ(a)<sup>σ</sup> = φ(a<sup>σ</sup>) = φ(a), i.e. φ(a) ∈ B<sup>G</sup> (G-equivariance of φ). Likewise for ψ. ── Only after this check does "a sequence between invariant parts" make sense.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">16</div>
+      <div class="ps-b">
+        <p><strong>Exact at B<sup>G</sup></strong>: ker(ψ|<sub>B<sup>G</sup></sub>) = φ(A<sup>G</sup>).</p>
+        <p class="ps-why"><b>▸ Reason</b>  (⊇) ψ∘φ = 0 is one half of im φ = ker ψ (R2). (⊆) If b ∈ B<sup>G</sup> and ψ(b) = 0, then b ∈ ker ψ = im φ, i.e. b = φ(a) for some a ∈ A. a is invariant: φ(a<sup>σ</sup>) = φ(a)<sup>σ</sup> = b<sup>σ</sup> = b = φ(a), and injectivity of φ gives a<sup>σ</sup> = a. So b ∈ φ(A<sup>G</sup>).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">17</div>
+      <div class="ps-b">
+        <p><strong>Exact at C<sup>G</sup></strong>: ker δ = ψ(B<sup>G</sup>).</p>
+        <p class="ps-why"><b>▸ Reason</b>  (⊇) If c = ψ(b) with b ∈ B<sup>G</sup>, we can choose b itself as the lift (Step 13 guarantees the freedom of choice), and d<sub>σ</sub> = b<sup>σ</sup> − b = 0. So δ(c) = 0. (⊆) If δ(c) = 0, then for a lift b, b<sup>σ</sup> − b = a<sup>σ</sup> − a (for some a ∈ A, by the definition of coboundary). Setting b′ := b − a, b′<sup>σ</sup> − b′ = (b<sup>σ</sup> − b) − (a<sup>σ</sup> − a) = 0, i.e. b′ ∈ B<sup>G</sup>. Moreover ψ(b′) = ψ(b) − ψ(a) = c − 0 = c (a ∈ A = ker ψ). So c ∈ ψ(B<sup>G</sup>).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">18</div>
+      <div class="ps-b">
+        <p><strong>Exact at H¹(G, A)</strong>: ker φ<sub>*</sub> = im δ.</p>
+        <p class="ps-why"><b>▸ Reason</b>  (⊇) φ<sub>*</sub>δ(c) is "the class of σ ↦ b<sup>σ</sup> − b read inside B", which is exactly the coboundary of b ∈ B. So it's 0. (⊆) Suppose [c] ∈ H¹(G, A) satisfies φ<sub>*</sub>[c] = 0. It's a coboundary in B, i.e. c<sub>σ</sub> = b<sup>σ</sup> − b (∀σ) for some b ∈ B. Setting y := ψ(b) ∈ C, y<sup>σ</sup> − y = ψ(b<sup>σ</sup> − b) = ψ(c<sub>σ</sub>) = 0 (c<sub>σ</sub> ∈ A = ker ψ), so y ∈ C<sup>G</sup>. Computing δ of this y with the lift b gives δ(y) = [σ ↦ b<sup>σ</sup> − b] = [c]. So [c] ∈ im δ.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">19</div>
+      <div class="ps-b">
+        <p><strong>Exact at H¹(G, B)</strong>: ker ψ<sub>*</sub> = im φ<sub>*</sub>.</p>
+        <p class="ps-why"><b>▸ Reason</b>  (⊇) ψ<sub>*</sub>φ<sub>*</sub>[c] = [(ψ∘φ)∘c] = [0] (ψ∘φ = 0). (⊆) Suppose [d] ∈ H¹(G, B) satisfies ψ<sub>*</sub>[d] = 0. It's a coboundary in C, i.e. ψ(d<sub>σ</sub>) = y<sup>σ</sup> − y (∀σ) for some y ∈ C. By surjectivity of ψ choose a lift b₀ ∈ B of y, and set d′<sub>σ</sub> := d<sub>σ</sub> − (b₀<sup>σ</sup> − b₀). d′ is cohomologous to d (they differ by the coboundary of b₀). ψ(d′<sub>σ</sub>) = (y<sup>σ</sup> − y) − (ψ(b₀)<sup>σ</sup> − ψ(b₀)) = (y<sup>σ</sup> − y) − (y<sup>σ</sup> − y) = 0, so all values of d′ lie in A = ker ψ. d′ is a cocycle of B with values in A, hence a cocycle of A (the same argument as Step 12). Continuity: σ ↦ b₀<sup>σ</sup> is locally constant, so d′ is continuous too. So [d] = [d′] = φ<sub>*</sub>[d′] ∈ im φ<sub>*</sub>.</p>
+      </div>
+    </div>
+    <div class="qed">∎ (all 5 places checked)</div>
+
+    <div class="why">
+      <div class="w-label">? Why δ is involved in exactness "from both sides"</div>
+      <p>
+        Lining up the checks, δ appears as "the kernel on the left" in Step 17 and as "the image on the right" in Step 18.
+        That is, δ is <strong>a bridge identifying "invariant elements that don't come from B<sup>G</sup>" with "cohomology classes that vanish in B"</strong>.
+        The precise content of the main part's slogan, "δ measures the obstruction to division", is nothing but these two exactness statements combined.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 8 ════════ -->
+  <div class="section" id="s8">
+    <div class="section-number">Section 08</div>
+    <h2>Correspondence with the main part</h2>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Statement in the main part (§02)</th><th>Proof in this note</th></tr></thead>
+      <tbody>
+        <tr><td>"H¹ = (1-cocycles)/(1-coboundaries)" makes sense as a group</td><td class="m">Step 1–2</td></tr>
+        <tr><td>"If the action is trivial, H¹ = Hom"</td><td class="m">Step 5</td></tr>
+        <tr><td>"We only consider continuous cocycles (= those factoring through some finite Galois extension)"</td><td class="m">Steps 6–9 (the §04 theorem)</td></tr>
+        <tr><td>"The following exact sequence sprouts"</td><td class="m">Step 15–19</td></tr>
+        <tr><td>"Changing the lift b only produces a difference of coboundaries"</td><td class="m">Step 13</td></tr>
+        <tr><td>"δ(c) = 0 ⟺ c comes from B<sup>G</sup>" (why box)</td><td class="m">Step 17</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="goon">
+      <div class="g-label">▸ Next: connecting the machine to elliptic curves</div>
+      <p>
+        All the parts are in place. In N1 we set A = E[m], B = C = E(<span class="ov">K</span>), ψ = [m],
+        run this six-term sequence, and check that the short exact sequence we cut out and δ
+        <strong>literally coincide</strong> with the main part's "Kummer exact sequence" and the Kummer pairing κ of Part 2, respectively.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/kummer.html">
+      <div class="p-dir">← Main part</div>
+      <div class="p-title">The Kummer pairing and Galois cohomology (back to §02)</div>
+    </a>
+    <a class="next" href="/math-site/en/in/kummer-step1.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N1</div>
+      <div class="p-title">The Kummer exact sequence for elliptic curves →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (the Kummer pairing and Galois cohomology) N0/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ Appendix B §1–§2</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

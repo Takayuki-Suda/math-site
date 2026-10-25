@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Is a Derivative? | Understanding Tangent Slopes and Rates of Change - Math the Japanese Way</title>
+<meta name="description" content="A derivative is &quot;how fast something is changing at that very instant&quot;. Get an intuitive feel, with pictures, for everything from limits to derivatives. High school math that grasps the meaning before the formulas.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="What Is a Derivative? | Understanding Tangent Slopes and Rates of Change - Math the Japanese Way">
+<meta property="og:description" content="A derivative is &quot;how fast something is changing at that very instant&quot;. Get an intuitive feel, with pictures, for everything from limits to derivatives. High school math that grasps the meaning before the formulas.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/ko/bibun.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root {
+    --bg:     #0d1b2a;
+    --bg2:    #132236;
+    --bg3:    #1a2e47;
+    --gold:   #f5a623;
+    --blue:   #4fc3f7;
+    --green:  #69f0ae;
+    --red:    #ff5252;
+    --white:  #e8f0ff;
+    --muted:  #7a9ab8;
+    --line:   rgba(79,195,247,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    padding: 0 0 48px;
+    overflow-x: hidden;
+  }
+
+  /* ── ヘッダー ── */
+  .header {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1a2e47 100%);
+    padding: 32px 20px 28px;
+    text-align: center;
+    border-bottom: 2px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: "f'(x)";
+    position: absolute;
+    font-size: 120px; font-weight: 900; font-style: italic;
+    color: rgba(79,195,247,0.04);
+    top: -10px; right: -10px; line-height: 1;
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    font-weight: 900; color: var(--white);
+    margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  .header h1 .accent { color: var(--gold); }
+  .header p { font-size: clamp(0.85rem, 3vw, 1rem); color: var(--muted); }
+
+  /* ── セクション共通 ── */
+  .section { max-width: 680px; margin: 32px auto 0; padding: 0 20px; }
+  .sec-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .num-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold); color: var(--bg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 900; flex-shrink: 0;
+  }
+  .sec-title {
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-weight: 900; margin-bottom: 16px; line-height: 1.4;
+  }
+
+  /* ── カード共通 ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px 20px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card.gold-top::before  { background: linear-gradient(90deg, var(--gold), #ff9800); }
+  .card.blue-top::before  { background: linear-gradient(90deg, var(--blue), #0288d1); }
+  .card.green-top::before { background: linear-gradient(90deg, var(--green), #00bfa5); }
+  .card.red-top::before   { background: linear-gradient(90deg, var(--red), #ff9100); }
+
+  /* ── SVGグラフ共通 ── */
+  svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+
+  /* ── スライダー ── */
+  .sl-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.85rem; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .sl-label { font-weight: 700; color: var(--gold); min-width: 80px; }
+  .sl-wrap  { flex: 1; min-width: 100px; }
+  input[type=range] { width: 100%; accent-color: var(--gold); height: 6px; }
+  .sl-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); min-width: 48px; text-align: right; }
+
+  /* ── 情報ボックス ── */
+  .info-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .info-box {
+    flex: 1 1 80px; background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px;
+    font-size: 0.78rem; text-align: center; color: var(--muted);
+  }
+  .info-box .v {
+    font-size: 1.1rem; font-weight: 900; display: block;
+    margin-top: 4px; color: var(--white);
+  }
+
+  /* ── メッセージ ── */
+  .msg {
+    background: var(--bg3); border-radius: 10px;
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px; font-size: 0.88rem;
+    line-height: 1.8; margin-top: 14px; color: var(--white);
+  }
+  .msg b { color: var(--gold); }
+  .msg .blue  { color: var(--blue); font-weight: 700; }
+  .msg .green { color: var(--green); font-weight: 700; }
+  .msg .red   { color: var(--red); font-weight: 700; }
+
+  /* ── 関数タブ ── */
+  .fn-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .fn-btn {
+    flex: 1 1 60px; padding: 8px 4px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    background: var(--bg3); font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; color: var(--muted);
+    transition: all .15s;
+  }
+  .fn-btn.on { background: var(--blue); color: var(--bg); border-color: var(--blue); }
+  .fn-btn:hover { border-color: var(--blue); }
+
+  /* ── 計算ステップ ── */
+  .calc-step {
+    background: var(--bg3); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 8px;
+    font-size: 0.9rem; line-height: 1.85;
+    border-left: 3px solid var(--green);
+    color: var(--white);
+  }
+  .calc-step:last-child { margin-bottom: 0; }
+  .no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    background: var(--green); color: var(--bg);
+    font-size: 0.72rem; font-weight: 900; border-radius: 50%;
+    margin-right: 8px; flex-shrink: 0; vertical-align: middle;
+  }
+  .hl  { color: var(--green); font-weight: 700; }
+  .hl2 { color: var(--blue);  font-weight: 700; }
+  .hlr { color: var(--red);   font-weight: 700; }
+
+  /* ── まとめパネル ── */
+  .summary {
+    background: linear-gradient(135deg, var(--bg3), #1a2e47);
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 20px; padding: 24px 20px;
+    text-align: center; margin-top: 36px;
+  }
+  .summary .big-formula {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 900; color: var(--gold);
+    font-style: italic; letter-spacing: 0.05em;
+    margin: 12px 0;
+  }
+  .summary p { font-size: 0.88rem; color: var(--muted); line-height: 1.9; }
+
+  /* ── 次のステップバナー ── */
+  .next-banner {
+    background: linear-gradient(135deg, #1a2e47, #0d2a1a);
+    border: 1px solid rgba(105,240,174,0.3);
+    border-radius: 20px; padding: 24px 20px;
+    text-align: center; margin-top: 16px;
+  }
+  .next-banner h3 { font-size: clamp(1rem, 4vw, 1.2rem); margin-bottom: 8px; color: var(--green); }
+  .next-banner p  { font-size: 0.85rem; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
+  .next-link {
+    display: inline-block; padding: 10px 28px;
+    background: var(--green); color: var(--bg);
+    font-weight: 900; font-size: 0.9rem;
+    border-radius: 100px; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .next-link:hover { opacity: 0.85; }
+
+  .footer-note {
+    text-align: center; margin-top: 40px;
+    font-size: 0.78rem; color: var(--muted);
+    padding: 0 20px;
+  }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/ko/bibun.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/ko/bibun.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/ko/bibun.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/ko/bibun.html"><!--/hreflang-->
+</head>
+<body>
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>Seeing derivatives as <span class="accent">"slope"</span></h1>
+  <p>Trial II ── The Shadow of the Tangent asks: what is "speed at an instant"? High school math: derivatives.</p>
+</div>
+
+<!-- ══ パート1：接線を動かす ══ -->
+<div class="section">
+  <div class="sec-label"><span class="num-badge">1</span>Move the tangent line</div>
+  <div class="card gold-top">
+    <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;line-height:1.8">
+      "<b style="color:var(--white)">The slope at that instant</b>" at one point on a curve is the derivative f'(a).<br>
+      Move the point with the slider and check the slope of the tangent line.
+    </p>
+
+    <!-- 関数選択 -->
+    <div class="fn-tabs" id="tanFnTabs">
+      <button class="fn-btn on" onclick="setTanFn(0,this)">x²</button>
+      <button class="fn-btn"    onclick="setTanFn(1,this)">x³</button>
+      <button class="fn-btn"    onclick="setTanFn(2,this)">sin x</button>
+      <button class="fn-btn"    onclick="setTanFn(3,this)">x²−2x</button>
+    </div>
+
+    <svg id="figTan" viewBox="0 0 360 220"></svg>
+
+    <div class="sl-row" style="margin-top:14px">
+      <div class="sl-label">Point x =</div>
+      <div class="sl-wrap">
+        <input type="range" id="slA" min="-30" max="30" value="10">
+      </div>
+      <div class="sl-val" id="dispA">1.0</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-box">Value of x<span class="v" id="infoX">1.0</span></div>
+      <div class="info-box">f(x)<span class="v" id="infoFx">1.00</span></div>
+      <div class="info-box">f'(x) (slope)<span class="v" id="infoFpx" style="color:var(--gold)">2.00</span></div>
+    </div>
+    <div class="msg" id="msgTan"></div>
+  </div>
+</div>
+
+<!-- ══ パート2：差分→微分の極限 ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">2</span>Find the slope with a "limit"</div>
+  <div class="card blue-top">
+    <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;line-height:1.8">
+      Take the slope of the line through two points and <b style="color:var(--white)">let h → 0</b>, and you get the slope of the tangent line!<br>
+      Make h smaller with the slider.
+    </p>
+
+    <svg id="figLimit" viewBox="0 0 360 220"></svg>
+
+    <div class="sl-row" style="margin-top:14px">
+      <div class="sl-label">h =</div>
+      <div class="sl-wrap">
+        <input type="range" id="slH" min="1" max="40" value="20">
+      </div>
+      <div class="sl-val" id="dispH">2.0</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-box">h<span class="v" id="infoH">2.00</span></div>
+      <div class="info-box">Difference slope<span class="v" id="infoDiff" style="color:var(--blue)">?</span></div>
+      <div class="info-box">True slope f'(1)<span class="v" id="infoTrue" style="color:var(--green)">2.00</span></div>
+    </div>
+    <div class="msg" id="msgLimit"></div>
+  </div>
+</div>
+
+<!-- ══ パート3：微分の計算ルール ══ -->
+<div class="section" style="margin-top:32px">
+  <div class="sec-label"><span class="num-badge">3</span>Rules for differentiating</div>
+  <div class="card green-top">
+
+    <div class="fn-tabs" id="diffFnTabs">
+      <button class="fn-btn on" onclick="setDiffFn(0,this)">x²</button>
+      <button class="fn-btn"    onclick="setDiffFn(1,this)">x³</button>
+      <button class="fn-btn"    onclick="setDiffFn(2,this)">x⁴</button>
+      <button class="fn-btn"    onclick="setDiffFn(3,this)">3x²+2x</button>
+      <button class="fn-btn"    onclick="setDiffFn(4,this)">sin x</button>
+    </div>
+
+    <svg id="figDiff" viewBox="0 0 360 200"></svg>
+    <div id="diffSteps" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="section">
+  <div class="summary">
+    <p style="color:var(--muted);font-size:0.85rem">Definition of the derivative</p>
+    <div class="big-formula">f'(x) = lim<sub>h→0</sub> [f(x+h)−f(x)] / h</div>
+    <p>
+      The "average rate of change" between two points on a curve,<br>
+      taken to the limit as h → 0, is the derivative.<br>
+      That's the "slope at that instant" = the slope of the tangent line.
+    </p>
+  </div>
+
+  <div class="next-banner">
+    <h3>∫ Next: integrals</h3>
+    <p>Integration is the reverse of differentiation.<br>It finds area as "the limit of a sum of infinitely thin strips".</p>
+    <a class="next-link" href="/math-site/en/ko/sekibun.html">See integrals →</a>
+  </div>
+</div>
+
+<div class="footer-note">
+  Takayuki Suda · Math the Japanese Way
+</div>
+
+<script>
+(function(){
+const NS = "http://www.w3.org/2000/svg";
+function pe(svg, tag, attrs, txt){
+  const e = document.createElementNS(NS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  if(txt !== undefined) e.textContent = txt;
+  svg.appendChild(e); return e;
+}
+
+// ══ 効果音エンジン ══
+let _ac = null;
+function getAC(){ if(!_ac) _ac = new (window.AudioContext||window.webkitAudioContext)(); return _ac; }
+function playTone(freq, type, st, dur, gain, ac){
+  const osc=ac.createOscillator(), g=ac.createGain();
+  osc.connect(g); g.connect(ac.destination);
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq, st);
+  g.gain.setValueAtTime(gain, st);
+  g.gain.exponentialRampToValueAtTime(0.001, st+dur);
+  osc.start(st); osc.stop(st+dur+0.05);
+}
+function soundSlide(v){
+  try{ const ac=getAC(),now=ac.currentTime;
+    playTone(200+v*3,'sine',now,0.08,0.15,ac); }catch(e){}
+}
+function soundTab(){
+  try{ const ac=getAC(),now=ac.currentTime;
+    playTone(523,'triangle',now,0.1,0.2,ac);
+    playTone(659,'triangle',now+0.08,0.1,0.15,ac); }catch(e){}
+}
+function soundLimit(){
+  try{ const ac=getAC(),now=ac.currentTime;
+    [440,554,659,880].forEach((f,i)=>playTone(f,'sine',now+i*0.07,0.15,0.2,ac)); }catch(e){}
+}
+
+// ══ 関数定義 ══
+const TAN_FNS = [
+  { label:"f(x)=x²",   f:x=>x*x,       fp:x=>2*x,    a:-2.5, b:2.5 },
+  { label:"f(x)=x³",   f:x=>x*x*x,     fp:x=>3*x*x,  a:-1.8, b:1.8 },
+  { label:"f(x)=sin x",f:x=>Math.sin(x),fp:x=>Math.cos(x), a:-3.1, b:3.1 },
+  { label:"f(x)=x²−2x",f:x=>x*x-2*x,   fp:x=>2*x-2,  a:-1.5, b:3.5 },
+];
+const DIFF_FNS = [
+  { label:"f(x)=x²",      f:x=>x*x,         fp:x=>2*x,
+    steps:[`f(x) = <span class="hl2">x²</span>`,
+           `Derivative of a power: by the rule nxⁿ⁻¹,<br><span class="hl">f'(x) = 2x</span>`] },
+  { label:"f(x)=x³",      f:x=>x*x*x,       fp:x=>3*x*x,
+    steps:[`f(x) = <span class="hl2">x³</span>`,
+           `<span class="hl">f'(x) = 3x²</span>`] },
+  { label:"f(x)=x⁴",      f:x=>x*x*x*x,     fp:x=>4*x*x*x,
+    steps:[`f(x) = <span class="hl2">x⁴</span>`,
+           `<span class="hl">f'(x) = 4x³</span>`] },
+  { label:"f(x)=3x²+2x", f:x=>3*x*x+2*x,   fp:x=>6*x+2,
+    steps:[`f(x) = <span class="hl2">3x²+2x</span>`,
+           `Differentiate each term separately:<br>
+            (3x²)' = 6x　　(2x)' = 2<br>
+            <span class="hl">f'(x) = 6x + 2</span>`] },
+  { label:"f(x)=sin x",   f:x=>Math.sin(x),  fp:x=>Math.cos(x),
+    steps:[`f(x) = <span class="hl2">sin x</span>`,
+           `Derivative of a trig function:<br>
+            <span class="hl">f'(x) = cos x</span>`] },
+];
+
+let tanFnIdx  = 0;
+let diffFnIdx = 0;
+
+// ══ パート1：接線 ══
+function drawTan(){
+  const fn  = TAN_FNS[tanFnIdx];
+  const raw = parseInt(document.getElementById('slA').value);
+  const a   = raw / 10;
+  document.getElementById('dispA').textContent = a.toFixed(1);
+  document.getElementById('infoX').textContent = a.toFixed(1);
+  document.getElementById('infoFx').textContent  = fn.f(a).toFixed(2);
+  const slope = fn.fp(a);
+  document.getElementById('infoFpx').textContent = slope.toFixed(2);
+
+  const svg = document.getElementById('figTan');
+  svg.innerHTML='';
+  const W=360,H=220,pL=36,pR=16,pT=14,pB=28;
+  const {a:xa, b:xb} = fn;
+  const vals = Array.from({length:101},(_,i)=>fn.f(xa+(xb-xa)*i/100));
+  const yMin = Math.min(...vals)*1.15, yMax = Math.max(...vals)*1.15 || 1;
+  const yRange = yMax-yMin || 1;
+  const tx = x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty = y=>H-pB-(y-yMin)/yRange*(H-pT-pB);
+
+  // グリッド
+  for(let xi=Math.ceil(xa);xi<=Math.floor(xb);xi++){
+    pe(svg,'line',{x1:tx(xi),y1:pT,x2:tx(xi),y2:H-pB,stroke:'rgba(79,195,247,0.1)','stroke-width':1});
+    pe(svg,'text',{x:tx(xi),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},xi);
+  }
+  // 軸
+  if(yMin<=0&&yMax>=0){
+    pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.2)','stroke-width':1});
+  }
+  pe(svg,'line',{x1:tx(xa),y1:pT,x2:tx(xa),y2:H-pB,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+
+  // 塗り（曲線下）
+  let fillD='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    fillD+=i===0?`M${tx(x)} ${ty(fn.f(x))}`:`L${tx(x)} ${ty(fn.f(x))}`;
+  }
+  const y0clamp=Math.max(yMin,Math.min(yMax,0));
+  fillD+=` L${tx(xb)} ${ty(y0clamp)} L${tx(xa)} ${ty(y0clamp)} Z`;
+  pe(svg,'path',{d:fillD,fill:'rgba(79,195,247,0.07)'});
+
+  // 曲線
+  let curve='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    curve+=i===0?`M${tx(x)} ${ty(fn.f(x))}`:`L${tx(x)} ${ty(fn.f(x))}`;
+  }
+  pe(svg,'path',{d:curve,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+
+  // 接線（接点を通る正しい接線。y範囲内に収まるx範囲を求める）
+  const fa = fn.f(a);
+  // y範囲から逆算してx範囲を絞る
+  let tanXa = Math.max(xa, a - 2.5);
+  let tanXb = Math.min(xb, a + 2.5);
+  // 接線のyがyMin〜yMaxを超える場合はxを縮める
+  if(Math.abs(slope) > 0.01){
+    const xAtYmin = a + (yMin - fa) / slope;
+    const xAtYmax = a + (yMax - fa) / slope;
+    const xLo = Math.min(xAtYmin, xAtYmax);
+    const xHi = Math.max(xAtYmin, xAtYmax);
+    tanXa = Math.max(tanXa, xLo);
+    tanXb = Math.min(tanXb, xHi);
+  }
+  if(tanXa < tanXb){
+    pe(svg,'line',{
+      x1:tx(tanXa), y1:ty(fa + slope*(tanXa-a)),
+      x2:tx(tanXb), y2:ty(fa + slope*(tanXb-a)),
+      stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'5,3'});
+  }
+
+  // 点
+  pe(svg,'circle',{cx:tx(a),cy:ty(fn.f(a)),r:5,fill:'#f5a623',stroke:'#fff','stroke-width':1.5});
+
+  // ラベル
+  pe(svg,'text',{x:pL+6,y:pT+12,'font-size':10,'font-weight':700,fill:'#4fc3f7'},fn.label);
+  pe(svg,'text',{x:tx(a)+8,y:ty(fn.f(a))-8,'font-size':10,'font-weight':700,fill:'#f5a623'},
+    `f'(${a.toFixed(1)})=${slope.toFixed(2)}`);
+
+  // メッセージ
+  const msg=document.getElementById('msgTan');
+  if(Math.abs(slope)<0.1){
+    msg.innerHTML=`Slope ≈ <b>0</b> → <span class="green">near a peak or the bottom of a valley</span>.<br>A candidate for a local max or min (a point where f'(x)=0).`;
+  } else if(slope>0){
+    msg.innerHTML=`Slope <b>${slope.toFixed(2)} > 0</b> → <span class="blue">rising to the right (increasing)</span>.`;
+  } else {
+    msg.innerHTML=`Slope <b>${slope.toFixed(2)} < 0</b> → <span class="red">falling to the right (decreasing)</span>.`;
+  }
+
+  soundSlide(Math.abs(raw)+30);
+}
+
+// ══ パート2：差分→極限 ══
+function drawLimit(){
+  const rawH = parseInt(document.getElementById('slH').value);
+  const h    = rawH / 10;
+  document.getElementById('dispH').textContent = h.toFixed(1);
+
+  const f  = x=>x*x;    // x² 固定
+  const fp = x=>2*x;
+  const a0 = 1;
+  const diff = (f(a0+h)-f(a0))/h;
+  const trueSlope = fp(a0);
+
+  document.getElementById('infoH').textContent    = h.toFixed(2);
+  document.getElementById('infoDiff').textContent = diff.toFixed(3);
+  document.getElementById('infoTrue').textContent = trueSlope.toFixed(2);
+
+  const svg=document.getElementById('figLimit');
+  svg.innerHTML='';
+  const W=360,H=220,pL=40,pR=20,pT=16,pB=28;
+  const xa=-0.2, xb=a0+h+0.5;
+  const yMax=f(xb)*1.2||1;
+  const tx=x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty=y=>H-pB-y/yMax*(H-pT-pB);
+
+  // グリッド軸
+  pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'line',{x1:tx(0),y1:pT,x2:tx(0),y2:H-pB,stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  pe(svg,'text',{x:tx(a0),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},'a');
+  pe(svg,'text',{x:tx(a0+h),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},'a+h');
+
+  // 曲線
+  let curve='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100;
+    if(f(x)<=yMax*1.05) curve+=curve===''?`M${tx(x)} ${ty(f(x))}`:`L${tx(x)} ${ty(f(x))}`;
+  }
+  pe(svg,'path',{d:curve,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+  pe(svg,'text',{x:pL+8,y:pT+14,'font-size':10,'font-weight':700,fill:'#4fc3f7'},'f(x)=x²');
+
+  // 差分の直線（青）
+  const ext=0.4;
+  pe(svg,'line',{
+    x1:tx(a0-ext),y1:ty(f(a0)+diff*(a0-ext-a0)),
+    x2:tx(a0+h+ext),y2:ty(f(a0)+diff*(a0+h+ext-a0)),
+    stroke:'#4fc3f7','stroke-width':1.5,'stroke-dasharray':'6,4'});
+
+  // 接線（金）
+  pe(svg,'line',{
+    x1:tx(a0-ext),y1:ty(f(a0)+trueSlope*(a0-ext-a0)),
+    x2:tx(a0+h+ext),y2:ty(f(a0)+trueSlope*(a0+h+ext-a0)),
+    stroke:'#f5a623','stroke-width':2.2});
+
+  // 2点
+  pe(svg,'circle',{cx:tx(a0),cy:ty(f(a0)),r:5,fill:'#f5a623',stroke:'#fff','stroke-width':1.5});
+  pe(svg,'circle',{cx:tx(a0+h),cy:ty(f(a0+h)),r:5,fill:'#4fc3f7',stroke:'#fff','stroke-width':1.5});
+
+  // hの幅ブレース
+  pe(svg,'line',{x1:tx(a0),y1:ty(-0.08*yMax),x2:tx(a0+h),y2:ty(-0.08*yMax),
+    stroke:'#ff5252','stroke-width':1.5});
+  pe(svg,'text',{x:(tx(a0)+tx(a0+h))/2,y:ty(-0.12*yMax),'text-anchor':'middle',
+    'font-size':10,'font-weight':700,fill:'#ff5252'},`h=${h.toFixed(1)}`);
+
+  // メッセージ
+  const err=Math.abs(diff-trueSlope);
+  const msg=document.getElementById('msgLimit');
+  if(h>3){
+    msg.innerHTML=`h=<b>${h.toFixed(1)}</b>: the two points are too far apart, so the <span class="blue">blue line (difference)</span> is nothing like the <span class="red">gold tangent line</span>.`;
+  } else if(h>1){
+    msg.innerHTML=`h=<b>${h.toFixed(1)}</b>: getting a little closer. Error <b>${err.toFixed(3)}</b>.`;
+  } else if(h>0.2){
+    msg.innerHTML=`h=<b>${h.toFixed(1)}</b>: much closer now! Error <b>${err.toFixed(3)}</b>.`;
+  } else {
+    msg.innerHTML=`h=<b>${h.toFixed(1)}</b>: they almost overlap! <b>Error ${err.toFixed(4)} → 0</b><br>
+      <span class="green">The limit as h→0 is the derivative f'(1)=${trueSlope.toFixed(2)}!</span>`;
+    soundLimit();
+  }
+  soundSlide(rawH+10);
+}
+
+// ══ パート3：微分計算 ══
+function drawDiff(){
+  const fn=DIFF_FNS[diffFnIdx];
+  const svg=document.getElementById('figDiff');
+  svg.innerHTML='';
+  const W=360,H=200,pL=40,pR=16,pT=14,pB=28;
+  const xa=-2.5,xb=2.5;
+  const vals=Array.from({length:101},(_,i)=>fn.f(xa+(xb-xa)*i/100));
+  const dvals=Array.from({length:101},(_,i)=>fn.fp(xa+(xb-xa)*i/100));
+  const allV=[...vals,...dvals].filter(v=>isFinite(v));
+  const yMin=Math.min(...allV)*1.15, yMax=Math.max(...allV)*1.15||1;
+  const yRange=yMax-yMin||1;
+  const tx=x=>(x-xa)/(xb-xa)*(W-pL-pR)+pL;
+  const ty=y=>H-pB-(y-yMin)/yRange*(H-pT-pB);
+
+  // グリッド
+  for(let xi=-2;xi<=2;xi++){
+    pe(svg,'line',{x1:tx(xi),y1:pT,x2:tx(xi),y2:H-pB,stroke:'rgba(79,195,247,0.08)','stroke-width':1});
+    pe(svg,'text',{x:tx(xi),y:H-pB+12,'text-anchor':'middle','font-size':9,fill:'#7a9ab8'},xi);
+  }
+  if(yMin<=0&&yMax>=0){
+    pe(svg,'line',{x1:pL,y1:ty(0),x2:W-pR,y2:ty(0),stroke:'rgba(255,255,255,0.15)','stroke-width':1});
+  }
+
+  // f(x)塗り
+  let fillD='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.f(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    fillD+=fillD===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  if(fillD) pe(svg,'path',{d:fillD+` L${tx(xb)} ${ty(Math.max(yMin,0))} L${tx(xa)} ${ty(Math.max(yMin,0))} Z`,
+    fill:'rgba(79,195,247,0.07)'});
+
+  // f(x)曲線
+  let c1='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.f(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    c1+=c1===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  pe(svg,'path',{d:c1,fill:'none',stroke:'#4fc3f7','stroke-width':2.5});
+
+  // f'(x)曲線（金）
+  let c2='';
+  for(let i=0;i<=100;i++){
+    const x=xa+(xb-xa)*i/100, y=fn.fp(x);
+    if(!isFinite(y)||Math.abs(y)>yMax*2) continue;
+    c2+=c2===''?`M${tx(x)} ${ty(y)}`:`L${tx(x)} ${ty(y)}`;
+  }
+  pe(svg,'path',{d:c2,fill:'none',stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'6,3'});
+
+  // 凡例
+  pe(svg,'line',{x1:pL+4,y1:pT+8,x2:pL+22,y2:pT+8,stroke:'#4fc3f7','stroke-width':2.5});
+  pe(svg,'text',{x:pL+26,y:pT+12,'font-size':9,'font-weight':700,fill:'#4fc3f7'},fn.label);
+  pe(svg,'line',{x1:pL+4,y1:pT+22,x2:pL+22,y2:pT+22,stroke:'#f5a623','stroke-width':2,'stroke-dasharray':'5,3'});
+  pe(svg,'text',{x:pL+26,y:pT+26,'font-size':9,'font-weight':700,fill:'#f5a623',"font-style":"italic"},"f'(x)");
+
+  // ステップ
+  const html=fn.steps.map((s,i)=>
+    `<div class="calc-step"><span class="no">${i+1}</span>${s}</div>`
+  ).join('');
+  document.getElementById('diffSteps').innerHTML=html;
+}
+
+// ══ イベント ══
+window.setTanFn = function(i, btn){
+  tanFnIdx=i;
+  document.querySelectorAll('#tanFnTabs .fn-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  soundTab();
+  drawTan();
+};
+window.setDiffFn = function(i, btn){
+  diffFnIdx=i;
+  document.querySelectorAll('#diffFnTabs .fn-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  soundTab();
+  drawDiff();
+};
+
+document.getElementById('slA').addEventListener('input', drawTan);
+document.getElementById('slH').addEventListener('input', drawLimit);
+
+drawTan();
+drawLimit();
+drawDiff();
+
+})();
+</script>
+</body>
+</html>

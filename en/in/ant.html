@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Algebraic Number Theory Arsenal ─ A Neukirch Reference | Math the Japanese Way</title>
+<meta name="description" content="A reference that organizes the main concepts of Neukirch's &quot;Algebraic Number Theory&quot; as an arsenal. Notes supporting a close reading of graduate math.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="The Algebraic Number Theory Arsenal ─ A Neukirch Reference | Math the Japanese Way">
+<meta property="og:description" content="A reference that organizes the main concepts of Neukirch's &quot;Algebraic Number Theory&quot; as an arsenal. Notes supporting a close reading of graduate math.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/ant.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'ζ'; position:absolute; right:20px; top:-40px; font-family:var(--display); font-style:italic;
+    font-size:250px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold-dim); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,4.6vw,2.7rem); line-height:1.35; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:640px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#15130a; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); border-color:var(--gold); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.35rem,3.2vw,1.85rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h2 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+  .refchip.adv { color:var(--purple); border-color:rgba(176,138,224,.4); }
+  .refchip.nk { color:var(--green); border-color:rgba(94,207,158,.4); }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .usage { border:1px solid rgba(122,168,240,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(122,168,240,.05); }
+  .usage .u-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--blue); margin-bottom:8px; }
+  .usage ul { margin-bottom:0; }
+  .usage li { font-size:0.9rem; color:#c3d4f0; }
+  .usage a { color:var(--gold-soft); text-decoration:none; border-bottom:1px dotted rgba(232,197,71,.5); }
+  .usage a:hover { color:var(--gold); border-bottom-style:solid; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  table.cmp td.g { font-family:var(--mono); font-size:0.84rem; color:var(--green); white-space:nowrap; }
+  table.cmp td a { color:inherit; text-decoration:none; border-bottom:1px dotted rgba(232,197,71,.5); }
+  table.cmp td a:hover { color:var(--gold); }
+  .table-wrap { overflow-x:auto; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/ant.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/ant.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/ant.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/ant.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Graduate notes ─ The Arithmetic of Elliptic Curves, Appendix</div>
+    <h1>The Algebraic Number Theory Arsenal<br><span class="en">A Neukirch Companion for the Series</span></h1>
+    <p class="hero-sub">
+      This series (Part 1 to the final chapter) borrowed several big theorems of algebraic number theory "as a user".
+      This appendix is a catalog recording <strong>exactly where those borrowed items are stored</strong>.
+      It's not a page to read straight through. When you're rereading the series and
+      think "where can I learn more about this tool?", open it and
+      jump to the relevant section of Neukirch ── it's a <strong>reference-only arsenal</strong> for that.
+    </p>
+    <p class="hero-book">TEXT: J. Neukirch, Algebraic Number Theory, Grundlehren 322, Springer (ANT below)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/aec.html">I The big map</a>
+      <a href="/math-site/en/in/weakmw.html">II Weak Mordell–Weil</a>
+      <a href="/math-site/en/in/kummer.html">III The Kummer pairing</a>
+      <a href="/math-site/en/in/descent.html">IV Descent</a>
+      <a href="/math-site/en/in/selmer.html">V Selmer and Ш</a>
+      <a href="/math-site/en/in/atec.html">End: Beyond</a>
+      <a class="cur" href="/math-site/en/in/ant.html">App.: Number theory arsenal</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>How to use this page</h2>
+    <p>There are three intended uses.</p>
+    <ol>
+      <li><strong>When you get stuck while rereading</strong>: when you meet an outside theorem in the series, like "finiteness of the class number" or "Hensel's lemma",
+        and want to check what's inside, jump from the master table in the next section to the chapter and section of ANT.</li>
+      <li><strong>Browse the shelves to find weak spots</strong>: the seven "shelves" from Section 03 on arrange the knowledge the series actually used
+        by theme. From each shelf's "where it's used in the series", you can go back to the scene where that tool did its work.</li>
+      <li><strong>Stocking up for the next climb</strong>: before moving on to ATAEC (especially CM and class field theory), previewed in the final chapter,
+        use the companion route in Section 10 to gather the gear you're missing all at once.</li>
+    </ol>
+    <div class="box rem">
+      <div class="box-label">Chip colors and how to read the numbers</div>
+      <p>
+        On this page three books are distinguished by color:
+        <span class="refchip">AEC VIII.1.6</span> = Silverman GTM 106,
+        <span class="refchip adv">ATAEC II.10.5</span> = Silverman GTM 151,
+        <span class="refchip nk">ANT I.6.3</span> = Neukirch Grundlehren 322.
+        "I.6.3" in ANT means "(6.3) in Chapter I §6". References only down to the section (e.g. ANT II §7) are
+        places where I recommend "reading the whole section".
+      </p>
+    </div>
+    <div class="goon">
+      <div class="g-label">⏩ A note to perfectionists (also valid for this appendix)</div>
+      <p>
+        ANT is a big book of about 570 pages, and includes high ground this series doesn't need, such as the Riemann–Roch theory (III §3–§8) and the axiomatics of abstract class field theory (IV §4–§7).
+        <strong>Sections not listed in this arsenal aren't needed to understand the series</strong>.
+        Open only the shelf you need, when you need it ── use it the same way you read the main series.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Master table ─ scenes in the series × chapters of Neukirch</h2>
+    <p>
+      The scenes where the series "used or assumed" outside knowledge, in order, matched with where they're stored in ANT.
+      The link in each row takes you straight back to that place.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Scene in the series</th><th>Borrowed knowledge</th><th>Where it's stored in ANT</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><a href="/math-site/en/in/aec.html#s10">Part 1, checklist #6</a></td>
+          <td>Primes, completions, decomposition groups, inertia groups, what "unramified at v" means</td>
+          <td class="g">I §8–§9 / II §3–§9 → <a href="#bank-local">Shelf 3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/aec.html#s10">Part 1, checklist #7</a></td>
+          <td>Finiteness of the ideal class group, Dirichlet's (S-)unit theorem</td>
+          <td class="g">I.6.3 / I.7.4 / I.11.7 → <a href="#bank-finiteness">Shelf 2</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/aec.html#s10">Part 1, checklist #8</a></td>
+          <td>Infinite Galois theory (thinking through finite quotients is enough)</td>
+          <td class="g">IV.1.2 / IV §2 → <a href="#bank-galois">Shelf 4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/weakmw.html#s5">Part 2, STEP 2 (VIII.1.5b)</a></td>
+          <td>The inertia group acts trivially on the residue field (the crux of unramifiedness)</td>
+          <td class="g">I §9 / II §9 → <a href="#bank-local">Shelf 3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/weakmw.html#s6">Part 2, STEP 3 (VIII.1.6)</a></td>
+          <td>Enlarging S to get a PID, finite generation of S-units, Kummer theory, the ramification test for X<sup>m</sup>−a</td>
+          <td class="g">I.6.3 / I.11.7 / IV §3 / III.2.12 → <a href="#bank-finiteness">Shelf 2</a> • <a href="#bank-galois">Shelf 4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/weakmw.html#s8">Part 2, example L = ℚ(ζ₈)</a></td>
+          <td>Rings of integers of cyclotomic fields and ramification (the discriminant is a power of 2)</td>
+          <td class="g">I.10.2–10.4 → <a href="#bank-dedekind">Shelf 1</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/weakmw.html#s9">Part 2, Problem 6 (another proof of VIII.1.7)</a></td>
+          <td>Hermite–Minkowski: there are finitely many extensions of bounded degree unramified outside S</td>
+          <td class="g">III.2.13 / III.2.16 → <a href="#bank-finiteness">Shelf 2</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/kummer.html#s2">Part 3, crash course in cohomology</a></td>
+          <td>Profinite groups and the convention of continuous cocycles</td>
+          <td class="g">IV §1–§2 → <a href="#bank-galois">Shelf 4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/kummer.html#s4">Part 3, Hilbert 90</a></td>
+          <td>H¹(G, <span class="ov">K</span><sup>×</sup>) = 0 and classical Kummer theory</td>
+          <td class="g">IV.3.5 / IV §3 → <a href="#bank-galois">Shelf 4</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/descent.html#s6">Part 4, the map of §5–§6 (the height machine)</a></td>
+          <td>Normalized absolute values and the product formula (the foundation of heights over general number fields)</td>
+          <td class="g">II §3–§4 / III.1.3 → <a href="#bank-local">Shelf 3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/descent.html#s6">Part 4, §9 (the regulator)</a></td>
+          <td>The prototype of the quantity called a regulator</td>
+          <td class="g">I §7 / VII §5 → <a href="#bank-zeta">Shelf 7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/selmer.html#s4">Part 5, X.4.3 (finiteness) and local conditions</a></td>
+          <td>Hensel's lemma = the reason "the local world is easy to compute in"</td>
+          <td class="g">II.4.6 / II §6 → <a href="#bank-local">Shelf 3</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/selmer.html#s7">Part 5, failure of the Hasse principle</a></td>
+          <td>For comparison: in genus 0 (quadratic forms) the local–global principle holds</td>
+          <td class="g">VI.4.5 (Hasse norm theorem) / start of VI §5 → <a href="#bank-gcft">Shelf 6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/selmer.html#s9">Part 5, Problem 5 (Lind–Reichardt)</a></td>
+          <td>Quadratic reciprocity (computing (p/17) = (17/p))</td>
+          <td class="g">I.8.6 / VI §8 → <a href="#bank-gcft">Shelf 6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/atec.html#s3">Final chapter, Door 1 (Néron models, Ogg's formula)</a></td>
+          <td>What the conductor f(E/K) really is = the Artin conductor</td>
+          <td class="g">VII §11 (11.9, conductor–discriminant formula) → <a href="#bank-zeta">Shelf 7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/atec.html#s4">Final chapter, Door 2 (the Tate curve, local duality)</a></td>
+          <td>Local class field theory: Br(K) ≅ ℚ/ℤ, the norm residue symbol</td>
+          <td class="g">V §1–§3 → <a href="#bank-lcft">Shelf 5</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/atec.html#s7">Final chapter, Door 5 (CM, Kronecker's dream)</a></td>
+          <td>All of class field theory: Hilbert class fields, ray class fields, Artin reciprocity</td>
+          <td class="g">IV–VI (especially VI §5–§6) → <a href="#bank-gcft">Shelf 6</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/atec.html#s7">Final chapter, Door 5 (background to Deuring's theorem)</a></td>
+          <td>Hecke characters, and the analytic continuation and functional equation of Hecke L-functions</td>
+          <td class="g">VII §6 / VII.8.5 → <a href="#bank-zeta">Shelf 7</a></td>
+        </tr>
+        <tr>
+          <td><a href="/math-site/en/in/atec.html#s8">Final chapter, Door 6 (L-functions and BSD)</a></td>
+          <td>General theory of ζ and L-functions, the class number formula (the prototype of BSD), density theorems</td>
+          <td class="g">VII §5 / VII.13.4 → <a href="#bank-zeta">Shelf 7</a></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p>
+      Below, the right-hand column of this table is organized into seven "shelves", and for each shelf we briefly note <strong>what is claimed</strong> and
+      <strong>where in the series it did its work</strong>.
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 棚1 ════════ -->
+  <div class="section" id="bank-dedekind">
+    <div class="section-number">Shelf 01 ─ ANT I §2–§3, §8–§10 / III §2</div>
+    <h2>Shelf 1: Dedekind rings, prime ideal factorization, ramification</h2>
+    <p>
+      "There are only finitely many bad primes", "you can see whether it's unramified from the discriminant" ── the foundation of the foundation of the series.
+      The ring of integers O<sub>K</sub> of a number field K is a Dedekind ring, and ideals factor uniquely into prime ideals
+      <span class="refchip nk">ANT I §2–§3</span>. How prime ideals behave in an extension L/K
+      (splitting, inertia, ramification, the fundamental identity Σe<sub>i</sub>f<sub>i</sub> = n) is
+      <span class="refchip nk">ANT I §8</span>; decomposition groups, inertia groups and Frobenius in Galois extensions are
+      <span class="refchip nk">ANT I §9</span>.
+    </p>
+    <div class="box thm">
+      <div class="box-label">Ramification is detected by the discriminant <span class="refchip nk">ANT III.2.12</span></div>
+      <p>
+        A prime ideal 𝔭 of K ramifies in L ⟺ 𝔭 divides the discriminant 𝔡<sub>L/K</sub>.
+        In particular <strong>only finitely many primes ramify</strong>.
+      </p>
+    </div>
+    <p>
+      Cyclotomic fields are the most important examples: the ring of integers of ℚ(ζ<sub>n</sub>) is ℤ[ζ<sub>n</sub>]
+      <span class="refchip nk">ANT I.10.2</span>, the splitting law for primes is <span class="refchip nk">ANT I.10.3</span>, and
+      essentially only the primes dividing n ramify<span class="refchip nk">ANT I.10.4</span>.
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/weakmw.html#s5">Part 2 STEP 2</a>: that S = {bad reduction}∪{v|m}∪∞ is a <strong>finite set</strong>, and
+          what the phrase "unramified at v" really means.</li>
+        <li><a href="/math-site/en/in/weakmw.html#s8">Part 2 example</a>: the discriminant of L = ℚ(i,√2) = ℚ(ζ₈) is a power of 2, and
+          only 2 ramifies ── checking it against the theory's prediction is exactly I.10.4.</li>
+        <li><a href="/math-site/en/in/weakmw.html#s6">Part 2 STEP 3(iii)</a>: the general theory behind the argument that derives, from the discriminant ±m<sup>m</sup>a<sup>m−1</sup> of X<sup>m</sup> − a,
+          the unramified condition ord<sub>v</sub>(a) ≡ 0 (mod m).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚2 ════════ -->
+  <div class="section" id="bank-finiteness">
+    <div class="section-number">Shelf 02 ─ ANT I §5–§7, §11 / III §2</div>
+    <h2>Shelf 2: the two great finiteness theorems and Hermite–Minkowski</h2>
+    <p>
+      The shelf that supports "the arithmetic heart" of the weak Mordell–Weil theorem (Part 2 STEP 3).
+      Both proofs come from Minkowski's lattice point theorem (the geometry of numbers<span class="refchip nk">ANT I §4–§5</span>).
+    </p>
+    <div class="box thm">
+      <div class="box-label">Finiteness of the class number <span class="refchip nk">ANT I.6.3</span> / the unit theorem <span class="refchip nk">ANT I.7.4</span> / the S-unit theorem <span class="refchip nk">ANT I.11.7</span></div>
+      <div class="formula">
+        <div class="fline">Cl<sub>K</sub> is a finite group  /  O<sub>K</sub><sup>×</sup> ≅ μ(K) × ℤ<sup>r+s−1</sup>  /  O<sub>S</sub><sup>×</sup> ≅ μ(K) × ℤ<sup>#S−1</sup></div>
+        <div class="fc">r, s = the numbers of real and complex places. The third is the precise form of "R<sub>S</sub><sup>×</sup> is finitely generated" used in Part 2</div>
+      </div>
+    </div>
+    <div class="box thm">
+      <div class="box-label">Hermite–Minkowski-type finiteness <span class="refchip nk">ANT III.2.13 / III.2.16</span></div>
+      <p>
+        With the degree fixed, there are only finitely many extensions L/K unramified outside a finite set S (III.2.13).
+        More strongly, there are only finitely many number fields of bounded discriminant (Hermite's theorem III.2.16).
+      </p>
+    </div>
+    <p>
+      Right after III.2.13, ANT adds a grand remark: "its analogue for curves is the Shafarevich conjecture,
+      which became the basis of Faltings' solution of the Mordell conjecture".
+      We meet the same idea again in AEC IX.6.1 (Shafarevich's theorem).
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/weakmw.html#s6">Part 2 STEP 3</a>: finiteness of the class number in (ii) (enlarging S to get a PID),
+          the S-unit theorem in (v). The scene where "the two great finiteness theorems are each used exactly once, in different roles".</li>
+        <li><a href="/math-site/en/in/weakmw.html#s9">Part 2, Problems 5 and 6</a>: the isomorphism R<sub>S</sub><sup>×</sup>/(R<sub>S</sub><sup>×</sup>)<sup>m</sup> ≅ T<sub>S</sub>, and
+          the alternative proof via Hermite–Minkowski (the theorem "assumed" in Problem 6 is really III.2.13).</li>
+        <li><a href="/math-site/en/in/selmer.html#s4">Part 5, X.4.3</a>: finiteness of cohomology unramified outside S = a replay of STEP 3.
+          The ultimate source of the finiteness and computability of Selmer groups is this shelf.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚3 ════════ -->
+  <div class="section" id="bank-local">
+    <div class="section-number">Shelf 03 ─ ANT II §1–§9 / III §1</div>
+    <h2>Shelf 3: the local world ─ completions, Hensel, inertia</h2>
+    <p>
+      A dictionary for "looking locally", the habit of the whole series. Valuations and completions<span class="refchip nk">ANT II §3–§4</span>,
+      p-adic numbers<span class="refchip nk">ANT II §1–§2</span>, the structure of local fields<span class="refchip nk">ANT II §5</span>.
+      And two key theorems:
+    </p>
+    <div class="box thm">
+      <div class="box-label">Hensel's lemma <span class="refchip nk">ANT II.4.6 (general theory in II §6)</span></div>
+      <p>
+        Over a complete (more generally, Henselian) valuation ring, a simple root in the residue field always lifts.
+        "If you can solve the congruence, you can solve it p-adically" ── the reason checking local conditions in Part 5 took only <strong>finitely many computations</strong>.
+      </p>
+    </div>
+    <div class="box thm">
+      <div class="box-label">Unramified extensions and inertia <span class="refchip nk">ANT II §7 / II §9 • I §9</span></div>
+      <p>
+        Unramified extensions of a local field are equivalent to extensions of the residue field (unique for each degree, generated by Frobenius).
+        The inertia group I<sub>v</sub> is defined as "the part acting trivially on the residue field", and
+        L/K is unramified at v ⟺ I<sub>v</sub> acts trivially.
+      </p>
+    </div>
+    <p>
+      The family of normalized absolute values and the product formula Π<sub>v</sub>|a|<sub>v</sub> = 1<span class="refchip nk">ANT III.1.3</span> are
+      the reason heights over general number fields (H<sub>K</sub> in AEC VIII §5) don't depend on the choice of coordinates.
+    </p>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/weakmw.html#s5">Part 2 STEP 2</a>: "an element σ of the inertia group acts trivially on the residue field" ──
+          at the crux of the unramifiedness proof, the language of this shelf is at work as is.</li>
+        <li><a href="/math-site/en/in/selmer.html#s6">Part 5, worked computations</a>: the valuation arguments for C₁₇(ℚ₁₇) = ∅ and C′₂(ℚ₂) = ∅,
+          and the Hensel side of "for v ∉ S there are automatically local points" (Hensel + Hasse–Weil).</li>
+        <li><a href="/math-site/en/in/descent.html#s6">Part 4, the map of §5–§6</a>: well-definedness of heights via the product formula.</li>
+        <li>All of the Ch. VII section in Part 1: the substructure of the language of reduction, E₀ and E₁.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚4 ════════ -->
+  <div class="section" id="bank-galois">
+    <div class="section-number">Shelf 04 ─ ANT IV §1–§3</div>
+    <h2>Shelf 4: infinite Galois theory, profinite groups, Kummer theory and Hilbert 90</h2>
+    <p>
+      The grammar for handling G<sub><span class="ov">K</span>/K</sub>. In infinite Galois extensions,
+      only "closed subgroups" correspond to intermediate fields (the main theorem with the Krull topology<span class="refchip nk">ANT IV.1.2</span>).
+      The view "profinite group = projective limit of finite groups"<span class="refchip nk">ANT IV §2</span> is
+      what really lies behind the convention in Part 3 that "cocycles are only the continuous ones = only those factoring through finite extensions".
+    </p>
+    <div class="box thm">
+      <div class="box-label">Hilbert 90 and Kummer theory <span class="refchip nk">ANT IV.3.5 / IV §3</span></div>
+      <div class="formula">
+        <div class="fline">H¹( G<sub>L/K</sub>, L<sup>×</sup> ) = 1  (for cyclic extensions, the classical form "norm 1 ⟺ of the form σ(β)/β")</div>
+      </div>
+      <p>
+        As a consequence, when μ<sub>m</sub> ⊂ K, the Kummer correspondence "abelian extensions of exponent m ⟷ subgroups of K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup>"
+        is complete. ANT IV §3 treats this as "abstract Kummer theory",
+        in the same framework as the later class field theory (Artin–Schreier theory sits on the same shelf).
+      </p>
+    </div>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/aec.html#s10">Part 1, checklist #8</a>: the precise meaning of "it's enough to think of G<sub><span class="ov">K</span>/K</sub> through finite quotients".</li>
+        <li><a href="/math-site/en/in/weakmw.html#s6">Part 2 STEP 3(iii)</a>: "the maximal abelian extension of exponent m = adjoining m-th roots of all elements" is
+          the Kummer correspondence itself.</li>
+        <li><a href="/math-site/en/in/kummer.html#s4">Part 3, Section 04</a>: via Hilbert 90,
+          δ : K<sup>×</sup>/(K<sup>×</sup>)<sup>m</sup> ≅ H¹(G, μ<sub>m</sub>).
+          The reference point for the contrast "for elliptic curves H¹(G,E) doesn't vanish".</li>
+        <li><a href="/math-site/en/in/kummer.html#s2">Part 3, Section 02</a>: the convention of continuous cohomology.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚5 ════════ -->
+  <div class="section" id="bank-lcft">
+    <div class="section-number">Shelf 05 ─ ANT V §1–§5</div>
+    <h2>Shelf 5: local class field theory ─ reciprocity, Hilbert symbols, formal groups</h2>
+    <p>
+      The support beneath Door 2 (the Tate curve, local duality) and Door 5 (CM) of the final chapter. At its center is one isomorphism:
+    </p>
+    <div class="box thm">
+      <div class="box-label">Local reciprocity <span class="refchip nk">ANT V.1.3</span></div>
+      <div class="formula">
+        <div class="fline">G(L/K)<sup>ab</sup> ≅ K<sup>×</sup>/N<sub>L/K</sub>L<sup>×</sup>  (L/K a finite Galois extension of local fields)</div>
+        <div class="fc">the norm residue symbol ( · , L/K). The conductor is defined in ANT V.1.6</div>
+      </div>
+    </div>
+    <ul>
+      <li><strong>Local Kronecker–Weber</strong><span class="refchip nk">ANT V.1.9</span>:
+        ℚ<sub>p</sub><sup>ab</sup> is generated by roots of unity. The global version (abelian extensions ⊂ cyclotomic fields) comes
+        right after<span class="refchip nk">ANT V.1.10</span>. This is the prototype over ℚ of "Kronecker's youthful dream" told in the final chapter.</li>
+      <li><strong>The Hilbert symbol</strong><span class="refchip nk">ANT V.3.1–3.2</span>:
+        a nondegenerate bilinear pairing K<sup>×</sup>/(K<sup>×</sup>)<sup>n</sup> × K<sup>×</sup>/(K<sup>×</sup>)<sup>n</sup> → μ<sub>n</sub>.
+        The prototype of "a nondegenerate pairing over a local field"; ATAEC Exercise 5.14's
+        WC(E/K) ≅ Hom(E(K), ℚ/ℤ) and the Cassels pairing (AEC X.4.14) are relatives of this type.</li>
+      <li><strong>Formal groups and Lubin–Tate theory</strong><span class="refchip nk">ANT V §4–§5</span>:
+        the "formal groups" that controlled the reduction kernel E₁ of elliptic curves in AEC Ch. IV
+        reappear here as <strong>tools that construct local class field theory itself</strong>.
+        The view "cyclotomic fields = torsion points of the multiplicative group 𝔾̂<sub>m</sub>" is the local version of "CM = building class fields from torsion points of elliptic curves" (ATAEC II).</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/atec.html#s4">Final chapter, Door 2</a>: the source of H²(G<sub>v</sub>, <span class="ov">K</span><sub>v</sub><sup>×</sup>) = Br(K<sub>v</sub>) ≅ ℚ/ℤ
+          (the fact ATAEC Exercise 5.14(c) cites "from local class field theory").</li>
+        <li><a href="/math-site/en/in/selmer.html#s7">Part 5, nontriviality of Ш</a>: the local duality at the source of the nondegeneracy of the Cassels pairing.</li>
+        <li>Where we meet AEC Ch. IV (the formal groups summarized in Part 1) again.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚6 ════════ -->
+  <div class="section" id="bank-gcft">
+    <div class="section-number">Shelf 06 ─ ANT VI §1–§8</div>
+    <h2>Shelf 6: global class field theory ─ Hilbert class fields, the Hasse principle, reciprocity</h2>
+    <p>
+      This is the real body behind ATAEC II (CM) saying "the crash course in II §3 is enough".
+      With the idele class group C<sub>K</sub><span class="refchip nk">ANT VI §1</span> as the star, global reciprocity
+      <span class="refchip nk">ANT VI §5</span> gives the dictionary "abelian extensions of K ⟷ closed subgroups of C<sub>K</sub>".
+    </p>
+    <div class="box thm">
+      <div class="box-label">Ray class fields and the Hilbert class field <span class="refchip nk">ANT VI.6.2–6.3 / VI.6.8</span></div>
+      <p>
+        For any modulus 𝔪 there is a ray class field K<sup>𝔪</sup>/K, and every finite abelian extension is contained in some ray class field.
+        The ray class fields of ℚ are nothing but the cyclotomic fields<span class="refchip nk">ANT VI.6.7</span>.
+        The ray class field of modulus 𝔪 = 1 (the big Hilbert class field) is <strong>the maximal unramified abelian extension</strong>, and
+        its Galois group is isomorphic to the (narrow) ideal class group. The Hilbert class field in ATAEC II.4.3's "K(j(E)) = the Hilbert class field"
+        is exactly this.
+      </p>
+    </div>
+    <ul>
+      <li><strong>The Hasse norm theorem</strong><span class="refchip nk">ANT VI.4.5</span>: for cyclic extensions,
+        "a norm locally everywhere ⟹ a norm globally". A representative case where the local–global principle <strong>holds</strong>, and
+        right after it the Minkowski–Hasse theorem for quadratic forms is also mentioned<span class="refchip nk">ANT start of VI §5</span>.
+        A point of comparison showing how delicate Ш ≠ 0 (the failure in genus 1) seen in Part 5 really is.</li>
+      <li><strong>Power reciprocity</strong><span class="refchip nk">ANT VI §8</span>: from the product formula for Hilbert symbols,
+        Gauss's quadratic reciprocity<span class="refchip nk">ANT I.8.6</span> and its n-th power version all come out at once.
+        A section where you can see the historical origin of class field theory as "the theory of reciprocity laws".</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/atec.html#s7">Final chapter, Door 5</a>: all the prerequisites of CM theory (Hilbert class fields, ray class fields, Artin reciprocity).
+          Get your gear for reading ATAEC II from this shelf.</li>
+        <li><a href="/math-site/en/in/selmer.html#s9">Part 5, Problem 5</a>: the quadratic reciprocity used in the proof of Lind–Reichardt
+          ((p/17) = (17/p), 17 ≡ 1 mod 4).</li>
+        <li><a href="/math-site/en/in/selmer.html#s7">Part 5, Section 07</a>: the background of "the Hasse principle holds in genus 0".</li>
+        <li><a href="/math-site/en/in/weakmw.html#s8">Part 2 example</a>: why ℚ(ζ₈) is almost all of "the abelian extensions of exponent 2 unramified outside 2"
+          can be seen through "ray class fields of ℚ = cyclotomic fields" (VI.6.7).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════ 棚7 ════════ -->
+  <div class="section" id="bank-zeta">
+    <div class="section-number">Shelf 07 ─ ANT VII §5–§8, §11, §13</div>
+    <h2>Shelf 7: ζ and L ─ the class number formula, Hecke characters, Artin conductors</h2>
+    <p>
+      The analytic weapons for Doors 5 and 6 of the final chapter (L-functions of CM curves, BSD).
+    </p>
+    <ul>
+      <li><strong>The Dedekind ζ and the analytic class number formula</strong><span class="refchip nk">ANT VII §5 (Cor. 5.11 and right after)</span>:
+        h, R and √|d<sub>K</sub>| appear in the residue of ζ<sub>K</sub>(s).
+        "A special value of an L-function = a product of arithmetic invariants" ── <strong>the prototype of the BSD conjecture</strong>.
+        The right attitude is to read the refined BSD formula (#Ш, the regulator, Tamagawa numbers) as the elliptic-curve version of this class number formula.</li>
+      <li><strong>Hecke characters and Hecke L-functions</strong><span class="refchip nk">ANT VII §6 / VII.8.5</span>:
+        the general theory of Grössencharacters, and analytic continuation and the functional equation via theta series.
+        The complete proof of the theorem ATAEC II.10.3 cites as "classically known" is here.
+        Together with Deuring's theorem (the L of a CM curve = a product of Hecke L's), it's the reason BSD for CM curves "makes sense".</li>
+      <li><strong>Artin L-functions and conductors</strong><span class="refchip nk">ANT VII §10–§12</span>:
+        L-functions of Galois representations and Artin conductors. The conductor–discriminant formula<span class="refchip nk">ANT VII.11.9</span> is
+        the general theory on the "f(E/K)" side of Ogg's formula (ATAEC IV.11.1).
+        The conductor of an elliptic curve is the Artin conductor of the Galois representation called the Tate module.</li>
+      <li><strong>Chebotarev's density theorem</strong><span class="refchip nk">ANT VII.13.4</span>:
+        Frobenius elements fill the Galois group uniformly. A theorem that's like the air of modern number theory, supporting statistics of
+        curves reduced mod p (the distribution of a<sub>p</sub>, testing isogeny, and so on).</li>
+    </ul>
+    <div class="usage">
+      <div class="u-label">⚔ Where it's used in the series</div>
+      <ul>
+        <li><a href="/math-site/en/in/atec.html#s7">Final chapter, Door 5</a>: background to Deuring's theorem (analytic continuation of Hecke L).</li>
+        <li><a href="/math-site/en/in/atec.html#s8">Final chapter, Door 6</a>: the general-theory side of the question "does L(E,s) even exist?".
+          Modular forms (ATAEC I) and Hecke L (ANT VII §8) are two faces of the same functional-equation technique.</li>
+        <li><a href="/math-site/en/in/atec.html#s3">Final chapter, Door 1</a>: the body of the definition of the conductor f(E/K) in Ogg's formula.</li>
+        <li><a href="/math-site/en/in/descent.html#s6">Part 4, §9</a>: where the name "elliptic regulator" comes from (an analogue of the unit regulator R).</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 伴走ルート ════════ -->
+  <div class="section" id="s10">
+    <div class="section-number">Section 10</div>
+    <h2>Companion routes ─ three paths for walking ANT as a side reader to the series</h2>
+    <p>
+      Not just using the arsenal shelf by shelf ── these are the shortest paths for people who want to read in bulk.
+      All of them assume you read <strong>with the corresponding page of the series open beside you</strong>.
+    </p>
+    <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th>Route</th><th>What to read</th><th>Goal</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>A. Weak MW all the way down</strong></td>
+          <td class="g">I §2–§11 → II §1–§9 → (III §2)</td>
+          <td>All the outside inputs to the proof in Part 2 (class numbers, S-units, inertia, discriminants) become <strong>your own</strong>.
+            The most important route for the series.</td>
+        </tr>
+        <tr>
+          <td><strong>B. To class field theory</strong></td>
+          <td class="g">IV §1–§3 → V §1 → VI §1, §5–§6</td>
+          <td>The full kit for reading ATAEC II (CM). The axiomatics of abstract class field theory (IV §4–§7) can be
+            skipped the first time; coming back when V and VI need it is enough.</td>
+        </tr>
+        <tr>
+          <td><strong>C. To L-functions</strong></td>
+          <td class="g">VII §1–§2 → §5 → §6, §8</td>
+          <td>The class number formula and the functional equation of Hecke L. You become able to read the analytic language of BSD and ATAEC I–II.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="why">
+      <div class="w-label">? Why Neukirch?</div>
+      <p>
+        The theorems this series borrowed are all standard and can be found in other textbooks. I still recommend ANT because
+        <strong>the viewpoint of going back and forth between local and global</strong> (exactly the viewpoint of Selmer groups) runs through the whole book, and because,
+        through Riemann–Roch theory and an Arakelov-style viewpoint (Chapter III), it connects straight to
+        the theme of the later part of this series, "number theory is geometry" ── height = intersection number (ATAEC III), Ogg's formula (ATAEC IV).
+        More than an arsenal, it's also the trailhead for the next mountain range.
+      </p>
+    </div>
+    <p>
+      Every place in the main series where we said "⏩ accept it for now and move on" now has its repayment address spelled out.
+      The courage to keep going on borrowed knowledge, and a map that lets you go back and repay anytime ── only with both can you walk fast and without worry.
+      Have a good climb.
+    </p>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/atec.html">
+      <div class="p-dir">← PREV ─ Final chapter</div>
+      <div class="p-title">Beyond ─ An invitation to Advanced Topics</div>
+    </a>
+    <a class="next" href="/math-site/en/in/aec.html">
+      <div class="p-dir">SERIES TOP</div>
+      <div class="p-title">Back to the big map →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Graduate notes / The Arithmetic of Elliptic Curves series, Appendix (reference only)</p>
+    <p>Based on: J. Neukirch, Algebraic Number Theory, Grundlehren der mathematischen Wissenschaften 322, Springer (ANT)</p>
+    <p>Series based on: Silverman, AEC (GTM 106) / ATAEC (GTM 151)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>

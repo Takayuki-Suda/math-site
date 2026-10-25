@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Between-the-Lines Note N2: A Complete Proof of Property (a) ─ Addition and Height ─ Descent and Heights | Math the Japanese Way</title>
+<meta name="description" content="Between-the-lines note N2, completely proving property (a) of the height function (its relation to addition). Close-reading notes on descent.">
+<meta name="keywords" content="math,arithmetic,Japanese math,relearning math,math explained,elementary math,why learn math">
+<meta property="og:title" content="Between-the-Lines Note N2: A Complete Proof of Property (a) ─ Addition and Height ─ Descent and Heights | Math the Japanese Way">
+<meta property="og:description" content="Between-the-lines note N2, completely proving property (a) of the height function (its relation to addition). Close-reading notes on descent.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/en/in/descent-step2.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="Math the Japanese Way">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=JetBrains+Mono:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+Math&display=swap');
+
+  :root {
+    --bg: #07080f;
+    --surface: #10121d;
+    --surface2: #171a29;
+    --border: #262b40;
+    --text: #d6d9e6;
+    --muted: #7d84a0;
+    --gold: #E8C547;
+    --gold-dim: #c8a84b;
+    --gold-soft: #f0d888;
+    --blue: #7aa8f0;
+    --green: #5ecf9e;
+    --red: #e0687a;
+    --purple: #b08ae0;
+    --mono: 'JetBrains Mono', 'Noto Sans Math', monospace;
+    --serif: 'Noto Serif JP', 'Noto Sans Math', serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--serif); font-weight:300; line-height:1.9; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(232,197,71,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,197,71,0.025) 1px, transparent 1px);
+    background-size:44px 44px; pointer-events:none; z-index:0; }
+  .container { max-width:860px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+  .hero { padding:72px 0 52px; border-bottom:1px solid var(--border); margin-bottom:56px; position:relative; overflow:hidden; }
+  .hero::after{ content:'λ'; position:absolute; right:10px; top:-46px; font-family:var(--display); font-style:italic;
+    font-size:280px; line-height:1; color:rgba(232,197,71,0.05); pointer-events:none; }
+  .hero-label { font-family:var(--mono); font-size:11px; letter-spacing:4px; color:var(--green); text-transform:uppercase;
+    margin-bottom:22px; display:flex; align-items:center; gap:12px; }
+  .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--green); }
+  .hero h1 { font-family:var(--serif); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.4rem); line-height:1.4; color:#fff; margin-bottom:14px; }
+  .hero h1 .en { font-family:var(--display); font-style:italic; font-weight:300; color:var(--gold-soft); }
+  .hero-sub { font-size:0.98rem; color:var(--muted); max-width:660px; line-height:2.0; }
+  .hero-book { font-family:var(--mono); font-size:12px; color:var(--gold-dim); margin-top:16px; }
+  .series-nav { display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0; }
+  .series-nav a { font-family:var(--mono); font-size:11px; letter-spacing:1px; text-decoration:none; color:var(--muted);
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; transition:all .25s; background:var(--surface); }
+  .series-nav a:hover { color:var(--gold); border-color:var(--gold-dim); }
+  .series-nav a.cur { color:#0a1410; background:linear-gradient(135deg,var(--green),#8fe8c0); border-color:var(--green); font-weight:700; }
+
+  .section { margin-bottom:72px; opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .section.visible { opacity:1; transform:translateY(0); }
+  .section-number { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  .section h2 { font-family:var(--serif); font-weight:700; font-size:clamp(1.3rem,3vw,1.7rem); color:#fff; margin-bottom:24px; line-height:1.4; }
+  .section h3 { font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--gold-soft); margin:34px 0 14px; }
+  .section p { font-size:0.96rem; margin-bottom:16px; line-height:2.0; }
+  .section ul, .section ol { margin:0 0 16px 1.4em; font-size:0.95rem; }
+  .section li { margin-bottom:8px; line-height:1.95; }
+  em { font-style:normal; color:var(--gold-soft); }
+  strong { color:#fff; font-weight:700; }
+
+  .refchip { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--gold-dim);
+    border:1px solid rgba(200,168,75,.35); border-radius:4px; padding:0 7px; margin:0 3px; vertical-align:1px; white-space:nowrap; }
+
+  .formula { background:var(--surface2); border-left:3px solid var(--gold); padding:16px 22px; margin:22px 0;
+    border-radius:0 6px 6px 0; font-family:'Noto Sans Math','STIX Two Math','Noto Serif JP',serif; font-size:1.08rem; font-weight:400; line-height:2.15; color:var(--gold-soft); overflow-x:auto; }
+  .formula .fc { color:var(--muted); font-size:0.82rem; }
+  .fline { white-space:nowrap; }
+
+  .box { border:1px solid var(--border); border-radius:8px; padding:20px 26px; margin:26px 0; background:var(--surface); }
+  .box .box-label { font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; color:var(--muted); }
+  .box p:last-child { margin-bottom:0; }
+  .box.thm { border-color:rgba(232,197,71,.5); background:rgba(232,197,71,.045); }
+  .box.thm .box-label { color:var(--gold); }
+  .box.dfn { border-color:rgba(122,168,240,.45); background:rgba(122,168,240,.05); }
+  .box.dfn .box-label { color:var(--blue); }
+  .box.rem { border-color:var(--border); }
+
+  .proof { border-left:2px solid var(--border); padding:4px 0 4px 24px; margin:22px 0 30px; }
+  .proof .p-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .proof p { font-size:0.93rem; color:var(--text); }
+  .qed { text-align:right; font-family:var(--mono); color:var(--gold-dim); font-size:0.9rem; }
+
+  .pstep { display:flex; gap:14px; margin:18px 0; }
+  .pstep .ps-n { flex:0 0 32px; height:32px; border:1px solid rgba(232,197,71,.5); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11.5px; color:var(--gold);
+    background:rgba(232,197,71,.06); margin-top:3px; }
+  .pstep .ps-b { flex:1; min-width:0; }
+  .pstep .ps-b p { margin-bottom:8px; font-size:0.94rem; line-height:1.95; }
+  .ps-why { font-size:0.85rem; color:var(--muted); border-left:2px solid rgba(94,207,158,.45); padding:2px 0 2px 12px; margin:0 0 6px; }
+  .ps-why b { color:var(--green); font-weight:400; font-family:var(--mono); font-size:0.8rem; letter-spacing:1px; }
+
+  .goon { border:1px dashed rgba(94,207,158,.5); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(94,207,158,.05); }
+  .goon .g-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--green); margin-bottom:8px; }
+  .goon p { font-size:0.9rem; color:#b8e6d0; margin-bottom:0; line-height:1.95; }
+
+  .why { border:1px solid rgba(176,138,224,.4); border-radius:8px; padding:16px 22px; margin:24px 0; background:rgba(176,138,224,.05); }
+  .why .w-label { font-family:var(--mono); font-size:10.5px; letter-spacing:3px; color:var(--purple); margin-bottom:8px; }
+  .why p { font-size:0.9rem; color:#d5c3ee; margin-bottom:0; line-height:1.95; }
+
+  table.cmp { width:100%; border-collapse:collapse; margin:20px 0; font-size:0.88rem; }
+  table.cmp th { background:var(--surface2); color:var(--gold); padding:10px 14px; text-align:left; font-weight:700;
+    border-bottom:1px solid var(--border); font-family:var(--serif); white-space:nowrap; }
+  table.cmp td { padding:10px 14px; border-bottom:1px solid rgba(38,43,64,.6); vertical-align:top; }
+  table.cmp td.m { font-family:var(--mono); font-size:0.84rem; color:var(--gold-soft); }
+  .table-wrap { overflow-x:auto; }
+
+  details.sol { margin:18px 0; border:1px solid var(--border); border-radius:6px; background:var(--surface2); }
+  details.sol summary { cursor:pointer; font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--green);
+    padding:10px 16px; user-select:none; }
+  details.sol summary:hover { color:#8fe8c0; }
+  details.sol .sol-body { padding:4px 18px 16px; border-top:1px solid var(--border); }
+  details.sol .sol-body p { font-size:0.9rem; margin-bottom:12px; color:#c9cddd; }
+
+  .ov { text-decoration:overline; }
+  sup, sub { line-height:0; }
+  .formula sup, .formula sub { font-size:0.78em; }
+  .divider { border:none; border-top:1px solid var(--border); margin:56px 0; }
+
+  .pager { display:flex; gap:14px; margin-top:64px; flex-wrap:wrap; }
+  .pager a { flex:1; min-width:230px; text-decoration:none; border:1px solid var(--border); border-radius:8px;
+    padding:18px 22px; background:var(--surface); transition:border-color .25s; }
+  .pager a:hover { border-color:var(--gold-dim); }
+  .pager .p-dir { font-family:var(--mono); font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .pager .p-title { font-size:0.95rem; color:var(--gold-soft); font-weight:700; }
+  .pager a.next { text-align:right; }
+
+  .footer { border-top:1px solid var(--border); padding-top:36px; margin-top:80px;
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px; line-height:2; }
+</style>
+<!--hreflang--><link rel="canonical" href="https://takayuki-suda.github.io/math-site/en/in/descent-step2.html"><link rel="alternate" hreflang="ja" href="https://takayuki-suda.github.io/math-site/in/descent-step2.html"><link rel="alternate" hreflang="en" href="https://takayuki-suda.github.io/math-site/en/in/descent-step2.html"><link rel="alternate" hreflang="x-default" href="https://takayuki-suda.github.io/math-site/in/descent-step2.html"><!--/hreflang-->
+</head>
+<body>
+
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/en/">∑ Math Classroom</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/">Home</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Elementary <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/sho/kazu.html">Counting Numbers</a>
+          <a href="/math-site/en/sho/tashizan.html">Addition</a>
+          <a href="/math-site/en/sho/hikizan.html">Subtraction</a>
+          <a href="/math-site/en/sho/kuku.html">The Times Table</a>
+          <a href="/math-site/en/sho/bunsu.html">Adding Fractions</a>
+          <a href="/math-site/en/sho/sankaku.html">Area of a Triangle</a>
+          <a href="/math-site/en/sho/en.html">Area of a Circle</a>
+          <a href="/math-site/en/sho/puzzle.html">Puzzles🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Middle School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/chu/moji.html">What Is an Algebraic Expression?</a>
+          <a href="/math-site/en/chu/houteishiki.html">What Is an Equation?</a>
+          <a href="/math-site/en/chu/ikiji.html">Linear Functions and Graphs</a>
+          <a href="/math-site/en/chu/niji.html">Quadratic Functions and Parabolas</a>
+          <a href="/math-site/en/chu/sanpei.html">The Pythagorean Theorem</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">High School <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/ko/sankakuhi.html">Trigonometric Functions</a>
+          <a href="/math-site/en/ko/bibun.html">Derivatives and Tangent Lines</a>
+          <a href="/math-site/en/ko/sekibun.html">Integrals and Area</a>
+          <a href="/math-site/en/ko/daigaku.html">The Door to University Math</a>
+          <a href="/math-site/en/ko/kyokugen.html">Limits and ε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">University <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/en/dai/senkei.html">Linear Maps and the Rank Theorem</a>
+          <a href="/math-site/en/dai/gun.html">Group Theory</a>
+          <a href="/math-site/en/dai/fukuso.html">Complex Analysis</a>
+          <a href="/math-site/en/dai/fourier.html">Fourier Analysis</a>
+          <a href="/math-site/en/dai/seisuron.html">Number Theory</a>
+          <a href="/math-site/en/dai/tahensuu.html">Multivariable Calculus and Differential Forms</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/en/why.html">Why Learn Math?</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/en/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ Adventure Game</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/en/nav.js" defer></script>
+
+<div class="container">
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero section" id="s0">
+    <div class="hero-label">Between-the-lines notes ─ Descent and heights N2/N3</div>
+    <h1>A complete proof of property (a) ─ addition and height<br><span class="en">Translation doubles the height, at most</span></h1>
+    <p class="hero-sub">
+      h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁(P₀) ── the proof that Main IV Section 03 gave as "key points + gaps",
+      written out completely with zero leaps, from handling the exceptional cases to a fully explicit form of the constant C₁.
+      There's only one crux: bounding the y-term |bd| <strong>with the curve's equation itself</strong>.
+    </p>
+    <p class="hero-book">TEXT: Silverman, AEC 2nd ed. ─ VIII.4.2(a) (fully expanded)</p>
+    <div class="series-nav">
+      <a href="/math-site/en/in/descent.html">Main IV Descent</a>
+      <a href="/math-site/en/in/descent-step0.html">N0 Descent theorem</a>
+      <a href="/math-site/en/in/descent-step1.html">N1 Foundations of height</a>
+      <a class="cur" href="/math-site/en/in/descent-step2.html">N2 Property (a) addition</a>
+      <a href="/math-site/en/in/descent-step3.html">N3 Property (b) doubling</a>
+    </div>
+  </div>
+
+  <!-- ════════ 1 ════════ -->
+  <div class="section" id="s1">
+    <div class="section-number">Section 01</div>
+    <h2>The gaps this note fills</h2>
+    <ul>
+      <li>① Making explicit <strong>how to choose</strong> C₁ in the exceptional cases (P₀ = O, P ∈ {O, P₀, −P₀})</li>
+      <li>② Every line of the computation turning the addition formula into the <strong>symmetric form</strong> ((xx₀+A)(x+x₀)+2B−2yy₀)/(x−x₀)²</li>
+      <li>③ A term-by-term check of multiplying by the denominator d⁴d₀⁴ to get <strong>a fraction of integers</strong></li>
+      <li>④ The <strong>precise statement and proof</strong> of "cancelling only lowers the height"</li>
+      <li>⑤ The complete argument bounding the troublemaker |bd| by M² (<strong>where the curve's equation is used</strong>)</li>
+      <li>⑥ A <strong>fully explicit form</strong> of the constant C₁(P₀, A, B)</li>
+    </ul>
+    <p>
+      There are three premises, A1–A3. In particular A1 (the coordinate lemma of N1) is the foundation of every computation.
+    </p>
+  </div>
+
+  <!-- ════════ 2 ════════ -->
+  <div class="section" id="s2">
+    <div class="section-number">Section 02</div>
+    <h2>Fixing the premises (A1–A3)</h2>
+
+    <div class="box dfn">
+      <div class="box-label">Premise A1 ─ shape of coordinates and height <span class="refchip">fully proved in N1</span></div>
+      <p>
+        Any P ∈ E(ℚ) other than O can be written uniquely as P = (a/d², b/d³) (a, b ∈ ℤ, d ≥ 1, gcd(a,d) = gcd(b,d) = 1), and
+      </p>
+      <div class="formula">
+        <div class="fline">H(x(P)) = max{ |a|, d² } =: M,  b² = a³ + Aad⁴ + Bd⁶  (an equation of integers)</div>
+      </div>
+      <p>Also h<sub>x</sub> ≥ 0 and h<sub>x</sub>(P) = h<sub>x</sub>(−P).</p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise A2 ─ the addition formula <span class="refchip">AEC III.2.3(d)</span></div>
+      <p>
+        For P = (x, y), P₀ = (x₀, y₀) with x ≠ x₀, setting λ = (y − y₀)/(x − x₀),
+        x(P + P₀) = λ² − x − x₀.
+        Note that on E, x(P) = x(P₀) ⟺ P = ±P₀ (only the two points (x, ±y) share the same x).
+      </p>
+    </div>
+
+    <div class="box dfn">
+      <div class="box-label">Premise A3 ─ elementary bounds on absolute values, and cancelling <span class="refchip">elementary number theory</span></div>
+      <p>
+        |s + t| ≤ |s| + |t|, |st| = |s||t|. Moreover (gap ④): if t = N/D (N, D ∈ ℤ, D ≠ 0), then
+        H(t) ≤ max{ |N|, |D| }.
+      </p>
+      <details class="sol">
+        <summary>Open the proof of H(t) ≤ max{|N|,|D|}</summary>
+        <div class="sol-body">
+          <p>
+            Let g = gcd(N, D) ≥ 1, p = N/g, q = ±D/g (sign chosen so q ≥ 1). Then
+            t = p/q is the reduced representation. So H(t) = max{|p|, |q|} = max{|N|, |D|}/g ≤ max{|N|, |D|}.
+            <strong>Cancelling (dividing by g) only ever works to lower the height</strong> ── this is why
+            we can completely ignore cancelling in upper bounds. (Not so for lower bounds. That's the theme of N3.)
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════ 3 ════════ -->
+  <div class="section" id="s3">
+    <div class="section-number">Section 03</div>
+    <h2>The statement and the exceptional cases (gap ①)</h2>
+
+    <div class="box thm">
+      <div class="box-label">Lemma (height property (a)) <span class="refchip">AEC VIII.4.2(a)</span></div>
+      <p>
+        Fix P₀ ∈ E(ℚ). Then there is a constant C₁ = C₁(P₀, A, B) such that
+        h<sub>x</sub>(P + P₀) ≤ 2h<sub>x</sub>(P) + C₁ for all P ∈ E(ℚ).
+      </p>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">1</div>
+      <div class="ps-b">
+        <p>Case P₀ = O: C₁ = 0 works. From now on let P₀ = (a₀/d₀², b₀/d₀³) ≠ O.</p>
+        <p class="ps-why"><b>▸ Reason</b>  h(P + O) = h(P) ≤ 2h(P) + 0. We used h(P) ≥ 0 (A1). The coordinate representation of P₀ is A1.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">2</div>
+      <div class="ps-b">
+        <p>Case P ∈ { O, P₀, −P₀ }: if we take C₁ ≥ max{ h(P₀), h(2P₀) }, the inequality holds. From now on exclude these three points. Then x(P) ≠ x(P₀), so the formula of A2 can be used, and P + P₀ ≠ O.</p>
+        <p class="ps-why"><b>▸ Reason</b>  If P = O, P+P₀ = P₀ and h(P₀) ≤ C₁ ≤ 2h(P)+C₁. If P = P₀, h(2P₀) ≤ C₁. If P = −P₀, P+P₀ = O and h(O) = 0 ≤ 2h(P)+C₁ (C₁ ≥ 0: values of h are ≥ 0). <strong>We removed at most three points, but C₁ can "swallow whole" the values at those three points</strong> ── an inequality of type (i) has slack in its constant term, so exceptions are nothing to fear. This is gap ①. x(P) ≠ x(P₀) is the contrapositive of the last claim in A2. P+P₀ = O ⟺ P = −P₀ is also already excluded.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 4 ════════ -->
+  <div class="section" id="s4">
+    <div class="section-number">Section 04</div>
+    <h2>The symmetric form of the addition formula (gap ②)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">3</div>
+      <div class="ps-b">
+        <p>Combine λ² − x − x₀ into a single fraction:</p>
+        <div class="formula">
+          <div class="fline">x(P + P₀) = (y − y₀)²/(x − x₀)² − (x + x₀) = [ (y − y₀)² − (x + x₀)(x − x₀)² ] / (x − x₀)²</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  A2 and a common denominator. x ≠ x₀ (Step 2), so the denominator isn't 0.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">4</div>
+      <div class="ps-b">
+        <p>Expand the two chunks of the numerator:</p>
+        <div class="formula">
+          <div class="fline">(y − y₀)² = y² + y₀² − 2yy₀ = x³ + x₀³ + A(x + x₀) + 2B − 2yy₀</div>
+          <div class="fline">(x + x₀)(x − x₀)² = x³ + x₀³ − x²x₀ − xx₀²</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Line 1: we added y² = x³+Ax+B and y₀² = x₀³+Ax₀+B (that <strong>both points lie on the curve</strong>). Line 2: we expanded (x−x₀)² = x²−2xx₀+x₀², multiplied by (x+x₀), and combined among the six terms −2x²x₀+x²x₀ = −x²x₀ and xx₀²−2xx₀² = −xx₀².</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">5</div>
+      <div class="ps-b">
+        <p>Taking the difference, x³ and x₀³ cancel:</p>
+        <div class="formula">
+          <div class="fline">numerator = x²x₀ + xx₀² + A(x + x₀) + 2B − 2yy₀ = (xx₀ + A)(x + x₀) + 2B − 2yy₀</div>
+          <div class="fline">∴ x(P + P₀) = [ (xx₀ + A)(x + x₀) + 2B − 2yy₀ ] / (x − x₀)²</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Only the factorization x²x₀ + xx₀² = xx₀(x + x₀). The cubic terms vanished, leaving <strong>degree at most 2 in each variable</strong> ── the "2" in "height at most doubles" is this degree. This is the finished form of gap ② (the formula in the main part).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 5 ════════ -->
+  <div class="section" id="s5">
+    <div class="section-number">Section 05</div>
+    <h2>Making it integral ─ multiplying by d⁴d₀⁴ (gaps ③④)</h2>
+
+    <div class="pstep">
+      <div class="ps-n">6</div>
+      <div class="ps-b">
+        <p>Substitute x = a/d², y = b/d³, x₀ = a₀/d₀², y₀ = b₀/d₀³ and multiply numerator and denominator by d⁴d₀⁴ to get x(P+P₀) = N/D, where</p>
+        <div class="formula">
+          <div class="fline">N = (aa₀ + Ad²d₀²)(ad₀² + a₀d²) + 2Bd⁴d₀⁴ − 2(bd)(b₀d₀)</div>
+          <div class="fline">D = (ad₀² − a₀d²)²  (≠ 0)</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Checking denominators term by term (gap ③): xx₀+A = (aa₀+Ad²d₀²)/(d²d₀²), x+x₀ = (ad₀²+a₀d²)/(d²d₀²), the product has denominator d⁴d₀⁴. Multiplying 2yy₀ = 2bb₀/(d³d₀³) by d⁴d₀⁴ gives 2bb₀dd₀ = 2(bd)(b₀d₀) ── <strong>exactly one power of each left over</strong>. (x−x₀)² = (ad₀²−a₀d²)²/(d⁴d₀⁴). Every term is cleared by the same d⁴d₀⁴. N, D ∈ ℤ. D ≠ 0 is x ≠ x₀.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">7</div>
+      <div class="ps-b">
+        <p>H(x(P + P₀)) ≤ max{ |N|, |D| }.</p>
+        <p class="ps-why"><b>▸ Reason</b>  A3 (gap ④). N/D need not be in lowest terms, but for an upper bound we may ignore cancelling.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ 6 ════════ -->
+  <div class="section" id="s6">
+    <div class="section-number">Section 06</div>
+    <h2>Bounding ─ by M² (gaps ⑤⑥)</h2>
+
+    <p>Set M := max{ |a|, d² } = H(x(P)). The only relations we use are |a| ≤ M and d² ≤ M (hence d ≤ M<sup>1/2</sup> and d⁴ ≤ M²).</p>
+
+    <div class="pstep">
+      <div class="ps-n">8</div>
+      <div class="ps-b">
+        <p>The three chunks not involving y are bounded by M straightforwardly:</p>
+        <div class="formula">
+          <div class="fline">|ad₀² + a₀d²| ≤ (d₀² + |a₀|)·M,  |aa₀ + Ad²d₀²| ≤ (|a₀| + |A|d₀²)·M</div>
+          <div class="fline">|2Bd⁴d₀⁴| ≤ 2|B|d₀⁴·M²,  |D| = (ad₀² − a₀d²)² ≤ (d₀² + |a₀|)²·M²</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  The triangle inequality (A3) and |a| ≤ M, d² ≤ M. For example |ad₀²+a₀d²| ≤ d₀²|a| + |a₀|d² ≤ d₀²M + |a₀|M. For D we squared the first bound.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">9</div>
+      <div class="ps-b">
+        <p><strong>The crux (gap ⑤):</strong> |b| ≤ (1+|A|+|B|)<sup>1/2</sup>·M<sup>3/2</sup>, hence |bd| ≤ (1+|A|+|B|)<sup>1/2</sup>·M².</p>
+        <p class="ps-why"><b>▸ Reason</b>  Apply the triangle inequality to the integer equation b² = a³ + Aad⁴ + Bd⁶ from A1: |b|² ≤ |a|³ + |A||a|d⁴ + |B|d⁶. All three terms are at most M³ (|a|³ ≤ M³, |a|d⁴ ≤ M·M², d⁶ = (d²)³ ≤ M³), so |b|² ≤ (1+|A|+|B|)M³. Take square roots and multiply by d ≤ M<sup>1/2</sup>. <strong>On its own b (≈ the y-coordinate) seems unrelated to M, but the equation "P lies on the curve" forces the upper bound |b| ~ M<sup>3/2</sup></strong> ── this is the only place in the whole proof (along with line 1 of Step 4) where the curve's equation acts quantitatively.</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">10</div>
+      <div class="ps-b">
+        <p>Combine and define κ:</p>
+        <div class="formula">
+          <div class="fline">|N| ≤ [ (|a₀| + |A|d₀²)(d₀² + |a₀|) + 2|B|d₀⁴ + 2|b₀|d₀·(1+|A|+|B|)<sup>1/2</sup> ]·M²</div>
+          <div class="fline">κ := max{ the bracket above, (d₀² + |a₀|)² }  ⇒  max{|N|, |D|} ≤ κ·M²</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Substitute the bounds of Steps 8–9 into the three chunks of N and combine with the triangle inequality. |2(bd)(b₀d₀)| ≤ 2|b₀|d₀·|bd|. κ is a constant depending only on P₀ and A, B (<strong>independent of P</strong>).</p>
+      </div>
+    </div>
+
+    <div class="pstep">
+      <div class="ps-n">11</div>
+      <div class="ps-b">
+        <p>Finish by taking logarithms:</p>
+        <div class="formula">
+          <div class="fline">H(x(P+P₀)) ≤ κ·M² = κ·H(x(P))²  ⇒  h(P + P₀) ≤ 2h(P) + log κ</div>
+          <div class="fline">C₁(P₀, A, B) := max{ log κ, h(P₀), h(2P₀) }</div>
+        </div>
+        <p class="ps-why"><b>▸ Reason</b>  Step 7 + Step 10, monotonicity of log and log(uv) = log u + log v. The final max merges in the exceptional cases of Step 2 (gaps ①⑥). Note also that κ ≥ (d₀²+|a₀|)² ≥ 1, so log κ ≥ 0.</p>
+      </div>
+    </div>
+    <div class="qed">∎</div>
+
+    <div class="box rem">
+      <div class="box-label">By-product: C₁(Q) = C₁(−Q)</div>
+      <p>
+        −P₀ = (a₀/d₀², −b₀/d₀³), and the formula for κ <strong>only looks at b₀ through its absolute value</strong>.
+        Moreover h(−P₀) = h(P₀) and h(−2P₀) = h(2P₀) (N1). So in the construction above C₁(P₀) = C₁(−P₀)
+        holds automatically. The C₁′ = max<sub>i</sub> C₁(−Q<sub>i</sub>) needed in the descent theorem (N0 Step 1) can be
+        the same value as the representatives' own constant max<sub>i</sub> C₁(Q<sub>i</sub>) ── so there was never any need to worry about signs.
+      </p>
+    </div>
+
+    <div class="why">
+      <div class="w-label">? This proof has not a single lower bound</div>
+      <p>
+        However small the denominator D gets, however much N/D cancels, it doesn't affect an upper bound
+        (A3: cancelling only lowers the height). So the proof of (a) was a one-way street of just
+        "bounding everything above by M²". In (b), on the other hand, we have to say that H(x(2P)) <strong>doesn't get too small</strong>,
+        and we must control the amount of cancellation itself. The tool for that is two identities ── on to N3.
+      </p>
+    </div>
+  </div>
+
+  <div class="pager">
+    <a href="/math-site/en/in/descent-step1.html">
+      <div class="p-dir">← PREV ─ Between-the-lines note N1</div>
+      <div class="p-title">Foundations of height ─ the shape of coordinates and finiteness</div>
+    </a>
+    <a class="next" href="/math-site/en/in/descent-step3.html">
+      <div class="p-dir">NEXT ─ Between-the-lines note N3</div>
+      <div class="p-title">A complete proof of property (b) ─ doubling and height →</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Math the Japanese Way ─ Between-the-lines notes (descent and heights) N2/N3</p>
+    <p>Based on: J.H. Silverman, The Arithmetic of Elliptic Curves, 2nd ed., GTM 106 ─ VIII.4.2(a)</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.section').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
