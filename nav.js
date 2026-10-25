@@ -18,6 +18,19 @@
           'top:var(--site-nav-h,48px);min-width:0;max-height:72vh;'+
           'overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:10000;}'+
         '.site-nav .site-nav__item.is-open .site-nav__arrow{transform:rotate(180deg);}'+
+      '}'+
+      /* 中くらいの画面幅：メニューが入りきらないときは2段に折り返す（横スクロールを出さない） */
+      '@media (min-width:701px) and (max-width:1000px){'+
+        '.site-nav .site-nav__inner{flex-wrap:wrap;justify-content:center;}'+
+        '.site-nav .site-nav__list{flex-wrap:wrap;justify-content:center;}'+
+      '}'+
+      /* 英語版：項目名が長いので余白を詰め、幅を広げる */
+      'html[lang="en"] .site-nav .site-nav__inner{max-width:1320px;}'+
+      'html[lang="en"] .site-nav .site-nav__link{padding-left:8px;padding-right:8px;}'+
+      '@media (min-width:701px) and (max-width:1240px){'+
+        'html[lang="en"] .site-nav .site-nav__inner{flex-wrap:wrap;justify-content:center;}'+
+        'html[lang="en"] .site-nav .site-nav__list{flex-wrap:wrap;justify-content:center;}'+
+        'html[lang="en"] .site-nav .site-nav__logo{padding-bottom:0;}'+
       '}';
     var s=document.createElement('style');
     s.textContent=css;
