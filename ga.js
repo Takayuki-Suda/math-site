@@ -6,7 +6,7 @@
    ════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
-  var GA_ID = '';   /* 例: 'G-XXXXXXXXXX' */
+  var GA_ID = 'G-31W8341QR0';
   var KEY = 'suda_no_count';
 
   function get(){ try{ return localStorage.getItem(KEY)==='1'; }catch(e){ return false; } }
