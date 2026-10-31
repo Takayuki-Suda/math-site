@@ -137,6 +137,9 @@
     strong: { label: 'つよい', p: [0, 0.96, 0.88, 0.75] }
   };
   var S = null, lastOpt = null, timerId = null;
+  /* 音（card-battle-sound.js）。読み込めなくてもゲームは動く */
+  function snd(n, d) { if (window.CBSound) window.CBSound.play(n, d); }
+  function bgm(on) { if (!window.CBSound) return; if (on) window.CBSound.bgmStart(); else window.CBSound.bgmStop(); }
 
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function br(t) { return esc(t).replace(/\n/g, '<br>'); }
@@ -173,7 +176,12 @@
 
   function startTurn() {
     S.sel = -1; S.q = null; S.hinted = false; S.counter = false; S.shield = false; S.result = null; S.used1 = {};
-    if (S.life.you <= 0 || S.life.cpu <= 0) { S.phase = 'over'; render(); return; }
+    if (window.CBSound) window.CBSound.setTense(S.life.you <= 3 || S.life.cpu <= 3);
+    if (S.life.you <= 0 || S.life.cpu <= 0) {
+      S.phase = 'over'; bgm(false);
+      snd(S.life.cpu <= 0 && S.life.you > 0 ? 'win' : 'lose', 0.1);
+      render(); return;
+    }
     ensureQuestion(S.turn);
     if (S.turn === 'you') { S.phase = 'attack'; render(); }
     else cpuAttack();
@@ -184,8 +192,8 @@
     var c = S.hand.you[idx];
     if (!c || S.used1[c.kind]) return;
     discard('you', idx); S.used1[c.kind] = true;
-    if (c.kind === 'draw') { S.hand.you.push(draw(), draw()); addLog('あなた：2 枚ドロー', 'you'); }
-    if (c.kind === 'heal') { var b = S.life.you; S.life.you = Math.min(S.max.you, S.life.you + 2); addLog('あなた：回復（ライフ ' + b + ' → ' + S.life.you + '）', 'you'); }
+    if (c.kind === 'draw') { snd('draw'); S.hand.you.push(draw(), draw()); addLog('あなた：2 枚ドロー', 'you'); }
+    if (c.kind === 'heal') { snd('heal'); var b = S.life.you; S.life.you = Math.min(S.max.you, S.life.you + 2); addLog('あなた：回復（ライフ ' + b + ' → ' + S.life.you + '）', 'you'); }
     render();
   }
   function youAttack() {
@@ -194,6 +202,7 @@
     S.q = discard('you', S.sel); S.sel = -1;
     addLog('あなた：★' + S.q.star + '「' + S.q.text.replace(/\n/g, '／') + '」を出した', 'you');
     S.phase = 'cpuThink'; render();
+    snd('card'); snd('think', 0.3);
     setTimeout(cpuAnswer, 1100);
   }
   /* CPU の正解しやすさ：強さ × 得意・苦手 */
@@ -208,21 +217,23 @@
     var q = S.q, p = cpuChance(q);
     /* CPU の作戦：むずかしければヒント、自信がなければシールド、自信があれば倍返し */
     var hi = findKind('cpu', 'hint');
-    if (hi >= 0 && p < 0.85 && Math.random() < 0.7) { discard('cpu', hi); S.hinted = true; p = Math.min(0.98, p + 0.15); addLog('CPU：ヒントを使った', 'cpu'); }
+    if (hi >= 0 && p < 0.85 && Math.random() < 0.7) { discard('cpu', hi); S.hinted = true; p = Math.min(0.98, p + 0.15); addLog('CPU：ヒントを使った', 'cpu'); snd('hint'); }
     var si = findKind('cpu', 'shield');
-    if (si >= 0 && p < 0.6 && q.star >= 2) { discard('cpu', si); S.shield = true; addLog('CPU：シールドを使った', 'cpu'); }
+    if (si >= 0 && p < 0.6 && q.star >= 2) { discard('cpu', si); S.shield = true; addLog('CPU：シールドを使った', 'cpu'); snd('shield', 0.1); }
     var ci = findKind('cpu', 'counter');
-    if (ci >= 0 && p >= 0.8 && Math.random() < 0.6) { discard('cpu', ci); S.counter = true; addLog('CPU：倍返しを宣言！', 'cpu'); }
+    if (ci >= 0 && p >= 0.8 && Math.random() < 0.6) { discard('cpu', ci); S.counter = true; addLog('CPU：倍返しを宣言！', 'cpu'); snd('counter', 0.2); }
     var ok = Math.random() < p;
     var ans = ok ? q.ans : wrongAnswer(q);
     S.result = { who: 'cpu', ok: ok, given: ans };
     if (ok) {
       S.hand.cpu.push(draw());
       var d = counterDmg(q); damage('you', d); S.result.dmg = d;
+      snd('wrong', 0.3); snd('hit', 0.65);
       addLog('CPU：' + fmt(ans) + ' と答えて正解 → あなたに反撃 ' + d + ' ダメージ。CPU はカードを 1 枚引いた', 'cpu');
       S.phase = 'cpuResult';
     } else {
       addLog('CPU：' + fmt(ans) + ' と答えた（まちがい）', 'cpu');
+      snd('correct', 0.3);
       S.phase = 'explain';
     }
     render();
@@ -231,6 +242,7 @@
   function youExplain(could) {
     var d = wrongDmg(S.q, could);
     damage('cpu', d);
+    if (d > 0) snd('hit'); else snd('shield');
     addLog('あなた：解き方を' + (could ? '説明できた' : '説明できなかった') + ' → CPU に ' + d + ' ダメージ', 'you');
     S.result.dmg = d; S.result.explained = could;
     S.phase = 'cpuResult'; render();
@@ -242,10 +254,10 @@
   function cpuAttack() {
     var h = S.hand.cpu;
     var hl = findKind('cpu', 'heal');
-    if (hl >= 0 && S.life.cpu <= S.max.cpu - 3) { discard('cpu', hl); var b0 = S.life.cpu; S.life.cpu = Math.min(S.max.cpu, S.life.cpu + 2); addLog('CPU：回復（ライフ ' + b0 + ' → ' + S.life.cpu + '）', 'cpu'); }
+    if (hl >= 0 && S.life.cpu <= S.max.cpu - 3) { discard('cpu', hl); snd('heal'); var b0 = S.life.cpu; S.life.cpu = Math.min(S.max.cpu, S.life.cpu + 2); addLog('CPU：回復（ライフ ' + b0 + ' → ' + S.life.cpu + '）', 'cpu'); }
     var di = findKind('cpu', 'draw');
     if (di >= 0 && h.filter(function (c) { return c.kind === 'q'; }).length <= 2) {
-      discard('cpu', di); h.push(draw(), draw()); addLog('CPU：2 枚ドロー', 'cpu');
+      discard('cpu', di); h.push(draw(), draw()); addLog('CPU：2 枚ドロー', 'cpu'); snd('draw', 0.3);
     }
     /* あなたのライフが少ないときは強いカード、ふだんは少しランダムに */
     var qs = [];
@@ -256,6 +268,7 @@
     addLog('CPU：★' + S.q.star + '「' + S.q.text.replace(/\n/g, '／') + '」を出した', 'cpu');
     S.phase = 'answer';
     render();
+    snd('card', 0.4);
     startTimer();
   }
   function startTimer() {
@@ -271,15 +284,15 @@
   function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
   function youUseHint() {
     var i = findKind('you', 'hint'); if (i < 0) return;
-    discard('you', i); S.hinted = true; addLog('あなた：ヒントを使った', 'you'); render();
+    discard('you', i); S.hinted = true; addLog('あなた：ヒントを使った', 'you'); snd('hint'); render();
   }
   function youUseShield() {
     var i = findKind('you', 'shield'); if (i < 0) return;
-    discard('you', i); S.shield = true; addLog('あなた：シールドを使った', 'you'); render();
+    discard('you', i); S.shield = true; addLog('あなた：シールドを使った', 'you'); snd('shield'); render();
   }
   function youUseCounter() {
     var i = findKind('you', 'counter'); if (i < 0) return;
-    discard('you', i); S.counter = true; addLog('あなた：倍返しを宣言！', 'you'); render();
+    discard('you', i); S.counter = true; addLog('あなた：倍返しを宣言！', 'you'); snd('counter'); render();
   }
   function youAnswer(timeout) {
     var ins = [];
@@ -293,9 +306,11 @@
     if (ok) {
       S.hand.you.push(draw());
       var d = counterDmg(q); damage('cpu', d); S.result.dmg = d;
+      snd('correct'); snd('hit', 0.4);
       addLog('あなた：正解！ CPU に反撃 ' + d + ' ダメージ。カードを 1 枚引いた', 'you');
     } else {
       var d2 = wrongDmg(q, true); damage('you', d2); S.result.dmg = d2;
+      snd('wrong'); if (d2 > 0) snd('hit', 0.4);
       addLog('あなた：' + (timeout ? '時間切れ' : 'まちがい') + ' → ' + d2 + ' ダメージ（CPU が解き方を説明）', 'you');
     }
     S.phase = 'yourResult'; render();
@@ -333,7 +348,7 @@
     var h = '<div class="cb-bar">' + lifeHTML('cpu') + '<div class="cb-traits"><span class="cb-weak">苦手：' + S.weak.join('・') + '</span><span class="cb-goodu">得意：' + S.good + '</span></div><div class="cb-cpuhand" aria-label="CPU の手札 ' + S.hand.cpu.length + ' 枚">' + S.hand.cpu.map(function () { return '<span class="cb-back"></span>'; }).join('') + '</div><div class="cb-deck">山札 ' + S.deck.length + '</div></div>';
     h += '<div class="cb-field">' + fieldHTML() + '</div>';
     A.className = 'cb-ph-' + S.phase;
-    h += '<div class="cb-bar cb-bar-you">' + lifeHTML('you') + '<details class="cb-log"><summary>記録</summary><ol>' + S.log.map(function (l) { return '<li class="cb-' + l.who + '">' + esc(l.t) + '</li>'; }).join('') + '</ol></details></div>';
+    h += '<div class="cb-bar cb-bar-you">' + lifeHTML('you') + soundHTML() + '<details class="cb-log"><summary>記録</summary><ol>' + S.log.map(function (l) { return '<li class="cb-' + l.who + '">' + esc(l.t) + '</li>'; }).join('') + '</ol></details></div>';
     h += '<div class="cb-hand" role="list" aria-label="あなたの手札">' + S.hand.you.map(function (c, i) {
       return '<button type="button" class="cb-slot" role="listitem" data-i="' + i + '" aria-pressed="' + (S.sel === i) + '"' + (handUsable(c) ? '' : ' disabled') + '>' + cardHTML(c, { sel: S.sel === i, mark: S.phase === 'attack' }) + '</button>';
     }).join('') + '</div>';
@@ -342,6 +357,12 @@
     var inps = document.querySelectorAll('.cb-in');
     Array.prototype.forEach.call(inps, function (e, i) { if (keep[i] != null) e.value = keep[i]; });
     if (inps.length && S.phase === 'answer' && !keep.length) inps[0].focus({ preventScroll: true });
+  }
+  function soundHTML() {
+    if (!window.CBSound) return '';
+    var m = window.CBSound.music(), f = window.CBSound.sfx();
+    return '<div class="cb-sound"><button type="button" class="cb-tg" id="cb-music" aria-pressed="' + m + '">♪ 音楽 ' + (m ? 'ON' : 'OFF') + '</button>' +
+      '<button type="button" class="cb-tg" id="cb-sfx" aria-pressed="' + f + '">効果音 ' + (f ? 'ON' : 'OFF') + '</button></div>';
   }
   function chanceWord(p) {
     var t = p >= 0.85 ? 'とても高い' : p >= 0.7 ? '高い' : p >= 0.5 ? 'ふつう' : '低い';
@@ -432,6 +453,7 @@
       '<fieldset><legend>あなたのライフ</legend>' + radio('ly', '10', '10', true) + radio('ly', '7', '7', false) + radio('ly', '5', '5（ハンデ）', false) + '</fieldset>' +
       '<fieldset><legend>CPU のライフ</legend>' + radio('lc', '10', '10', true) + radio('lc', '7', '7', false) + radio('lc', '5', '5', false) + '</fieldset>' +
       '<fieldset><legend>答える時間</legend>' + radio('tm', '0', '制限なし', true) + radio('tm', '60', '60 秒', false) + radio('tm', '30', '30 秒', false) + '</fieldset>' +
+      '<div class="cb-row"><span class="cb-note">音：</span>' + soundHTML() + '</div>' +
       '<button type="button" class="cb-btn cb-main" id="cb-start">バトル開始</button></div></div>';
   }
   function readOpt() {
@@ -439,7 +461,14 @@
     return { cpu: v('cp'), lifeYou: +v('ly'), lifeCpu: +v('lc'), time: +v('tm') };
   }
   function on(id, fn) { var e = $(id); if (e) e.onclick = fn; }
-  function bindSetup() { on('cb-start', function () { lastOpt = readOpt(); newGame(lastOpt); scrollToApp(); }); }
+  function bindSetup() {
+    on('cb-start', function () { lastOpt = readOpt(); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); });
+    bindSound();
+  }
+  function bindSound() {
+    on('cb-music', function () { var v = !window.CBSound.music(); window.CBSound.setMusic(v); if (v && S && S.phase !== 'over') bgm(true); render(); });
+    on('cb-sfx', function () { var v = !window.CBSound.sfx(); window.CBSound.setSfx(v); if (v) snd('click'); render(); });
+  }
   function scrollToApp() {
     var a = $('cb-app'), nav = document.querySelector('.site-nav');
     var top = a.getBoundingClientRect().top + window.pageYOffset - (nav ? nav.getBoundingClientRect().height : 0) - 8;
@@ -449,7 +478,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('.cb-slot'), function (b) {
       b.onclick = function () {
         var i = +b.getAttribute('data-i'), c = S.hand.you[i];
-        if (S.phase === 'attack') { S.sel = S.sel === i ? -1 : i; S.msg = ''; render(); }
+        if (S.phase === 'attack') { S.sel = S.sel === i ? -1 : i; S.msg = ''; snd('click'); render(); }
         else if (S.phase === 'answer') { if (c.kind === 'hint') youUseHint(); else if (c.kind === 'counter') youUseCounter(); else if (c.kind === 'shield') youUseShield(); }
       };
     });
@@ -462,7 +491,8 @@
     on('cb-hint', youUseHint);
     on('cb-counter', youUseCounter);
     on('cb-answer', function () { youAnswer(false); });
-    on('cb-again', function () { newGame(lastOpt); });
+    on('cb-again', function () { newGame(lastOpt); bgm(true); });
+    bindSound();
     on('cb-reset', function () { S = null; render(); });
     Array.prototype.forEach.call(document.querySelectorAll('.cb-in'), function (e) {
       e.onkeydown = function (ev) { if (ev.key === 'Enter') youAnswer(false); };

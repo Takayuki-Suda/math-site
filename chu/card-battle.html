@@ -63,6 +63,9 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--whit
 .cb-main{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#1a1040;border:none;}
 .cb-main:hover{filter:brightness(1.08);background:linear-gradient(135deg,var(--gold),var(--gold-lt));}
 .cb-field .cb-main{position:sticky;bottom:2px;z-index:2;box-shadow:0 0 0 6px var(--bg2),0 6px 16px rgba(0,0,0,.6);}
+.cb-sound{display:flex;gap:6px;}
+.cb-tg{font-family:inherit;font-size:.78rem;font-weight:700;border-radius:999px;padding:4px 12px;min-height:32px;cursor:pointer;border:1px solid #3a4a66;background:transparent;color:var(--gray);}
+.cb-tg[aria-pressed="true"]{border-color:var(--gold);color:var(--gold-lt);background:rgba(200,168,75,.12);}
 .cb-shieldbtn{border-color:#7fb4ff;color:#a9d4ff;}
 .cb-traits{display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;font-weight:700;}
 .cb-traits span{border-radius:999px;padding:1px 10px;}
@@ -239,6 +242,7 @@ legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;w
   <div id="cb-app" aria-live="polite"></div>
   <p class="cb-proto">これは試作版です。問題は中1〜中2（正負の数・文字式・方程式・比例・一次関数・連立方程式）の 40 枚です。</p>
 </main>
+<script src="/math-site/chu/card-battle-sound.js"></script>
 <script src="/math-site/chu/card-battle.js"></script>
 </body>
 </html>
