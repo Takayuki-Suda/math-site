@@ -23,14 +23,15 @@
     ['draw', '2 枚ドロー', '自分の番に使う。山札から 2 枚引く。', 1],
     ['heal', '回復', '自分の番に使う。ライフを 2 回復する。', 1]
   ];
-  /* キャラクター 6 人（数学者）。once は「1 回だけ」の能力 */
+  /* キャラクター 6 人（数学者）。limit は回数に限りがある能力（1 回だけ／2 回まで）
+     強さは CPU どうしの大量対戦で、どのキャラも勝率がほぼ同じになるように調整した */
   var CHARS = {
-    euclid: { name: 'ユークリッド', sym: '△', era: '古代ギリシャ', story: '『原論』で、定義から順に証明を積み上げた。', skill: '証明の達人', desc: '相手がまちがえたとき、説明できなくてもダメージが半分にならない。' },
-    gauss: { name: 'ガウス', sym: 'Σ', era: 'ドイツ', story: '子どものころ、1 から 100 までの和を一瞬で求めた。', skill: '速算', desc: '★1 の問題に正解したとき、反撃ダメージ ＋1。' },
-    riemann: { name: 'リーマン', sym: 'ζ', era: 'ドイツ', story: '今も解かれていない「リーマン予想」を残した。', skill: '未解決の謎', desc: '★3 の問題を出して相手がまちがえたら、ダメージ ＋1。' },
-    euler: { name: 'オイラー', sym: 'e', era: 'スイス', story: '史上最多ともいわれる数の論文を書いた。', skill: '多作', desc: '「2 枚ドロー」が 3 枚ドローになる。' },
-    fermat: { name: 'フェルマー', sym: 'xⁿ', era: 'フランス', story: '「余白が狭すぎて書けない」と最終定理を書き残した。', skill: '余白が足りない', desc: '1 回だけ、自分がまちがえたときのダメージを 0 にできる。', once: true },
-    takagi: { name: '高木貞治', sym: '類', era: '日本', story: '類体論をつくり、日本の近代数学を切りひらいた。', skill: '類体論', desc: '1 回だけ、同じ単元の問題カードを 2 枚まとめて出せる。', once: true }
+    euclid: { name: 'ユークリッド', sym: '△', era: '古代ギリシャ', story: '定義と公理から、すべてを証明で積み上げた『原論』は、2000 年以上も数学の教科書になった。', skill: '証明の達人', desc: '相手がまちがえて、あなたが解き方を説明できたら、ダメージが 1 ふえる。' },
+    gauss: { name: 'ガウス', sym: 'Σ', era: 'ドイツ', story: '2000 年だれもできなかった正十七角形の作図を、定規とコンパスで成しとげた。', skill: '速算', desc: '★1 の問題に正解したら、反撃ダメージが 2 ふえる。' },
+    riemann: { name: 'リーマン', sym: 'ζ', era: 'ドイツ', story: 'ゼータ関数の零点の予想は、160 年以上たった今も解かれていない。', skill: '未解決の謎', desc: '★3 の問題で相手がまちがえたら、ダメージが 2 ふえる。' },
+    euler: { name: 'オイラー', sym: 'e', era: 'スイス', story: '目が見えなくなっても、口で語って論文を書き続け、史上最多ともいわれる数の論文を残した。', skill: '不屈', desc: '★2・★3 の問題をまちがえても、受けるダメージが 1 へる。' },
+    fermat: { name: 'フェルマー', sym: 'xⁿ', era: 'フランス', story: '余白に残した一言は 358 年なぞのままで、1995 年にやっと証明された。', skill: '余白が足りない', desc: '自分がまちがえたとき、受けるダメージを 0 にできる。', limit: 1 },
+    takagi: { name: '高木貞治', sym: '類', era: '日本', story: '類体論で、日本の数学を世界の最前線に押し上げた。', skill: '類体論', desc: '同じ単元の問題カードを 2 枚まとめて出せる。そのとき相手は正解しても反撃できない。', limit: 2 }
   };
   var CHAR_ORDER = ['euclid', 'gauss', 'riemann', 'euler', 'fermat', 'takagi'];
   function unitGroup(u) { return u === '反比例' ? '比例' : u; }
@@ -173,7 +174,7 @@
       deckKey: opt.deck, deck: shuffle(makeDeck(opt.deck)), used: [],
       hand: { you: [], cpu: [] }, turn: 'you', phase: '', sel: -1,
       q: null, counter: false, shield: false, swapCard: null, swapPick: [], result: null, log: [], msg: '', used1: {},
-      char: { you: opt.charYou, cpu: opt.charCpu }, once: { you: false, cpu: false }, pendingQ: null, fermatNow: false
+      char: { you: opt.charYou, cpu: opt.charCpu }, once: { you: 0, cpu: 0 }, combo: false, pendingQ: null, fermatNow: false
     };
     var u = shuffle(unitsOf(opt.deck));
     S.weak = [u[0], u[1]]; S.good = u[2];
@@ -196,12 +197,13 @@
   function name(w) { return w === 'you' ? 'あなた' : 'CPU'; }
   function discard(who, idx) { var c = S.hand[who].splice(idx, 1)[0]; S.used.push(c); return c; }
   function hasChar(who, k) { return S.char[who] === k; }
-  function canOnce(who, k) { return hasChar(who, k) && !S.once[who]; }
-  function drawN(who) { return hasChar(who, 'euler') ? 3 : 2; }
+  function canOnce(who, k) { return hasChar(who, k) && S.once[who] < (CHARS[k].limit || 1); }
+  function limitLabel(c) { return c.limit ? (c.limit === 1 ? '（1 回だけ）' : '（' + c.limit + ' 回まで）') : ''; }
+  function drawN() { return 2; }
   function findKind(who, kind) { for (var i = 0; i < S.hand[who].length; i++) if (S.hand[who][i].kind === kind) return i; return -1; }
 
   function startTurn() {
-    S.sel = -1; S.q = null; S.counter = false; S.shield = false; S.result = null; S.used1 = {}; S.pendingQ = null; S.fermatNow = false;
+    S.sel = -1; S.q = null; S.counter = false; S.shield = false; S.result = null; S.used1 = {}; S.pendingQ = null; S.fermatNow = false; S.combo = false;
     if (window.CBSound) window.CBSound.setTense(S.life.you <= 3 || S.life.cpu <= 3);
     if (S.life.you <= 0 || S.life.cpu <= 0) {
       S.phase = 'over'; bgm(false);
@@ -231,8 +233,8 @@
     S.q = discard('you', S.sel); S.sel = -1;
     addLog('あなた：★' + S.q.star + '「' + S.q.text.replace(/\n/g, '／') + '」を出した', 'you');
     if (partner && canOnce('you', 'takagi')) {
-      S.pendingQ = discard('you', S.hand.you.indexOf(partner)); S.once.you = true;
-      addLog('あなた：高木の類体論！ ★' + S.pendingQ.star + '「' + S.pendingQ.text.replace(/\n/g, '／') + '」もまとめて出した', 'you');
+      S.pendingQ = discard('you', S.hand.you.indexOf(partner)); S.once.you++; S.combo = true;
+      addLog('あなた：高木の類体論！ ★' + S.pendingQ.star + '「' + S.pendingQ.text.replace(/\n/g, '／') + '」もまとめて出した（CPU は正解しても反撃できない）', 'you');
     }
     S.phase = 'cpuThink'; render();
     snd('card'); snd('think', 0.3);
@@ -245,13 +247,13 @@
     else if (g === S.good) p = Math.min(0.99, p + 0.08);
     return p;
   }
-  /* 正解したときの反撃（answerer = 答えた人）。ガウスは ★1 で ＋1 */
-  function counterDmg(q, answerer) { return (S.counter ? q.star + 1 : 1) + (hasChar(answerer, 'gauss') && q.star === 1 ? 1 : 0); }
+  /* 正解したときの反撃（answerer = 答えた人）。ガウスは ★1 で ＋2。高木の 2 枚出しには反撃できない */
+  function counterDmg(q, answerer) { if (S.combo) return 0; return (S.counter ? q.star + 1 : 1) + (hasChar(answerer, 'gauss') && q.star === 1 ? 2 : 0); }
   function cpuAnswer() {
     var q = S.q, p = cpuChance(q);
     /* CPU の作戦：自信があれば倍返し（シールドはまちがえたあとに使う） */
     var ci = findKind('cpu', 'counter');
-    if (ci >= 0 && p >= 0.8 && Math.random() < 0.6) { discard('cpu', ci); S.counter = true; addLog('CPU：倍返しを宣言！', 'cpu'); snd('counter', 0.2); }
+    if (ci >= 0 && !S.combo && p >= 0.8 && Math.random() < 0.6) { discard('cpu', ci); S.counter = true; addLog('CPU：倍返しを宣言！', 'cpu'); snd('counter', 0.2); }
     var ok = Math.random() < p;
     var ans = ok ? q.ans : wrongAnswer(q);
     S.result = { who: 'cpu', ok: ok, given: ans };
@@ -270,22 +272,26 @@
     }
     render();
   }
-  /* まちがえたときのダメージ（attacker = 問題を出した人）。リーマンは ★3 で ＋1、シールドで −2 */
+  /* まちがえたときのダメージ（attacker = 問題を出した人、full = 説明できた）
+     ユークリッドは説明できたら ＋1、リーマンは ★3 で ＋2、シールドで −2、答えた人がオイラーなら ★2・★3 で −1 */
   function wrongDmg(q, full, attacker) {
     var base = full ? q.star : Math.floor(q.star / 2);
-    if (hasChar(attacker, 'riemann') && q.star === 3) base += 1;
-    return Math.max(0, base - (S.shield ? 2 : 0));
+    if (hasChar(attacker, 'euclid') && full) base += 1;
+    if (hasChar(attacker, 'riemann') && q.star === 3) base += 2;
+    if (S.shield) base -= 2;
+    if (hasChar(other(attacker), 'euler') && q.star >= 2) base -= 1;
+    return Math.max(0, base);
   }
   function youExplain(could) {
-    var full = could || hasChar('you', 'euclid');
+    var full = could;
     var d = wrongDmg(S.q, full, 'you');
     /* CPU のフェルマー：大きいダメージ、またはやられそうなときに使う */
     if (d > 0 && canOnce('cpu', 'fermat') && (d >= 3 || d >= S.life.cpu)) {
-      S.once.cpu = true; S.result.fermat = true; addLog('CPU：フェルマー「余白が足りない！」→ ダメージ 0', 'cpu'); d = 0;
+      S.once.cpu++; S.result.fermat = true; addLog('CPU：フェルマー「余白が足りない！」→ ダメージ 0', 'cpu'); d = 0;
     }
     damage('cpu', d);
     if (d > 0) snd('hit'); else snd('shield');
-    addLog('あなた：解き方を' + (could ? '説明できた' : '説明できなかった') + (full && !could ? '（ユークリッドの力で全ダメージ）' : '') + ' → CPU に ' + d + ' ダメージ', 'you');
+    addLog('あなた：解き方を' + (could ? '説明できた' : '説明できなかった') + (could && hasChar('you', 'euclid') ? '（ユークリッドの力で ＋1）' : '') + ' → CPU に ' + d + ' ダメージ', 'you');
     S.result.dmg = d; S.result.explained = could;
     S.phase = 'cpuResult'; render();
   }
@@ -321,14 +327,14 @@
     var qs = [];
     h.forEach(function (c, i) { if (c.kind === 'q') qs.push(i); });
     qs.sort(function (a, b) { return h[b].star - h[a].star; });
-    var pick = S.life.you <= 3 ? qs[0] : qs[Math.floor(Math.random() * Math.min(2, qs.length))];
+    var pick = S.life.you <= 3 || (hasChar('cpu', 'riemann') && h[qs[0]].star === 3) ? qs[0] : qs[Math.floor(Math.random() * Math.min(2, qs.length))];
     S.q = discard('cpu', pick);
     addLog('CPU：★' + S.q.star + '「' + S.q.text.replace(/\n/g, '／') + '」を出した', 'cpu');
     if (canOnce('cpu', 'takagi')) {
       var pt = sameUnitPartners('cpu', S.q);
       if (pt.length && Math.random() < 0.6) {
-        S.pendingQ = discard('cpu', h.indexOf(pt[0])); S.once.cpu = true;
-        addLog('CPU：高木の類体論！ 同じ単元のカードを 2 枚まとめて出した', 'cpu');
+        S.pendingQ = discard('cpu', h.indexOf(pt[0])); S.once.cpu++; S.combo = true;
+        addLog('CPU：高木の類体論！ 同じ単元のカードを 2 枚まとめて出した（正解しても反撃できない）', 'cpu');
       }
     }
     S.phase = 'answer';
@@ -385,7 +391,7 @@
     } else {
       snd('wrong');
       /* CPU が解き方を説明できたか（ユークリッドならいつも全ダメージ） */
-      S.cpuExp = hasChar('cpu', 'euclid') || Math.random() < S.cpu.explain;
+      S.cpuExp = Math.random() < S.cpu.explain;
       if (findKind('you', 'shield') >= 0 || canOnce('you', 'fermat')) { S.phase = 'shieldAsk'; render(); return; }
       applyYourWrong();
       return;
@@ -401,7 +407,7 @@
   }
   function youShieldDecide(use) {
     if (use === 'fermat' && canOnce('you', 'fermat')) {
-      S.once.you = true; S.fermatNow = true; addLog('あなた：フェルマー「余白が足りない！」→ ダメージ 0', 'you'); snd('shield');
+      S.once.you++; S.fermatNow = true; addLog('あなた：フェルマー「余白が足りない！」→ ダメージ 0', 'you'); snd('shield');
     } else if (use) {
       var i = findKind('you', 'shield');
       if (i >= 0) { discard('you', i); S.shield = true; addLog('あなた：シールドを使った（ダメージ −2）', 'you'); snd('shield'); }
@@ -468,7 +474,7 @@
     return S.pendingQ ? '2 問目へ（高木の類体論）' : '次へ（' + who + '）';
   }
   function charChip(who) {
-    var c = CHARS[S.char[who]], used = c.once && S.once[who];
+    var c = CHARS[S.char[who]], used = c.limit && S.once[who] >= c.limit;
     return '<span class="cb-chip' + (used ? ' is-used' : '') + '" title="' + esc(c.skill + '：' + c.desc) + '"><span class="cb-chip-sym">' + c.sym + '</span>' + esc(c.name) + '<span class="cb-chip-skill">' + esc(c.skill) + (used ? '（使用済み）' : '') + '</span></span>';
   }
   function chanceWord(p) {
@@ -478,7 +484,7 @@
   function handUsable(c) {
     if (S.phase === 'attack') return c.kind === 'q' || ((c.kind === 'draw' || c.kind === 'heal' || c.kind === 'swap') && !S.used1[c.kind]);
     if (S.phase === 'swap') return c !== S.swapCard;
-    if (S.phase === 'answer') return c.kind === 'counter' && !S.counter;
+    if (S.phase === 'answer') return c.kind === 'counter' && !S.counter && !S.combo;
     if (S.phase === 'shieldAsk') return c.kind === 'shield';
     return false;
   }
@@ -494,7 +500,7 @@
           h += '<button type="button" class="cb-btn cb-main" id="cb-attack">このカードを出す</button>';
           if (canOnce('you', 'takagi')) {
             var pts = sameUnitPartners('you', c);
-            if (pts.length) h += '<p class="cb-note"><b class="cb-skill">高木の類体論（1 回だけ）</b>：同じ単元のカードを 2 枚まとめて出せます。</p>' +
+            if (pts.length) h += '<p class="cb-note"><b class="cb-skill">高木の類体論（のこり ' + (CHARS.takagi.limit - S.once.you) + ' 回）</b>：同じ単元のカードを 2 枚まとめて出せます。CPU は正解しても反撃できません。</p>' +
               pts.map(function (pc) { return '<button type="button" class="cb-btn cb-takagi" data-partner="' + S.hand.you.indexOf(pc) + '">＋「' + esc(pc.text.replace(/\n/g, ' ')) + '」（★' + pc.star + '）もまとめて出す</button>'; }).join('');
           }
         }
@@ -520,13 +526,16 @@
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU は「' + esc(fmt(r.given)) + '」と答えた → まちがい！</h2>' +
           '<div class="cb-back-ans"><b>カードの裏</b>：答え ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '<br><span class="cb-pt">ポイント：' + esc(q.hint) + '</span></div>' +
           '<p class="cb-note">ダメージを入れるには、出した人が<b>解き方を説明</b>します。声に出して説明してみよう。' +
-          (hasChar('you', 'euclid') ? '<b class="cb-skill">ユークリッドの力</b>で、説明できてもできなくても ' + wrongDmg(q, true, 'you') + ' ダメージ。' : '説明できたら ' + wrongDmg(q, true, 'you') + ' ダメージ、できなければ ' + wrongDmg(q, false, 'you') + ' ダメージ。') +
-          (hasChar('you', 'riemann') && q.star === 3 ? '（<b class="cb-skill">リーマンの力</b>で ＋1）' : '') + (S.shield ? '（CPU のシールドで 2 へっています）' : '') + '</p>' +
+          '説明できたら ' + wrongDmg(q, true, 'you') + ' ダメージ、できなければ ' + wrongDmg(q, false, 'you') + ' ダメージ。' +
+          (hasChar('you', 'euclid') ? '（<b class="cb-skill">ユークリッドの力</b>で、説明できたら ＋1）' : '') +
+          (hasChar('you', 'riemann') && q.star === 3 ? '（<b class="cb-skill">リーマンの力</b>で ＋2）' : '') + (S.shield ? '（CPU のシールドで 2 へっています）' : '') +
+          (hasChar('cpu', 'euler') && q.star >= 2 ? '（CPU の<b class="cb-skill">オイラーの不屈</b>で −1）' : '') + '</p>' +
           '<div class="cb-row"><button type="button" class="cb-btn cb-main" id="cb-exp-ok">説明できた</button><button type="button" class="cb-btn" id="cb-exp-ng">できなかった</button></div></div></div>';
       }
       case 'cpuResult': {
         var r2 = S.result, t;
-        if (r2.ok) t = '<h2 class="cb-bad">CPU が正解（' + esc(fmt(r2.given)) + '）→ 反撃 ' + r2.dmg + ' ダメージ</h2><p>' + (S.counter ? '<b class="cb-hit">倍返しが効いた！</b>' : '') + 'CPU はカードを 1 枚引きました。</p>';
+        if (r2.ok && S.combo) t = '<h2 class="cb-good">CPU が正解（' + esc(fmt(r2.given)) + '）→ でも高木の類体論で反撃なし！</h2><p>CPU はカードを 1 枚引きました。</p>';
+        else if (r2.ok) t = '<h2 class="cb-bad">CPU が正解（' + esc(fmt(r2.given)) + '）→ 反撃 ' + r2.dmg + ' ダメージ</h2><p>' + (S.counter ? '<b class="cb-hit">倍返しが効いた！</b>' : '') + 'CPU はカードを 1 枚引きました。</p>';
         else if (r2.fermat) t = '<h2 class="cb-bad">CPU のフェルマー「余白が足りない！」→ ダメージ 0</h2><p>CPU は 1 回だけの能力を使いました。</p>';
         else t = '<h2 class="cb-good">CPU に ' + r2.dmg + ' ダメージ！</h2><p>' + (S.shield ? 'CPU のシールドで 2 へった。' : '') + (r2.explained ? 'ちゃんと説明できたね。' : '次は説明できるように、カードの裏の解き方を読んでおこう。') + '</p>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side">' + t + '<button type="button" class="cb-btn cb-main" id="cb-next">' + nextLabel('CPU の番') + '</button></div></div>';
@@ -536,9 +545,9 @@
         var ins = pair ? '<div class="cb-row"><label>' + q.labels[0] + ' =<input class="cb-in" inputmode="text" autocomplete="off"></label><label>' + q.labels[1] + ' =<input class="cb-in" inputmode="text" autocomplete="off"></label></div>'
           : '<div class="cb-row"><label>答え<input class="cb-in cb-in-1" inputmode="text" autocomplete="off"></label></div>';
         var tools = '';
-        if (findKind('you', 'counter') >= 0 && !S.counter) tools += '<button type="button" class="cb-btn cb-counterbtn" id="cb-counter">倍返しを宣言</button>';
+        if (findKind('you', 'counter') >= 0 && !S.counter && !S.combo) tools += '<button type="button" class="cb-btn cb-counterbtn" id="cb-counter">倍返しを宣言</button>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU の攻撃！ 答えよう' + (S.time ? '<span class="cb-timer" id="cb-timer">' + S.left + '</span>' : '') + '</h2>' +
-          '<p class="cb-note">正解すれば CPU に反撃 ' + counterDmg(q, 'you') + ' ダメージ。まちがえると最大 ' + wrongDmg(q, true, 'cpu') + ' ダメージ。</p>' +
+          '<p class="cb-note">' + (S.combo ? '高木の類体論で、正解しても反撃はできません。' : '正解すれば CPU に反撃 ' + counterDmg(q, 'you') + ' ダメージ。') + 'まちがえると最大 ' + wrongDmg(q, true, 'cpu') + ' ダメージ。</p>' +
           (S.pendingQ ? '<p class="cb-tag cb-counterbtn">高木の類体論：このあともう 1 問あります</p>' : '') +
           (S.counter ? '<p class="cb-tag cb-counterbtn">倍返し宣言中</p>' : '') +
           ins + (DECKS[S.deckKey].keys.length ? '<div class="cb-keys" aria-label="記号を入れる">' + DECKS[S.deckKey].keys.map(function (k) { return '<button type="button" class="cb-key" data-ins="' + k + '">' + k + '</button>'; }).join('') + '</div>' : '') +
@@ -558,7 +567,8 @@
       }
       case 'yourResult': {
         var r3 = S.result, t3;
-        if (r3.ok) t3 = '<h2 class="cb-good">正解！ CPU に反撃 ' + r3.dmg + ' ダメージ</h2><p>' + (S.counter ? '<b class="cb-hit">倍返しが効いた！</b>' : '') + 'カードを 1 枚引きました。</p>';
+        if (r3.ok && S.combo) t3 = '<h2 class="cb-good">正解！</h2><p>CPU の高木の類体論なので、反撃はできません。カードを 1 枚引きました。</p>';
+        else if (r3.ok) t3 = '<h2 class="cb-good">正解！ CPU に反撃 ' + r3.dmg + ' ダメージ</h2><p>' + (S.counter ? '<b class="cb-hit">倍返しが効いた！</b>' : '') + 'カードを 1 枚引きました。</p>';
         else t3 = '<h2 class="cb-bad">' + (r3.timeout ? '時間切れ' : 'ざんねん') + '… ' + r3.dmg + ' ダメージ</h2>' + (S.shield ? '<p>シールドで 2 へらせた！</p>' : '') + (S.fermatNow ? '<p><b class="cb-skill">余白が足りない！</b> ダメージを 0 にした。</p>' : '') + (!S.fermatNow && !r3.cpuExp ? '<p>CPU は説明できなかったので、ダメージは半分。</p>' : '') +
           '<div class="cb-back-ans"><b>CPU の説明</b>：答えは ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '<br><span class="cb-pt">ポイント：' + esc(q.hint) + '</span></div>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side">' + t3 + '<button type="button" class="cb-btn cb-main" id="cb-next">' + nextLabel('あなたの番') + '</button></div></div>';
@@ -581,7 +591,7 @@
         var c = CHARS[k];
         return '<label class="cb-charcard cb-ch-' + k + '"><input type="radio" name="cb-ch" value="' + k + '"' + (k === pick ? ' checked' : '') + '>' +
           '<span class="cb-ch-sym">' + c.sym + '</span><span class="cb-ch-name">' + esc(c.name) + '</span><span class="cb-ch-era">' + esc(c.era) + '</span>' +
-          '<span class="cb-ch-skill">' + esc(c.skill) + (c.once ? '（1 回だけ）' : '') + '</span><span class="cb-ch-desc">' + esc(c.desc) + '</span>' +
+          '<span class="cb-ch-skill">' + esc(c.skill) + limitLabel(c) + '</span><span class="cb-ch-desc">' + esc(c.desc) + '</span>' +
           '<span class="cb-ch-story">' + esc(c.story) + '</span></label>';
       }).join('') + '</div>' +
       '<label class="cb-cpuch">CPU のキャラクター：<select id="cb-cc"><option value="random">おまかせ</option>' + CHAR_ORDER.map(function (k) { return '<option value="' + k + '">' + esc(CHARS[k].name) + '</option>'; }).join('') + '</select></label></div>';
@@ -590,7 +600,7 @@
       '<li>相手が答える。<b>正解</b>なら、出した人に<b>反撃 1 ダメージ</b>。答えた人はカードを 1 枚引ける。</li>' +
       '<li><b>まちがい</b>なら、出した人が解き方を説明して、★ の数だけダメージ（説明できなければ半分）。</li>' +
       '<li>CPU には<b>苦手な単元</b>と<b>得意な単元</b>がある。苦手をねらおう。</li>' +
-      '<li><b>キャラクター</b>：6 人の数学者から 1 人えらぶ。それぞれ能力が 1 つある（「1 回だけ」の能力は、使ったら終わり）。</li>' +
+      '<li><b>キャラクター</b>：6 人の数学者から 1 人えらぶ。それぞれ能力が 1 つある（回数が決まっている能力は、使いきったら終わり）。</li>' +
       '<li><b>特殊カード</b>：答える番に「倍返し（反撃が ★＋1 に）」、まちがえたときに「シールド（ダメージ −2）」、自分の番に「入れかえ（好きな枚数を山札と交換）」「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
       '<li>相手のライフを 0 にしたら勝ち！</li></ol></div>' +
       '<div class="cb-box"><h2>設定</h2>' +
