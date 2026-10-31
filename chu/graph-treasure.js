@@ -276,7 +276,8 @@
   /* ────────── 新しいゲーム ────────── */
   function newGame(opt) {
     S = {
-      level: opt.level, cpu: CPU_SET[opt.cpu], turnsEach: opt.turns, first: opt.first, placeMode: opt.place,
+      level: opt.level, cpu: CPU_SET[opt.cpu], turnsEach: opt.turns, first: opt.first,
+      view: opt.view || 'show', placeMode: (opt.view && opt.view !== 'show') ? 'auto' : opt.place,
       treasures: [], curves: [], marks: [],
       deck: {
         s: shuffle(SLOPES.map(parseF)), b: shuffle(ICPTS.map(parseF)),
@@ -295,7 +296,7 @@
       for (var i = 0; i < ns; i++) S.hands[p].s.push(draw('s'));
       for (var j = 0; j < nb; j++) S.hands[p].b.push(draw('b'));
     });
-    if (opt.tutorial) { setupTutorial(); render(); return; }
+    if (opt.tutorial) { setupTutorial(); render(); scrollToGame(); return; }
     /* お宝の置き方 */
     var other = S.first === 'you' ? 'cpu' : 'you';
     for (var t = 0; t < 24; t++) S.placeQueue.push({ who: t % 2 === 0 ? S.first : other, v: t < 20 ? 1 : 3 });
@@ -313,6 +314,14 @@
       advancePlace();
     }
     render();
+    scrollToGame();
+  }
+  /* ゲームが画面いっぱいに見える位置までスクロールする */
+  function scrollToGame() {
+    var g = document.querySelector('.gt-game'), nav = document.querySelector('.site-nav');
+    if (!g) return;
+    var top = g.getBoundingClientRect().top + window.pageYOffset - (nav ? nav.getBoundingClientRect().height : 0) - 8;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
   /* ────────── チュートリアル（決まった流れで 3 手番ぶん体験する） ──────────
@@ -596,7 +605,8 @@
         var c = makeLine(h.s[i], j < 0 ? F(0) : h.b[j], 'cpu');
         if (isDup(c)) return;
         var bo = bonusOptions(c, 'you').reduce(function (m, o) { return Math.max(m, o.res.score); }, 0);
-        moves.push({ si: i, bi: j, curve: c, value: valueOn(c) + bo + Math.random() * 0.3 });
+        /* お宝を隠すモードでは、CPU もお宝の場所を知らない */
+        moves.push({ si: i, bi: j, curve: c, value: (S.view === 'hide' ? 0 : valueOn(c)) + bo + Math.random() * 0.3 });
       });
     }
     moves.sort(function (a, b) { return b.value - a.value; });
@@ -770,6 +780,7 @@
     });
     S.treasures.forEach(function (t) {
       if (t.by) return;
+      if (S.view !== 'show' && S.phase !== 'over') return;   // 宝の地図・かくすモードでは盤に出さない
       var g = el('g', { 'class': t.v === 3 ? 'gt-gold' : 'gt-coin', transform: 'translate(' + px(t.x) + ',' + py(t.y) + ')' }, gTreas);
       el('circle', { r: t.v === 3 ? 15 : 12 }, g);
       var tx = el('text', { y: t.v === 3 ? 6 : 5, 'text-anchor': 'middle' }, g);
@@ -800,12 +811,19 @@
     });
     return h;
   }
+  var lastKey = '';
   function renderPanel() {
     var P = $('gt-panel');
     if (!S) { P.innerHTML = setupHTML(); bindSetup(); return; }
     var h = '<div class="gt-scores">' + scoreRow('you') + scoreRow('cpu') + '</div>';
     var turnNo = Math.min(S.done[S.turn] + 1, S.turnsEach);
     if (S.phase !== 'place' && S.phase !== 'over' && S.phase !== 'tutDone') h += '<div class="gt-turninfo">' + (S.tut ? 'チュートリアル・' : '') + NAME[S.turn] + 'の番（' + turnNo + ' / ' + S.turnsEach + ' 回目）・残りのお宝 ' + S.treasures.filter(function (t) { return !t.by; }).length + ' 個</div>';
+    if (S.view === 'map' && S.phase !== 'over') {
+      var left = S.treasures.filter(function (t) { return !t.by; }).sort(function (a, b) { return a.x - b.x || b.y - a.y; });
+      h += '<div class="gt-map"><b>宝の地図</b>（盤には出ません。座標から場所を見つけよう）<div class="gt-map-list">' +
+        left.map(function (t) { return '<span class="' + (t.v === 3 ? 'gt-map-gold' : '') + '">' + (t.v === 3 ? '金' : '\u2605') + ' (' + nstr(t.x) + ', ' + nstr(t.y) + ')</span>'; }).join('') + '</div></div>';
+    }
+    if (S.view === 'hide' && S.phase !== 'over') h += '<div class="gt-map">お宝はかくれています。線を引いて、いくつ見つかるかな？（ゲームの最後に場所がわかります）</div>';
     if (S.tut) h += tutGuide();
     if (S.msg) h += '<div class="gt-msg" role="status">' + esc(S.msg) + '</div>';
     h += '<div class="gt-box">' + (S.phase === 'tutDone' ? tutDoneHTML() : phaseHTML()) + '</div>';
@@ -813,6 +831,8 @@
       S.curves.map(function (o) { return '<li class="gt-' + o.owner + '"><span class="gt-dot"></span>' + NAME[o.owner] + '：' + esc(o.label) + '</li>'; }).join('') + '</ul></details>';
     h += '<details class="gt-log"><summary>記録</summary><ol>' + S.log.map(function (l) { return '<li class="gt-' + l.who + '">' + esc(l.t) + '</li>'; }).join('') + '</ol></details>';
     P.innerHTML = h;
+    var key = S.phase + S.done.you + S.done.cpu;
+    if (key !== lastKey) { P.scrollTop = 0; lastKey = key; }
     bindPanel();
   }
   function phaseHTML() {
@@ -833,7 +853,7 @@
         if (c) {
           var dup = isDup(c);
           h += '<div class="gt-eq">' + esc(curveStr(c)) + '</div>';
-          h += dup ? '<p class="gt-warn">この線はもう引かれています。別の組み合わせにしよう。</p>' : '<button type="button" class="gt-btn gt-main" id="gt-drawline">この線を引く</button>';
+          h += dup ? '<p class="gt-warn">この線はもう引かれています。別の組み合わせにしよう。</p>' : '<button type="button" class="gt-btn gt-main gt-sticky" id="gt-drawline">この線を引く</button>';
         }
         var alt = '';
         var al = tutAllow();
@@ -848,7 +868,7 @@
           '<p class="gt-note">移項して y = ax + b の形に直そう。分数は 1/2 のように入れてね。</p>' +
           '<div class="gt-row gt-yax"><span>y =</span><input class="gt-in" id="gt-ea" placeholder="a" aria-label="a（傾き）"><span>x +</span><input class="gt-in" id="gt-eb" placeholder="b" aria-label="b（切片）"></div>' +
           '<p class="gt-note">例：y = −2x + 3 なら a に −2、b に 3。b がマイナスなら −3 と入れる。</p>' +
-          '<button type="button" class="gt-btn gt-main" id="gt-eqok">決定</button>';
+          '<button type="button" class="gt-btn gt-main gt-sticky" id="gt-eqok">決定</button>';
         break;
       case 'bonus': {
         var B = S.bonus;
@@ -862,14 +882,14 @@
           var res = B.opts[B.pick].res;
           h += '<p class="gt-note">' + esc(curveStr(B.curve)) + ' と ' + esc(B.opts[B.pick].other.label) + ' の交点' + (res.pts.length > 1 ? 'を 2 つとも' : 'を') + '入れてね。' +
             (res.score === 3 ? '答えは √ を使って (1 + √5)/2 のように入れられます。' : '分数は 2/3 のように入れてね。') + '</p>' + bonusInputs(res) +
-            '<button type="button" class="gt-btn gt-main" id="gt-bok">決定</button>';
+            '<button type="button" class="gt-btn gt-main gt-sticky" id="gt-bok">決定</button>';
         }
         h += '<button type="button" class="gt-btn gt-ghost" id="gt-bskip">今回は挑戦しない</button>';
         break;
       }
       case 'yourEnd':
         if (S.bonus && S.bonus.result) h += '<div class="gt-steps"><b>交点の求め方</b><ol>' + S.bonus.result.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></div>';
-        h += '<button type="button" class="gt-btn gt-main" id="gt-next">' + (S.tut && S.done.you === 2 ? 'チュートリアルのまとめへ' : willEnd() ? '結果を見る' : '次へ（CPU の番）') + '</button>';
+        h += '<button type="button" class="gt-btn gt-main gt-sticky" id="gt-next">' + (S.tut && S.done.you === 2 ? 'チュートリアルのまとめへ' : willEnd() ? '結果を見る' : '次へ（CPU の番）') + '</button>';
         break;
       case 'cpuShow': {
         var r = S.lastCpu;
@@ -880,12 +900,12 @@
           h += '<div class="gt-eq gt-cpu-eq">CPU「' + esc(curveStr(r.declared)) + '」</div>';
           if (r.checked && r.wrong) h += '<p>まちがった線は消して、お宝はもとの場所にもどしました。</p>';
           else h += '<p>' + (r.taken.length ? 'お宝 ' + r.taken.length + ' 個（' + sumV(r.taken) + ' 点）を取った。' : 'お宝はなかった。') + '</p>';
-          if (r.bonus && !(r.checked && r.wrong)) h += '<div class="gt-steps"><b>CPU の交点の計算</b><ol>' + r.bonus.res.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></div>';
           if (r.kind === 'line' && !r.checked) h += '<p class="gt-note">CPU が言った式と、盤に引かれた線は合っている？ 切片と傾きを確かめよう。まちがいを見つけたら ＋1点（まちがえても減点なし）。</p>' +
             '<button type="button" class="gt-btn gt-matta' + (S.tut && r.wrong ? ' is-hint' : '') + '" id="gt-matta">待った！</button>';
+          if (r.bonus && !(r.checked && r.wrong)) h += '<div class="gt-steps"><b>CPU の交点の計算</b><ol>' + r.bonus.res.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></div>';
         }
         var lock = S.tut && r.wrong && !r.checked;
-        h += '<button type="button" class="gt-btn gt-main" id="gt-next"' + (lock ? ' disabled' : '') + '>' + (willEnd() ? '結果を見る' : '次へ（あなたの番）') + '</button>';
+        h += '<button type="button" class="gt-btn gt-main gt-sticky" id="gt-next"' + (lock ? ' disabled' : '') + '>' + (willEnd() ? '結果を見る' : '次へ（あなたの番）') + '</button>';
         break;
       }
       case 'over': {
@@ -912,7 +932,8 @@
       radio('lv', '1', '中1：比例 y = ax', false) + radio('lv', '2', '中2：一次関数・連立方程式・移項', true) + radio('lv', '3', '中3：＋放物線 y = ax²', false) + '</fieldset>' +
       '<fieldset><legend>CPU の強さ</legend>' + radio('cp', 'easy', 'やさしい（よくまちがえる）', true) + radio('cp', 'normal', 'ふつう', false) + radio('cp', 'strong', 'つよい', false) + '</fieldset>' +
       '<fieldset><legend>1 人の手番の回数</legend>' + radio('tn', '5', '5 回（約 15 分）', true) + radio('tn', '8', '8 回（じっくり）', false) + '</fieldset>' +
-      '<fieldset><legend>お宝の置き方</legend>' + radio('pl', 'auto', 'おまかせ（すぐ始める）', true) + radio('pl', 'manual', '交代で置く（座標の練習）', false) + '</fieldset>' +
+      '<fieldset><legend>お宝の見え方</legend>' + radio('tv', 'show', '見える（はじめての人に）', true) + radio('tv', 'map', '宝の地図：座標だけわかる（座標の練習）', false) + radio('tv', 'hide', 'かくれている（運だめし）', false) + '</fieldset>' +
+      '<fieldset><legend>お宝の置き方（「見える」のとき）</legend>' + radio('pl', 'auto', 'おまかせ（すぐ始める）', true) + radio('pl', 'manual', '交代で置く（座標の練習）', false) + '</fieldset>' +
       '<fieldset><legend>先に引く人</legend>' + radio('fs', 'you', 'あなた', true) + radio('fs', 'cpu', 'CPU', false) + '</fieldset>' +
       '<button type="button" class="gt-btn gt-main" id="gt-start">ゲーム開始</button></div>';
   }
@@ -922,7 +943,7 @@
   var lastOpt = null;
   function readOpt() {
     function v(n) { var e = document.querySelector('input[name="gt-' + n + '"]:checked'); return e ? e.value : ''; }
-    return { level: +v('lv'), cpu: v('cp'), turns: +v('tn'), place: v('pl'), first: v('fs') };
+    return { level: +v('lv'), cpu: v('cp'), turns: +v('tn'), place: v('pl'), first: v('fs'), view: v('tv') };
   }
   function bindSetup() {
     $('gt-start').onclick = function () { lastOpt = readOpt(); newGame(lastOpt); };
@@ -978,8 +999,6 @@
 
   function startTutorial() {
     newGame({ level: 2, cpu: 'easy', turns: 3, first: 'you', place: 'auto', tutorial: true });
-    var b = document.querySelector('.gt-boardbox');
-    if (b && b.getBoundingClientRect().top < 0) b.scrollIntoView({ behavior: 'smooth' });
   }
   root.__gtState = function () { return S; };  // 動作確認用
   function init() { buildBoard(); render(); }
