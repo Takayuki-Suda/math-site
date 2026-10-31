@@ -3,9 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>数学カードバトル（試作版） - 会津若松の数学教室</title>
-<meta name="robots" content="noindex">
-<meta name="description" content="問題カードを出し合って戦う、中学数学のカードバトル（試作版）。">
+<title>数学カードバトル｜問題カードで戦う中学数学ゲーム - 会津若松の数学教室</title>
+<meta name="description" content="問題カードを出し合って戦う中学数学のカードゲーム。正負の数・方程式・一次関数・連立方程式・平方根・二次方程式の40枚。コンピュータと対戦しながら、解き方を説明する力も身につきます。">
+<meta name="keywords" content="中学数学,ゲーム,カードゲーム,方程式,一次関数,平方根,会津若松,数学,個別指導">
+<meta property="og:title" content="数学カードバトル｜問題カードで戦う中学数学ゲーム">
+<meta property="og:description" content="問題カードを出し合って戦う中学数学のカードゲーム。コンピュータと対戦できます。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/chu/card-battle.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="会津若松の算数・数学教室">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://takayuki-suda.github.io/math-site/chu/card-battle.html">
 <script src="/math-site/ga.js" defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
@@ -66,6 +75,14 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--whit
 .cb-sound{display:flex;gap:6px;}
 .cb-tg{font-family:inherit;font-size:.78rem;font-weight:700;border-radius:999px;padding:4px 12px;min-height:32px;cursor:pointer;border:1px solid #3a4a66;background:transparent;color:var(--gray);}
 .cb-tg[aria-pressed="true"]{border-color:var(--gold);color:var(--gold-lt);background:rgba(200,168,75,.12);}
+.cb-card.cb-swap{--c:#ffd166;}
+.cb-slot.is-picked .cb-card{box-shadow:0 0 0 3px #ff5d73,0 0 18px rgba(255,93,115,.6);}
+.cb-slot.is-picked::after{content:'×';position:absolute;top:-8px;right:-6px;width:24px;height:24px;border-radius:50%;background:#ff5d73;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.cb-slot{position:relative;}
+.cb-keys{display:flex;gap:6px;flex-wrap:wrap;}
+.cb-key{font-family:inherit;font-size:1.1rem;font-weight:700;min-width:46px;min-height:42px;border-radius:10px;border:1.5px solid #3a4a66;background:#0b1222;color:var(--white);cursor:pointer;}
+.cb-key:hover{border-color:var(--gold);}
+.cb-pt{display:inline-block;margin-top:4px;font-size:.88rem;color:#c4d0e4;}
 .cb-shieldbtn{border-color:#7fb4ff;color:#a9d4ff;}
 .cb-traits{display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;font-weight:700;}
 .cb-traits span{border-radius:999px;padding:1px 10px;}
@@ -75,7 +92,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--whit
 .cb-mark.cb-weak{background:#3ecf8e;color:#06281a;}
 .cb-mark.cb-goodu{background:var(--cpu);color:#2a0a05;}
 .cb-chance{font-size:.95rem;font-weight:700;color:var(--gold-lt);}
-.cb-shield{--c:#7fb4ff;} .cb-heal{--c:#ff8fb1;}
+.cb-card.cb-shield{--c:#7fb4ff;} .cb-card.cb-heal{--c:#ff8fb1;}
 .cb-hintbtn{border-color:#3ecf8e;color:#5fe0a0;}
 .cb-counterbtn{border-color:var(--cpu);color:#ffb3a9;}
 .cb-tag{font-size:.88rem;border:1px solid;border-radius:8px;padding:4px 10px;}
@@ -234,13 +251,13 @@ legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;w
 </nav>
 <script src="/math-site/nav.js" defer></script>
 <header class="cb-hero">
-  <div class="cb-badge">試作版</div>
+  <div class="cb-badge">中学数学ゲーム</div>
   <h1>数学カードバトル</h1>
   <p>問題カードを出し合って戦おう。相手のライフを 0 にしたら勝ち！</p>
 </header>
 <main class="cb-wrap">
   <div id="cb-app" aria-live="polite"></div>
-  <p class="cb-proto">これは試作版です。問題は中1〜中2（正負の数・文字式・方程式・比例・一次関数・連立方程式）の 40 枚です。</p>
+  <p class="cb-proto">問題カードは中1〜中3の 40 枚（正負の数・文字式・方程式・比例・一次関数・連立方程式・平方根・二次方程式）です。</p>
 </main>
 <script src="/math-site/chu/card-battle-sound.js"></script>
 <script src="/math-site/chu/card-battle.js"></script>

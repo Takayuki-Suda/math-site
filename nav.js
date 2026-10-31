@@ -64,7 +64,7 @@
     if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
-  /* ── 「中学生」メニューにゲーム「グラフ・トレジャー」を追加（日本語版のみ）── */
+  /* ── 「中学生」メニューにゲーム（グラフ・トレジャー、数学カードバトル）を追加（日本語版のみ）── */
   function injectChuGame(nav){
     if(location.pathname.indexOf('/math-site/en/')===0) return;
     var a=nav.querySelector('.site-nav__dropdown a[href$="/chu/ikiji.html"]');
@@ -73,6 +73,10 @@
     g.href='/math-site/chu/graph-treasure.html';
     g.textContent='\u30b2\u30fc\u30e0\uff1a\u30b0\u30e9\u30d5\u30fb\u30c8\u30ec\u30b8\u30e3\u30fc'; /* ゲーム：グラフ・トレジャー */
     a.parentNode.appendChild(g);
+    var cb=document.createElement('a');
+    cb.href='/math-site/chu/card-battle.html';
+    cb.textContent='\u30b2\u30fc\u30e0\uff1a\u6570\u5b66\u30ab\u30fc\u30c9\u30d0\u30c8\u30eb'; /* ゲーム：数学カードバトル */
+    a.parentNode.appendChild(cb);
   }
 
   /* ── 言語切替（日本語 ⇄ English）──

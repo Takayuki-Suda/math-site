@@ -12,6 +12,9 @@
   /* ────────── 問題カード ──────────
      [★, 単元, 問題, 答え, ヒント, 解き方]
      答えは数、または [x, y] / [a, b] の組（labels で名前を決める） */
+  /* [★, 単元, 問題, 答え, ヒント, 解き方, 答えの名前（組のとき）, CPU のまちがい例（√ の答えのとき）]
+     答えは数、√ を含む式の文字列、または 2 つの組 */
+  var BIG = ['大きい解', '小さい解'];
   var PROBLEMS = [
     // ★1
     [1, '正負の数', '(−3) + 8', 5, '数直線で −3 から右へ 8 進む。', '−3 + 8 = 5'],
@@ -19,57 +22,59 @@
     [1, '正負の数', '(−6) × (−2)', 12, 'マイナス × マイナス は プラス。', '6 × 2 = 12 で、符号は ＋'],
     [1, '正負の数', '(−15) ÷ 3', -5, 'マイナス ÷ プラス は マイナス。', '15 ÷ 3 = 5 で、符号は −'],
     [1, '正負の数', '7 − (−2)', 9, 'マイナスをひくのは、プラスをたすのと同じ。', '7 − (−2) = 7 + 2 = 9'],
-    [1, '正負の数', '(−4) × 5', -20, 'マイナス × プラス は マイナス。', '4 × 5 = 20 で、符号は −'],
     [1, '正負の数', '−8 + 3 − 5', -10, 'プラスどうし、マイナスどうしをまとめる。', '3 − 8 − 5 = 3 − 13 = −10'],
-    [1, '正負の数', '2 − 9', -7, '大きいほうから小さいほうをひいて、符号をつける。', '9 − 2 = 7 で、符号は −'],
     [1, '文字式', 'x = 3 のとき、2x + 1 の値', 7, 'x に 3 を入れる。', '2 × 3 + 1 = 7'],
     [1, '文字式', 'a = −2 のとき、3a の値', -6, 'a に (−2) を入れる。', '3 × (−2) = −6'],
     [1, '方程式', 'x + 5 = 12 の x', 7, '5 を右へ移項する。', 'x = 12 − 5 = 7'],
     [1, '方程式', '3x = −18 の x', -6, '両辺を 3 でわる。', 'x = −18 ÷ 3 = −6'],
-    [1, '方程式', 'x ÷ 4 = 3 の x', 12, '両辺に 4 をかける。', 'x = 3 × 4 = 12'],
     [1, '比例', 'y = 2x で、x = 4 のときの y', 8, 'x に 4 を入れる。', 'y = 2 × 4 = 8'],
     [1, '一次関数', 'y = −3x + 1 の傾き', -3, 'y = ax + b の a が傾き。', 'a = −3'],
     [1, '一次関数', 'y = 4x − 5 の切片', -5, 'y = ax + b の b が切片。', 'b = −5'],
+    [1, '平方根', '√49', 7, '2 乗して 49 になる、正の数。', '7² = 49 なので、√49 = 7'],
+    [1, '平方根', '√2 × √8', 4, '√a × √b = √(a × b)。', '√2 × √8 = √16 = 4'],
+    [1, '平方根', '√((−5)²)', 5, '(−5)² を先に計算する。', '(−5)² = 25、√25 = 5（−5 ではない！）'],
     // ★2
     [2, '正負の数', '(−2)³', -8, '(−2) を 3 回かける。', '(−2) × (−2) × (−2) = 4 × (−2) = −8'],
     [2, '正負の数', '−3²', -9, '2 乗するのは 3 だけ。かっこがない！', '−(3 × 3) = −9'],
     [2, '正負の数', '3 − 2 × (−4)', 11, 'かけ算を先に計算する。', '2 × (−4) = −8 なので、3 − (−8) = 11'],
-    [2, '正負の数', '(−12) ÷ (−3) × (−2)', -8, '左から順に計算する。', '(−12) ÷ (−3) = 4、4 × (−2) = −8'],
     [2, '文字式', 'x = −3 のとき、x² − 2x の値', 15, '(−3)² は 9。−2x は −2 × (−3)。', '9 − 2 × (−3) = 9 + 6 = 15'],
     [2, '方程式', '2x − 7 = 5 の x', 6, '−7 を移項してから、2 でわる。', '2x = 12、x = 6'],
     [2, '方程式', '5x + 3 = 2x − 9 の x', -4, 'x を左に、数を右に集める。', '5x − 2x = −9 − 3、3x = −12、x = −4'],
-    [2, '方程式', '3(x − 2) = 9 の x', 5, '両辺を 3 でわると x − 2 = 3。', 'x − 2 = 3、x = 5'],
-    [2, '方程式', 'x ÷ 3 + 1 = 5 の x', 12, '1 を移項してから、3 をかける。', 'x ÷ 3 = 4、x = 12'],
-    [2, '方程式', '0.5x = −4 の x', -8, '0.5 は 1/2。両辺を 2 倍する。', 'x = −4 ÷ 0.5 = −8'],
     [2, '比例', 'y は x に比例し、x = 3 のとき y = −12。比例定数は？', -4, 'y = ax に x = 3、y = −12 を入れる。', '−12 = 3a、a = −4'],
     [2, '反比例', 'y は x に反比例し、x = 2 のとき y = 6。x = 4 のときの y', 3, '反比例では x × y がいつも同じ。', 'x × y = 12 なので、y = 12 ÷ 4 = 3'],
     [2, '一次関数', '2 点 (0, 1) と (2, 7) を通る直線の傾き', 3, '傾き ＝ y の増え方 ÷ x の増え方。', '(7 − 1) ÷ (2 − 0) = 6 ÷ 2 = 3'],
     [2, '一次関数', 'y = −2x + 5 で、x = −3 のときの y', 11, 'x に (−3) を入れる。', '−2 × (−3) + 5 = 6 + 5 = 11'],
     [2, '一次関数', 'y = 3x − 2 で、x が 2 増えると y はいくつ増える？', 6, '傾き 3 は「x が 1 増えると y が 3 増える」。', '3 × 2 = 6'],
     [2, '一次関数', '傾きが 2 で、点 (1, 5) を通る直線の切片', 3, 'y = 2x + b に x = 1、y = 5 を入れる。', '5 = 2 + b、b = 3'],
+    [2, '平方根', '√12 を a√b の形に', '2√3', '12 = 4 × 3。√4 は 2。', '√12 = √(4 × 3) = 2√3', null, ['3√2', '4√3', '6']],
+    [2, '平方根', '√18 + √8', '5√2', 'それぞれ a√2 の形に直す。', '√18 = 3√2、√8 = 2√2 なので、3√2 + 2√2 = 5√2', null, ['√26', '6√2', '4√2']],
+    [2, '平方根', 'a = −3 のとき、√(a²) の値', 3, '√(a²) は a の絶対値 |a|。', '√((−3)²) = √9 = 3（a ではなく |a| になる）'],
+    [2, '二次方程式', 'x² = 25 の解', [5, -5], '2 乗して 25 になる数は 2 つある。', 'x = ±5', BIG],
     // ★3
     [3, '連立方程式', 'x + y = 7\nx − y = 1', [4, 3], '2 つの式をたすと y が消える。', '2x = 8、x = 4、y = 7 − 4 = 3'],
-    [3, '連立方程式', '2x + y = 5\nx − y = 1', [2, 1], '2 つの式をたすと y が消える。', '3x = 6、x = 2、y = 2 − 1 = 1'],
     [3, '連立方程式', 'y = 2x + 1\ny = −x + 7', [2, 5], '右辺どうしを = でつなぐ。', '2x + 1 = −x + 7、3x = 6、x = 2、y = 5'],
     [3, '連立方程式', '3x + 2y = 4\nx + 2y = −4', [4, -4], '上の式から下の式をひくと y が消える。', '2x = 8、x = 4、4 + 2y = −4、y = −4'],
     [3, '一次関数', '2 点 (1, 3) と (3, −1) を通る直線 y = ax + b の a と b', [-2, 5], 'まず傾き a、次に点を入れて b。', 'a = (−1 − 3) ÷ (3 − 1) = −2、3 = −2 + b、b = 5', ['a', 'b']],
     [3, '一次関数', 'y = x + 3 と y = −2x + 6 の交点', [1, 4], '交点は連立方程式の解。', 'x + 3 = −2x + 6、3x = 3、x = 1、y = 4'],
-    [3, '方程式', '3x − 2(x − 4) = 1 の x', -7, 'かっこを外すと −2 × (−4) = +8。', '3x − 2x + 8 = 1、x = −7'],
-    [3, '方程式', '(2x + 1) ÷ 3 = x − 1 の x', 4, '両辺に 3 をかける。', '2x + 1 = 3x − 3、x = 4']
+    [3, '二次方程式', '解の公式で\nx² + 3x + 1 = 0', ['(−3 + √5)/2', '(−3 − √5)/2'], 'x = (−b ± √(b² − 4ac)) / 2a。a = 1、b = 3、c = 1。', 'b² − 4ac = 9 − 4 = 5 なので、x = (−3 ± √5)/2', BIG,
+      [['(3 + √5)/2', '(3 − √5)/2'], ['(−3 + √13)/2', '(−3 − √13)/2']]],
+    [3, '二次方程式', '解の公式で\nx² − 4x + 1 = 0', ['2 + √3', '2 − √3'], 'a = 1、b = −4、c = 1 を公式に入れる。', 'x = (4 ± √12)/2 = (4 ± 2√3)/2 = 2 ± √3', BIG,
+      [['4 + √3', '4 − √3'], ['2 + √5', '2 − √5']]],
+    [3, '平方根', '√((1 − √2)²)', '√2 − 1', '1 − √2 はプラス？マイナス？ √(a²) は |a|。', '1 − √2 は負の数なので、|1 − √2| = √2 − 1', null, ['1 − √2', '1 + √2']]
   ];
   var SPECIALS = [
-    ['hint', 'ヒント', '答える番に使う。問題のヒントが見られる。'],
+    ['swap', '入れかえ', '自分の番に使う。手札から好きな枚数をえらんで、山札と入れかえる。'],
     ['counter', '倍返し', '答える前に使う。正解したら、反撃ダメージが ★＋1 になる。'],
     ['shield', 'シールド', '答える前に使う。まちがえても、ダメージを 2 へらす。'],
     ['draw', '2 枚ドロー', '自分の番に使う。山札から 2 枚引く。'],
     ['heal', '回復', '自分の番に使う。ライフを 2 回復する。']
   ];
-  var UNITS = ['正負の数', '文字式', '方程式', '比例', '一次関数', '連立方程式'];
+  var UNITS = ['正負の数', '文字式', '方程式', '比例', '一次関数', '連立方程式', '平方根', '二次方程式'];
   function unitGroup(u) { return u === '反比例' ? '比例' : u; }
   function makeDeck() {
     var d = [];
     PROBLEMS.forEach(function (p, i) {
-      d.push({ id: 'p' + i, kind: 'q', star: p[0], unit: p[1], text: p[2], ans: p[3], hint: p[4], sol: p[5], labels: p[6] || ['x', 'y'] });
+      d.push({ id: 'p' + i, kind: 'q', star: p[0], unit: p[1], text: p[2], ans: p[3], hint: p[4], sol: p[5], labels: p[6] || ['x', 'y'], wrongs: p[7] || null });
     });
     SPECIALS.forEach(function (s, i) {
       for (var k = 0; k < 2; k++) d.push({ id: 's' + i + k, kind: s[0], name: s[1], desc: s[2] });
@@ -78,34 +83,52 @@
   }
   function fmt(n) {
     if (Array.isArray(n)) return '(' + fmt(n[0]) + ', ' + fmt(n[1]) + ')';
+    if (typeof n === 'string') return n;
     return (n < 0 ? MINUS : '') + Math.abs(n);
   }
+  function val(a) { return typeof a === 'string' ? evalExpr(a) : a; }
   function ansStr(card) {
     if (!Array.isArray(card.ans)) return fmt(card.ans);
     return card.labels[0] + ' = ' + fmt(card.ans[0]) + '、' + card.labels[1] + ' = ' + fmt(card.ans[1]);
   }
 
-  /* 答えの読み取り（全角・マイナス記号・分数に対応） */
+  /* 答えの読み取り（全角・マイナス記号・分数・√ に対応。2√3 のようなかけ算の省略も読む） */
   function evalExpr(str) {
     var s = String(str == null ? '' : str).trim();
     if (!s) return NaN;
     s = s.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xfee0); })
+      .replace(/ルート|sqrt|√/gi, 'r')
       .replace(/[−ー－‐–]/g, '-').replace(/＋/g, '+').replace(/[／÷]/g, '/').replace(/[×＊]/g, '*')
       .replace(/（/g, '(').replace(/）/g, ')').replace(/．/g, '.').replace(/\s+/g, '');
     var i = 0;
     function expr() { var v = term(); while (s[i] === '+' || s[i] === '-') { var op = s[i++]; var w = term(); v = op === '+' ? v + w : v - w; } return v; }
-    function term() { var v = unary(); while (s[i] === '*' || s[i] === '/') { var op = s[i++]; var w = unary(); v = op === '*' ? v * w : v / w; } return v; }
+    function term() {
+      var v = unary();
+      for (;;) {
+        if (s[i] === '*' || s[i] === '/') { var op = s[i++]; var w = unary(); v = op === '*' ? v * w : v / w; }
+        else if (s[i] === 'r' || s[i] === '(') v = v * unary();
+        else break;
+      }
+      return v;
+    }
     function unary() { if (s[i] === '-') { i++; return -unary(); } if (s[i] === '+') { i++; return unary(); } return atom(); }
     function atom() {
+      if (s[i] === 'r') { i++; var r = atom(); return r < 0 ? NaN : Math.sqrt(r); }
       if (s[i] === '(') { i++; var w = expr(); if (s[i] !== ')') throw 0; i++; return w; }
       var m = /^\d+(\.\d+)?/.exec(s.slice(i)); if (!m) throw 0; i += m[0].length; return parseFloat(m[0]);
     }
     try { var v = expr(); return i === s.length ? v : NaN; } catch (e) { return NaN; }
   }
   function close(a, b) { return isFinite(a) && Math.abs(a - b) < 1e-9; }
+  function squareFree(str) {
+    var m, re = /(?:√|ルート|sqrt)\s*\(?\s*(\d+)/gi;
+    while ((m = re.exec(String(str)))) { var n = +m[1]; for (var k = 2; k * k <= n; k++) if (n % (k * k) === 0) return false; }
+    return true;
+  }
   function check(card, inputs) {
-    if (Array.isArray(card.ans)) return close(evalExpr(inputs[0]), card.ans[0]) && close(evalExpr(inputs[1]), card.ans[1]);
-    return close(evalExpr(inputs[0]), card.ans);
+    if (/の形に/.test(card.text) && !squareFree(inputs[0])) return false;
+    if (Array.isArray(card.ans)) return close(evalExpr(inputs[0]), val(card.ans[0])) && close(evalExpr(inputs[1]), val(card.ans[1]));
+    return close(evalExpr(inputs[0]), val(card.ans));
   }
   /* CPU がまちがえるときの答え（よくあるまちがい） */
   function wrongAnswer(card, rnd) {
@@ -116,12 +139,13 @@
       var w; do { w = c[Math.floor(rnd() * c.length)]; } while (w === n);
       return w;
     }
+    if (card.wrongs) { var w = card.wrongs[Math.floor(rnd() * card.wrongs.length)]; return Array.isArray(w) ? w.slice() : w; }
     if (!Array.isArray(card.ans)) return bad(card.ans);
     var a = card.ans.slice(); var k = rnd() < 0.5 ? 0 : 1; a[k] = bad(a[k]); return a;
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
-  var core = { PROBLEMS: PROBLEMS, makeDeck: makeDeck, evalExpr: evalExpr, check: check, wrongAnswer: wrongAnswer, fmt: fmt, ansStr: ansStr };
+  var core = { val: val, PROBLEMS: PROBLEMS, makeDeck: makeDeck, evalExpr: evalExpr, check: check, wrongAnswer: wrongAnswer, fmt: fmt, ansStr: ansStr };
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
   root.CBCore = core;
   if (typeof document === 'undefined') return;
@@ -136,7 +160,7 @@
     normal: { label: 'ふつう', p: [0, 0.9, 0.75, 0.55] },
     strong: { label: 'つよい', p: [0, 0.96, 0.88, 0.75] }
   };
-  var S = null, lastOpt = null, timerId = null;
+  var S = null, lastOpt = null, timerId = null, lastIn = null;
   /* 音（card-battle-sound.js）。読み込めなくてもゲームは動く */
   function snd(n, d) { if (window.CBSound) window.CBSound.play(n, d); }
   function bgm(on) { if (!window.CBSound) return; if (on) window.CBSound.bgmStart(); else window.CBSound.bgmStop(); }
@@ -150,7 +174,7 @@
       life: { you: opt.lifeYou, cpu: opt.lifeCpu }, max: { you: opt.lifeYou, cpu: opt.lifeCpu },
       deck: shuffle(makeDeck()), used: [],
       hand: { you: [], cpu: [] }, turn: 'you', phase: '', sel: -1,
-      q: null, hinted: false, counter: false, shield: false, result: null, log: [], msg: '', used1: {}
+      q: null, counter: false, shield: false, swapCard: null, swapPick: [], result: null, log: [], msg: '', used1: {}
     };
     var u = shuffle(UNITS.slice());
     S.weak = [u[0], u[1]]; S.good = u[2];
@@ -175,7 +199,7 @@
   function findKind(who, kind) { for (var i = 0; i < S.hand[who].length; i++) if (S.hand[who][i].kind === kind) return i; return -1; }
 
   function startTurn() {
-    S.sel = -1; S.q = null; S.hinted = false; S.counter = false; S.shield = false; S.result = null; S.used1 = {};
+    S.sel = -1; S.q = null; S.counter = false; S.shield = false; S.result = null; S.used1 = {};
     if (window.CBSound) window.CBSound.setTense(S.life.you <= 3 || S.life.cpu <= 3);
     if (S.life.you <= 0 || S.life.cpu <= 0) {
       S.phase = 'over'; bgm(false);
@@ -215,9 +239,7 @@
   function counterDmg(q) { return S.counter ? q.star + 1 : 1; }
   function cpuAnswer() {
     var q = S.q, p = cpuChance(q);
-    /* CPU の作戦：むずかしければヒント、自信がなければシールド、自信があれば倍返し */
-    var hi = findKind('cpu', 'hint');
-    if (hi >= 0 && p < 0.85 && Math.random() < 0.7) { discard('cpu', hi); S.hinted = true; p = Math.min(0.98, p + 0.15); addLog('CPU：ヒントを使った', 'cpu'); snd('hint'); }
+    /* CPU の作戦：自信がなければシールド、自信があれば倍返し */
     var si = findKind('cpu', 'shield');
     if (si >= 0 && p < 0.6 && q.star >= 2) { discard('cpu', si); S.shield = true; addLog('CPU：シールドを使った', 'cpu'); snd('shield', 0.1); }
     var ci = findKind('cpu', 'counter');
@@ -255,6 +277,16 @@
     var h = S.hand.cpu;
     var hl = findKind('cpu', 'heal');
     if (hl >= 0 && S.life.cpu <= S.max.cpu - 3) { discard('cpu', hl); snd('heal'); var b0 = S.life.cpu; S.life.cpu = Math.min(S.max.cpu, S.life.cpu + 2); addLog('CPU：回復（ライフ ' + b0 + ' → ' + S.life.cpu + '）', 'cpu'); }
+    var sw = findKind('cpu', 'swap');
+    if (sw >= 0) {
+      var low = h.filter(function (c, i) { return i !== sw && (c.kind === 'q' && c.star === 1); });
+      if (low.length >= 2) {
+        discard('cpu', sw);
+        low.forEach(function (c) { S.used.push(h.splice(h.indexOf(c), 1)[0]); });
+        low.forEach(function () { h.push(draw()); });
+        addLog('CPU：入れかえ（' + low.length + ' 枚）', 'cpu'); snd('draw', 0.2);
+      }
+    }
     var di = findKind('cpu', 'draw');
     if (di >= 0 && h.filter(function (c) { return c.kind === 'q'; }).length <= 2) {
       discard('cpu', di); h.push(draw(), draw()); addLog('CPU：2 枚ドロー', 'cpu'); snd('draw', 0.3);
@@ -282,10 +314,23 @@
     }, 1000);
   }
   function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
-  function youUseHint() {
-    var i = findKind('you', 'hint'); if (i < 0) return;
-    discard('you', i); S.hinted = true; addLog('あなた：ヒントを使った', 'you'); snd('hint'); render();
+  function youSwapStart(idx) { S.swapCard = S.hand.you[idx]; S.swapPick = []; S.sel = -1; S.phase = 'swap'; S.msg = ''; render(); }
+  function youSwapToggle(idx) {
+    var c = S.hand.you[idx]; if (c === S.swapCard) return;
+    var k = S.swapPick.indexOf(c); if (k >= 0) S.swapPick.splice(k, 1); else S.swapPick.push(c);
+    snd('click'); render();
   }
+  function youSwapDo() {
+    var n = S.swapPick.length; if (!n) return;
+    var h = S.hand.you;
+    S.used.push(h.splice(h.indexOf(S.swapCard), 1)[0]);
+    S.swapPick.forEach(function (c) { S.used.push(h.splice(h.indexOf(c), 1)[0]); });
+    for (var i = 0; i < n; i++) h.push(draw());
+    S.used1.swap = true; S.swapCard = null; S.swapPick = [];
+    addLog('あなた：入れかえ（' + n + ' 枚）', 'you'); snd('draw');
+    S.phase = 'attack'; ensureQuestion('you'); render();
+  }
+  function youSwapCancel() { S.swapCard = null; S.swapPick = []; S.phase = 'attack'; render(); }
   function youUseShield() {
     var i = findKind('you', 'shield'); if (i < 0) return;
     discard('you', i); S.shield = true; addLog('あなた：シールドを使った', 'you'); snd('shield'); render();
@@ -350,7 +395,8 @@
     A.className = 'cb-ph-' + S.phase;
     h += '<div class="cb-bar cb-bar-you">' + lifeHTML('you') + soundHTML() + '<details class="cb-log"><summary>記録</summary><ol>' + S.log.map(function (l) { return '<li class="cb-' + l.who + '">' + esc(l.t) + '</li>'; }).join('') + '</ol></details></div>';
     h += '<div class="cb-hand" role="list" aria-label="あなたの手札">' + S.hand.you.map(function (c, i) {
-      return '<button type="button" class="cb-slot" role="listitem" data-i="' + i + '" aria-pressed="' + (S.sel === i) + '"' + (handUsable(c) ? '' : ' disabled') + '>' + cardHTML(c, { sel: S.sel === i, mark: S.phase === 'attack' }) + '</button>';
+      var picked = S.phase === 'swap' && S.swapPick.indexOf(c) >= 0;
+      return '<button type="button" class="cb-slot' + (picked ? ' is-picked' : '') + '" role="listitem" data-i="' + i + '" aria-pressed="' + (S.sel === i || picked) + '"' + (handUsable(c) ? '' : ' disabled') + '>' + cardHTML(c, { sel: S.sel === i, mark: S.phase === 'attack' }) + '</button>';
     }).join('') + '</div>';
     A.innerHTML = h;
     bind();
@@ -369,8 +415,9 @@
     return t + '（約 ' + Math.round(p * 10) * 10 + '%）';
   }
   function handUsable(c) {
-    if (S.phase === 'attack') return c.kind === 'q' || ((c.kind === 'draw' || c.kind === 'heal') && !S.used1[c.kind]);
-    if (S.phase === 'answer') return (c.kind === 'hint' && !S.hinted) || (c.kind === 'counter' && !S.counter) || (c.kind === 'shield' && !S.shield);
+    if (S.phase === 'attack') return c.kind === 'q' || ((c.kind === 'draw' || c.kind === 'heal' || c.kind === 'swap') && !S.used1[c.kind]);
+    if (S.phase === 'swap') return c !== S.swapCard;
+    if (S.phase === 'answer') return (c.kind === 'counter' && !S.counter) || (c.kind === 'shield' && !S.shield);
     return false;
   }
   function fieldHTML() {
@@ -385,18 +432,26 @@
           h += '<button type="button" class="cb-btn cb-main" id="cb-attack">このカードを出す</button>';
         }
         else if (c && (c.kind === 'draw' || c.kind === 'heal')) h += '<button type="button" class="cb-btn cb-main" id="cb-usesp">' + esc(c.name) + 'を使う</button>';
+        else if (c && c.kind === 'swap') h += '<button type="button" class="cb-btn cb-main" id="cb-swapstart">入れかえを使う</button>';
         else h += '<p class="cb-note cb-point">↓ 手札のカードをえらんでね</p>';
         h += '</div>';
         if (c) h = '<div class="cb-stage">' + cardHTML(c, { big: true }) + h + '</div>';
         else h = '<div class="cb-stage cb-empty"><div class="cb-slotbig">？</div>' + h + '</div>';
         return h;
       }
+      case 'swap': {
+        var n = S.swapPick.length;
+        return '<div class="cb-stage">' + cardHTML(S.swapCard, { big: true }) + '<div class="cb-side"><h2>入れかえるカードをえらぼう</h2>' +
+          '<p class="cb-note">手札から好きな枚数をタップしてえらびます（もう一度タップで取り消し）。えらんだカードは捨てて、同じ枚数を山札から引きます。</p>' +
+          '<div class="cb-row"><button type="button" class="cb-btn cb-main" id="cb-swapdo"' + (n ? '' : ' disabled') + '>えらんだ ' + n + ' 枚を入れかえる</button>' +
+          '<button type="button" class="cb-btn" id="cb-swapcancel">やめる</button></div></div></div>';
+      }
       case 'cpuThink':
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU が考えています…</h2><div class="cb-dots"><span></span><span></span><span></span></div></div></div>';
       case 'explain': {
         var r = S.result;
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU は「' + esc(fmt(r.given)) + '」と答えた → まちがい！</h2>' +
-          '<div class="cb-back-ans"><b>カードの裏</b>：答え ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '</div>' +
+          '<div class="cb-back-ans"><b>カードの裏</b>：答え ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '<br><span class="cb-pt">ポイント：' + esc(q.hint) + '</span></div>' +
           '<p class="cb-note">ダメージを入れるには、出した人が<b>解き方を説明</b>します。声に出して説明してみよう。説明できたら ' + wrongDmg(q, true) + ' ダメージ、できなければ ' + wrongDmg(q, false) + ' ダメージ。' + (S.shield ? '（CPU のシールドで 2 へっています）' : '') + '</p>' +
           '<div class="cb-row"><button type="button" class="cb-btn cb-main" id="cb-exp-ok">説明できた</button><button type="button" class="cb-btn" id="cb-exp-ng">できなかった</button></div></div></div>';
       }
@@ -411,14 +466,13 @@
         var ins = pair ? '<div class="cb-row"><label>' + q.labels[0] + ' =<input class="cb-in" inputmode="text" autocomplete="off"></label><label>' + q.labels[1] + ' =<input class="cb-in" inputmode="text" autocomplete="off"></label></div>'
           : '<div class="cb-row"><label>答え<input class="cb-in cb-in-1" inputmode="text" autocomplete="off"></label></div>';
         var tools = '';
-        if (findKind('you', 'hint') >= 0 && !S.hinted) tools += '<button type="button" class="cb-btn cb-hintbtn" id="cb-hint">ヒントを使う</button>';
         if (findKind('you', 'counter') >= 0 && !S.counter) tools += '<button type="button" class="cb-btn cb-counterbtn" id="cb-counter">倍返しを宣言</button>';
         if (findKind('you', 'shield') >= 0 && !S.shield) tools += '<button type="button" class="cb-btn cb-shieldbtn" id="cb-shield">シールドを使う</button>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU の攻撃！ 答えよう' + (S.time ? '<span class="cb-timer" id="cb-timer">' + S.left + '</span>' : '') + '</h2>' +
           '<p class="cb-note">正解すれば CPU に反撃 ' + counterDmg(q) + ' ダメージ。まちがえると ' + wrongDmg(q, true) + ' ダメージ。</p>' +
           (S.counter ? '<p class="cb-tag cb-counterbtn">倍返し宣言中</p>' : '') + (S.shield ? '<p class="cb-tag cb-shieldbtn">シールド中</p>' : '') +
-          (S.hinted ? '<div class="cb-hintbox"><b>ヒント</b>：' + esc(q.hint) + '</div>' : '') +
-          ins + '<p class="cb-note">マイナスは −3、分数は 1/2 のように入れてね。</p>' +
+          ins + '<div class="cb-keys" aria-label="記号を入れる">' + ['√', '−', '/', '(', ')'].map(function (k) { return '<button type="button" class="cb-key" data-ins="' + k + '">' + k + '</button>'; }).join('') + '</div>' +
+          '<p class="cb-note">マイナスは −3、分数は 1/2、ルートは 2√3 のように入れてね。</p>' +
           (tools ? '<div class="cb-row">' + tools + '</div>' : '') +
           '<button type="button" class="cb-btn cb-main" id="cb-answer">答える</button></div></div>';
       }
@@ -426,7 +480,7 @@
         var r3 = S.result, t3;
         if (r3.ok) t3 = '<h2 class="cb-good">正解！ CPU に反撃 ' + r3.dmg + ' ダメージ</h2><p>' + (S.counter ? '<b class="cb-hit">倍返しが効いた！</b>' : '') + 'カードを 1 枚引きました。</p>';
         else t3 = '<h2 class="cb-bad">' + (r3.timeout ? '時間切れ' : 'ざんねん') + '… ' + r3.dmg + ' ダメージ</h2>' + (S.shield ? '<p>シールドで 2 へらせた！</p>' : '') +
-          '<div class="cb-back-ans"><b>CPU の説明</b>：答えは ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '</div>';
+          '<div class="cb-back-ans"><b>CPU の説明</b>：答えは ' + esc(ansStr(q)) + '<br>' + esc(q.sol) + '<br><span class="cb-pt">ポイント：' + esc(q.hint) + '</span></div>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side">' + t3 + '<button type="button" class="cb-btn cb-main" id="cb-next">' + (S.life.you <= 0 || S.life.cpu <= 0 ? '結果を見る' : '次へ（あなたの番）') + '</button></div></div>';
       }
       case 'over': {
@@ -446,7 +500,7 @@
       '<li>相手が答える。<b>正解</b>なら、出した人に<b>反撃 1 ダメージ</b>。答えた人はカードを 1 枚引ける。</li>' +
       '<li><b>まちがい</b>なら、出した人が解き方を説明して、★ の数だけダメージ（説明できなければ半分）。</li>' +
       '<li>CPU には<b>苦手な単元</b>と<b>得意な単元</b>がある。苦手をねらおう。</li>' +
-      '<li><b>特殊カード</b>：答える番に「ヒント」「倍返し（反撃が ★＋1 に）」「シールド（ダメージ −2）」、自分の番に「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
+      '<li><b>特殊カード</b>：答える番に「倍返し（反撃が ★＋1 に）」「シールド（ダメージ −2）」、自分の番に「入れかえ（好きな枚数を山札と交換）」「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
       '<li>相手のライフを 0 にしたら勝ち！</li></ol></div>' +
       '<div class="cb-box"><h2>設定</h2>' +
       '<fieldset><legend>CPU の強さ</legend>' + radio('cp', 'easy', 'やさしい', true) + radio('cp', 'normal', 'ふつう', false) + radio('cp', 'strong', 'つよい', false) + '</fieldset>' +
@@ -479,7 +533,8 @@
       b.onclick = function () {
         var i = +b.getAttribute('data-i'), c = S.hand.you[i];
         if (S.phase === 'attack') { S.sel = S.sel === i ? -1 : i; S.msg = ''; snd('click'); render(); }
-        else if (S.phase === 'answer') { if (c.kind === 'hint') youUseHint(); else if (c.kind === 'counter') youUseCounter(); else if (c.kind === 'shield') youUseShield(); }
+        else if (S.phase === 'swap') youSwapToggle(i);
+        else if (S.phase === 'answer') { if (c.kind === 'counter') youUseCounter(); else if (c.kind === 'shield') youUseShield(); }
       };
     });
     on('cb-attack', youAttack);
@@ -488,7 +543,20 @@
     on('cb-exp-ok', function () { youExplain(true); });
     on('cb-exp-ng', function () { youExplain(false); });
     on('cb-next', function () { if (S.phase === 'cpuResult') endYourTurn(); else endCpuTurn(); });
-    on('cb-hint', youUseHint);
+    on('cb-swapstart', function () { youSwapStart(S.sel); });
+    on('cb-swapdo', youSwapDo);
+    on('cb-swapcancel', youSwapCancel);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ins]'), function (b) {
+      b.onmousedown = function (ev) { ev.preventDefault(); };
+      b.onclick = function () {
+        var inp = document.activeElement && document.activeElement.classList.contains('cb-in') ? document.activeElement : (lastIn || document.querySelector('.cb-in'));
+        if (!inp) return;
+        var t = b.getAttribute('data-ins'), a = inp.selectionStart == null ? inp.value.length : inp.selectionStart, z = inp.selectionEnd == null ? a : inp.selectionEnd;
+        inp.value = inp.value.slice(0, a) + t + inp.value.slice(z);
+        inp.focus(); try { inp.setSelectionRange(a + t.length, a + t.length); } catch (e) {}
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.cb-in'), function (e) { e.addEventListener('focus', function () { lastIn = e; }); });
     on('cb-counter', youUseCounter);
     on('cb-answer', function () { youAnswer(false); });
     on('cb-again', function () { newGame(lastOpt); bgm(true); });
