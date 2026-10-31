@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja" data-no-en>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学カードバトル（試作版） - 会津若松の数学教室</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="問題カードを出し合って戦う、中学数学のカードバトル（試作版）。">
+<script src="/math-site/ga.js" defer></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --bg3:#1a2235; --line:rgba(200,168,75,.25);
+  --gold:#c8a84b; --gold-lt:#e8c96b; --white:#f0f4ff; --gray:#b9c6da;
+  --you:#4aa8ff; --cpu:#ff7a6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--white);line-height:1.7;}
+.cb-hero{text-align:center;padding:16px 16px 8px;background:radial-gradient(ellipse 70% 90% at 50% 0%,rgba(200,168,75,.16),transparent 70%);}
+.cb-badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.15em;color:var(--gold-lt);border:1px solid var(--line);border-radius:999px;padding:2px 12px;margin-bottom:4px;}
+.cb-hero h1{font-family:'Kaisei Decol',serif;font-size:clamp(1.5rem,5vw,2.1rem);color:var(--gold-lt);line-height:1.3;}
+.cb-hero p{color:#c4d0e4;font-size:.92rem;}
+.cb-wrap{max-width:1100px;margin:0 auto;padding:6px 14px 40px;}
+
+/* アプリ全体：1 画面に収める */
+#cb-app{height:calc(100vh - var(--site-nav-h,56px) - 14px);height:calc(100dvh - var(--site-nav-h,56px) - 14px);min-height:540px;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;}
+#cb-app:has(.cb-setup){display:block;height:auto;min-height:0;}
+
+.cb-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--bg3);border-radius:14px;padding:6px 12px;}
+.cb-life{display:flex;align-items:center;gap:8px;font-weight:700;}
+.cb-life.is-turn .cb-lname{text-decoration:underline;text-underline-offset:4px;}
+.cb-life.cb-you .cb-lname{color:var(--you);} .cb-life.cb-cpu .cb-lname{color:var(--cpu);}
+.cb-hearts{display:flex;gap:3px;}
+.cb-heart{width:13px;height:13px;border-radius:50%;background:#ff5d73;box-shadow:0 0 6px rgba(255,93,115,.6);}
+.cb-heart.is-lost{background:#2b3550;box-shadow:none;}
+.cb-lnum{font-size:1.2rem;}
+.cb-cpuhand{display:flex;gap:4px;margin-left:auto;}
+.cb-back{width:24px;height:34px;border-radius:5px;border:1.5px solid var(--gold);background:repeating-linear-gradient(45deg,#1a2442 0 4px,#121a31 4px 8px);}
+.cb-deck{font-size:.82rem;color:var(--gray);}
+.cb-bar-you{justify-content:space-between;position:relative;}
+.cb-log{font-size:.82rem;max-width:60%;}
+.cb-log summary{cursor:pointer;color:var(--gold-lt);font-weight:700;}
+.cb-log ol{position:absolute;z-index:20;right:8px;bottom:calc(100% + 6px);max-width:420px;max-height:260px;overflow:auto;background:#0d1426;border:1px solid var(--line);border-radius:10px;padding:10px 10px 10px 30px;color:#c8d4e0;}
+.cb-log li.cb-you{color:#a9d4ff;} .cb-log li.cb-cpu{color:#ffb3a9;}
+
+.cb-field{min-height:0;overflow:auto;background:radial-gradient(ellipse at 50% 40%,rgba(74,168,255,.08),transparent 70%),var(--bg2);border:1px solid var(--line);border-radius:18px;padding:14px;}
+.cb-stage{display:flex;gap:22px;align-items:center;justify-content:center;min-height:100%;flex-wrap:wrap;}
+.cb-side{flex:1 1 300px;max-width:470px;display:flex;flex-direction:column;gap:10px;}
+.cb-side h2{font-size:1.15rem;color:var(--gold-lt);line-height:1.5;}
+.cb-note{font-size:.9rem;color:var(--gray);}
+.cb-point{color:var(--gold-lt);font-weight:700;}
+.cb-msg{background:rgba(200,168,75,.12);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--gold-lt);margin-bottom:8px;text-align:center;}
+.cb-good{color:#5fe0a0 !important;} .cb-bad{color:#ff8a8a !important;}
+.cb-hit{color:#ff9f43;}
+.cb-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.cb-row label{display:flex;align-items:center;gap:6px;font-weight:700;font-size:1.05rem;}
+.cb-in{width:110px;min-height:46px;border-radius:10px;border:1.5px solid #3a4a66;background:#0b1222;color:var(--white);font-size:1.25rem;font-family:inherit;text-align:center;}
+.cb-in-1{width:150px;}
+.cb-in:focus{outline:2px solid var(--gold);border-color:transparent;}
+.cb-btn{font-family:inherit;font-size:.98rem;font-weight:700;border-radius:999px;padding:11px 20px;min-height:46px;cursor:pointer;border:1.5px solid var(--gold);background:transparent;color:var(--gold-lt);}
+.cb-btn:hover{background:rgba(200,168,75,.12);}
+.cb-main{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#1a1040;border:none;}
+.cb-main:hover{filter:brightness(1.08);background:linear-gradient(135deg,var(--gold),var(--gold-lt));}
+.cb-field .cb-main{position:sticky;bottom:2px;z-index:2;box-shadow:0 0 0 6px var(--bg2),0 6px 16px rgba(0,0,0,.6);}
+.cb-hintbtn{border-color:#3ecf8e;color:#5fe0a0;}
+.cb-counterbtn{border-color:var(--cpu);color:#ffb3a9;}
+.cb-tag{font-size:.88rem;border:1px solid;border-radius:8px;padding:4px 10px;}
+.cb-hintbox{background:rgba(62,207,142,.1);border:1px solid #3ecf8e;border-radius:10px;padding:8px 12px;font-size:.95rem;}
+.cb-back-ans{background:var(--bg3);border-left:4px solid var(--gold);border-radius:8px;padding:10px 12px;font-size:.98rem;}
+.cb-back-ans b{color:var(--gold-lt);}
+.cb-timer{display:inline-block;margin-left:10px;min-width:44px;text-align:center;border-radius:999px;background:#ff5d73;color:#fff;font-size:1rem;padding:0 10px;}
+.cb-dots{display:flex;gap:8px;}
+.cb-dots span{width:12px;height:12px;border-radius:50%;background:var(--gold-lt);animation:cb-blink 1s infinite;}
+.cb-dots span:nth-child(2){animation-delay:.2s;} .cb-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes cb-blink{0%,100%{opacity:.2;}50%{opacity:1;}}
+.cb-slotbig{width:200px;height:280px;border:2px dashed #3a4a66;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#3a4a66;}
+
+/* ── カード ── */
+.cb-card{--c:#9fb0c8;width:118px;height:166px;border-radius:12px;position:relative;overflow:hidden;text-align:left;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/14px 14px,
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/14px 14px,
+    linear-gradient(165deg,#1d2a48,#0b1120 72%);
+  border:2px solid var(--c);box-shadow:inset 0 0 0 3px rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.55);
+  padding:8px;display:flex;flex-direction:column;color:var(--white);font-family:'Noto Sans JP',sans-serif;}
+.cb-card::before{content:'';position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,var(--c),transparent 70%);opacity:.35;pointer-events:none;}
+.cb-s1{--c:#a9b8d0;} .cb-s2{--c:#4aa8ff;} .cb-s3{--c:#e8c96b;}
+.cb-s3{box-shadow:inset 0 0 0 3px rgba(0,0,0,.35),0 0 18px rgba(232,201,107,.45),0 6px 16px rgba(0,0,0,.55);}
+.cb-hint{--c:#3ecf8e;} .cb-counter{--c:#ff7a6b;} .cb-draw{--c:#c38bff;}
+.cb-top{display:flex;justify-content:space-between;align-items:center;gap:4px;position:relative;}
+.cb-unit{font-size:.62rem;font-weight:700;color:#0a0e1a;background:var(--c);border-radius:999px;padding:1px 7px;white-space:nowrap;}
+.cb-stars{font-size:.72rem;color:var(--gold-lt);letter-spacing:-1px;}
+.cb-off{color:#38445f;}
+.cb-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:.8rem;line-height:1.45;padding:4px 0;position:relative;}
+.cb-foot{font-size:.62rem;color:var(--c);text-align:center;font-weight:700;letter-spacing:.08em;border-top:1px solid rgba(255,255,255,.08);padding-top:3px;}
+.cb-spname{flex:0 0 auto;margin-top:16px;text-align:center;font-weight:900;font-size:1.05rem;color:var(--c);}
+.cb-desc{flex:1;font-size:.66rem;line-height:1.5;color:#c8d4e0;margin-top:8px;text-align:center;}
+.cb-big{width:210px;height:296px;padding:14px;border-radius:16px;}
+.cb-big .cb-unit{font-size:.78rem;padding:2px 10px;}
+.cb-big .cb-stars{font-size:1.05rem;}
+.cb-big .cb-text{font-size:1.3rem;}
+.cb-big .cb-foot{font-size:.8rem;}
+
+.cb-hand{display:flex;gap:10px;overflow-x:auto;padding:12px 4px 6px;justify-content:center;}
+.cb-slot{background:none;border:none;padding:0;cursor:pointer;border-radius:12px;transition:transform .15s;flex:0 0 auto;}
+.cb-slot:hover:not(:disabled){transform:translateY(-6px);}
+.cb-slot:disabled{cursor:default;opacity:.45;}
+.cb-slot[aria-pressed="true"]{transform:translateY(-10px);}
+.cb-slot[aria-pressed="true"] .cb-card{box-shadow:0 0 0 3px var(--white),0 0 22px var(--c);}
+.cb-slot:focus-visible{outline:3px solid var(--gold-lt);outline-offset:3px;}
+
+/* 設定画面 */
+.cb-setup{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.cb-box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;}
+.cb-box h2{font-size:1.1rem;color:var(--gold-lt);}
+.cb-rules{padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:.95rem;color:#d4deee;}
+.cb-rules b{color:var(--gold-lt);}
+fieldset{border:none;display:flex;flex-wrap:wrap;gap:4px 16px;}
+legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;width:100%;}
+.cb-radio{display:flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;}
+.cb-radio input{accent-color:var(--gold);width:18px;height:18px;}
+.cb-proto{max-width:760px;margin:22px auto 0;font-size:.85rem;color:var(--gray);text-align:center;}
+
+@media(max-width:760px){
+  .cb-setup{grid-template-columns:1fr;}
+  .cb-card{width:92px;height:132px;padding:6px;}
+  .cb-text{font-size:.68rem;}
+  .cb-big{width:150px;height:212px;padding:10px;}
+  .cb-big .cb-text{font-size:.98rem;}
+  .cb-stage{gap:10px;}
+  .cb-side{flex-basis:100%;}
+  .cb-hand{justify-content:flex-start;gap:8px;padding-top:10px;}
+  .cb-back{width:16px;height:24px;}
+  .cb-heart{width:10px;height:10px;}
+  .cb-field{padding:10px;}
+}
+@media (prefers-reduced-motion:reduce){.cb-dots span{animation:none;opacity:.8;}}
+</style>
+</head>
+<body>
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+<header class="cb-hero">
+  <div class="cb-badge">試作版</div>
+  <h1>数学カードバトル</h1>
+  <p>問題カードを出し合って戦おう。相手のライフを 0 にしたら勝ち！</p>
+</header>
+<main class="cb-wrap">
+  <div id="cb-app" aria-live="polite"></div>
+  <p class="cb-proto">これは試作版です。問題は中1〜中2（正負の数・文字式・方程式・比例・一次関数・連立方程式）の 40 枚です。</p>
+</main>
+<script src="/math-site/chu/card-battle.js"></script>
+</body>
+</html>
