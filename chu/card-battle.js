@@ -18,7 +18,7 @@
   var SPECIALS = [
     ['swap', '入れかえ', '自分の番に使う。手札から好きな枚数をえらんで、山札と入れかえる。'],
     ['counter', '倍返し', '答える前に使う。正解したら、反撃ダメージが ★＋1 になる。'],
-    ['shield', 'シールド', '答える前に使う。まちがえても、ダメージを 2 へらす。'],
+    ['shield', 'シールド', 'まちがえたときに使える。受けるダメージを 2 へらす。'],
     ['draw', '2 枚ドロー', '自分の番に使う。山札から 2 枚引く。'],
     ['heal', '回復', '自分の番に使う。ライフを 2 回復する。']
   ];
@@ -226,9 +226,7 @@
   function counterDmg(q) { return S.counter ? q.star + 1 : 1; }
   function cpuAnswer() {
     var q = S.q, p = cpuChance(q);
-    /* CPU の作戦：自信がなければシールド、自信があれば倍返し */
-    var si = findKind('cpu', 'shield');
-    if (si >= 0 && p < 0.6 && q.star >= 2) { discard('cpu', si); S.shield = true; addLog('CPU：シールドを使った', 'cpu'); snd('shield', 0.1); }
+    /* CPU の作戦：自信があれば倍返し（シールドはまちがえたあとに使う） */
     var ci = findKind('cpu', 'counter');
     if (ci >= 0 && p >= 0.8 && Math.random() < 0.6) { discard('cpu', ci); S.counter = true; addLog('CPU：倍返しを宣言！', 'cpu'); snd('counter', 0.2); }
     var ok = Math.random() < p;
@@ -243,6 +241,8 @@
     } else {
       addLog('CPU：' + fmt(ans) + ' と答えた（まちがい）', 'cpu');
       snd('correct', 0.3);
+      var si = findKind('cpu', 'shield');
+      if (si >= 0 && q.star >= 2) { discard('cpu', si); S.shield = true; addLog('CPU：シールドを使った（ダメージ −2）', 'cpu'); snd('shield', 0.8); }
       S.phase = 'explain';
     }
     render();
@@ -318,10 +318,6 @@
     S.phase = 'attack'; ensureQuestion('you'); render();
   }
   function youSwapCancel() { S.swapCard = null; S.swapPick = []; S.phase = 'attack'; render(); }
-  function youUseShield() {
-    var i = findKind('you', 'shield'); if (i < 0) return;
-    discard('you', i); S.shield = true; addLog('あなた：シールドを使った', 'you'); snd('shield'); render();
-  }
   function youUseCounter() {
     var i = findKind('you', 'counter'); if (i < 0) return;
     discard('you', i); S.counter = true; addLog('あなた：倍返しを宣言！', 'you'); snd('counter'); render();
@@ -341,11 +337,26 @@
       snd('correct'); snd('hit', 0.4);
       addLog('あなた：正解！ CPU に反撃 ' + d + ' ダメージ。カードを 1 枚引いた', 'you');
     } else {
-      var d2 = wrongDmg(q, true); damage('you', d2); S.result.dmg = d2;
-      snd('wrong'); if (d2 > 0) snd('hit', 0.4);
-      addLog('あなた：' + (timeout ? '時間切れ' : 'まちがい') + ' → ' + d2 + ' ダメージ（CPU が解き方を説明）', 'you');
+      snd('wrong');
+      if (findKind('you', 'shield') >= 0) { S.phase = 'shieldAsk'; render(); return; }
+      applyYourWrong();
+      return;
     }
     S.phase = 'yourResult'; render();
+  }
+  function applyYourWrong() {
+    var q = S.q, d2 = wrongDmg(q, true);
+    damage('you', d2); S.result.dmg = d2;
+    if (d2 > 0) snd('hit', 0.3);
+    addLog('あなた：' + (S.result.timeout ? '時間切れ' : 'まちがい') + ' → ' + d2 + ' ダメージ（CPU が解き方を説明）', 'you');
+    S.phase = 'yourResult'; render();
+  }
+  function youShieldDecide(use) {
+    if (use) {
+      var i = findKind('you', 'shield');
+      if (i >= 0) { discard('you', i); S.shield = true; addLog('あなた：シールドを使った（ダメージ −2）', 'you'); snd('shield'); }
+    }
+    applyYourWrong();
   }
   function endCpuTurn() { refill('cpu'); S.turn = 'you'; startTurn(); }
 
@@ -404,7 +415,8 @@
   function handUsable(c) {
     if (S.phase === 'attack') return c.kind === 'q' || ((c.kind === 'draw' || c.kind === 'heal' || c.kind === 'swap') && !S.used1[c.kind]);
     if (S.phase === 'swap') return c !== S.swapCard;
-    if (S.phase === 'answer') return (c.kind === 'counter' && !S.counter) || (c.kind === 'shield' && !S.shield);
+    if (S.phase === 'answer') return c.kind === 'counter' && !S.counter;
+    if (S.phase === 'shieldAsk') return c.kind === 'shield';
     return false;
   }
   function fieldHTML() {
@@ -454,14 +466,21 @@
           : '<div class="cb-row"><label>答え<input class="cb-in cb-in-1" inputmode="text" autocomplete="off"></label></div>';
         var tools = '';
         if (findKind('you', 'counter') >= 0 && !S.counter) tools += '<button type="button" class="cb-btn cb-counterbtn" id="cb-counter">倍返しを宣言</button>';
-        if (findKind('you', 'shield') >= 0 && !S.shield) tools += '<button type="button" class="cb-btn cb-shieldbtn" id="cb-shield">シールドを使う</button>';
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU の攻撃！ 答えよう' + (S.time ? '<span class="cb-timer" id="cb-timer">' + S.left + '</span>' : '') + '</h2>' +
           '<p class="cb-note">正解すれば CPU に反撃 ' + counterDmg(q) + ' ダメージ。まちがえると ' + wrongDmg(q, true) + ' ダメージ。</p>' +
-          (S.counter ? '<p class="cb-tag cb-counterbtn">倍返し宣言中</p>' : '') + (S.shield ? '<p class="cb-tag cb-shieldbtn">シールド中</p>' : '') +
+          (S.counter ? '<p class="cb-tag cb-counterbtn">倍返し宣言中</p>' : '') +
           ins + (DECKS[S.deckKey].keys.length ? '<div class="cb-keys" aria-label="記号を入れる">' + DECKS[S.deckKey].keys.map(function (k) { return '<button type="button" class="cb-key" data-ins="' + k + '">' + k + '</button>'; }).join('') + '</div>' : '') +
           '<p class="cb-note">' + esc(DECKS[S.deckKey].note) + '</p>' +
           (tools ? '<div class="cb-row">' + tools + '</div>' : '') +
           '<button type="button" class="cb-btn cb-main" id="cb-answer">答える</button></div></div>';
+      }
+      case 'shieldAsk': {
+        var full = q.star, cut = Math.max(0, q.star - 2);
+        return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2 class="cb-bad">' + (S.result.timeout ? '時間切れ' : 'まちがい') + '… シールドを使う？</h2>' +
+          '<p>このままだと <b class="cb-hit">' + full + ' ダメージ</b>。シールドを使うと <b class="cb-good">' + cut + ' ダメージ</b>になります。</p>' +
+          '<p class="cb-note">シールドは 1 回きり。大きいダメージのときまで取っておくのも作戦です。</p>' +
+          '<div class="cb-row"><button type="button" class="cb-btn cb-main" id="cb-sh-yes">シールドを使う（' + full + ' → ' + cut + '）</button>' +
+          '<button type="button" class="cb-btn" id="cb-sh-no">使わない</button></div></div></div>';
       }
       case 'yourResult': {
         var r3 = S.result, t3;
@@ -487,7 +506,7 @@
       '<li>相手が答える。<b>正解</b>なら、出した人に<b>反撃 1 ダメージ</b>。答えた人はカードを 1 枚引ける。</li>' +
       '<li><b>まちがい</b>なら、出した人が解き方を説明して、★ の数だけダメージ（説明できなければ半分）。</li>' +
       '<li>CPU には<b>苦手な単元</b>と<b>得意な単元</b>がある。苦手をねらおう。</li>' +
-      '<li><b>特殊カード</b>：答える番に「倍返し（反撃が ★＋1 に）」「シールド（ダメージ −2）」、自分の番に「入れかえ（好きな枚数を山札と交換）」「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
+      '<li><b>特殊カード</b>：答える番に「倍返し（反撃が ★＋1 に）」、まちがえたときに「シールド（ダメージ −2）」、自分の番に「入れかえ（好きな枚数を山札と交換）」「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
       '<li>相手のライフを 0 にしたら勝ち！</li></ol></div>' +
       '<div class="cb-box"><h2>設定</h2>' +
       '<fieldset><legend>レベル（問題カードの束）</legend>' + ORDER.map(function (k) { return radio('dk', k, DECKS[k].name + '（' + DECKS[k].range + '）', k === curDeck); }).join('') + '</fieldset>' +
@@ -523,12 +542,14 @@
         var i = +b.getAttribute('data-i'), c = S.hand.you[i];
         if (S.phase === 'attack') { S.sel = S.sel === i ? -1 : i; S.msg = ''; snd('click'); render(); }
         else if (S.phase === 'swap') youSwapToggle(i);
-        else if (S.phase === 'answer') { if (c.kind === 'counter') youUseCounter(); else if (c.kind === 'shield') youUseShield(); }
+        else if (S.phase === 'answer') { if (c.kind === 'counter') youUseCounter(); }
+        else if (S.phase === 'shieldAsk') { if (c.kind === 'shield') youShieldDecide(true); }
       };
     });
     on('cb-attack', youAttack);
     on('cb-usesp', function () { var i = S.sel; S.sel = -1; youPlaySpecial(i); });
-    on('cb-shield', youUseShield);
+    on('cb-sh-yes', function () { youShieldDecide(true); });
+    on('cb-sh-no', function () { youShieldDecide(false); });
     on('cb-exp-ok', function () { youExplain(true); });
     on('cb-exp-ng', function () { youExplain(false); });
     on('cb-next', function () { if (S.phase === 'cpuResult') endYourTurn(); else endCpuTurn(); });
