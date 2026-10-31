@@ -12,56 +12,9 @@
   /* ────────── 問題カード ──────────
      [★, 単元, 問題, 答え, ヒント, 解き方]
      答えは数、または [x, y] / [a, b] の組（labels で名前を決める） */
-  /* [★, 単元, 問題, 答え, ヒント, 解き方, 答えの名前（組のとき）, CPU のまちがい例（√ の答えのとき）]
-     答えは数、√ を含む式の文字列、または 2 つの組 */
-  var BIG = ['大きい解', '小さい解'];
-  var PROBLEMS = [
-    // ★1
-    [1, '正負の数', '(−3) + 8', 5, '数直線で −3 から右へ 8 進む。', '−3 + 8 = 5'],
-    [1, '正負の数', '(−5) − 4', -9, 'マイナスの方向へさらに 4 進む。', '−5 − 4 = −9'],
-    [1, '正負の数', '(−6) × (−2)', 12, 'マイナス × マイナス は プラス。', '6 × 2 = 12 で、符号は ＋'],
-    [1, '正負の数', '(−15) ÷ 3', -5, 'マイナス ÷ プラス は マイナス。', '15 ÷ 3 = 5 で、符号は −'],
-    [1, '正負の数', '7 − (−2)', 9, 'マイナスをひくのは、プラスをたすのと同じ。', '7 − (−2) = 7 + 2 = 9'],
-    [1, '正負の数', '−8 + 3 − 5', -10, 'プラスどうし、マイナスどうしをまとめる。', '3 − 8 − 5 = 3 − 13 = −10'],
-    [1, '文字式', 'x = 3 のとき、2x + 1 の値', 7, 'x に 3 を入れる。', '2 × 3 + 1 = 7'],
-    [1, '文字式', 'a = −2 のとき、3a の値', -6, 'a に (−2) を入れる。', '3 × (−2) = −6'],
-    [1, '方程式', 'x + 5 = 12 の x', 7, '5 を右へ移項する。', 'x = 12 − 5 = 7'],
-    [1, '方程式', '3x = −18 の x', -6, '両辺を 3 でわる。', 'x = −18 ÷ 3 = −6'],
-    [1, '比例', 'y = 2x で、x = 4 のときの y', 8, 'x に 4 を入れる。', 'y = 2 × 4 = 8'],
-    [1, '一次関数', 'y = −3x + 1 の傾き', -3, 'y = ax + b の a が傾き。', 'a = −3'],
-    [1, '一次関数', 'y = 4x − 5 の切片', -5, 'y = ax + b の b が切片。', 'b = −5'],
-    [1, '平方根', '√49', 7, '2 乗して 49 になる、正の数。', '7² = 49 なので、√49 = 7'],
-    [1, '平方根', '√2 × √8', 4, '√a × √b = √(a × b)。', '√2 × √8 = √16 = 4'],
-    [1, '平方根', '√((−5)²)', 5, '(−5)² を先に計算する。', '(−5)² = 25、√25 = 5（−5 ではない！）'],
-    // ★2
-    [2, '正負の数', '(−2)³', -8, '(−2) を 3 回かける。', '(−2) × (−2) × (−2) = 4 × (−2) = −8'],
-    [2, '正負の数', '−3²', -9, '2 乗するのは 3 だけ。かっこがない！', '−(3 × 3) = −9'],
-    [2, '正負の数', '3 − 2 × (−4)', 11, 'かけ算を先に計算する。', '2 × (−4) = −8 なので、3 − (−8) = 11'],
-    [2, '文字式', 'x = −3 のとき、x² − 2x の値', 15, '(−3)² は 9。−2x は −2 × (−3)。', '9 − 2 × (−3) = 9 + 6 = 15'],
-    [2, '方程式', '2x − 7 = 5 の x', 6, '−7 を移項してから、2 でわる。', '2x = 12、x = 6'],
-    [2, '方程式', '5x + 3 = 2x − 9 の x', -4, 'x を左に、数を右に集める。', '5x − 2x = −9 − 3、3x = −12、x = −4'],
-    [2, '比例', 'y は x に比例し、x = 3 のとき y = −12。比例定数は？', -4, 'y = ax に x = 3、y = −12 を入れる。', '−12 = 3a、a = −4'],
-    [2, '反比例', 'y は x に反比例し、x = 2 のとき y = 6。x = 4 のときの y', 3, '反比例では x × y がいつも同じ。', 'x × y = 12 なので、y = 12 ÷ 4 = 3'],
-    [2, '一次関数', '2 点 (0, 1) と (2, 7) を通る直線の傾き', 3, '傾き ＝ y の増え方 ÷ x の増え方。', '(7 − 1) ÷ (2 − 0) = 6 ÷ 2 = 3'],
-    [2, '一次関数', 'y = −2x + 5 で、x = −3 のときの y', 11, 'x に (−3) を入れる。', '−2 × (−3) + 5 = 6 + 5 = 11'],
-    [2, '一次関数', 'y = 3x − 2 で、x が 2 増えると y はいくつ増える？', 6, '傾き 3 は「x が 1 増えると y が 3 増える」。', '3 × 2 = 6'],
-    [2, '一次関数', '傾きが 2 で、点 (1, 5) を通る直線の切片', 3, 'y = 2x + b に x = 1、y = 5 を入れる。', '5 = 2 + b、b = 3'],
-    [2, '平方根', '√12 を a√b の形に', '2√3', '12 = 4 × 3。√4 は 2。', '√12 = √(4 × 3) = 2√3', null, ['3√2', '4√3', '6']],
-    [2, '平方根', '√18 + √8', '5√2', 'それぞれ a√2 の形に直す。', '√18 = 3√2、√8 = 2√2 なので、3√2 + 2√2 = 5√2', null, ['√26', '6√2', '4√2']],
-    [2, '平方根', 'a = −3 のとき、√(a²) の値', 3, '√(a²) は a の絶対値 |a|。', '√((−3)²) = √9 = 3（a ではなく |a| になる）'],
-    [2, '二次方程式', 'x² = 25 の解', [5, -5], '2 乗して 25 になる数は 2 つある。', 'x = ±5', BIG],
-    // ★3
-    [3, '連立方程式', 'x + y = 7\nx − y = 1', [4, 3], '2 つの式をたすと y が消える。', '2x = 8、x = 4、y = 7 − 4 = 3'],
-    [3, '連立方程式', 'y = 2x + 1\ny = −x + 7', [2, 5], '右辺どうしを = でつなぐ。', '2x + 1 = −x + 7、3x = 6、x = 2、y = 5'],
-    [3, '連立方程式', '3x + 2y = 4\nx + 2y = −4', [4, -4], '上の式から下の式をひくと y が消える。', '2x = 8、x = 4、4 + 2y = −4、y = −4'],
-    [3, '一次関数', '2 点 (1, 3) と (3, −1) を通る直線 y = ax + b の a と b', [-2, 5], 'まず傾き a、次に点を入れて b。', 'a = (−1 − 3) ÷ (3 − 1) = −2、3 = −2 + b、b = 5', ['a', 'b']],
-    [3, '一次関数', 'y = x + 3 と y = −2x + 6 の交点', [1, 4], '交点は連立方程式の解。', 'x + 3 = −2x + 6、3x = 3、x = 1、y = 4'],
-    [3, '二次方程式', '解の公式で\nx² + 3x + 1 = 0', ['(−3 + √5)/2', '(−3 − √5)/2'], 'x = (−b ± √(b² − 4ac)) / 2a。a = 1、b = 3、c = 1。', 'b² − 4ac = 9 − 4 = 5 なので、x = (−3 ± √5)/2', BIG,
-      [['(3 + √5)/2', '(3 − √5)/2'], ['(−3 + √13)/2', '(−3 − √13)/2']]],
-    [3, '二次方程式', '解の公式で\nx² − 4x + 1 = 0', ['2 + √3', '2 − √3'], 'a = 1、b = −4、c = 1 を公式に入れる。', 'x = (4 ± √12)/2 = (4 ± 2√3)/2 = 2 ± √3', BIG,
-      [['4 + √3', '4 − √3'], ['2 + √5', '2 − √5']]],
-    [3, '平方根', '√((1 − √2)²)', '√2 − 1', '1 − √2 はプラス？マイナス？ √(a²) は |a|。', '1 − √2 は負の数なので、|1 − √2| = √2 − 1', null, ['1 − √2', '1 + √2']]
-  ];
+  /* 問題カードは card-battle-decks.js（CB_DECKS）にある。デッキ：sho-low / sho-high / chu / ko / dai */
+  var DECKS = root.CB_DECKS || (typeof require === 'function' ? require('./card-battle-decks.js') : {});
+  var DEFAULT_DECK = 'chu';
   var SPECIALS = [
     ['swap', '入れかえ', '自分の番に使う。手札から好きな枚数をえらんで、山札と入れかえる。'],
     ['counter', '倍返し', '答える前に使う。正解したら、反撃ダメージが ★＋1 になる。'],
@@ -69,11 +22,15 @@
     ['draw', '2 枚ドロー', '自分の番に使う。山札から 2 枚引く。'],
     ['heal', '回復', '自分の番に使う。ライフを 2 回復する。']
   ];
-  var UNITS = ['正負の数', '文字式', '方程式', '比例', '一次関数', '連立方程式', '平方根', '二次方程式'];
   function unitGroup(u) { return u === '反比例' ? '比例' : u; }
-  function makeDeck() {
+  function unitsOf(key) {
+    var seen = {}, out = [];
+    DECKS[key].problems.forEach(function (p) { var g = unitGroup(p[1]); if (!seen[g]) { seen[g] = 1; out.push(g); } });
+    return out;
+  }
+  function makeDeck(key) {
     var d = [];
-    PROBLEMS.forEach(function (p, i) {
+    DECKS[key || DEFAULT_DECK].problems.forEach(function (p, i) {
       d.push({ id: 'p' + i, kind: 'q', star: p[0], unit: p[1], text: p[2], ans: p[3], hint: p[4], sol: p[5], labels: p[6] || ['x', 'y'], wrongs: p[7] || null });
     });
     SPECIALS.forEach(function (s, i) {
@@ -97,7 +54,7 @@
     var s = String(str == null ? '' : str).trim();
     if (!s) return NaN;
     s = s.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xfee0); })
-      .replace(/ルート|sqrt|√/gi, 'r')
+      .replace(/ルート|sqrt|√/gi, 'r').replace(/pi|π/gi, 'P').replace(/e/g, 'E')
       .replace(/[−ー－‐–]/g, '-').replace(/＋/g, '+').replace(/[／÷]/g, '/').replace(/[×＊]/g, '*')
       .replace(/（/g, '(').replace(/）/g, ')').replace(/．/g, '.').replace(/\s+/g, '');
     var i = 0;
@@ -106,7 +63,7 @@
       var v = unary();
       for (;;) {
         if (s[i] === '*' || s[i] === '/') { var op = s[i++]; var w = unary(); v = op === '*' ? v * w : v / w; }
-        else if (s[i] === 'r' || s[i] === '(') v = v * unary();
+        else if (s[i] === 'r' || s[i] === '(' || s[i] === 'P' || s[i] === 'E') v = v * unary();
         else break;
       }
       return v;
@@ -114,6 +71,8 @@
     function unary() { if (s[i] === '-') { i++; return -unary(); } if (s[i] === '+') { i++; return unary(); } return atom(); }
     function atom() {
       if (s[i] === 'r') { i++; var r = atom(); return r < 0 ? NaN : Math.sqrt(r); }
+      if (s[i] === 'P') { i++; return Math.PI; }
+      if (s[i] === 'E') { i++; return Math.E; }
       if (s[i] === '(') { i++; var w = expr(); if (s[i] !== ')') throw 0; i++; return w; }
       var m = /^\d+(\.\d+)?/.exec(s.slice(i)); if (!m) throw 0; i += m[0].length; return parseFloat(m[0]);
     }
@@ -125,8 +84,16 @@
     while ((m = re.exec(String(str)))) { var n = +m[1]; for (var k = 2; k * k <= n; k++) if (n % (k * k) === 0) return false; }
     return true;
   }
+  function reduced(str) {
+    var m = /^\s*[−\-]?\s*(\d+)\s*[\/／]\s*(\d+)\s*$/.exec(String(str));
+    if (!m) return true;
+    var a = +m[1], b = +m[2], x = a, y = b; while (y) { var t = x % y; x = y; y = t; }
+    return x === 1 && b !== 1;
+  }
   function check(card, inputs) {
     if (/の形に/.test(card.text) && !squareFree(inputs[0])) return false;
+    var fr = function (a) { return typeof a === 'string' && /^[−\-]?\d+\/\d+$/.test(a); };
+    if (!Array.isArray(card.ans) && fr(card.ans) && !reduced(inputs[0])) return false;
     if (Array.isArray(card.ans)) return close(evalExpr(inputs[0]), val(card.ans[0])) && close(evalExpr(inputs[1]), val(card.ans[1]));
     return close(evalExpr(inputs[0]), val(card.ans));
   }
@@ -140,12 +107,17 @@
       return w;
     }
     if (card.wrongs) { var w = card.wrongs[Math.floor(rnd() * card.wrongs.length)]; return Array.isArray(w) ? w.slice() : w; }
+    if (typeof card.ans === 'string') {
+      var f = /^([−\-]?)(\d+)\/(\d+)$/.exec(card.ans);
+      if (f) { var n = +f[2], dd = +f[3]; var c2 = [dd + '/' + n, (n + 1) + '/' + dd, (f[1] ? '' : MINUS) + n + '/' + dd]; c2 = c2.filter(function (x) { return Math.abs(evalExpr(x) - evalExpr(card.ans)) > 1e-9; }); return c2[Math.floor(rnd() * c2.length)]; }
+      return card.ans.charAt(0) === MINUS ? card.ans.slice(1) : MINUS + card.ans;
+    }
     if (!Array.isArray(card.ans)) return bad(card.ans);
     var a = card.ans.slice(); var k = rnd() < 0.5 ? 0 : 1; a[k] = bad(a[k]); return a;
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
-  var core = { val: val, PROBLEMS: PROBLEMS, makeDeck: makeDeck, evalExpr: evalExpr, check: check, wrongAnswer: wrongAnswer, fmt: fmt, ansStr: ansStr };
+  var core = { val: val, DECKS: DECKS, unitsOf: unitsOf, makeDeck: makeDeck, evalExpr: evalExpr, check: check, wrongAnswer: wrongAnswer, fmt: fmt, ansStr: ansStr };
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
   root.CBCore = core;
   if (typeof document === 'undefined') return;
@@ -161,6 +133,21 @@
     strong: { label: 'つよい', p: [0, 0.96, 0.88, 0.75] }
   };
   var S = null, lastOpt = null, timerId = null, lastIn = null;
+  /* レベル（デッキ）は ?deck=sho-low のように URL で決める */
+  var ORDER = ['sho-low', 'sho-high', 'chu', 'ko', 'dai'];
+  var curDeck = (function () {
+    var m = /[?&]deck=([\w-]+)/.exec(location.search);
+    return m && DECKS[m[1]] ? m[1] : DEFAULT_DECK;
+  })();
+  function showLevel() {
+    var d = DECKS[curDeck], e = $('cb-level');
+    if (e) e.textContent = d.name + '編（' + d.range + '）';
+    document.title = '数学カードバトル ' + d.name + '編 - 会津若松の数学教室';
+  }
+  function setDeck(k) {
+    curDeck = k; showLevel();
+    try { history.replaceState(null, '', location.pathname + '?deck=' + k); } catch (e) {}
+  }
   /* 音（card-battle-sound.js）。読み込めなくてもゲームは動く */
   function snd(n, d) { if (window.CBSound) window.CBSound.play(n, d); }
   function bgm(on) { if (!window.CBSound) return; if (on) window.CBSound.bgmStart(); else window.CBSound.bgmStop(); }
@@ -172,11 +159,11 @@
     S = {
       cpu: CPU_SET[opt.cpu], time: opt.time,
       life: { you: opt.lifeYou, cpu: opt.lifeCpu }, max: { you: opt.lifeYou, cpu: opt.lifeCpu },
-      deck: shuffle(makeDeck()), used: [],
+      deckKey: opt.deck, deck: shuffle(makeDeck(opt.deck)), used: [],
       hand: { you: [], cpu: [] }, turn: 'you', phase: '', sel: -1,
       q: null, counter: false, shield: false, swapCard: null, swapPick: [], result: null, log: [], msg: '', used1: {}
     };
-    var u = shuffle(UNITS.slice());
+    var u = shuffle(unitsOf(opt.deck));
     S.weak = [u[0], u[1]]; S.good = u[2];
     for (var i = 0; i < HAND; i++) { S.hand.you.push(draw()); S.hand.cpu.push(draw()); }
     addLog('バトル開始！ あなたの先攻です。CPU の苦手は ' + S.weak.join('・') + '、得意は ' + S.good + '。');
@@ -471,8 +458,8 @@
         return '<div class="cb-stage">' + cardHTML(q, { big: true }) + '<div class="cb-side"><h2>CPU の攻撃！ 答えよう' + (S.time ? '<span class="cb-timer" id="cb-timer">' + S.left + '</span>' : '') + '</h2>' +
           '<p class="cb-note">正解すれば CPU に反撃 ' + counterDmg(q) + ' ダメージ。まちがえると ' + wrongDmg(q, true) + ' ダメージ。</p>' +
           (S.counter ? '<p class="cb-tag cb-counterbtn">倍返し宣言中</p>' : '') + (S.shield ? '<p class="cb-tag cb-shieldbtn">シールド中</p>' : '') +
-          ins + '<div class="cb-keys" aria-label="記号を入れる">' + ['√', '−', '/', '(', ')'].map(function (k) { return '<button type="button" class="cb-key" data-ins="' + k + '">' + k + '</button>'; }).join('') + '</div>' +
-          '<p class="cb-note">マイナスは −3、分数は 1/2、ルートは 2√3 のように入れてね。</p>' +
+          ins + (DECKS[S.deckKey].keys.length ? '<div class="cb-keys" aria-label="記号を入れる">' + DECKS[S.deckKey].keys.map(function (k) { return '<button type="button" class="cb-key" data-ins="' + k + '">' + k + '</button>'; }).join('') + '</div>' : '') +
+          '<p class="cb-note">' + esc(DECKS[S.deckKey].note) + '</p>' +
           (tools ? '<div class="cb-row">' + tools + '</div>' : '') +
           '<button type="button" class="cb-btn cb-main" id="cb-answer">答える</button></div></div>';
       }
@@ -503,6 +490,7 @@
       '<li><b>特殊カード</b>：答える番に「倍返し（反撃が ★＋1 に）」「シールド（ダメージ −2）」、自分の番に「入れかえ（好きな枚数を山札と交換）」「2 枚ドロー」「回復（ライフ ＋2）」。</li>' +
       '<li>相手のライフを 0 にしたら勝ち！</li></ol></div>' +
       '<div class="cb-box"><h2>設定</h2>' +
+      '<fieldset><legend>レベル（問題カードの束）</legend>' + ORDER.map(function (k) { return radio('dk', k, DECKS[k].name + '（' + DECKS[k].range + '）', k === curDeck); }).join('') + '</fieldset>' +
       '<fieldset><legend>CPU の強さ</legend>' + radio('cp', 'easy', 'やさしい', true) + radio('cp', 'normal', 'ふつう', false) + radio('cp', 'strong', 'つよい', false) + '</fieldset>' +
       '<fieldset><legend>あなたのライフ</legend>' + radio('ly', '10', '10', true) + radio('ly', '7', '7', false) + radio('ly', '5', '5（ハンデ）', false) + '</fieldset>' +
       '<fieldset><legend>CPU のライフ</legend>' + radio('lc', '10', '10', true) + radio('lc', '7', '7', false) + radio('lc', '5', '5', false) + '</fieldset>' +
@@ -512,11 +500,12 @@
   }
   function readOpt() {
     function v(n) { var e = document.querySelector('input[name="cb-' + n + '"]:checked'); return e ? e.value : ''; }
-    return { cpu: v('cp'), lifeYou: +v('ly'), lifeCpu: +v('lc'), time: +v('tm') };
+    return { deck: v('dk') || curDeck, cpu: v('cp'), lifeYou: +v('ly'), lifeCpu: +v('lc'), time: +v('tm') };
   }
   function on(id, fn) { var e = $(id); if (e) e.onclick = fn; }
   function bindSetup() {
-    on('cb-start', function () { lastOpt = readOpt(); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.onchange = function () { setDeck(r.value); }; });
+    on('cb-start', function () { lastOpt = readOpt(); setDeck(lastOpt.deck); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); });
     bindSound();
   }
   function bindSound() {
@@ -567,6 +556,6 @@
     });
   }
   root.__cbState = function () { return S; };  // 動作確認用
-  function init() { render(); }
+  function init() { showLevel(); render(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })(typeof window !== 'undefined' ? window : globalThis);

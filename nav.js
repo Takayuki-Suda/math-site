@@ -64,7 +64,7 @@
     if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
-  /* ── 「中学生」メニューにゲーム（グラフ・トレジャー、数学カードバトル）を追加（日本語版のみ）── */
+  /* ── 「中学生」メニューにゲーム「グラフ・トレジャー」を追加（日本語版のみ）── */
   function injectChuGame(nav){
     if(location.pathname.indexOf('/math-site/en/')===0) return;
     var a=nav.querySelector('.site-nav__dropdown a[href$="/chu/ikiji.html"]');
@@ -73,10 +73,31 @@
     g.href='/math-site/chu/graph-treasure.html';
     g.textContent='\u30b2\u30fc\u30e0\uff1a\u30b0\u30e9\u30d5\u30fb\u30c8\u30ec\u30b8\u30e3\u30fc'; /* ゲーム：グラフ・トレジャー */
     a.parentNode.appendChild(g);
-    var cb=document.createElement('a');
-    cb.href='/math-site/chu/card-battle.html';
-    cb.textContent='\u30b2\u30fc\u30e0\uff1a\u6570\u5b66\u30ab\u30fc\u30c9\u30d0\u30c8\u30eb'; /* ゲーム：数学カードバトル */
-    a.parentNode.appendChild(cb);
+  }
+
+  /* ── 「カードゲーム」メニュー（数学カードバトルの 5 レベル）を追加（日本語版のみ）──
+     挿入位置は「なぜ学ぶのか」の直前（無ければ末尾）。ラベルは英語版ビルドで訳されないよう Unicode エスケープ。 */
+  function injectCardMenu(nav){
+    if(location.pathname.indexOf('/math-site/en/')===0) return;
+    var list=nav.querySelector('.site-nav__list');
+    if(!list || nav.querySelector('.site-nav__item--card')) return;
+    var li=document.createElement('li');
+    li.className='site-nav__item site-nav__item--card';
+    li.innerHTML=
+      '<a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">\u30ab\u30fc\u30c9\u30b2\u30fc\u30e0 <span class="site-nav__arrow">\u25bc</span></a>'+
+      '<div class="site-nav__dropdown" style="min-width:250px">'+
+        '<a href="/math-site/chu/card-battle.html?deck=sho-low">\u5c0f\u5b66\u6821 \u4f4e\u5b66\u5e74\uff08\u5c0f1\u301c\u5c0f3\uff09</a>'+
+        '<a href="/math-site/chu/card-battle.html?deck=sho-high">\u5c0f\u5b66\u6821 \u9ad8\u5b66\u5e74\uff08\u5c0f4\u301c\u5c0f6\uff09</a>'+
+        '<a href="/math-site/chu/card-battle.html?deck=chu">\u4e2d\u5b66\u751f</a>'+
+        '<a href="/math-site/chu/card-battle.html?deck=ko">\u9ad8\u6821\u751f</a>'+
+        '<a href="/math-site/chu/card-battle.html?deck=dai">\u5927\u5b66\u751f</a>'+
+      '</div>';
+    var ref=null, ch=list.children;
+    for(var i=0;i<ch.length;i++){
+      var x=ch[i].querySelector && ch[i].querySelector('a.site-nav__link[href]');
+      if(x && (x.getAttribute('href')||'').indexOf('why.html')>-1){ ref=ch[i]; break; }
+    }
+    if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
   /* ── 言語切替（日本語 ⇄ English）──
@@ -108,6 +129,7 @@
     if(!nav) return;
     injectGradMenu(nav);
     injectChuGame(nav);
+    injectCardMenu(nav);
     injectLangSwitch(nav);
     injectCSS();
 
