@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja" data-no-en>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グラフ・トレジャー｜直線を引いてお宝を集める一次関数ゲーム - 会津若松の数学教室</title>
+<meta name="description" content="座標平面に直線 y=ax+b を引いて、お宝を集めるゲーム。コンピュータと対戦しながら、傾き・切片・連立方程式（交点）・移項・放物線が身につきます。中学1〜3年の学年別ルールつき。">
+<meta name="keywords" content="一次関数,ゲーム,連立方程式,傾き,切片,中学数学,会津若松,数学,個別指導">
+<meta property="og:title" content="グラフ・トレジャー｜直線を引いてお宝を集める一次関数ゲーム">
+<meta property="og:description" content="座標平面に直線を引いてお宝を集めよう。コンピュータと対戦しながら、傾き・切片・連立方程式・放物線が身につく中学数学ゲーム。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://takayuki-suda.github.io/math-site/chu/graph-treasure.html">
+<meta property="og:image" content="https://takayuki-suda.github.io/math-site/ogp.png">
+<meta property="og:site_name" content="会津若松の算数・数学教室">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://takayuki-suda.github.io/math-site/chu/graph-treasure.html">
+<script src="/math-site/ga.js" defer></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --bg3:#1a2235; --line:rgba(200,168,75,.25);
+  --gold:#c8a84b; --gold-lt:#e8c96b; --white:#f0f4ff; --gray:#9fb0c8;
+  --you:#4aa8ff; --cpu:#ff7a6b; --slope:#4aa8ff; --icpt:#ff9f43; --eq:#3ecf8e; --para:#c38bff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--white);line-height:1.7;}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+.gt-hero{text-align:center;padding:30px 16px 18px;background:radial-gradient(ellipse 70% 90% at 50% 0%,rgba(200,168,75,.16),transparent 70%);}
+.gt-badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.15em;color:var(--gold-lt);border:1px solid var(--line);border-radius:999px;padding:3px 14px;margin-bottom:10px;}
+.gt-hero h1{font-family:'Kaisei Decol',serif;font-size:clamp(1.7rem,6vw,2.6rem);color:var(--gold-lt);line-height:1.3;}
+.gt-hero p{color:var(--gray);font-size:.92rem;margin-top:8px;}
+.gt-wrap{max-width:1180px;margin:0 auto;padding:8px 16px 48px;}
+.gt-game{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,1fr);gap:20px;align-items:start;}
+@media(max-width:880px){.gt-game{grid-template-columns:minmax(0,1fr);}}
+.gt-boardbox{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:10px;position:sticky;top:60px;}
+#gt-board{display:block;width:100%;height:auto;touch-action:manipulation;font-family:'Noto Sans JP',sans-serif;}
+.gt-plate{fill:#0e1628;stroke:rgba(200,168,75,.35);}
+.gt-grid line{stroke:#2a3a58;stroke-width:1.2;}
+.gt-axis line{stroke:#c9d6ea;stroke-width:2.4;}
+.gt-arrow{fill:#c9d6ea;}
+.gt-label text{fill:#a9b8d0;font-size:15px;}
+.gt-axname{fill:#e6ecf8;font-size:19px;font-weight:700;font-style:italic;}
+.gt-dots circle{fill:#4d6189;}
+.gt-curve{fill:none;stroke-width:3.5;stroke-linecap:round;}
+.gt-curve.gt-you{stroke:var(--you);}
+.gt-curve.gt-cpu{stroke:var(--cpu);}
+.gt-curve.gt-new{stroke-width:5;filter:drop-shadow(0 0 5px currentColor);}
+.gt-preview{fill:none;stroke:#ffffff;stroke-width:3;stroke-dasharray:10 8;opacity:.85;}
+.gt-preview.gt-bad{stroke:#ff5d5d;}
+.gt-mark{fill:none;stroke-width:3;}
+.gt-mark.gt-you{stroke:var(--you);} .gt-mark.gt-cpu{stroke:var(--cpu);}
+.gt-coin circle{fill:#e8c96b;stroke:#7a5c00;stroke-width:1.5;}
+.gt-coin text{fill:#3a2a00;font-size:14px;font-weight:700;}
+.gt-gold circle{fill:#ffb703;stroke:#fff3c4;stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(255,183,3,.7));}
+.gt-gold text{fill:#2a1a00;font-size:17px;font-weight:900;}
+.gt-tip rect{fill:#000;opacity:.82;}
+.gt-tip text{fill:#fff;font-size:15px;font-weight:700;}
+.gt-legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:.8rem;color:var(--gray);padding:6px 4px 2px;}
+.gt-legend span::before{content:'';display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:currentColor;}
+.gt-legend .l-you{color:var(--you);} .gt-legend .l-cpu{color:var(--cpu);}
+
+#gt-panel{display:flex;flex-direction:column;gap:12px;}
+.gt-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.gt-score{background:var(--bg2);border:1.5px solid var(--bg3);border-radius:14px;padding:10px 12px;text-align:center;}
+.gt-score.is-turn{border-color:currentColor;box-shadow:0 0 0 1px currentColor inset;}
+.gt-score.gt-you{color:var(--you);} .gt-score.gt-cpu{color:var(--cpu);}
+.gt-score-name{font-weight:700;font-size:.9rem;}
+.gt-score-tot{font-size:1.9rem;font-weight:900;color:var(--white);line-height:1.2;}
+.gt-score-tot small{font-size:.8rem;margin-left:2px;color:var(--gray);}
+.gt-score-sub{font-size:.75rem;color:var(--gray);}
+.gt-turninfo{font-size:.85rem;color:var(--gray);text-align:center;}
+.gt-msg{background:rgba(200,168,75,.12);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.92rem;color:var(--gold-lt);}
+.gt-box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.gt-box h3{font-size:1.05rem;color:var(--gold-lt);}
+.gt-note{font-size:.84rem;color:var(--gray);}
+.gt-warn{font-size:.88rem;color:#ff8a8a;}
+.gt-big{font-size:1.2rem;font-weight:700;}
+fieldset{border:none;display:flex;flex-direction:column;gap:4px;}
+legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;}
+.gt-radio{display:flex;align-items:center;gap:8px;font-size:.92rem;cursor:pointer;min-height:32px;}
+.gt-radio input{accent-color:var(--gold);width:18px;height:18px;}
+.gt-hand{display:flex;flex-wrap:wrap;gap:8px;}
+.gt-card{flex:1 1 70px;min-height:76px;max-width:110px;border-radius:12px;border:2px solid currentColor;background:transparent;color:var(--slope);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;transition:transform .12s,background .12s;}
+.gt-card-b{color:var(--icpt);}
+.gt-card:hover{transform:translateY(-2px);}
+.gt-card.is-sel{background:currentColor;}
+.gt-card.is-sel span{color:#0a0e1a;}
+.gt-card-lab{font-size:.72rem;font-weight:700;}
+.gt-card-v{font-size:1.7rem;font-weight:900;line-height:1.1;color:var(--white);}
+.gt-eq{font-size:1.45rem;font-weight:900;text-align:center;background:var(--bg3);border-radius:10px;padding:10px;letter-spacing:.03em;}
+.gt-cpu-eq{color:var(--cpu);}
+.gt-eqcard{font-size:1.6rem;font-weight:900;text-align:center;color:var(--eq);border:2px dashed var(--eq);border-radius:12px;padding:14px;}
+.gt-btn{font-family:inherit;font-size:.95rem;font-weight:700;border-radius:999px;padding:11px 18px;min-height:44px;cursor:pointer;border:1.5px solid var(--gold);background:transparent;color:var(--gold-lt);}
+.gt-btn:hover{background:rgba(200,168,75,.12);}
+.gt-main{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#1a1040;border:none;}
+.gt-main:hover{filter:brightness(1.08);background:linear-gradient(135deg,var(--gold),var(--gold-lt));}
+.gt-ghost{border-color:#3a4a66;color:var(--gray);}
+.gt-eqbtn{border-color:var(--eq);color:var(--eq);}
+.gt-parabtn{border-color:var(--para);color:var(--para);}
+.gt-matta{border-color:var(--cpu);color:var(--cpu);font-size:1.05rem;}
+.gt-alt{display:flex;flex-direction:column;gap:8px;border-top:1px dashed #33405c;padding-top:12px;}
+.gt-alt>span{font-size:.8rem;color:var(--gray);text-align:center;}
+.gt-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:1.1rem;font-weight:700;}
+.gt-yax{justify-content:center;font-size:1.25rem;}
+.gt-in{width:84px;min-height:44px;border-radius:10px;border:1.5px solid #3a4a66;background:#0b1222;color:var(--white);font-size:1.1rem;font-family:inherit;text-align:center;padding:4px 6px;}
+.gt-in:focus{outline:2px solid var(--gold);border-color:transparent;}
+.gt-tag{font-size:.75rem;color:var(--gray);width:100%;}
+.gt-opts{display:flex;flex-direction:column;gap:8px;}
+.gt-opt{font-family:inherit;font-size:.92rem;text-align:left;border-radius:12px;border:1.5px solid var(--cpu);background:transparent;color:var(--white);padding:10px 12px;min-height:44px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;}
+.gt-opt.is-sel{background:rgba(255,122,107,.16);}
+.gt-pts{color:var(--gold-lt);font-weight:700;white-space:nowrap;}
+.gt-steps{background:var(--bg3);border-radius:10px;padding:10px 14px;font-size:.9rem;}
+.gt-steps b{color:var(--gold-lt);}
+.gt-steps ol{padding-left:1.3em;margin-top:4px;}
+.gt-lines,.gt-log{background:var(--bg2);border:1px solid var(--bg3);border-radius:12px;padding:10px 14px;font-size:.86rem;}
+.gt-lines summary,.gt-log summary{cursor:pointer;color:var(--gold-lt);font-weight:700;}
+.gt-lines ul{list-style:none;margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+.gt-lines li.gt-you{color:var(--you);} .gt-lines li.gt-cpu{color:var(--cpu);}
+.gt-dot{display:inline-block;width:14px;height:4px;border-radius:2px;background:currentColor;margin-right:8px;vertical-align:middle;}
+.gt-log ol{padding-left:1.3em;margin-top:6px;max-height:220px;overflow:auto;color:#c8d4e0;}
+.gt-log li.gt-you{color:#a9d4ff;} .gt-log li.gt-cpu{color:#ffb3a9;}
+
+.gt-rules{max-width:820px;margin:34px auto 0;background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 24px;}
+.gt-rules h2{font-size:1.15rem;color:var(--gold-lt);margin-bottom:10px;}
+.gt-rules h3{font-size:.98rem;color:var(--gold-lt);margin:16px 0 4px;}
+.gt-rules p,.gt-rules li{font-size:.9rem;color:#c8d4e0;}
+.gt-rules ul,.gt-rules ol{padding-left:1.3em;}
+.gt-rules table{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:6px;}
+.gt-rules th,.gt-rules td{border:1px solid #33405c;padding:6px 8px;text-align:left;}
+.gt-rules th{background:var(--bg3);color:var(--gold-lt);}
+.gt-more{max-width:820px;margin:24px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+.gt-more a{color:var(--gold-lt);border:1px solid var(--line);border-radius:999px;padding:9px 16px;text-decoration:none;font-size:.88rem;}
+.gt-more a:hover{background:rgba(200,168,75,.1);}
+.gt-cta{max-width:820px;margin:24px auto 0;text-align:center;font-size:.88rem;color:var(--gray);}
+.gt-cta a{color:var(--gold-lt);}
+@media(max-width:880px){
+  .gt-boardbox{top:var(--site-nav-h,46px);z-index:5;padding:6px;box-shadow:0 10px 24px rgba(0,0,0,.6);}
+  #gt-board{max-width:min(100%,40vh);margin:0 auto;}
+  .gt-legend{display:none;}
+}
+</style>
+</head>
+<body>
+<style>
+/* ── SITE NAV ── */
+.site-nav{position:sticky;top:0;z-index:9999;background:#0a0e1a;border-bottom:1px solid rgba(200,168,75,.3);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;}
+.site-nav__inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:4px;}
+.site-nav__logo{color:#c8a84b;font-weight:700;font-size:.95rem;text-decoration:none;padding:14px 10px;white-space:nowrap;letter-spacing:.05em;margin-right:8px;}
+.site-nav__logo:hover{color:#e8c96b;}
+.site-nav__list{list-style:none;display:flex;margin:0;padding:0;gap:0;}
+.site-nav__item{position:relative;}
+.site-nav__link{display:flex;align-items:center;gap:4px;color:#f0f4ff;text-decoration:none;cursor:pointer;padding:14px 12px;font-size:.88rem;white-space:nowrap;transition:color .2s;}
+.site-nav__link:hover,.site-nav__link:focus{color:#c8a84b;outline:none;}
+.site-nav__arrow{font-size:.60rem;opacity:.7;transition:transform .25s;display:inline-block;}
+.site-nav__item:hover .site-nav__arrow{transform:rotate(180deg);}
+.site-nav__dropdown{display:none;position:absolute;top:100%;left:0;background:#111827;border:1px solid rgba(200,168,75,.25);border-radius:6px;min-width:190px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+.site-nav__item:hover .site-nav__dropdown,.site-nav__item:focus-within .site-nav__dropdown{display:block;}
+.site-nav__dropdown a{display:block;color:#d0d8e8;text-decoration:none;padding:9px 18px;font-size:.85rem;transition:color .2s,background .2s;}
+.site-nav__dropdown a:hover{color:#c8a84b;background:rgba(200,168,75,.08);}
+@media(max-width:700px){
+  .site-nav__inner{overflow-x:auto;flex-wrap:nowrap;padding:0 10px;}
+  .site-nav__link{padding:12px 8px;font-size:.78rem;}
+  .site-nav__logo{font-size:.82rem;padding:12px 6px;}
+}
+</style>
+<nav class="site-nav" aria-label="サイトナビゲーション">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="/math-site/">∑ 数学の教室</a>
+    <ul class="site-nav__list">
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/">ホーム</a></li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">小学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/sho/kazu.html">かずのかぞえかた</a>
+          <a href="/math-site/sho/tashizan.html">たしざん</a>
+          <a href="/math-site/sho/hikizan.html">ひきざん</a>
+          <a href="/math-site/sho/kuku.html">九九の表</a>
+          <a href="/math-site/sho/bunsu.html">分数の足し算</a>
+          <a href="/math-site/sho/sankaku.html">三角形の面積</a>
+          <a href="/math-site/sho/en.html">円の面積</a>
+          <a href="/math-site/sho/puzzle.html">パズル🧩</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">中学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/chu/moji.html">文字式ってなに？</a>
+          <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+          <a href="/math-site/chu/ikiji.html">一次関数・グラフ</a>
+          <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+          <a href="/math-site/chu/sanpei.html">三平方の定理</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">高校生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/ko/sankakuhi.html">三角関数</a>
+          <a href="/math-site/ko/bibun.html">微分・接線</a>
+          <a href="/math-site/ko/sekibun.html">積分と面積</a>
+          <a href="/math-site/ko/daigaku.html">大学数学への扉</a>
+          <a href="/math-site/ko/kyokugen.html">極限とε-δ</a>
+        </div>
+      </li>
+      <li class="site-nav__item">
+        <a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">大学生 <span class="site-nav__arrow">▼</span></a>
+        <div class="site-nav__dropdown">
+          <a href="/math-site/dai/senkei.html">線形写像と次元定理</a>
+          <a href="/math-site/dai/gun.html">群論</a>
+          <a href="/math-site/dai/fukuso.html">複素関数論</a>
+          <a href="/math-site/dai/fourier.html">フーリエ解析</a>
+          <a href="/math-site/dai/seisuron.html">整数論</a>
+          <a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a>
+        </div>
+      </li>
+      <li class="site-nav__item"><a class="site-nav__link" href="/math-site/why.html">なぜ学ぶのか</a></li>
+      <li class="site-nav__item"><a class="site-nav__link site-nav__game" href="/math-site/sho/map.html" style="background:linear-gradient(135deg,#c8a84b,#e8c96b);color:#1a1040;font-weight:900;border-radius:9px;margin:6px 2px;padding:8px 14px;box-shadow:0 0 12px rgba(200,168,75,.45);">🗺️ ゲームで冒険</a></li>
+    </ul>
+  </div>
+</nav>
+<script src="/math-site/nav.js" defer></script>
+
+<header class="gt-hero">
+  <div class="gt-badge">中学数学ゲーム</div>
+  <h1>グラフ・トレジャー</h1>
+  <p>直線を引いて、お宝を集めよう。相手はコンピュータ。<br>交点を計算できたらボーナス！</p>
+</header>
+
+<main class="gt-wrap">
+  <div class="gt-game">
+    <div class="gt-boardbox">
+      <svg id="gt-board" role="img" aria-label="x と y が −5 から 5 までの座標平面のゲーム盤"></svg>
+      <div class="gt-legend"><span class="l-you">あなたの線</span><span class="l-cpu">CPU の線</span><span>★ お宝 1点・金 3点</span></div>
+    </div>
+    <div id="gt-panel" aria-live="polite"></div>
+  </div>
+
+  <section class="gt-rules" id="rules">
+    <h2>遊び方</h2>
+    <p>座標平面の格子点（線が交わるところ）にお宝が置いてあります。自分の番に直線を 1 本引くと、その線が通る格子点のお宝がすべて自分のものになります。決まった回数の手番が終わったとき、点数の多いほうの勝ちです。</p>
+    <h3>自分の番にできること（1 つえらぶ）</h3>
+    <ol>
+      <li><b>手札で線を引く</b>：傾きカードと切片カードを 1 枚ずつえらび、y = ax + b を引く。（中1 は傾きだけで y = ax）</li>
+      <li><b>式カードに挑戦</b>：2x + y = 3 のような式を、移項して y = ax + b に直す。正解なら ＋1点で、その線を引ける。</li>
+      <li><b>放物線カードを引く</b>（中3）：y = x² などの放物線を引く。</li>
+    </ol>
+    <h3>交点ボーナス</h3>
+    <p>自分の線が相手の線と交わったら、交点を 1 つえらんで座標を計算できます。交点を求めることは、2 つの式の連立方程式を解くことです。</p>
+    <table>
+      <thead><tr><th>できたこと</th><th>点</th></tr></thead>
+      <tbody>
+        <tr><td>お宝 ★ ／ 金のお宝</td><td>1 ／ 3</td></tr>
+        <tr><td>式カードを正しく直せた</td><td>1</td></tr>
+        <tr><td>交点が格子点（整数）</td><td>1</td></tr>
+        <tr><td>交点が分数</td><td>2</td></tr>
+        <tr><td>放物線と直線の交点（2 つ）</td><td>2（解の公式が必要なら 3）</td></tr>
+        <tr><td>CPU のまちがいに「待った！」</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <h3>待った！</h3>
+    <p>CPU はときどき、言った式とちがう線を引きます。CPU の番のあとに、言った式と盤の線が合っているか確かめよう。まちがいを見つけて「待った！」を押すと ＋1点。合っていても減点はありません。</p>
+    <h3>線の引き方のコツ</h3>
+    <p>まず y 軸の上の点 (0, b) が切片。そこから右へ 1 進んで、上へ a 進む（a がマイナスなら下へ）。傾きが ½ なら、右へ 2 進んで上へ 1。</p>
+  </section>
+
+  <nav class="gt-more" aria-label="関連する教材">
+    <a href="/math-site/chu/ikiji.html">一次関数・グラフを復習する</a>
+    <a href="/math-site/chu/houteishiki.html">方程式ってなに？</a>
+    <a href="/math-site/chu/niji.html">二次関数・放物線</a>
+  </nav>
+  <p class="gt-cta">一次関数や連立方程式を「なぜ？」から学びたい方へ：<a href="https://www.street-academy.com/myclass/219220" target="_blank" rel="noopener">オンライン個別指導（ストアカ）</a></p>
+</main>
+
+<script src="/math-site/chu/graph-treasure.js"></script>
+</body>
+</html>

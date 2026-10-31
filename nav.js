@@ -64,12 +64,24 @@
     if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
+  /* ── 「中学生」メニューにゲーム「グラフ・トレジャー」を追加（日本語版のみ）── */
+  function injectChuGame(nav){
+    if(location.pathname.indexOf('/math-site/en/')===0) return;
+    var a=nav.querySelector('.site-nav__dropdown a[href$="/chu/ikiji.html"]');
+    if(!a || nav.querySelector('.site-nav__dropdown a[href$="/chu/graph-treasure.html"]')) return;
+    var g=document.createElement('a');
+    g.href='/math-site/chu/graph-treasure.html';
+    g.textContent='\u30b2\u30fc\u30e0\uff1a\u30b0\u30e9\u30d5\u30fb\u30c8\u30ec\u30b8\u30e3\u30fc'; /* ゲーム：グラフ・トレジャー */
+    a.parentNode.appendChild(g);
+  }
+
   /* ── 言語切替（日本語 ⇄ English）──
      英語版は /math-site/en/ 以下に同じ構成で置いてある。
      ラベルはUnicodeエスケープ（英語版ビルドの翻訳対象にしないため）。 */
   function injectLangSwitch(nav){
     var list=nav.querySelector('.site-nav__list');
     if(!list || nav.querySelector('.site-nav__item--lang')) return;
+    if(document.documentElement.hasAttribute('data-no-en')) return; /* 英語版がまだないページ */
     var p=location.pathname, en='/math-site/en/', base=en.slice(0,-3); /* 英語版ビルドのパス書き換えを受けない書き方 */
     var isEn=p.indexOf(en)===0, href;
     if(isEn){ href=base+p.slice(en.length); }
@@ -91,6 +103,7 @@
     var nav=document.querySelector('.site-nav');
     if(!nav) return;
     injectGradMenu(nav);
+    injectChuGame(nav);
     injectLangSwitch(nav);
     injectCSS();
 
