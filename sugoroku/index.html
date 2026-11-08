@@ -562,6 +562,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
       <ol class="invHow"><li>参加者はURLを開く（またはQRを読む）</li><li>自分の名前をタップ</li><li>問題タイムになると、その人の画面に問題が自動で出ます。答えも自動で届きます</li></ol>
       <div class="invLab">つながっている人</div><div id="invList" class="invList"></div>
       <div id="invMode" class="invMode"></div>
+      <button class="btn big gold" id="invStart" onclick="startFromInvite()" style="display:none;margin:6px 0 10px">🎬 ゲームをはじめる</button><br>
       <button class="small-link" onclick="newRoom()">部屋番号を新しくする</button>
     </div>
     <div class="invQR" id="invQR"></div>
@@ -1391,6 +1392,7 @@ function waitHTML(){
   const I = P.info || {}, me = pMe() || {};
   const msg = ({
     setup:['⏳', '先生がはじめるのを待っています'],
+    lobby:['🎄', '準備OK！<br>もうすぐゲームが始まります'],
     roll:[String(I.turnId) === String(P.pid) ? '🎲' : '⏳', String(I.turnId) === String(P.pid) ? 'あなたの番です！<br>先生の画面を見てね' : 'サイコロの順番を待っています'],
     quizReady:['📝', 'まもなく問題タイム！<br>この画面に問題が出ます'],
     quiz:me.topic > 0 ? ['✅', '答えを送りました！<br>結果を待ってね'] : ['📣', '今回は問題なし。<br>みんなを応援しよう！'],
@@ -3197,6 +3199,9 @@ function renderInvite(){
   $('#invMode').innerHTML = NET.mode === 'fb' ? (NET.connected ? '🟢 インターネットでつながっています' : '🔴 つながっていません（インターネットを確認してください）') : '🟡 テストモード：同じパソコンの別のタブだけでつながります（Firebaseの設定を入れると、みんなのスマホとつながります）';
   $('#invList').innerHTML = H.players.filter(pl => !pl.cpu).map(pl => `<span class="invp ${connected(pl) ? 'on' : ''}" style="--pc:${pl.color}">${connected(pl) ? '📱' : '…'} ${esc(pl.name)}</span>`).join('') || '<span class="invp">（⚙ 参加者で名前を入れてください）</span>';
   makeQR(url);
+  const sb = $('#invStart'); sb.style.display = H.phase === 'lobby' ? '' : 'none';
+  const hum = H.players.filter(pl => !pl.cpu), con = hum.filter(connected).length;
+  sb.textContent = hum.length && con < hum.length ? `🎬 ゲームをはじめる（${con} / ${hum.length}人つながっています）` : '🎬 ゲームをはじめる';
 }
 let qrLib = null;
 async function makeQR(url){
@@ -3210,6 +3215,7 @@ async function makeQR(url){
 function openInvite(){ openModal('m-invite'); renderInvite(); }
 window.openInvite = openInvite;
 window.copyInvite = () => { const u = $('#invUrl'); u.select(); try { navigator.clipboard.writeText(u.value); } catch(e){ document.execCommand('copy'); } $('#invCopy').textContent = 'コピーしました！'; setTimeout(() => { $('#invCopy').textContent = 'コピー'; }, 1500); };
+window.startFromInvite = () => { if (H.phase === 'lobby') mainAction(); };
 window.newRoom = () => { hostRoom(true); renderInvite(); };
 function slotPos(pl, posId = pl.pos){
   const same = H.players.filter(o => o.pos === posId), k = same.indexOf(pl), n = same.length;
@@ -3313,10 +3319,11 @@ function updatePawns(){
 }
 function renderHUD(){
   const cur = H.players[H.turn];
-  $('#hround').textContent = H.phase === 'setup' ? '' : `ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}`;
+  $('#hround').textContent = H.phase === 'setup' || H.phase === 'lobby' ? '' : `ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}`;
   const ph = $('#phase');
   const txt = ({
     setup:'「⚙ 参加者」で名前を入れてね',
+    lobby:'📲 みんながつながったら「ゲームをはじめる」',
     roll: cur ? `${cur.emoji} ${cur.name}さんの番！` : '',
     quizReady:'📝 全員そろった！ 問題タイム',
     quiz:'📝 問題タイム！ 自分の画面の問題を解こう',
@@ -3332,6 +3339,7 @@ function renderHUD(){
   const mb = $('#mainBtn');
   let label = ({
     setup:'⚙ 参加者を決める',
+    lobby:'🎬 ゲームをはじめる',
     roll: cur ? `🎲 ${cur.name}さんのサイコロ` : '',
     quizReady:'📝 問題タイム スタート（2分）',
     quiz:'⏹ 問題タイムを終わる',
@@ -3414,6 +3422,7 @@ function mainAction(){
   initAudio(); if (H.busy || H.asking) return;
   const cur = H.players[H.turn];
   if (H.phase === 'setup') openSetup();
+  else if (H.phase === 'lobby'){ closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; openingShow(); }
   else if (H.phase === 'roll' && cur && !isBot(cur)) takeTurn(cur);
   else if (H.phase === 'quizReady') startQuiz();
   else if (H.phase === 'quiz') endQuiz();
@@ -3741,7 +3750,7 @@ function openSetup(){
 }
 let SETUP_MAP = '';
 function renderMapSel(){
-  const started = H.phase !== 'setup';
+  const started = H.phase !== 'setup' && H.phase !== 'lobby';
   $('#mapsel').innerHTML = Object.entries(MAPS).map(([k, m]) => `<button class="mapcard ${SETUP_MAP === k ? 'sel' : ''}" data-map="${k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join('') +
     (started ? `<div class="mapnote">※ マップを変えると、ゲームはさいしょからになります</div>` : '');
   $('#mapsel').querySelectorAll('.mapcard').forEach(b => b.onclick = () => { SETUP_MAP = b.dataset.map; renderMapSel(); sfx.star(); });
@@ -3777,7 +3786,8 @@ function saveSetup(){
   H.players.forEach(removePawn);
   H.players = next; H.players.forEach(pl => { pl.obj = makePawn(pl); });
   placeAll(); closeModal('m-setup');
-  if (H.phase === 'setup' && next.length){ H.phase = 'roll'; H.turn = 0; initAudio(); openingShow(); }
+  // すぐには始めず「待合室」に。参加者がつながるのを待ってから「ゲームをはじめる」
+  if (H.phase === 'setup' && next.length){ H.phase = 'lobby'; H.turn = 0; initAudio(); renderHUD(); setTimeout(openInvite, 300); }
   if (H.turn >= next.length) H.turn = 0;
   renderHUD();
 }
@@ -3792,7 +3802,7 @@ function resetGame(){
 /* ---- ボタン ---- */
 $('#mainBtn').onclick = mainAction;
 $('#watchBtn').onclick = () => { H.watch = !H.watch; renderHUD(); };
-$('#autoBtn').onclick = () => { initAudio(); H.auto = !H.auto; renderHUD(); if (H.auto){ if (H.phase === 'quizReady') startQuiz(); else if (H.phase === 'score' && !H.busy) nextRound(); } };
+$('#autoBtn').onclick = () => { initAudio(); H.auto = !H.auto; renderHUD(); if (H.auto){ if (H.phase === 'lobby') mainAction(); else if (H.phase === 'quizReady') startQuiz(); else if (H.phase === 'score' && !H.busy) nextRound(); } };
 $('#viewBtn').onclick = () => { H.view = !H.view; if (H.view) camOverview(); else if (H.players[H.turn] && H.phase === 'roll') camFollow(H.players[H.turn].obj.position, 1.1); renderHUD(); };
 $('#undoBtn').onclick = undo;
 $('#setupBtn').onclick = openSetup;
@@ -4636,7 +4646,7 @@ $('#inviteBtn').onclick = openInvite;
 { const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss'); }; }
 $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? 'win' : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
-setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
+setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
 window.__H = H; window.__render = renderHUD; window.__dbg = {NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land};
 }
 
