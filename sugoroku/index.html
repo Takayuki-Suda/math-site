@@ -1376,15 +1376,39 @@ function netJoin(code){
   if (location.hash !== '#play/' + code) history.replaceState(null, '', '#play/' + code);
   P.stage = P.pid != null || P.jid ? 'wait' : 'join'; renderPlay();
   P.subs.push(NET.on(`rooms/${code}/info`, v => { P.info = v; netUpdate(); }));
-  P.subs.push(NET.on(`rooms/${code}/roster`, v => { P.roster = v; netUpdate(); }));
+  P.subs.push(NET.on(`rooms/${code}/roster`, v => { P.roster = v || {}; netUpdate(); }));
+  if (P.jid) watchMyJoin();
+  clearTimeout(P.slowT); P.slowT = setTimeout(() => { if (!P.info){ P.slow = true; renderPlay(); } }, 6000);
 }
-function pMe(){ return P.roster && P.pid != null ? P.roster[P.pid] : null; }
+function pMe(){
+  if (!P.roster || P.pid == null) return null;
+  const r = P.roster[P.pid]; if (!r) return null;
+  if (r.jid && r.jid !== P.jid) return null;      // 前に使った番号が、いまは別の人になっている
+  return r;
+}
+/* 自分の参加申しこみが消えたら（先生の画面が読みこみ直されたなど）、自動でもう一度送る */
+function watchMyJoin(){
+  if (P.offMy) P.offMy();
+  P.offMy = NET.on(`rooms/${P.room}/join/${P.jid}`, v => {
+    P.myJoin = v;
+    if (v || P.stage === 'join') return;
+    let d = null; try { d = JSON.parse(localStorage.getItem('sg_jdata_' + P.room) || 'null'); } catch(e){}
+    const inRoster = P.roster && Object.values(P.roster).some(r => r && r.jid === P.jid);
+    if (d && !inRoster && P.info && (P.info.phase === 'setup' || P.info.phase === 'lobby')) NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({}, d, {at:NET.now()}));
+  });
+  P.subs.push(() => { if (P.offMy){ P.offMy(); P.offMy = null; } });
+}
 function netUpdate(){
   const I = P.info, me = pMe();
   if (P.stage === 'join' || !I || !P.roster){ renderPlay(); return; }
+  if (!me && P.pid != null){ P.pid = null; try { localStorage.removeItem('sg_pid_' + P.room); } catch(e){} }
   if (!me && P.jid){ const k = Object.keys(P.roster).find(k => P.roster[k] && P.roster[k].jid === P.jid);
     if (k){ P.pid = k; try { localStorage.setItem('sg_pid_' + P.room, k); } catch(e){} NET.set(`rooms/${P.room}/claim/${k}`, {at:NET.now()}); return netUpdate(); }
-    if (P.stage !== 'join'){ P.stage = 'wait'; renderPlay(); } return; }
+    if (P.stage !== 'join'){
+      // 申しこみが残っていない／ゲームが始まる前なら、もう一度送る
+      if (!P.myJoin && (I.phase === 'setup' || I.phase === 'lobby')){ let d = null; try { d = JSON.parse(localStorage.getItem('sg_jdata_' + P.room) || 'null'); } catch(e){} if (d) NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({}, d, {at:NET.now()})); else { P.stage = 'join'; renderPlay(); return; } }
+      P.stage = 'wait'; renderPlay(); }
+    return; }
   if (!me){ P.stage = 'join'; renderPlay(); return; }
   P.name = me.name;
   const qOpen = I.phase === 'quiz' && me.topic > 0 && I.quizId && !P.done[I.quizId];
@@ -1407,7 +1431,8 @@ function pSelfJoin(){
   if (!P.char){ $('#jmsg').textContent = 'コマをえらんでね'; return; }
   P.jid = P.jid || ('j' + Math.random().toString(36).slice(2, 10)); P.pid = null;
   try { localStorage.setItem('sg_jid_' + P.room, P.jid); localStorage.removeItem('sg_pid_' + P.room); } catch(e){}
-  NET.set(`rooms/${P.room}/join/${P.jid}`, {name:nm, char:P.char, at:NET.now()});
+  const d = {name:nm, char:P.char}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
+  NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({at:NET.now()}, d)); watchMyJoin();
   initAudio(); try { sfx.star(); } catch(e){}
   P.name = nm; P.stage = 'wait'; renderPlay();
 }
@@ -1459,7 +1484,7 @@ function renderPlay(){
     return;
   }
   if (P.stage === 'wait'){
-    B.innerHTML = !(P.info && P.roster) ? '<div class="wmsg" style="margin:30px 0">先生の画面とつないでいます…</div>'
+    B.innerHTML = !(P.info && P.roster) ? `<div class="wmsg" style="margin:30px 0">先生の画面とつないでいます…</div>${P.slow ? `<div class="wsub" style="text-align:center">先生の画面が開いていないか、部屋番号（${esc(P.room)}）がちがうかもしれません。<br>先生に確認してね</div>` : ''}`
       : pMe() ? waitHTML() : `<div class="wait"><div class="wbig">📝</div><div class="wmsg">${esc(P.name || '')}さん、<br>先生の画面に登録しています…</div><div class="wsub">${P.info.phase === 'setup' || P.info.phase === 'lobby' ? 'すぐに先生の画面にコマが出ます' : 'ゲームが始まっています。先生に伝えてね'}</div><div class="wfoot"><button class="small-link" onclick="P.stage='join';renderPlay()">やりなおす</button></div></div>`;
   } else if (P.stage === 'setup'){
     B.innerHTML = `<h2>ようこそ！</h2>
@@ -3199,6 +3224,8 @@ function hostRoom(fresh){
   let c = ''; try { c = fresh ? '' : localStorage.getItem('sg_room') || ''; } catch(e){}
   if (!/^\d{4}$/.test(c)){ c = String(1000 + Math.floor(Math.random() * 9000)); try { localStorage.setItem('sg_room', c); } catch(e){} }
   NETH.room = c; NETH.last = {};
+  // 前のゲームの申しこみ・接続の記録を消してから始める（ゆうれい参加者を防ぐ）
+  NET.set(`rooms/${c}/join`, null); NET.set(`rooms/${c}/claim`, null);
   if (NETH.offClaim) NETH.offClaim();
   NETH.offClaim = NET.on(`rooms/${c}/claim`, v => { NETH.claims = v || {}; renderHUD.last = ''; renderHUD(); renderInvite(); });
   if (NETH.offJoin) NETH.offJoin();
@@ -3238,6 +3265,7 @@ function onJoin(v){
     if (slot < 0) return;
     const pl = {pos:MAP.start, stars:0, items:[], gear:[], got:[], okCount:0, tickets:0, pity:0, tkGot:false, space:null, res:null, resStar:null, double:false, plan:null,
       id:slot, slot, name, char:ch, emoji:CHARS[ch].emoji, color:PCOLORS[slot], cpu:false, jid, obj:null};
+    NET.set(`rooms/${NETH.room}/claim/p${slot}`, {at:NET.now()});
     pl.obj = makePawn(pl); H.players.push(pl); H.players.sort((a, b) => a.slot - b.slot);
     if (H.phase === 'setup'){ H.phase = 'lobby'; closeModal('m-setup'); }
     placeAll(); renderHUD(); renderInvite(); sfx.chime();
@@ -3858,6 +3886,7 @@ function resetGame(){
   if (H.busy || H.asking) return;
   snap(); clearInterval(H.timer);
   H.players.forEach(removePawn); H.players = [];
+  if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
   saveSetup();
 }
@@ -4710,7 +4739,7 @@ $('#inviteBtn').onclick = openInvite;
 $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? 'win' : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
 setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
-window.__H = H; window.__render = renderHUD; window.__dbg = {THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land};
+window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land};
 }
 
 </script>
