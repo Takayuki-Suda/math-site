@@ -53,6 +53,10 @@ body.hostmode .snow{display:none}
 .choice b{display:block;font-size:20px}
 .choice span{color:var(--muted);font-size:14px}
 .home .note{color:var(--muted);font-size:13px;margin-top:20px}
+.startBtn{display:inline-block;margin:8px auto 0;padding:18px 64px;font-size:30px;letter-spacing:.08em;color:#2a1e00;background:linear-gradient(180deg,#ffe27a,#f5b82e);border:none;border-radius:999px;box-shadow:0 8px 0 #b07a10,0 14px 28px rgba(0,0,0,.4);cursor:pointer;animation:startPulse 1.8s ease-in-out infinite}
+.startBtn:hover{filter:brightness(1.06)}
+.startBtn:active{transform:translateY(6px);box-shadow:0 2px 0 #b07a10,0 6px 14px rgba(0,0,0,.4);animation:none}
+@keyframes startPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
 /* ---------- host (3D) ---------- */
 #c{position:fixed;inset:0;width:100%;height:100%;display:block}
@@ -459,9 +463,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <div class="tree">🎄</div>
     <h1 class="dela">数学すごろく クリスマス会</h1>
     <p class="sub">サイコロで村をまわって、問題に正解して ⭐ を集めよう！</p>
-    <button class="choice" onclick="go('play')"><b>📱 参加する人はこちら</b><span>自分のスマホ・パソコンで問題を解きます</span></button>
-    <button class="choice" onclick="go('host')"><b>🎅 先生用（3Dのすごろく盤）</b><span>Zoomで画面共有します。🤖コンピューターの生徒を入れて、1人でも試せます</span></button>
-    <p class="note">いまは「中学コース」です。高校・大人（SPI）コースは準備中です。</p>
+    <button class="startBtn dela" onclick="homeStart()">▶ スタート</button>
   </div>
 </section>
 
@@ -698,6 +700,8 @@ function lin2(a, b){
 }
 const fmtT = t => Math.floor(t/60) + ':' + String(t%60).padStart(2,'0');
 function go(v){ location.hash = v === 'home' ? '' : v; route(); }
+/* スタートを押したら、音を鳴らせるようにしてから すごろく盤へ（ブラウザは「押した」あとでないと音を出せない） */
+function homeStart(){ initAudio(); try { BGM.loadData(); BGM.play('title'); } catch(e){} go('host'); }
 function route(){
   const h = location.hash.replace('#',''), [v0, arg] = h.split('/');
   const v = (v0 === 'host' || v0 === 'play') ? v0 : 'home';
@@ -1205,6 +1209,7 @@ const BGM = (() => {
   const api = {
     play(name){ if (!SONGS[name]) return; if (name !== curName){ curName = name; if (name !== 'quiz') intensity = 0; } start(); },
     kick(){ start(); },
+    stop(){ curName = ''; stopCur(); },
     current:() => curName,
     setIntensity(v){ const ch = (v > 0) !== (intensity > 0); intensity = v; if (ch && cur && cur.buf && curName === 'quiz') start(); },
     prerenderAll, loadData, ready:() => Object.keys(BUF), _buf:k => BUF[k] && BUF[k].buffer, _renderLoop:renderLoop,
@@ -5017,6 +5022,148 @@ function fireworkShow(scn, center, count = 6, spread = 10, gap = 280){
   for (let i = 0; i < count; i++) setTimeout(() => firework(scn, center.clone().add(new THREE.Vector3((Math.random() - .5) * spread, Math.random() * 3, (Math.random() - .5) * spread * .4)), {size:.8 + Math.random() * .5}), i * gap);
 }
 
+/* ================= 雷とリヒテンベルク図形（オープニングの最初） =================
+   雷が盤に落ちて、金色の枝分かれ模様（リヒテンベルク図形：放電が作るフラクタル）が広がる */
+function boltPath(top, bot, rough, depth){
+  // 真ん中をずらしていく（中点変位法）とギザギザの雷の線になる
+  let pts = [top.clone(), bot.clone()];
+  for (let d = 0; d < depth; d++){
+    const nx = [];
+    for (let i = 0; i < pts.length - 1; i++){
+      const a = pts[i], b = pts[i + 1], m = a.clone().lerp(b, .4 + Math.random() * .2), len = a.distanceTo(b);
+      m.x += (Math.random() - .5) * len * rough; m.z += (Math.random() - .5) * len * rough * .6;
+      nx.push(a, m);
+    }
+    nx.push(pts[pts.length - 1]); pts = nx;
+  }
+  return pts;
+}
+function boltMesh(pts, r, col, op){
+  const path = new THREE.CurvePath(); for (let i = 0; i < pts.length - 1; i++) path.add(new THREE.LineCurve3(pts[i], pts[i + 1]));
+  const geo = new THREE.TubeGeometry(path, (pts.length - 1) * 2, r, 5, false);
+  const mat = new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:op, depthWrite:false, blending:THREE.AdditiveBlending, fog:false, toneMapped:false});
+  const m = new THREE.Mesh(geo, mat); m.userData.op0 = op; m.userData.n = geo.index ? geo.index.count : geo.attributes.position.count; return m;
+}
+/* 地面の模様：枝が分かれながら外へのびる。赤＝線の明るさ、緑＝とどく時間（緑÷赤で読む） */
+function lichtenberg(S = 1024, HS = S){
+  const c = document.createElement('canvas'); c.width = S; c.height = HS; const g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0, 0, S, HS); g.lineCap = 'round'; g.lineJoin = 'round';
+  const segs = [], R = S * .47, C = S / 2, CY = HS / 2, stack = [];
+  const arms = 6 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < arms; i++) stack.push({x:C, y:CY, a:i / arms * Math.PI * 2 + Math.random() * .5, w:15, d:0, depth:0, lim:R * (.7 + Math.random() * .3)});
+  while (stack.length && segs.length < 9000){
+    const b = stack.pop(); let {x, y, a, w, d} = b;
+    for (let s = 0; s < 400; s++){
+      const step = 5 + Math.random() * 4; a += (Math.random() - .5) * .9;
+      const nx = x + Math.cos(a) * step, ny = y + Math.sin(a) * step, rr = Math.hypot(nx - C, ny - CY);
+      if (rr > b.lim || ny < 4 || ny > HS - 4) break;
+      segs.push([x, y, nx, ny, w, d]); d += step; x = nx; y = ny;
+      if (b.depth < 5 && Math.random() < .065 + b.depth * .015) stack.push({x, y, a:a + (Math.random() < .5 ? -1 : 1) * (.5 + Math.random() * .7), w:Math.max(2.6, w * .64), d, depth:b.depth + 1, lim:Math.min(b.lim, rr + R * (.35 - b.depth * .04) + Math.random() * R * .15)});
+      w = Math.max(2.6, w * .995);
+    }
+  }
+  const dMax = Math.max(...segs.map(s => s[5])) || 1;
+  segs.sort((p, q) => q[5] - p[5]);   // 遅く届く線から描いて、早く届く線を上に重ねる
+  for (const [x0, y0, x1, y1, w, d] of segs){ const t = Math.min(1, d / dMax); g.strokeStyle = `rgb(255,${Math.round(t * 255)},0)`; g.lineWidth = w; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); }
+  const h = document.createElement('canvas'); h.width = S / 4; h.height = HS / 4; const hg = h.getContext('2d');
+  hg.filter = 'blur(7px)'; hg.drawImage(c, 0, 0, S / 4, HS / 4);
+  return {c, h, segs:segs.map(s => [s[2] / S, s[3] / HS, Math.min(1, s[5] / dMax)])};
+}
+const LG_VS = 'varying vec2 vUv; varying vec3 vWp; void main(){ vUv = uv; vWp = (modelMatrix * vec4(position, 1.0)).xyz; gl_Position = projectionMatrix * viewMatrix * vec4(vWp, 1.0); }';
+const LG_FS = `uniform sampler2D tA, tB; uniform float uP, uFade, uT; uniform vec4 uClip; varying vec2 vUv; varying vec3 vWp;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+void main(){
+  vec4 a = texture2D(tA, vUv), b = texture2D(tB, vUv);
+  float arA = a.g / max(a.r, .004), arB = b.g / max(b.r, .004);
+  float on = a.r * smoothstep(uP + .005, uP - .03, arA);
+  float front = a.r * step(arA, uP) * (1.0 - smoothstep(0.0, .07, uP - arA));
+  float halo = b.r * smoothstep(uP + .02, uP - .06, arB);
+  float fl = .7 + .3 * sin(uT * 13.0 + hash(floor(vUv * 160.0)) * 40.0);
+  float clip = smoothstep(uClip.x, uClip.x + .5, vWp.z) * smoothstep(uClip.y, uClip.y - .35, vWp.z) * smoothstep(uClip.w, uClip.w - .6, abs(vWp.x));
+  vec3 col = vec3(1.0, .33, .03) * on * 1.25 * fl + vec3(1.0, .68, .26) * front * 1.9 + vec3(1.0, .4, .05) * halo * .75;
+  float scorch = clamp(halo * 1.6 + on * .8, 0.0, .82);   // 焼けて黒くなった地面
+  float k = uFade * clip;
+  gl_FragColor = vec4(col * k, scorch * k);
+}`;
+async function lightningStrike(at, clip, onLand){
+  // clip：模様をはみ出させない床の範囲 {z0, z1, x}（なければ制限なし）
+  if (reduceMotion){ onLand && onLand(); return; }
+  const SX = 26, SZ = clip ? 14 : 22, root = new THREE.Group(); scene.add(root);
+  const CL = clip ? new THREE.Vector4(clip.z0, clip.z1, 0, clip.x) : new THREE.Vector4(-1e4, 1e4, 0, 1e4);
+  // 地面の模様
+  const L = lichtenberg(1024, Math.round(1024 * SZ / SX)), tA = new THREE.CanvasTexture(L.c), tB = new THREE.CanvasTexture(L.h);
+  const U = {tA:{value:tA}, tB:{value:tB}, uP:{value:0}, uFade:{value:1}, uT:{value:0}, uClip:{value:CL}};
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(SX, SZ), new THREE.ShaderMaterial({uniforms:U, vertexShader:LG_VS, fragmentShader:LG_FS, transparent:true, depthWrite:false, blending:THREE.CustomBlending, blendSrc:THREE.OneFactor, blendDst:THREE.OneMinusSrcAlphaFactor, blendSrcAlpha:THREE.ZeroFactor, blendDstAlpha:THREE.OneFactor, polygonOffset:true, polygonOffsetFactor:-4, polygonOffsetUnits:-4}));
+  plane.rotation.x = -Math.PI / 2; plane.rotation.z = Math.random() < .5 ? 0 : Math.PI; plane.position.copy(at); plane.position.y += .06; plane.renderOrder = 5; plane.visible = false; root.add(plane);
+  plane.updateMatrixWorld(true);
+  const uv2w = (u, v) => plane.localToWorld(new THREE.Vector3((u - .5) * SX, (v - .5) * SZ, 0));
+  const inside = w => w.z > CL.x + .3 && w.z < CL.y - .3 && Math.abs(w.x) < CL.w - .5;
+  // 雷の線（本体＋まわりの光＋枝）
+  const top = at.clone().add(new THREE.Vector3((Math.random() - .5) * 8, 34, -6 - Math.random() * 4));
+  const main = boltPath(top, at, .55, 7), bolt = new THREE.Group();
+  bolt.add(boltMesh(main, .07, new THREE.Color(5, 5.5, 8), 1), boltMesh(main, .32, new THREE.Color(.5, .6, 1.4), .35));
+  for (let i = 0; i < 4; i++){
+    const k = 10 + Math.floor(Math.random() * (main.length * .6)), s = main[k];
+    const e = s.clone().add(new THREE.Vector3((Math.random() - .5) * 10, -4 - Math.random() * 7, (Math.random() - .5) * 5));
+    bolt.add(boltMesh(boltPath(s, e, .6, 5), .035, new THREE.Color(3, 3.5, 6), .9));
+  }
+  bolt.visible = false; root.add(bolt);
+  // 火花（落ちた瞬間にはじけるもの＋広がる先から舞い上がるもの）
+  const N = 700, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), vel = new Float32Array(N * 3), life = new Float32Array(N).fill(-1);
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const sparks = new THREE.Points(geo, new THREE.PointsMaterial({size:.22, map:fwTex, vertexColors:true, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, fog:false, toneMapped:false}));
+  sparks.frustumCulled = false; root.add(sparks);
+  let nextP = 0;
+  const spawn = (p, v, hot) => { const i = nextP; nextP = (nextP + 1) % N; pos.set([p.x, p.y, p.z], i * 3); vel.set([v.x, v.y, v.z], i * 3); life[i] = 1;
+    const c = hot ? [3, 2.6, 2] : [2.4, .9 + Math.random() * .6, .2]; col.set(c, i * 3); };
+  // 光の幕（画面全体がピカッと光る）
+  const fl = document.createElement('div'); fl.style.cssText = 'position:fixed;inset:0;z-index:8;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 40%,#fff 0%,#dfe8ff 35%,#8fa6ff 100%);mix-blend-mode:screen';
+  document.body.appendChild(fl);
+  const T0 = performance.now(), STRIKE = .32, GROW = 1.9, END = 5.2;
+  // 落ちるところは近くから見せる（そのあとロゴといっしょに全体の画面へ切りかわる）
+  const HOLD = 1.3, base = at.clone().add(new THREE.Vector3(1.5, 10.5, 16)), look = at.clone().add(new THREE.Vector3(0, 0, -1.5)), push = new THREE.Vector3(-.1, -.45, -1).multiplyScalar(2.4);
+  let landed = false, last = T0, flick = 0;
+  sfx._noise(0, .3, .05, 'highpass', 6000, 2000, .5);   // バチバチッという前ぶれ
+  await new Promise(res => {
+    const step = () => {
+      const now = performance.now(), t = (now - T0) / 1000, dt = Math.min(.05, (now - last) / 1000); last = now;
+      if (showSkip && t < END - .6){ U.uFade.value = 0; }
+      // 雷：はじめは細い前ぶれが下へのび、STRIKEで本体が落ちて、何回かまたたく
+      if (t < STRIKE){ const fr = t / STRIKE; bolt.visible = !showSkip; bolt.children.forEach(m => { m.geometry.setDrawRange(0, Math.floor(m.userData.n * fr / 3) * 3); m.material.opacity = m.userData.op0 * (.2 + .25 * Math.random()); }); }
+      else if (t < STRIKE + .6){ const on = t < STRIKE + .1 || (Math.sin(t * 55) > -.2 && Math.random() > .25); bolt.visible = on && !showSkip; const fade = 1 - Math.max(0, t - STRIKE - .3) / .3; bolt.children.forEach(m => { m.geometry.setDrawRange(0, Infinity); m.material.opacity = m.userData.op0 * fade; }); }
+      else bolt.visible = false;
+      if (!landed && t >= STRIKE){
+        landed = true; plane.visible = true; onLand && onLand();
+        fl.style.transition = 'none'; fl.style.opacity = '.9'; void fl.offsetWidth; fl.style.transition = 'opacity .55s ease-out'; fl.style.opacity = '0';
+        const SU = scene.userData; SU.flash = 1.6; SU.flashCol = new THREE.Color('#cfd8ff');
+        sfx._noise(0, .22, .4, 'highpass', 2600, 700, .7); sfx._noise(.03, .45, .28, 'bandpass', 1600, 260, .6);
+        sfx._noise(.06, 2.6, .32, 'lowpass', 700, 50, .7); sfx._sweep(.04, .7, 95, 32, .3, 'sine'); sfx._noise(.7, 2.2, .12, 'lowpass', 320, 55, .5);
+        for (let i = 0; i < 260; i++){ const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * 7; spawn(at.clone().add(new THREE.Vector3(0, .2, 0)), new THREE.Vector3(Math.cos(a) * s, 3 + Math.random() * 8, Math.sin(a) * s), Math.random() < .4); }
+      }
+      // 地面の模様が外へ広がる
+      if (landed){
+        const g = Math.min(1, (t - STRIKE) / GROW), p = 1 - Math.pow(1 - g, 2.2);
+        U.uP.value = p; U.uT.value = t;
+        if (g < 1 && !showSkip){ const want = 9; for (let k = 0; k < want; k++){ const s = L.segs[Math.floor(Math.random() * L.segs.length)]; if (s[2] > p || s[2] < p - .06) continue; const w = uv2w(s[0], 1 - s[1]); if (!inside(w)) continue; spawn(w.add(new THREE.Vector3(0, .1, 0)), new THREE.Vector3((Math.random() - .5) * 1.2, 1.5 + Math.random() * 3.5, (Math.random() - .5) * 1.2), false); }
+          if (Math.random() < .3) sfx._noise(0, .04, .05 + Math.random() * .05, 'highpass', 4000, 0, 1); }
+        U.uFade.value = showSkip ? 0 : t < STRIKE + GROW ? 1 : Math.max(0, 1 - (t - STRIKE - GROW) / (END - STRIKE - GROW));
+      }
+      // 火花を動かす
+      for (let i = 0; i < N; i++){ if (life[i] <= 0) continue; life[i] -= dt * .8; const j = i * 3; vel[j + 1] -= 6 * dt; vel[j] *= .985; vel[j + 2] *= .985;
+        pos[j] += vel[j] * dt; pos[j + 1] += vel[j + 1] * dt; pos[j + 2] += vel[j + 2] * dt;
+        const k = Math.max(0, life[i]); col[j] *= .985; col[j + 1] *= .975; col[j + 2] *= .96; if (k <= 0 || pos[j + 1] < at.y - .5){ life[i] = 0; pos[j + 1] = -999; } }
+      geo.attributes.position.needsUpdate = true; geo.attributes.color.needsUpdate = true;
+      // 落ちた瞬間、画面がゆれる
+      const sh = landed ? Math.max(0, 1 - (t - STRIKE) / .5) : 0;
+      if (t < HOLD + .05){ const o = new THREE.Vector3((Math.random() - .5), (Math.random() - .5), (Math.random() - .5)).multiplyScalar(sh * .7); cam.pos.copy(base).addScaledVector(push, Math.min(1, t / HOLD)).add(o); cam.tpos.copy(cam.pos); cam.look.copy(look); cam.tlook.copy(look); }
+      if ((t >= HOLD || showSkip) && res){ const r = res; res = null; r(); }
+      if (t < END){ requestAnimationFrame(step); return; }
+      scene.remove(root); root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); tA.dispose(); tB.dispose(); fl.remove();
+    };
+    requestAnimationFrame(step);
+  });
+}
+
 /* ================= オープニングセレモニー ================= */
 const TOURS = {
   dungeon:[[[0,24,34],[0,3,0]], [[-9,12,-1],[-8,7,-9]], [[8,12,-1],[8,7,-9]], [[11,8,7],[6,3.5,-1]], [[-8,8,7],[-8,3.5,-1]], [[-6,4,16],[0,0,8]], [[9,5,15],[14,2,6]], [[0,31,25],[0,3.3,-.6]]],
@@ -5025,11 +5172,15 @@ const TOURS = {
 let showSkip = false;
 async function openingShow(){
   showSkip = false; H.busy = true; renderHUD();
-  const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go'); void O.offsetWidth; O.querySelector('.op-logo').classList.add('go');
-  BGM.play('opening'); sfx.jingle();
+  const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go');
   const path = TOURS[MAPKEY] || TOURS.dungeon;
   const pc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[0]))), lc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[1])));
-  cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0));
+  cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
+  // まず雷が盤のまん中に落ちて、金色の枝分かれ模様が広がる → それからロゴと曲
+  { const la = lc.getPoint(0), d = n => Math.hypot(n.p.x - la.x, n.p.z - la.z), near = Object.values(NODE).reduce((b, n) => d(n) < d(b) ? n : b);
+    const fl = MAPKEY === 'dungeon' ? Object.values(DF).find(F => Math.abs(F.y - near.p.y) < .5) : null;
+    BGM.stop(); await lightningStrike(new THREE.Vector3(la.x, near.p.y, fl ? (fl.z0 + fl.z1) / 2 : la.z), fl ? {z0:fl.z0, z1:fl.z1, x:19.8} : null); }
+  void O.offsetWidth; O.querySelector('.op-logo').classList.add('go'); BGM.play('opening'); sfx.jingle();
   const fwAt = MAPKEY === 'dungeon' ? new THREE.Vector3(14, 9, 5) : new THREE.Vector3(2.5, 9, 7);
   setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt, 5, 12, 320); }, 900);
   setTimeout(() => { if (!showSkip) fireworkShow(scene, MAPKEY === 'dungeon' ? new THREE.Vector3(-8, 13, -6) : new THREE.Vector3(-6, 9, -4), 4, 10, 300); }, 3800);
