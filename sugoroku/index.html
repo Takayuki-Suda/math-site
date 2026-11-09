@@ -3425,7 +3425,7 @@ function labelTex(fill, label, emoji, dark){
 function makeTile(n, root, shopSide){
   let fill, label, emoji = true, r = .85;
   if (n.type === 'q' || n.type === 'fire'){ fill = TCOL[n.topic]; label = TSHORT[n.topic]; emoji = false; }
-  else if (n.type === 'gift'){ fill = '#f2c94c'; label = n.gate ? '🔑' : '🎁'; }
+  else if (n.type === 'gift'){ fill = '#f2c94c'; label = n.gate && !(MAP && MAP.coop) ? '🔑' : '🎁'; }
   else if (n.type === 'sled'){ fill = '#38bdf8'; label = '🛷'; }
   else if (n.type === 'snow'){ fill = '#e8eefc'; label = '⛄'; }
   else if (n.type === 'shop'){ fill = MAP && MAP.coop ? '#3b5bdb' : '#0f766e'; label = MAP && MAP.coop ? '💼' : '🏪'; r = 1.0; }
@@ -3581,7 +3581,7 @@ const bulbMats = ['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#f15bb5'].map(c => ne
     }
   }));
   const lp = NODE.b6.p.clone().add(NODE.G1.p).multiplyScalar(.5);
-  const lock = new THREE.Group();
+  const lock = new THREE.Group(); lock.visible = !COOPMAP;
   const lb = new THREE.Mesh(new RoundedBoxGeometry(.6, .5, .25, 2, .06), mat('#f2c94c', {metalness:.6, roughness:.3, flatShading:false})); lb.position.y = .45; lock.add(lb);
   const sh = new THREE.Mesh(new THREE.TorusGeometry(.2, .05, 8, 16, Math.PI), mat('#cfd8ee', {metalness:.8, roughness:.2, flatShading:false})); sh.position.y = .7; lock.add(sh);
   lock.position.copy(lp); root.add(shadowAll(lock));
@@ -5132,6 +5132,7 @@ function mainAction(){
 async function takeTurn(pl){
   if (H.busy) return;
   snap(); H.busy = true; renderHUD();
+  if (isCoop()) closeCard();
   camFollow(pl.obj.position, .9); await sleep(H.auto ? 250 : 450);
   let dice = 1, plus = 0;
   const usable = [...new Set(pl.items.filter(k => k === 'dice2' || k === 'boots'))];
@@ -5142,7 +5143,7 @@ async function takeTurn(pl){
   }
   const n = await rollDice(pl, dice, plus);
   await moveSteps(pl, n);
-  await land(pl);
+  try { await land(pl); } catch(e){ console.error('land', e); if (isCoop()) closeCard(); }
   faceFront(pl);
   await bannerQ; await sleep(200);
   if (isCoop() && H.coop && (H.coop.won || H.coop.lost)){ H.busy = false; coopFinish(H.coop.won ? 'win' : 'lose'); return; }
@@ -5200,7 +5201,7 @@ async function chooseRoute(pl, nd){
   let bp;
   if (isBot(pl)){ const gt = opts.find(id => NODE[id].gate); bp = gt ? (Math.random() < .85 ? gt : opts.find(id => id !== gt)) : pick(opts); }
   const v = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, '分かれ道！ どっちに進む？',
-    opts.map(id => ({v:id, ic:ROUTE_LABEL[id][0], t:ROUTE_LABEL[id][1], s:ROUTE_LABEL[id][2]})), isBot(pl) ? bp : undefined);
+    opts.map(id => { const L = ROUTE_LABEL[id], co = isCoop(); return {v:id, ic:co && NODE[id].gate ? '❄️' : L[0], t:L[1], s:co ? (NODE[id].gate ? '協力モードはカギなしで通れる！ ツリーまで一気に' : L[2].replace('🏪ショップ', '💼職業安定所')) : L[2]}; }), isBot(pl) ? bp : undefined);
   if (NODE[v].gate){ if (isCoop()){ await banner('❄️ 氷の湖の近道へ！', 1000); } else { removeItem(pl, 'key'); renderHUD(); await banner('🔑 カギで<br>氷の湖の門が開いた！', 1100); } }
   return v;
 }
@@ -5350,7 +5351,7 @@ async function eventSpace(pl){
 }
 function startQuiz(){
   if (H.phase !== 'quizReady') return;
-  snap(); H.phase = 'quiz'; H.t = 120; camOverview(); splash('問題タイム！', '自分の画面に問題が出ます'); sfx.jingle();
+  snap(); H.phase = 'quiz'; H.t = 120; camOverview(); splash('問題タイム！', '自分の画面に問題が出ます'); sfx.jingle(); if (isCoop()) closeCard();
   H.quizId = Date.now() % 1000000000; H.endsAt = NET.now() + 120000; NETH.ans = {}; H.players.forEach(pl => { pl._ansShown = false; });
   if (NETH.offAns) NETH.offAns(); NETH.offAns = NET.on(`rooms/${NETH.room}/ans/${H.quizId}`, onAns);
   BGM.setIntensity(0); BGM.play('quiz');
@@ -5429,7 +5430,7 @@ async function nextRound(){
   if (H.round >= H.maxRound){ finishGame(); return; }
   H.round++; H.phase = 'roll'; H.turn = 0;
   H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; });
-  H.t = 120; drawTimer(); roundSplash();
+  H.t = 120; drawTimer(); roundSplash(); if (isCoop()) closeCard();
   camFollow(H.players[0].obj.position, 1.1);
   renderHUD();
 }
@@ -5559,7 +5560,7 @@ function resetGame(){
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
-  H.coop = null; H.coopEnd = null; H.vote = null; $('#meet').classList.remove('on'); $('#ccard').classList.remove('on'); townLights(true); renderTown(); renderModeSel();
+  H.coop = null; H.coopEnd = null; H.vote = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
   saveSetup();
 }
 
@@ -5653,8 +5654,16 @@ async function jobCenter(pl){
   if (v){ pl.job = v; sfx.shop(); renderHUD(); renderTown(); await banner(`${JOBS[v].ic} ${esc(pl.name)}さんは<br>${JOBS[v].name}になった！`, 1300); }
 }
 /* ---- 町のできごとカード ---- */
+let cardTok = 0;
+function closeCard(){ cardTok++; $('#ccard').classList.remove('on'); }
 async function showCard(r, i, n){
-  const c = r.card, C = $('#ccard'), fast = H.auto;
+  const tok = ++cardTok, C = $('#ccard');
+  try { await showCardInner(r, i, n, C); }
+  catch(e){ console.error('showCard', e); try { syncTown(); } catch(e2){} }
+  finally { if (tok === cardTok) C.classList.remove('on'); }
+}
+async function showCardInner(r, i, n, C){
+  const c = r.card, fast = H.auto;
   const eff = c.good ? [c.happy ? `幸せ度 +${c.happy}` : '', c.yen ? `+${fmtYen(COOP.yen(H.coop, c.yen))}` : '', c.tickets ? '全員に 🎟️ ガチャ券 1枚' : ''].filter(Boolean).join('　')
     : [c.happy ? `幸せ度 ${Math.round(c.happy * COOP_CFG.cardMul)}` : '', c.yen ? fmtYen(COOP.yen(H.coop, c.yen * COOP_CFG.cardMul)) : ''].filter(Boolean).join('　');
   C.innerHTML = `<div class="cc-in" id="ccIn"><div class="cc-face cc-back"><div class="cc-q dela">？</div><div class="cc-bt dela">こがね町の<br>できごと</div>${n > 1 ? `<div class="cc-no">${i + 1} / ${n}</div>` : ''}</div>
@@ -5748,6 +5757,7 @@ async function runVote(opts, k, law){
   const secs = H.auto ? 4 : k ? 20 : 30;
   VOTE.endsAt = NET.now() + secs * 1000;
   H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' && H.players.some(x => x.job === 'police') ? 2 : 0)}))};
+  if (!voters().length && !H.auto){ VOTE.open = false; VOTE.teacher = true; }   // スマホで投票できる人がいないときは、町長（先生）がすぐ決める
   renderHUD(); netPublish(true);
   if (VOTE.off) VOTE.off();
   VOTE.off = NET.on(`rooms/${NETH.room}/vote/${VOTE.id}`, v => { VOTE.human = {}; Object.entries(v || {}).forEach(([pk, o]) => { const pl = H.players.find(p => pkey(p) === pk); if (pl && !isBot(pl)) VOTE.human[pk] = o; }); renderMeet(); checkAll(); });
@@ -5832,10 +5842,11 @@ async function coopRoundEnd(){
   const S = H.coop; if (!S) return false;
   H.busy = true; renderHUD();
   S.round = H.round;
-  await coopMeeting();
-  if (!S.won && !S.lost) await coopCards();
-  if (!S.won && !S.lost) await coopRoundEndFx();
-  H.busy = false;
+  const safe = async (name, f) => { try { await f(); } catch(e){ console.error(name, e); $('#meet').classList.remove('on'); closeCard(); H.vote = null; } };
+  await safe('meeting', coopMeeting);
+  if (!S.won && !S.lost) await safe('cards', coopCards);
+  if (!S.won && !S.lost) await safe('roundEnd', coopRoundEndFx);
+  closeCard(); H.busy = false;
   if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return true; }
   renderHUD(); return false;
 }
