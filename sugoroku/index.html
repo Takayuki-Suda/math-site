@@ -162,6 +162,163 @@ body.hostmode .snow{display:none}
   .panel{top:auto;bottom:70px;left:8px !important;right:8px !important;width:auto;max-height:45vh}
 }
 
+
+/* ===== 協力モード（こがね町） ===== */
+.town{position:fixed;left:16px;top:70px;z-index:5;width:292px;background:linear-gradient(180deg,rgba(26,44,99,.94),rgba(11,21,48,.94));border:2px solid rgba(242,201,76,.75);border-radius:16px;padding:7px 12px 9px;box-shadow:0 8px 24px rgba(0,0,0,.45);display:none;pointer-events:auto}
+body.coopmode .town{display:block}
+body.coopmode.showing .town{display:none}
+.town .tn{display:flex;align-items:center;justify-content:space-between;font-size:15px;color:var(--gold)}
+.town .tn span:last-child{font-size:13px;color:var(--muted);font-weight:700}
+.tyen{position:relative;display:flex;align-items:baseline;gap:6px;font-size:24px;color:#fff;line-height:1.25}
+.tyen span:first-child{font-size:20px}
+.tdelta{position:absolute;right:4px;top:-4px;font-family:'Dela Gothic One',sans-serif;font-size:18px;opacity:0;pointer-events:none;white-space:nowrap}
+.tdelta.up{color:#7dffb0}.tdelta.down{color:#ff8a8a}
+.tdelta.go{animation:tdel 1.8s ease-out forwards}
+@keyframes tdel{0%{opacity:0;transform:translateY(8px) scale(.7)}15%{opacity:1;transform:none scale(1.15)}75%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+.hap{position:relative;height:24px;border-radius:12px;background:#0b1530;border:2px solid var(--line);overflow:visible;margin:4px 0 2px}
+.hap i{position:absolute;left:0;top:0;bottom:0;border-radius:10px;background:linear-gradient(90deg,#ff9d3d,#ffd23f 70%,#fff3b0);box-shadow:0 0 12px rgba(255,210,63,.55);transition:width 1.1s cubic-bezier(.3,1.3,.5,1)}
+.hap b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13.5px;line-height:1;text-shadow:0 1px 3px #000;white-space:nowrap}
+.hap .tdelta{top:-20px}
+.hap.low i{background:linear-gradient(90deg,#e0484f,#ff8a3d);box-shadow:0 0 12px rgba(224,72,79,.6)}
+.hap.full i{animation:hapfull 1.2s infinite alternate}
+@keyframes hapfull{to{box-shadow:0 0 26px rgba(255,240,170,1)}}
+.hap.big{height:34px;border-radius:17px;margin:8px auto}.hap.big b{font-size:18px}
+.tprojs{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:6px}
+.tp{display:flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap;overflow:hidden;color:#cfd9f5}
+.tp .tnm{overflow:hidden;text-overflow:ellipsis}
+.tp .pips{margin-left:auto;display:flex;gap:2px;flex:none}
+.pips i{display:inline-block;width:8px;height:8px;border-radius:2px;background:#26386e}
+.pips i.on{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.tp.done{color:var(--gold);font-weight:900}
+.tjobs{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:13px;color:var(--muted)}
+body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
+.pchip.co .em{position:relative}
+.pchip .jb{position:absolute;right:-8px;bottom:-6px;font-size:17px;filter:drop-shadow(0 1px 2px #000)}
+.pchip .st.yen{font-size:15px;color:#7dffb0}
+/* 町の会議 */
+.meet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(4,8,22,.5)}
+.meet.on{display:flex}
+.mt-box{width:min(1240px,97vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,rgba(26,44,99,.98),rgba(11,21,48,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 16px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mt-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mt-head h3{margin:0;font-size:28px}
+.mt-yen{font-size:24px;color:#fff;background:rgba(0,0,0,.25);border-radius:12px;padding:2px 12px}
+.mt-msg{flex:1;color:var(--gold);font-weight:900;font-size:17px;min-width:200px}
+.mt-t{font-size:36px;min-width:64px;text-align:center;background:rgba(8,16,40,.8);border:2px solid var(--line);border-radius:14px;line-height:1.3}
+.mt-t.low{color:var(--red);border-color:var(--red)}
+.mt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+@media (min-width:1100px){.mt-grid{grid-template-columns:repeat(4,1fr)}}
+@media (max-height:800px){.pc .mh{display:none}.pc{padding:6px 10px}.pc .votes{min-height:26px;margin-top:3px}.pc .votes img{width:26px;height:26px}.mt-head h3{font-size:24px}}
+.pc{position:relative;display:block;text-align:left;border-radius:16px;padding:8px 12px 8px;background:linear-gradient(180deg,#22397d,#142659);border:2px solid rgba(255,255,255,.14);color:var(--snow);font-family:inherit;cursor:default;transition:transform .2s,box-shadow .2s}
+.pc .ph{display:flex;align-items:center;gap:8px}
+.pc .ic{font-size:28px;line-height:1}
+.pc .nm{font-weight:900;font-size:18px}
+.pc .lvp{display:flex;align-items:center;gap:3px;font-size:13px;color:#dfe7ff;margin-top:2px}
+.pc .lvp i{width:12px;height:12px;border-radius:3px;background:#26386e}
+.pc .lvp i.on{background:var(--gold)}
+.pc .lvp i.next{background:transparent;border:2px dashed var(--gold)}
+.pc .lvp span{margin-left:6px}
+.pc .mh{font-size:12px;color:#c7d6ff;background:rgba(255,255,255,.07);border-radius:8px;padding:2px 7px;margin-top:4px}
+.pc .pr{font-size:21px;margin-top:4px}
+.pc .pr s{color:var(--muted);font-size:14px;margin-right:6px}
+.pc .dsc{font-size:12px;color:#7dffb0}
+.pc .gain{color:var(--gold);font-weight:900;font-size:14px}
+.pc .nomoney{position:absolute;right:10px;bottom:8px;font-size:12px;color:#ff9a9a;font-weight:900}
+.pc.no{opacity:.5;filter:saturate(.5)}
+.pc .votes{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;min-height:30px}
+.pc .votes img{width:30px;height:30px;border-radius:50%;border:3px solid var(--pc);background:#0b1530;object-fit:contain;animation:vin .35s cubic-bezier(.3,1.7,.5,1)}
+@keyframes vin{from{transform:scale(0)}}
+.pc .cnt{position:absolute;right:12px;top:6px;font-size:30px;color:var(--gold)}
+.pc.save{background:linear-gradient(180deg,#1d4a3f,#123329)}
+.pc.pickable{cursor:pointer;outline:2px dashed rgba(242,201,76,.6)}
+.pc.pickable:hover{transform:translateY(-3px)}
+.pc.tie{cursor:pointer;outline:4px dashed var(--gold);animation:tie 1s infinite alternate}
+@keyframes tie{to{box-shadow:0 0 24px rgba(242,201,76,.7)}}
+.pc.win{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold),0 0 40px rgba(255,210,63,.75);transform:scale(1.04);z-index:2}
+.mt-done{margin-top:8px;font-size:13px;color:var(--gold)}
+.mt-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
+/* できごとカード */
+.ccard{position:fixed;left:50%;top:50%;z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
+.ccard.on{display:block;animation:ccin .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes ccin{from{transform:translate(-50%,-30%) scale(.5);opacity:0}}
+.cc-in{width:min(400px,86vw);height:min(540px,78vh);position:relative;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.3,1.3,.5,1)}
+.cc-in.flip{transform:rotateY(180deg)}
+.cc-face{position:absolute;inset:0;border-radius:28px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.65);border:6px solid #fff}
+.cc-back{background:repeating-linear-gradient(45deg,#3a2a8a 0 18px,#2c1f6e 18px 36px);color:#ffd23f}
+.cc-q{font-size:150px;line-height:1;text-shadow:0 6px 0 #1a1240}
+.cc-bt{font-size:32px;color:#fff;margin-top:8px}
+.cc-no{position:absolute;top:16px;right:20px;font-weight:900;color:#fff}
+.cc-front{transform:rotateY(180deg);background:linear-gradient(180deg,#fffaf0,#ffe6b8);color:#3a2400}
+.cc-front.bad{background:linear-gradient(180deg,#fff0f0,#ffc7c7);color:#4a0d0d}
+.cc-kind{font-size:18px;padding:2px 16px;border-radius:999px;background:rgba(0,0,0,.1)}
+.cc-ic{font-size:118px;line-height:1.15;margin:4px 0}
+.cc-nm{font-size:29px;line-height:1.25}
+.cc-ef{font-size:21px;font-weight:900;margin-top:6px}
+.cc-res{position:relative;margin-top:14px;font-size:19px;font-weight:900;padding:10px 14px;border-radius:16px;opacity:0;transform:scale(.7);transition:.35s cubic-bezier(.3,1.6,.5,1);line-height:1.4}
+.cc-res.show{opacity:1;transform:none}
+.cc-res.guard{background:#1f7a4d;color:#fff}
+.cc-res.bad{background:rgba(120,0,0,.12)}
+.cc-res.good{background:rgba(242,201,76,.35)}
+.cc-dmg{font-size:30px;color:#c0262d}
+.cc-stamp{position:absolute;right:-22px;top:-40px;transform:rotate(14deg);border:5px solid #2fa46b;color:#2fa46b;background:#fff;font-size:30px;padding:0 12px;border-radius:12px;animation:stamp .4s cubic-bezier(.3,1.8,.5,1)}
+@keyframes stamp{from{transform:rotate(14deg) scale(2.4);opacity:0}}
+#c.shake{animation:cshake .5s}
+@keyframes cshake{20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-5px)}60%{transform:translate(-6px,3px)}80%{transform:translate(4px,-2px)}}
+/* 導入ストーリー */
+.story{position:fixed;inset:0;z-index:8;pointer-events:none;display:none}
+.story.on{display:block}
+.st-line{position:absolute;left:50%;bottom:calc(9vh + 28px);transform:translate(-50%,10px);width:min(1150px,92vw);text-align:center;font-size:34px;line-height:1.5;color:#fff;text-shadow:0 3px 14px #000,0 0 34px rgba(0,0,0,.9);opacity:0;transition:opacity .55s,transform .55s}
+.st-line.on{opacity:1;transform:translate(-50%,0)}
+/* 設定 */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.modecard{text-align:left;padding:12px 14px;border-radius:16px;background:linear-gradient(180deg,#22397d,#142659);border:2px solid rgba(255,255,255,.14)}
+.modecard b{display:block;font-size:20px}
+.modecard span{font-size:13px;color:var(--muted)}
+.modecard.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold) inset}
+.modecard:disabled{opacity:.5}
+.rsel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.rsel>span{font-weight:900;margin-right:4px}
+.rsel .btn{padding:6px 14px}
+.rsel small{display:block;font-size:11px;font-weight:500;opacity:.8}
+.sjob{display:none}
+body.coopmode .sjob{display:block}
+body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
+.rlead{margin:0 0 6px}
+.boss-coop{text-align:center;margin-top:12px}
+.boss-coop p{margin:0 0 8px;color:var(--gold);font-weight:900}
+.bcbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.gr-coop{margin-top:6px;font-size:15px;color:#7dffb0;font-weight:700;max-width:640px;margin-left:auto;margin-right:auto}
+.banner .bl{color:var(--gold)}
+.banner small{display:block;font-size:.62em;color:#dfe7ff;margin-top:4px}
+.rsum{font-size:19px;text-align:left;line-height:1.6}
+.rsum .dela{text-align:center;font-size:24px;margin-bottom:4px}
+.rsum b{color:#7dffb0}.rsum b.neg{color:#ff9a9a}
+/* 結果 */
+.cres{text-align:center}
+.cr-big{font-size:30px;margin:4px 0}
+.cres.win .cr-big{color:var(--gold);text-shadow:0 0 20px rgba(255,210,63,.6)}
+.cr-sub{color:var(--muted);font-weight:700}
+.cr-projs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.crp{display:flex;flex-direction:column;align-items:center;padding:6px;border-radius:12px;background:rgba(255,255,255,.05);font-size:13px}
+.crp span:first-child{font-size:24px}
+.crp.done{background:rgba(242,201,76,.18);outline:2px solid var(--gold)}
+.crp.some{background:rgba(125,255,176,.08)}
+.crp small{color:var(--muted)}
+.cr-ppl{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:8px;text-align:left}
+.crm{display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:14px;background:linear-gradient(180deg,rgba(38,64,138,.7),rgba(21,39,90,.7));border-left:6px solid var(--pc)}
+.crm .pimg{width:64px;height:64px;object-fit:contain}
+.crm .nm{font-weight:900;font-size:17px}
+.crm .job{display:block;font-size:13px;color:var(--muted);font-weight:700}
+.crm .hero{color:var(--gold);font-weight:900}
+.crm .st{font-size:13px;color:#dfe7ff}
+.cr-math{margin-top:12px;font-size:13px;color:var(--muted)}
+@media (max-width:760px){
+  .town{left:8px;right:8px;width:auto;top:auto;bottom:62px;padding:5px 10px}
+  .tprojs,.tjobs{display:none}
+  .mt-grid{grid-template-columns:1fr 1fr}
+  .st-line{font-size:20px}
+  .cr-projs{grid-template-columns:repeat(2,1fr)}
+  .modes{grid-template-columns:1fr}
+}
 /* ---------- play ---------- */
 .play{max-width:520px;margin:0 auto;padding:14px 14px 40px}
 .phead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -241,6 +398,31 @@ body.hostmode .snow{display:none}
 .explain .ans{font-weight:900;color:var(--gold)}
 .small-link{background:none;color:var(--muted);text-decoration:underline;font-size:14px;padding:6px}
 
+
+/* ===== 協力モード（スマホ） ===== */
+.jobgrid{display:grid;gap:6px;margin:4px 0 10px}
+.jobpick{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 10px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--snow);font-family:inherit}
+.jobpick .ji{font-size:30px}
+.jobpick .jt{flex:1;min-width:0}
+.jobpick b{display:block;font-size:16px}
+.jobpick small{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+.jobpick em{font-style:normal;font-size:11px;color:var(--gold);white-space:nowrap}
+.jobpick.sel{border-color:var(--gold);background:#2a2a14}
+.wtown{margin:8px 0;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05)}
+.wt1{font-size:15px;color:var(--gold);margin-bottom:2px}
+.wt1 b{color:#fff}
+.wtp{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;margin-top:6px;font-size:16px}
+.wtp>span{display:inline-flex;align-items:center;gap:3px}
+.vgrid{display:grid;gap:6px}
+.vopt{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 12px;border-radius:14px;border:2px solid var(--line);background:linear-gradient(180deg,#22397d,#142659);color:var(--snow);font-family:inherit;min-height:56px}
+.vopt .vi{font-size:30px}
+.vopt b{display:block;font-size:17px}
+.vopt small{display:block;font-size:12.5px;color:var(--muted)}
+.vopt.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold) inset;background:#2a2a14}
+.vopt.save{background:linear-gradient(180deg,#1d4a3f,#123329)}
+.vopt:disabled{opacity:.45}
+.vfoot{text-align:center;margin-top:10px;color:var(--muted)}
+.vfoot b{color:#fff;font-size:20px}
 /* ---------- modals ---------- */
 .modal{position:fixed;inset:0;background:rgba(3,8,22,.82);display:none;align-items:flex-start;justify-content:center;z-index:40;overflow:auto;padding:30px 14px}
 .modal.on{display:flex}
@@ -505,6 +687,10 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
   </div>
   <div class="phase" id="phase"></div>
   <div class="floortag dela" id="floorTag"></div>
+  <div class="town" id="town"></div>
+  <div class="meet" id="meet"></div>
+  <div class="ccard" id="ccard"></div>
+  <div class="story" id="story"><div class="st-line dela" id="stLine"></div></div>
   <div class="panel right" id="scorePanel"></div>
   <div class="panel left" id="watchPanel"></div>
   <div class="strip" id="strip"></div>
@@ -522,6 +708,18 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 <div class="modal" id="m-rules"><div class="mbox">
   <button class="btn close" onclick="closeModal('m-rules')">とじる</button>
   <h2>🎲 あそびかた</h2>
+  <div id="rulesCoop">
+  <p class="rlead">🏘 <b>協力モード「こがね町を救え！」</b>　みんなは同じチーム。数学の力で、さびれた町を元気にしよう！</p>
+  <ol class="rules">
+    <li>サイコロで町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
+    <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どれを直すかスマホで<b>投票</b>します。直すと <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ直すと<b>完成ボーナス</b>！</li>
+    <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、困りごとを直しておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
+    <li><b>職業</b>：💻システムエンジニア／🚒消防士／⚖️弁護士／🚛衛生のプロ／👮警察官。それぞれ得意なことがあります。みんなでちがう職業にすると強い！ 💼職業安定所のマスで変えられます。</li>
+    <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
+    <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。</li>
+    <li><b>幸せ度100</b>でみんなの勝ち！ 最後のラウンドまでにとどかなかったら、<b>最後の大工事（ボス問題）</b>に挑戦。成功すると幸せ度+15。幸せ度が0になったり、100にとどかなかったら負け…</li>
+  </ol></div>
+  <div id="rulesVs">
   <ol class="rules">
     <li>先生の画面で、ひとりずつ<b>サイコロ</b>をふって、クリスマス村を進みます。<b>分かれ道</b>では、どっちに行くか自分で決めます。</li>
     <li>止まった<b>マスの色</b>で、問題の分野が決まります。🔥チャレンジマスは、正解すると⭐が<b>2倍</b>！</li>
@@ -530,12 +728,13 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <li>🎁 ⭐+2、⛄ ほかのみんなに⭐+1、🛷 さらに3マス、❓ なにかが起こる、🎄 を通ると⭐+3。</li>
     <li>🏰 ダンジョンでは、階段・🍭すべり台・🚃トロッコ・🧊氷のトンネル・🚡ゴンドラで上下に移動！ ❓では落とし穴に落ちることも。B3の👑大広間に着くと⭐+5。</li>
     <li>🎟️ 正解するとガチャ券が1枚！ ラウンドの終わりの<b>ガチャタイム</b>で、おしゃれ・ぶき・ペット・台座と称号の4つのガチャから選んでまわせます。N〜LR（レジェンドレア）の5段階。持てるのは<b>3つまで</b>（見た目だけで、⭐には影響しません）。5回以内に SR以上が必ず出ます。</li>
-    <li>8ラウンドで⭐がいちばん多い人の勝ち！ さいごは全員で協力するボス問題。</li>
-  </ol>
+    <li>さいごのラウンドで⭐がいちばん多い人の勝ち！ さいごは全員で協力するボス問題。</li>
+  </ol></div>
 </div></div>
 
 <div class="modal" id="m-setup"><div class="mbox">
   <h2>⚙ 参加する人</h2>
+  <div class="modesel" id="modesel"></div>
   <div class="mapsel" id="mapsel"></div>
   <button class="btn big gold" onclick="selfJoinMode()" style="width:100%;margin:0 0 6px">📲 参加者に自分で名前とコマを入れてもらう（おすすめ）</button>
   <p style="color:var(--muted);margin:0 0 10px;font-size:13px;text-align:center">参加者用のURLが出ます。参加者がスマホで名前とコマを選ぶと、ここに自動で入ります</p>
@@ -560,7 +759,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 
 <div class="modal" id="m-boss"><div class="mbox">
   <button class="btn close" onclick="closeModal('m-boss')">とじる</button>
-  <h2>👑 さいごのボス問題（みんなで協力！）</h2>
+  <h2 id="bossTitle">👑 さいごのボス問題（みんなで協力！）</h2>
   <div class="boss-q">次の式をみたす<b>整数</b>の組 (x, y) を、ぜんぶ見つけよう！<span class="eq dela">y² = x³ + 1</span></div>
   <p style="text-align:center;color:var(--muted);margin:0 0 12px">ヒント：x に −2, −1, 0, 1, 2, … を入れて、x³ + 1 が「ある数の2乗」（0, 1, 4, 9, 16, 25, …）になるか調べよう</p>
   <div class="boss-wrap">
@@ -576,6 +775,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     x をどんなに大きくしても、ほかにはありません。約300年前に、数学者<b>オイラー</b>がそれを証明しました（8 と 9 は「となりあう立方数と平方数」の、ただ1つの組）。<br>
     y² = x³ + 1 のような式のグラフを<b>「楕円曲線」</b>といいます。先生が大学院で研究していたのは、こういう世界です。🎄
   </div>
+  <div class="boss-coop" id="bossCoop"></div>
 </div></div>
 
 
@@ -1400,12 +1600,261 @@ function graphSVG(a, b){
 const TCOL = {1:'#3b82f6', 2:'#2fa46b', 3:'#a970ff', 4:'#f08a24', 5:'#ff6fa3'};
 const TSHORT = TOPICS;
 
+/* COOP-ENGINE-BEGIN */
+/* ============ 協力モードのルール（こがね町）：3Dや画面から切りはなした計算だけの部分 ============
+   ここだけ取り出して、パソコンで何千回も自動対戦させて数字を調整しています（同じコードをゲームでも使う） */
+const COOP_CFG = {
+  startHappy:40, goal:100,
+  yenPerStar:100,                 // ★1 正解 = 100万円（単位はすべて「万円」）
+  lvCost:[620, 980, 1340],        // 4人・8ラウンドのときの工事の値段（自動対戦で決めた値）
+  lvHappy:[5, 6, 10],
+  giftYen:150, snowHappy:1, lapYen:150, deficitYen:100,
+  badRate:.7,                     // 引いたカードが悪いカードになる確率
+  bossHappy:15,
+  maxBuys:2,                      // 1回の会議で直せる工事の数
+  lawyerRate:.2, lawyerCool:1,    // 弁護士：何割引きか／何ラウンドに1回使えるか
+  seMul:2, seAll:1.3, seTrain:.3,   // SE：関数のお金の倍率／ほかの分野の倍率／電車の割引
+  policeLimit:1,                  // 警察官：1ラウンドに防げる犯罪カードの数
+  priceExp:1.35,                    // ラウンド数に合わせて値段を変える強さ
+  kpExp:1.8,                       // 人数に合わせて値段を変える強さ
+  kpTable:{1:.24, 2:.33, 3:.61, 4:1, 5:1.55, 6:2.04},  // 人数ごとの値段の倍率（自動対戦で決めた値）
+  cardMul:1,                      // 悪いカードの強さ
+};
+const PROJECTS = [
+  {id:'water', ic:'🚰', name:'古い水道管', topic:3, math:'1次関数', hint:'工事費 ＝ 基本料金 ＋ 長さ × 単価',
+    lv:['古い管の点検', '半分の管を交換', '新しい水道が完成'], bonus:'毎ラウンド 幸せ度＋1'},
+  {id:'train', ic:'🚃', name:'止まった電車', topic:1, math:'速さ・時刻表', hint:'道のり ＝ 速さ × 時間',
+    lv:['線路の修理', '駅を直す', '電車が再び走る'], bonus:'観光客が来て 毎ラウンド＋200万円'},
+  {id:'debt', ic:'💸', name:'町の赤字', topic:2, math:'正負の数・方程式', hint:'収入 − 支出 ＝ 0 にする x は？',
+    lv:['ムダづかいを見直す', '借金を半分返す', '赤字がゼロに'], bonus:'残りの工事が全部1割引き'},
+  {id:'akiya', ic:'🏚', name:'空き家が多い', topic:4, math:'面積・図形', hint:'部屋の面積 ＝ たて × よこ',
+    lv:['空き家を調べる', 'リフォームする', '新しい家族が住む'], bonus:'家賃が入って 毎ラウンド＋100万円'},
+  {id:'aging', ic:'👴', name:'少子高齢化', topic:5, math:'資料の活用', hint:'人口ピラミッドから 割合を読む',
+    lv:['子育ての相談窓口', '保育園をつくる', '子どもの声が戻る'], bonus:'子どもが増えて 毎ラウンド 幸せ度＋2'},
+  {id:'hosp', ic:'🏥', name:'病院が遠い', topic:1, math:'速さ・地図の縮尺', hint:'地図の長さ × 縮尺 ＝ 本当の道のり',
+    lv:['救急車を増やす', '診療所をつくる', '町の病院が完成'], bonus:'幸せ度が0になりそうなとき 1回だけ10でふみとどまる'},
+  {id:'shop', ic:'🏪', name:'シャッター商店街', topic:2, math:'割合・売上', hint:'売上 ＝ 値段 × 個数、利益率は？',
+    lv:['空き店舗を貸す', 'クリスマス市をひらく', '商店街がにぎわう'], bonus:'毎ラウンド＋150万円'},
+  {id:'snow', ic:'❄️', name:'雪かきが追いつかない', topic:4, math:'体積・比例', hint:'雪の体積 ＝ 面積 × 深さ',
+    lv:['雪かき当番をつくる', '除雪車を買う', '雪まつりの準備完了'], bonus:'最終ラウンドに 雪まつりで幸せ度＋5'},
+];
+const PROJ = {}; PROJECTS.forEach(p => { PROJ[p.id] = p; });
+const JOBS = {
+  se:{ic:'💻', name:'システムエンジニア', d:'正解したときのお金がいつも1.3倍（関数の問題は2倍）。電車の工事が3割引き'},
+  fire:{ic:'🚒', name:'消防士', d:'災害カード（大雪・火事）を1ラウンドに1回防ぐ'},
+  lawyer:{ic:'⚖️', name:'弁護士', d:'会議のたびに交渉して、工事1つを2割引きにする'},
+  clean:{ic:'🚛', name:'衛生のプロ', d:'町の衛生を守るプロ。水道管の破裂を防ぐ。水道と雪かきの工事が3割引き'},
+  police:{ic:'👮', name:'警察官', d:'犯罪カード（詐欺電話・空き巣）を1ラウンドに1回防ぐ。商店街の工事で幸せ度＋2'},
+};
+const JOB_ORDER = ['se', 'fire', 'lawyer', 'clean', 'police'];
+const CARDS = [
+  {id:'snowfall', ic:'❄️', name:'大雪で道が通れない', happy:-9, yen:0, proj:'snow', plv:1, jobs:['fire']},
+  {id:'pipe', ic:'🚰', name:'水道管が破裂した', happy:-10, yen:-200, proj:'water', plv:1, jobs:['clean']},
+  {id:'fire', ic:'🔥', name:'空き家で火事', happy:-10, yen:0, proj:'akiya', plv:1, jobs:['fire']},
+  {id:'scam', ic:'📞', name:'お年寄りに詐欺電話', happy:-8, yen:-200, jobs:['police']},
+  {id:'thief', ic:'🕵️', name:'空き巣が入った', happy:-7, yen:0, proj:'akiya', plv:2, jobs:['police']},
+  {id:'sick', ic:'🚑', name:'急病人！ 病院が遠い', happy:-10, yen:0, proj:'hosp', plv:1},
+  {id:'leave', ic:'🎒', name:'若い家族が町を出ていく', happy:-9, yen:0, proj:'aging', plv:1},
+  {id:'closed', ic:'🏪', name:'また1軒、お店が閉まった', happy:-7, yen:-100, proj:'shop', plv:1},
+  {id:'bus', ic:'🚌', name:'バスも減便に', happy:-7, yen:0, proj:'train', plv:1},
+  {id:'interest', ic:'💸', name:'借金の利子をはらう', happy:0, yen:-300, proj:'debt', plv:1},
+  {id:'furusato', ic:'💌', name:'ふるさと納税が届いた', good:true, happy:0, yen:500},
+  {id:'tv', ic:'📺', name:'テレビ取材が来た', good:true, happy:5, yen:0},
+  {id:'santa', ic:'🎅', name:'サンタのボランティア', good:true, happy:0, yen:0, tickets:1},
+  {id:'alumni', ic:'🏫', name:'卒業生が帰ってきた', good:true, happy:4, yen:0},
+  {id:'onsen', ic:'♨️', name:'温泉が人気に', good:true, happy:0, yen:300},
+  {id:'lighting', ic:'🎄', name:'町のツリー点灯式', good:true, happy:3, yen:0},
+];
+const CARD = {}; CARDS.forEach(c => { CARD[c.id] = c; });
+// ガチャのアイテムの力（いちばんレアなものだけが町に効く：ペット・おしゃれ・台座。ぶき・そうびは1つずつ守る）
+const COOP_ITEM = {
+  pet:{N:2, R:3, SR:4, UR:5, LR:7},             // 悪いカードで下がった幸せ度を、1ラウンドに1回いやす
+  fashion:{N:30, R:60, SR:90, UR:120, LR:200},  // 毎ラウンド 万円
+  ped:{N:.03, R:.05, SR:.08, UR:.12, LR:.15},   // 工事の割引
+  title:{N:.1, R:.2, SR:.3, UR:.4, LR:.3},      // 得意分野のお金（LR はぜんぶの分野）
+  gear:{N:{cut:3, rest:2}, R:{cut:5, rest:2}, SR:{cut:99, rest:3}, UR:{cut:99, rest:2}, LR:{cut:99, all:true, rest:3}},
+};
+const TITLE_TOPIC = {t_kuku:1, t_keisan:1, t_hoteishiki:2, t_zukei:4, t_pita:4, galaxy:0};
+const RAR_IDX = {N:0, R:1, SR:2, UR:3, LR:4};
+
+const COOP = {
+  itemMeta:id => null,    // ゲームのほうで ITEM につなぐ
+  rng:Math.random,
+  newState(o){
+    const S = {round:1, rounds:o.rounds || 8, n:Math.max(1, o.n || 4), budget:0, happy:COOP_CFG.startHappy,
+      lv:{}, lawyerUsed:{}, rest:{}, hospUsed:false, won:false, lost:false, festival:false,
+      earned:{}, blocked:{}, built:[], log:[], deck:[]};
+    PROJECTS.forEach(p => { S.lv[p.id] = 0; });
+    return S;
+  },
+  /* 人数とラウンド数に合わせた倍率（値段・決まった額のお金） */
+  kp(S){ const T = COOP_CFG.kpTable; return T && T[S.n] != null ? T[S.n] : Math.max(.25, Math.pow(S.n / 4, COOP_CFG.kpExp)); },
+  kr(S){ return Math.pow(S.rounds / 8, COOP_CFG.priceExp); },
+  yen(S, base){ return Math.round(base * COOP.kp(S) / 10) * 10; },
+  hasJob(players, j){ return players.filter(p => p.job === j); },
+  /* 町でいちばんレアなアイテム（種類ごと） */
+  best(players, kind){
+    let top = null;
+    players.forEach(p => (p.gear || []).forEach(id => { const m = COOP.itemMeta(id); if (!m) return;
+      const k = m.g === 'noble' ? (m.slot === 'title' ? 'title' : 'ped') : m.g;
+      if (k === kind && (!top || RAR_IDX[m.r] > RAR_IDX[top.m.r])) top = {m, id, pl:p}; }));
+    return top;
+  },
+  pedDisc(players){ const b = COOP.best(players, 'ped'); return b ? COOP_ITEM.ped[b.m.r] : 0; },
+  /* 次の段階の工事の値段（割引の内わけつき） */
+  price(S, players, pid){
+    const lv = S.lv[pid]; if (lv >= 3) return null;
+    const base = Math.round(COOP_CFG.lvCost[lv] * COOP.kp(S) * COOP.kr(S) / 10) * 10;
+    const disc = [];
+    if (S.lv.debt >= 3 && pid !== 'debt') disc.push({t:'💸 赤字ゼロ', r:.1});
+    if (pid === 'train' && COOP.hasJob(players, 'se').length) disc.push({t:'💻 SE', r:COOP_CFG.seTrain});
+    if ((pid === 'water' || pid === 'snow') && COOP.hasJob(players, 'clean').length) disc.push({t:'🚛 衛生のプロ', r:.3});
+    const pd = COOP.pedDisc(players); if (pd) disc.push({t:'💎 台座', r:pd});
+    const mul = disc.reduce((m, d) => m * (1 - d.r), 1);
+    return {base, disc, cost:Math.max(10, Math.round(base * mul / 10) * 10)};
+  },
+  /* 正解したときのお金 */
+  earn(S, pl, star, topic, dbl){
+    let mul = dbl ? 2 : 1; const why = [];
+    if (pl.job === 'se'){ const k = topic === 3 ? COOP_CFG.seMul : COOP_CFG.seAll; if (k > 1){ mul *= k; why.push(`💻×${k}`); } }
+    (pl.gear || []).forEach(id => { const m = COOP.itemMeta(id); if (!m || !m.title || !(id in TITLE_TOPIC)) return;
+      const tp = TITLE_TOPIC[id]; if (tp === 0 || tp === topic){ const r = COOP_ITEM.title[m.r]; mul *= 1 + r; why.push(`《${m.title}》+${Math.round(r * 100)}%`); } });
+    return {yen:Math.round(star * COOP_CFG.yenPerStar * mul / 10) * 10, why};
+  },
+  addEarn(S, pl, yen, topic){ const e = S.earned[pl.id] = S.earned[pl.id] || {total:0, top:{}, ok:0}; e.total += yen; e.ok += yen > 0 ? 1 : yen < 0 ? -1 : 0; if (topic) e.top[topic] = (e.top[topic] || 0) + yen; S.budget = Math.max(0, S.budget + yen); },
+  /* 会議でえらべる工事 */
+  options(S, players){
+    return PROJECTS.filter(p => S.lv[p.id] < 3).map(p => { const pr = COOP.price(S, players, p.id); return {id:p.id, lv:S.lv[p.id], price:pr, can:pr.cost <= S.budget}; });
+  },
+  lawyerFor(S, players){ return players.find(p => p.job === 'lawyer' && !(S.lawyerUsed[p.id] && S.round - S.lawyerUsed[p.id] < COOP_CFG.lawyerCool)) || null; },
+  buy(S, players, pid, lawyer){
+    const pr = COOP.price(S, players, pid); if (!pr) return null;
+    let cost = pr.cost;
+    if (lawyer){ cost = Math.max(10, Math.round(cost * (1 - COOP_CFG.lawyerRate) / 10) * 10); S.lawyerUsed[lawyer.id] = S.round; }
+    if (cost > S.budget) return null;
+    S.budget -= cost;
+    const lv = S.lv[pid]; S.lv[pid] = lv + 1;
+    let dh = COOP_CFG.lvHappy[lv];
+    if (pid === 'shop' && COOP.hasJob(players, 'police').length) dh += 2;
+    S.happy += dh; S.built.push({pid, lv:lv + 1, round:S.round});
+    COOP.check(S);
+    return {pid, lv:lv + 1, cost, dh, done:lv + 1 >= 3, lawyer:!!lawyer};
+  },
+  drawCard(S, forceBad){
+    const bad = forceBad != null ? forceBad : COOP.rng() < COOP_CFG.badRate;
+    const pool = CARDS.filter(c => !!c.good === !bad && !(S.deck.slice(-3).includes(c.id)));
+    const c = pool[Math.floor(COOP.rng() * pool.length)];
+    S.deck.push(c.id); return c;
+  },
+  /* カードの結果：防げたか、どれだけ変わったか */
+  resolve(S, players, c, used){
+    used = used || {fire:0, police:0};
+    const mul = c.good ? 1 : COOP_CFG.cardMul;
+    const out = {card:c, dh:Math.round(c.happy * mul), dy:c.yen ? COOP.yen(S, c.yen * mul) : 0, tickets:c.tickets || 0, by:null};
+    if (!c.good){
+      if (c.proj && S.lv[c.proj] >= c.plv){ out.by = {kind:'proj', t:`${PROJ[c.proj].ic} ${PROJ[c.proj].name}（レベル${c.plv}）`}; }
+      else {
+        const lim = {fire:COOP.hasJob(players, 'fire').length, police:COOP.hasJob(players, 'police').length * COOP_CFG.policeLimit};
+        const jp = (c.jobs || []).map(j => COOP.hasJob(players, j)).flat().filter(p => !(p.job in lim) || (used[p.job] || 0) < lim[p.job]);
+        if (jp.length){ const p = jp[0]; if (p.job in lim) used[p.job] = (used[p.job] || 0) + 1; out.by = {kind:'job', pl:p, t:`${JOBS[p.job].ic} ${JOBS[p.job].name}の ${p.name || ''}`}; S.blocked[p.id] = (S.blocked[p.id] || 0) + 1; }
+        else {
+          const g = COOP.guard(S, players, -out.dh, out.dh === 0, used);
+          if (g){ S.blocked[g.pl.id] = (S.blocked[g.pl.id] || 0) + 1;
+            if (g.full){ out.by = {kind:'item', pl:g.pl, id:g.id, t:`${g.m.name}`}; }
+            else { out.dh = Math.min(0, out.dh + g.cut); out.cut = {pl:g.pl, id:g.id, t:g.m.name, n:g.cut}; } }
+        }
+      }
+      if (out.by){ out.dh = 0; out.dy = 0; }
+      else if (out.dh < 0 && !used.pet){
+        const pet = COOP.best(players, 'pet');
+        if (pet){ used.pet = true; const h = Math.min(-out.dh, COOP_ITEM.pet[pet.m.r]); out.heal = {pl:pet.pl, id:pet.id, t:pet.m.name, n:h}; out.dh += h; S.blocked[pet.pl.id] = (S.blocked[pet.pl.id] || 0) + 1; }
+      }
+    }
+    S.happy += out.dh; S.budget = Math.max(0, S.budget + out.dy);
+    COOP.check(S);
+    return out;
+  },
+  /* ぶき・そうびで守る（ちょうどいい強さのものから使う。使ったら何ラウンドか休む） */
+  guard(S, players, dmg, yenOnly, used){
+    if (used.allBy) { const a = used.allBy; return {pl:a.pl, id:a.id, m:a.m, full:true}; }
+    const list = [];
+    players.forEach(p => (p.gear || []).forEach(id => { const m = COOP.itemMeta(id); if (!m || m.g !== 'gear') return;
+      const key = p.id + ':' + id; if ((S.rest[key] || 0) > 0) return; const G = COOP_ITEM.gear[m.r]; list.push({pl:p, id, m, key, G}); }));
+    if (!list.length) return null;
+    const full = list.filter(x => x.G.cut >= 99).sort((a, b) => RAR_IDX[a.m.r] - RAR_IDX[b.m.r]);
+    const part = list.filter(x => x.G.cut < 99).sort((a, b) => b.G.cut - a.G.cut);
+    let pick = null;
+    if (!yenOnly){ const ok = part.find(x => x.G.cut >= dmg); pick = ok || (full[0] ? null : part[0]); }
+    if (!pick) pick = full[0] || null;
+    if (!pick) return null;
+    S.rest[pick.key] = pick.G.rest + 1;   // このラウンドの終わりに1減る
+    if (pick.G.all) used.allBy = pick;
+    return {pl:pick.pl, id:pick.id, m:pick.m, full:pick.G.cut >= 99, cut:pick.G.cut};
+  },
+  /* ラウンドの終わりに毎回おきること */
+  roundEnd(S, players){
+    const L = [];
+    const add = (ic, t, dh, dy) => { if (!dh && !dy) return; S.happy += dh || 0; S.budget = Math.max(0, S.budget + (dy || 0)); L.push({ic, t, dh:dh || 0, dy:dy || 0}); };
+    if (S.lv.debt === 0) add('💸', '借金の利子', 0, -COOP.yen(S, COOP_CFG.deficitYen));
+    if (S.lv.water >= 3) add('🚰', '新しい水道で町が元気', 1, 0);
+    if (S.lv.aging >= 3) add('👴', '子どもの声が戻った', 2, 0);
+    if (S.lv.train >= 3) add('🚃', '電車で観光客', 0, COOP.yen(S, 200));
+    if (S.lv.akiya >= 3) add('🏚', '空き家の家賃', 0, COOP.yen(S, 100));
+    if (S.lv.shop >= 3) add('🏪', '商店街の売上', 0, COOP.yen(S, 150));
+    const fa = COOP.best(players, 'fashion'); if (fa) add('👗', `${fa.m.name}で観光客`, 0, COOP.yen(S, COOP_ITEM.fashion[fa.m.r]));
+    if (S.round >= S.rounds && S.lv.snow >= 3 && !S.festival){ S.festival = true; add('⛄', '雪まつり！', 5, 0); }
+    Object.keys(S.rest).forEach(k => { S.rest[k] = Math.max(0, S.rest[k] - 1); if (!S.rest[k]) delete S.rest[k]; });
+    COOP.check(S);
+    return L;
+  },
+  check(S){
+    if (S.lost || S.won) return S;
+    if (S.happy <= 0){
+      if (S.lv.hosp >= 3 && !S.hospUsed){ S.hospUsed = true; S.happy = 10; S.log.push('hosp'); }
+      else { S.happy = 0; S.lost = true; }
+    }
+    if (S.happy >= COOP_CFG.goal){ S.happy = COOP_CFG.goal; S.won = true; }
+    return S;
+  },
+  /* コンピューターが会議で選ぶ工事（よさそうな順に点数をつける） */
+  score(S, players, o){
+    const p = PROJ[o.id], lv = o.lv, left = S.rounds - S.round + 1, cost = o.price.cost;
+    let v = COOP_CFG.lvHappy[lv] + (o.id === 'shop' && COOP.hasJob(players, 'police').length ? 2 : 0);
+    const cardsLeft = left * (S.round <= 2 ? 1.5 : 2) * COOP_CFG.badRate;
+    CARDS.forEach(c => { if (!c.good && c.proj === o.id && c.plv === lv + 1){
+      const jobBlock = (c.jobs || []).some(j => COOP.hasJob(players, j).length);
+      if (!jobBlock) v += (-c.happy + (c.yen ? -c.yen / 120 : 0)) * cardsLeft / 10; } });
+    if (lv === 2){
+      const per = {water:1, aging:2, train:200 / 120, akiya:100 / 120, shop:150 / 120}[o.id] || 0;
+      v += per * (left - 1);
+      if (o.id === 'debt') v += 4; if (o.id === 'snow') v += 5; if (o.id === 'hosp') v += S.happy < 30 ? 6 : 1;
+      v += 2;   // 完成するとうれしい
+    }
+    if (o.id === 'debt' && lv === 0) v += COOP_CFG.deficitYen / 120 * left;
+    return v / (cost / 100);
+  },
+  aiPick(S, players, opts){
+    const can = (opts || COOP.options(S, players)).filter(o => o.can);
+    if (!can.length) return null;
+    can.forEach(o => { o.sc = COOP.score(S, players, o) * (.85 + COOP.rng() * .3); });
+    return can.sort((a, b) => b.sc - a.sc)[0].id;
+  },
+};
+function fmtYen(m){
+  m = Math.round(m); const neg = m < 0; m = Math.abs(m);
+  const oku = Math.floor(m / 10000), man = m % 10000;
+  const s = (oku ? oku + '億' : '') + (man || !oku ? man.toLocaleString('ja-JP') + '万' : '') + '円';
+  return (neg ? '−' : '') + s;
+}
+/* COOP-ENGINE-END */
+
 /* ============ 参加者画面 ============ */
-const P = {inited:false, stage:'setup', course:null, level:1, sel:null, name:'', topic:0, star:0, prob:null, t:120, timer:null, hist:[], room:'', pid:null, jid:null, char:'', info:null, roster:null, done:{}, subs:[]};
+const P = {inited:false, stage:'setup', course:null, level:1, sel:null, name:'', topic:0, star:0, prob:null, t:120, timer:null, hist:[], room:'', pid:null, jid:null, char:'', info:null, roster:null, done:{}, subs:[], job:'', voteId:0, myVote:null};
+const pCoop = () => !!(P.info && P.info.mode === 'coop');
 function loadCourse(){ try { const c = JSON.parse(localStorage.getItem('sg_course') || 'null'); if (c && COURSES[c.c]){ P.course = c.c; P.level = Math.max(0, Math.min(2, c.l | 0)); } } catch(e){} }
 function saveCourse(){ try { localStorage.setItem('sg_course', JSON.stringify({c:P.course, l:P.level})); } catch(e){} }
 /* コースとレベルを先生の画面に知らせる（表示用。問題はこの画面で作る） */
-function sendPref(){ if (!P.room || P.pid == null || !P.course) return; P.prefAt = Date.now(); NET.set(`rooms/${P.room}/pref/${P.pid}`, {course:P.course, level:P.level, at:NET.now()}); }
+function sendPref(){ if (!P.room || P.pid == null || !P.course) return; P.prefAt = Date.now(); NET.set(`rooms/${P.room}/pref/${P.pid}`, {course:P.course, level:P.level, job:P.job || '', at:NET.now()}); }
 function courseSelHTML(){
   const c = P.course;
   return `<div class="csel">${COURSE_ORDER.map(k => `<button type="button" class="copt ${c === k ? 'sel' : ''}" onclick="pPickCourse('${k}')"><span class="cic">${COURSES[k].ic}</span>${COURSES[k].name.replace(/（.*）/, '')}<small>${COURSES[k].name.match(/（(.*)）/) ? COURSES[k].name.match(/（(.*)）/)[1] : ''}</small></button>`).join('')}</div>
@@ -1414,6 +1863,22 @@ function courseSelHTML(){
 }
 function pPickCourse(k){ P.course = k; saveCourse(); sendPref(); try { sfx.star(); } catch(e){} const el = $('#csel'); if (el) el.innerHTML = courseSelHTML(); }
 function pPickLevel(i){ P.level = i; saveCourse(); sendPref(); try { sfx.star(); } catch(e){} const el = $('#csel'); if (el) el.innerHTML = courseSelHTML(); }
+function jobCounts(){ const c = {}; Object.entries(P.roster || {}).forEach(([k, r]) => { if (r && r.job && k !== P.pid) c[r.job] = (c[r.job] || 0) + 1; }); return c; }
+function jobPickHTML(){
+  const c = jobCounts();
+  if (!JOBS[P.job]){ const min = Math.min(...JOB_ORDER.map(j => c[j] || 0)); P.job = JOB_ORDER.find(j => (c[j] || 0) === min); }
+  return `<div class="jobgrid">${JOB_ORDER.map(j => `<button type="button" class="jobpick ${P.job === j ? 'sel' : ''}" data-j="${j}" onclick="pPickJob('${j}')"><span class="ji">${JOBS[j].ic}</span><span class="jt"><b>${JOBS[j].name}</b><small>${JOBS[j].d}</small></span><em>${c[j] ? `いま${c[j]}人` : 'まだいない！'}</em></button>`).join('')}</div>`;
+}
+function pPickJob(j){ P.job = j; try { localStorage.setItem('sg_job', j); } catch(e){} document.querySelectorAll('.jobpick').forEach(b => b.classList.toggle('sel', b.dataset.j === j)); try { sfx.star(); } catch(e){} if (P.pid != null) sendPref(); }
+function pVote(id){
+  const V = P.info && P.info.vote; if (!V || !P.room || P.pid == null) return;
+  P.myVote = id; NET.set(`rooms/${P.room}/vote/${V.id}/${P.pid}`, {v:id, at:NET.now()}); initAudio(); try { sfx.star(); } catch(e){} renderPlay();
+}
+function townHTML(){
+  const T = P.info && P.info.town; if (!T) return '';
+  return `<div class="wtown"><div class="wt1">🏘 こがね町　<b>💰 ${fmtYen(T.b)}</b></div><div class="hap ${T.h < 30 ? 'low' : ''}"><i style="width:${Math.max(0, Math.min(100, T.h))}%"></i><b>😊 幸せ度 ${T.h} / 100</b></div>
+    <div class="wtp">${PROJECTS.map((p, i) => `<span title="${p.name}">${p.ic}<span class="pips">${[0,1,2].map(k => `<i class="${k < +(T.lv || '')[i] ? 'on' : ''}"></i>`).join('')}</span></span>`).join('')}</div></div>`;
+}
 const myCourse = () => `${COURSES[P.course || 'chu'].ic} ${courseLabel(P.course || 'chu', P.level)}`;
 function playInit(){ if (P.inited) return; P.inited = true; loadCourse(); NET.onConn(() => { if (P.stage === 'wait') renderPlay(); }); if (P.room) netJoin(P.room); else renderPlay(); }
 /* ---- 先生の部屋につなぐ ---- */
@@ -1459,6 +1924,15 @@ function netUpdate(){
     return; }
   if (!me){ P.stage = 'join'; renderPlay(); return; }
   P.name = me.name;
+  document.body.classList.toggle('coopmode', I.mode === 'coop');
+  if (me.job && !P.job) P.job = me.job;
+  if (I.mode === 'coop' && I.phase === 'meeting' && I.vote && P.stage !== 'quiz'){
+    if (P.stage !== 'vote' || P.voteId !== I.vote.id){ P.voteId = I.vote.id; P.myVote = null; initAudio(); try { sfx.jingle(); } catch(e){} }
+    P.stage = 'vote'; renderPlay(); return;
+  }
+  if (P.stage === 'vote'){ P.stage = 'wait'; }
+  if (P.stage === 'job' && !(I.phase === 'setup' || I.phase === 'lobby')) P.stage = 'wait';
+  if (P.stage === 'job'){ return; }
   if (!P.course && me.course && COURSES[me.course]){ P.course = me.course; P.level = me.level | 0; }
   if (P.course && (me.course !== P.course || (me.level | 0) !== P.level) && !(Date.now() - (P.prefAt || 0) < 4000)) sendPref();
   const qOpen = I.phase === 'quiz' && me.topic > 0 && I.quizId && !P.done[I.quizId];
@@ -1483,7 +1957,7 @@ function pSelfJoin(){
   if (!P.course){ $('#jmsg').textContent = 'コースをえらんでね'; return; }
   P.jid = P.jid || ('j' + Math.random().toString(36).slice(2, 10)); P.pid = null;
   try { localStorage.setItem('sg_jid_' + P.room, P.jid); localStorage.removeItem('sg_pid_' + P.room); } catch(e){}
-  const d = {name:nm, char:P.char, course:P.course, level:P.level}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
+  const d = {name:nm, char:P.char, course:P.course, level:P.level, job:pCoop() ? P.job : ''}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
   NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({at:NET.now()}, d)); watchMyJoin();
   initAudio(); try { sfx.star(); } catch(e){}
   P.name = nm; P.stage = 'wait'; renderPlay();
@@ -1499,24 +1973,29 @@ function waitHTML(){
     roll:[String(I.turnId) === String(P.pid) ? '🎲' : '⏳', String(I.turnId) === String(P.pid) ? 'あなたの番です！<br>先生の画面を見てね' : 'サイコロの順番を待っています'],
     quizReady:['📝', 'まもなく問題タイム！<br>この画面に問題が出ます'],
     quiz:me.topic > 0 ? ['✅', '答えを送りました！<br>結果を待ってね'] : ['📣', '今回は問題なし。<br>みんなを応援しよう！'],
-    score:['⭐', '⭐ を数えています…'],
+    score:pCoop() ? ['💰', '町の予算を数えています…'] : ['⭐', '⭐ を数えています…'],
     gacha:['🎰', 'ガチャタイム！<br>先生の画面を見てね'],
-    end:['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
+    meeting:['🏛', '町の会議！'],
+    build:['🏗', '工事中！<br>先生の画面を見てね'],
+    cards:['📜', 'こがね町のできごと！<br>先生の画面を見てね'],
+    end:pCoop() ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🏗', '最後の大工事！<br>みんなで協力しよう']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
   })[I.phase] || ['⏳', '先生の画面を待っています'];
-  const last = P.hist[P.hist.length - 1];
+  const last = P.hist[P.hist.length - 1], co = pCoop();
   return `<div class="wait">
     <div class="wme">${CHAR_THUMB[me.char] ? `<img class="wimg" src="${CHAR_THUMB[me.char]}" alt="" style="border-color:${me.color || '#888'}">` : `<span class="wdot" style="background:${me.color || '#888'}"></span>`}<b>${esc(me.name || '')}</b></div>
-    <div class="wst"><span>⭐ ${me.stars || 0}</span>${me.tickets ? `<span>🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="wsp">📍 ${esc(me.space)}</span>` : ''}</div>
+    <div class="wst">${co ? (JOBS[me.job] ? `<span>${JOBS[me.job].ic} ${JOBS[me.job].name}</span>` : '') : `<span>⭐ ${me.stars || 0}</span>`}${me.tickets ? `<span>🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="wsp">📍 ${esc(me.space)}</span>` : ''}</div>
+    ${co ? townHTML() : ''}
     <div class="wbig">${msg[0]}</div><div class="wmsg">${msg[1]}</div>
+    ${co && JOBS[me.job] && (I.phase === 'setup' || I.phase === 'lobby') ? `<div class="wsub">${JOBS[me.job].d}　<button class="small-link" onclick="P.stage='job';renderPlay()">職業を変える</button></div>` : ''}
     <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
     ${I.phase === 'roll' && I.round ? `<div class="wsub">ラウンド ${I.round} / ${I.maxRound}</div>` : ''}
-    ${last && I.phase !== 'quiz' ? `<div class="wsub">前回：${last.ok ? `⭕ 正解（⭐${last.st}）` : '❌ ざんねん'}</div>` : ''}
+    ${last && I.phase !== 'quiz' ? `<div class="wsub">前回：${last.ok ? (co ? `⭕ 正解${me.yen ? `　町の予算に +${fmtYen(me.yen)}` : ''}` : `⭕ 正解（⭐${last.st}）`) : '❌ ざんねん'}</div>` : ''}
     <div class="wfoot">部屋 ${esc(P.room)}${NET.mode === 'fb' && !NET.connected ? '　🔴 つながっていません' : ''}　<button class="small-link" onclick="P.stage='join';renderPlay()">名前を選びなおす</button></div></div>`;
 }
 function pscore(){
   const st = P.hist.reduce((s,h) => s + h.st, 0), ok = P.hist.filter(h => h.ok).length;
-  $('#pscore').innerHTML = P.hist.length ? `⭐ ${st}<br><span style="color:var(--muted);font-weight:500">正解 ${ok} / ${P.hist.length}</span>` : '';
-  $('#pwho').textContent = P.name ? '🎄 ' + P.name + ' さん' : '🎄 数学すごろく';
+  $('#pscore').innerHTML = P.hist.length ? (pCoop() ? `✅ 正解 ${ok} / ${P.hist.length}` : `⭐ ${st}<br><span style="color:var(--muted);font-weight:500">正解 ${ok} / ${P.hist.length}</span>`) : '';
+  $('#pwho').textContent = P.name ? (pCoop() ? '🏘 ' : '🎄 ') + P.name + ' さん' : (pCoop() ? '🏘 こがね町を救え！' : '🎄 数学すごろく');
 }
 function renderPlay(){
   pscore();
@@ -1531,11 +2010,26 @@ function renderPlay(){
       <div class="cpgrid">${Object.entries(CHAR_LIST).map(([k, c]) => `<button class="cpick ${P.char === k ? 'sel' : ''}" data-k="${k}" ${taken.has(k) && P.char !== k ? 'disabled' : ''} onclick="pPickChar('${k}')"><img src="${CHAR_THUMB[k] || ''}" alt=""><span>${c[0]}</span></button>`).join('')}</div>
       <label>コースとレベル（あとで変えられます）</label>
       <div id="csel">${courseSelHTML()}</div>
+      ${pCoop() ? `<label>職業をえらぼう（こがね町でのしごと・みんなでちがう職業にすると強い！）</label>${jobPickHTML()}` : ''}
       <div class="msg" id="jmsg"></div>
       <button class="btn green big" onclick="pSelfJoin()">この名前とコマで参加する</button>` : '<div class="wmsg" style="margin:14px 0">ゲームはもう始まっています。<br>先生に「参加者に入れてください」と伝えてね</div>'}
       ${ids.length ? `<details ${open ? '' : 'open'} style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted)">もう登録してある人は、自分の名前をタップ</summary>
       <div class="jgrid">${ids.map(k => `<button class="jbtn" onclick="pJoin('${k}')" style="--pc:${R[k].color}"><img class="jimg" src="${CHAR_THUMB[R[k].char] || ''}" alt="">${esc(R[k].name)}</button>`).join('')}</div></details>` : ''}
       <div style="text-align:center;margin-top:10px"><button class="small-link" onclick="P.subs.forEach(f=>f());P.subs=[];P.room='';P.stage='setup';history.replaceState(null,'','#play');renderPlay()">部屋番号を入れなおす</button></div>`;
+    return;
+  }
+  if (P.stage === 'vote' && P.info && P.info.vote){
+    const V = P.info.vote, T = P.info.town || {b:0};
+    B.innerHTML = `<h2>🏛 町の会議${V.k ? '（2つめ）' : ''}</h2><p style="margin:0 0 8px;color:var(--muted)">どの工事に町のお金を使う？　💰 <b style="color:#fff">${fmtYen(T.b)}</b>${V.law ? `<br>⚖️ 弁護士の${esc(V.law)}さんが2割引きに交渉中！` : ''}</p>
+      <div class="vgrid">${V.opts.map(o => { const p = PROJ[o.id]; return `<button class="vopt ${P.myVote === o.id ? 'sel' : ''}" ${o.can ? '' : 'disabled'} onclick="pVote('${o.id}')"><span class="vi">${p.ic}</span><span class="vt"><b>${p.name}</b><small>レベル${o.lv + 1}「${p.lv[o.lv]}」</small><small>${fmtYen(o.cost)}　😊 +${o.dh || COOP_CFG.lvHappy[o.lv]}${o.lv === 2 ? '　🎉 完成！' : ''}${o.can ? '' : '　（お金が足りない）'}</small></span></button>`; }).join('')}
+      <button class="vopt save ${P.myVote === 'save' ? 'sel' : ''}" onclick="pVote('save')"><span class="vi">💰</span><span class="vt"><b>今回は貯金</b><small>次のラウンドで高い工事をする</small></span></button></div>
+      <div class="vfoot">⏱ のこり <b id="vt">${Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000))}</b> 秒　${P.myVote ? '✅ 投票しました（変えられます）' : '👆 タップして投票'}</div>`;
+    clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#vt'); if (!el || P.stage !== 'vote'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000)); }, 500);
+    return;
+  }
+  if (P.stage === 'job'){
+    B.innerHTML = `<h2>💼 職業をえらぶ</h2><p style="margin:0 0 8px;color:var(--muted)">みんなでちがう職業にすると、町を守る力が強くなるよ</p>${jobPickHTML()}
+      <button class="btn green big" onclick="sendPref();P.stage='wait';netUpdate()">OK</button>`;
     return;
   }
   if (P.stage === 'course'){
@@ -1569,13 +2063,13 @@ function renderPlay(){
     B.innerHTML = `<div style="text-align:center"><span class="dot" style="display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;border:3px solid #fff;background:${TCOL[P.topic]};font-weight:900">${TSHORT[P.topic]}</span>
       <div style="font-size:22px;font-weight:900;margin:4px 0">${COURSES[P.course || 'chu'].f[P.topic]}</div>
       <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.back=P.stage;P.stage='course';renderPlay()">変える</button></div>
-      <p style="margin:0;color:var(--muted)">むずかしさを選ぼう。むずかしいほど ⭐ がたくさん！</p></div>
+      <p style="margin:0;color:var(--muted)">むずかしさを選ぼう。むずかしいほど ${pCoop() ? '町のお金' : '⭐'} がたくさん！</p></div>
       <div class="starsel">
-        <button class="btn" onclick="pStar(1)">★<small>やさしい　→ 正解で⭐1</small></button>
-        <button class="btn" onclick="pStar(2)">★★<small>ふつう　→ 正解で⭐2</small></button>
-        <button class="btn red" onclick="pStar(3)">★★★<small style="color:#ffe1e2">むずかしい　→ 正解で⭐3</small></button>
+        <button class="btn" onclick="pStar(1)">★<small>やさしい　→ 正解で${pCoop() ? fmtYen(100 * (P.double ? 2 : 1)) : '⭐1'}</small></button>
+        <button class="btn" onclick="pStar(2)">★★<small>ふつう　→ 正解で${pCoop() ? fmtYen(200 * (P.double ? 2 : 1)) : '⭐2'}</small></button>
+        <button class="btn red" onclick="pStar(3)">★★★<small style="color:#ffe1e2">むずかしい　→ 正解で${pCoop() ? fmtYen(300 * (P.double ? 2 : 1)) : '⭐3'}</small></button>
       </div>
-      ${P.room ? `<div style="text-align:center;color:var(--muted)">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.double ? '　🔥 チャレンジマス：⭐が2倍！' : ''}</div>` : `<div style="text-align:center"><button class="small-link" onclick="P.stage='pick';renderPlay()">← 色を選びなおす</button></div>`}`;
+      ${P.room ? `<div style="text-align:center;color:var(--muted)">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.double ? `　🔥 チャレンジマス：${pCoop() ? 'お金' : '⭐'}が2倍！` : ''}</div>` : `<div style="text-align:center"><button class="small-link" onclick="P.stage='pick';renderPlay()">← 色を選びなおす</button></div>`}`;
     if (P.room){ clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); if (netRemain() <= 0){ clearInterval(P.timer); } }, 500); }
   } else if (P.stage === 'quiz'){
     const pr = P.prob;
@@ -1594,7 +2088,7 @@ function renderPlay(){
     B.innerHTML = `<div class="result">
       <div class="mark">${r === 'ok' ? '⭕' : r === 'time' ? '⏰' : '❌'}</div>
       <div class="rt">${r === 'ok' ? `${'★'.repeat(P.star)} 正解！` : r === 'time' ? '時間切れ…' : 'ざんねん！'}</div>
-      ${r === 'ok' ? `<div class="tell">⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！</div><p style="color:var(--muted);margin:0">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p style="margin:4px 0">今回は⭐なし。次でとりかえそう！${P.room ? '<br><span style="color:var(--muted)">（先生の画面に届きました）</span>' : ''}</p>`}
+      ${r === 'ok' ? `<div class="tell">${pCoop() ? `町の予算に +${fmtYen(P.star * 100 * (P.double ? 2 : 1))}` : `⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！`}</div><p style="color:var(--muted);margin:0">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p style="margin:4px 0">今回は${pCoop() ? 'お金' : '⭐'}なし。次でとりかえそう！${P.room ? '<br><span style="color:var(--muted)">（先生の画面に届きました）</span>' : ''}</p>`}
       </div>
       <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>
       <button class="btn green big" onclick="P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">${P.room ? 'OK' : '次のラウンドへ'}</button>`;
@@ -2849,6 +3343,7 @@ const DUNGEON_EDGES = {
 let NODE = {}, ROUTE_LABEL = {}, EDGES = {}, MAP = null, MAPKEY = '';
 const mapRoot = new THREE.Group(); scene.add(mapRoot);
 const tileMeshes = {};
+let TOWN = null;   // こがね町の明かり（協力モードのときだけ）
 const flames = [];
 function setNodes(list){
   NODE = {}; let k = 0;
@@ -2933,7 +3428,7 @@ function makeTile(n, root, shopSide){
   else if (n.type === 'gift'){ fill = '#f2c94c'; label = n.gate ? '🔑' : '🎁'; }
   else if (n.type === 'sled'){ fill = '#38bdf8'; label = '🛷'; }
   else if (n.type === 'snow'){ fill = '#e8eefc'; label = '⛄'; }
-  else if (n.type === 'shop'){ fill = '#0f766e'; label = '🏪'; r = 1.0; }
+  else if (n.type === 'shop'){ fill = MAP && MAP.coop ? '#3b5bdb' : '#0f766e'; label = MAP && MAP.coop ? '💼' : '🏪'; r = 1.0; }
   else if (n.type === 'event'){ fill = '#2a1f5c'; label = '❓'; }
   else if (n.type === 'tree'){ fill = '#14532d'; label = '🎄'; r = 1.3; }
   else if (n.type === 'cart'){ fill = '#8a5a3a'; label = '🚃'; }
@@ -2966,7 +3461,7 @@ function makeTile(n, root, shopSide){
 }
 function loadMap(key){
   if (MAPKEY === key) return;
-  disposeTree(mapRoot); mapRoot.clear();
+  disposeTree(mapRoot); mapRoot.clear(); TOWN = null;
   Object.keys(tileMeshes).forEach(k => delete tileMeshes[k]); flames.length = 0;
   MAPKEY = key; MAP = MAPS[key];
   setNodes(MAP.nodes());
@@ -2980,7 +3475,9 @@ function loadMap(key){
   try {
     const ex = Object.values(tileMeshes);
     if (MAPKEY === 'dungeon' && typeof DG !== 'undefined'){ if (DG.cart) ex.push(DG.cart); if (DG.gondola) ex.push(DG.gondola.cab, DG.gondola.cable, DG.gondola.line); }
+    if (TOWN) TOWN.prep(true);
     Q.freeze = freezeStatic(mapRoot, {exclude:ex, anim:MAP.anim});
+    if (TOWN) TOWN.prep(false);
     if (Q.mobile) mapRoot.traverse(o => { if (o.isMesh && o.castShadow && !o.userData.frozen){ if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const sc = o.getWorldScale(new THREE.Vector3()).x; if (o.geometry.boundingSphere.radius * sc < .3) o.castShadow = false; } });
   } catch(e){ console.warn('freeze', e); }
   try {   // 最初の1回の描画で止まらないように、先に準備しておく
@@ -3019,7 +3516,7 @@ function pine(x, z, s = 1){
   g.position.set(x, 0, z); g.scale.setScalar(s); g.rotation.y = Math.random()*6;
   root.add(shadowAll(g));
 }
-const smokes = [], windows = [];
+const smokes = [], windows = [], houseLights = [], townBulbs = [], COOPMAP = !!(MAP && MAP.coop);
 function house(x, z, col, rot = 0){
   const g = new THREE.Group();
   const body = new THREE.Mesh(new THREE.BoxGeometry(2, 1.4, 1.6), mat(col)); body.position.y = .7; g.add(body);
@@ -3037,7 +3534,7 @@ function house(x, z, col, rot = 0){
     root.add(s); smokes.push(s);
   }
   g.position.set(x, 0, z); g.rotation.y = rot;
-  const light = new THREE.PointLight('#ffb347', 6, 5, 2); light.position.set(0, 1, 1.3); g.add(light);
+  const light = new THREE.PointLight('#ffb347', 6, 5, 2); light.position.set(0, 1, 1.3); g.add(light); houseLights.push(light);
   root.add(shadowAll(g));
 }
 function mountain(x, z, s){
@@ -3078,7 +3575,8 @@ const bulbMats = ['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#f15bb5'].map(c => ne
       [.3, .7].forEach((t, j) => {
         const side = j ? 1 : -1, px = a.x + d.x*t + ux*.78*side, pz = a.z + d.z*t + uz*.78*side;
         const pole = new THREE.Mesh(poleGeo, poleMat); pole.position.set(px, .17, pz); root.add(pole);
-        const bl = new THREE.Mesh(bulbGeo, bulbMats[li++ % bulbMats.length]); bl.position.set(px, .4, pz); root.add(bl);
+        const ci = li % bulbMats.length, bl = new THREE.Mesh(bulbGeo, bulbMats[li++ % bulbMats.length]); bl.position.set(px, .4, pz); root.add(bl);
+        if (COOPMAP) townBulbs.push({bl, ci});
       });
     }
   }));
@@ -3087,6 +3585,27 @@ const bulbMats = ['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#f15bb5'].map(c => ne
   const lb = new THREE.Mesh(new RoundedBoxGeometry(.6, .5, .25, 2, .06), mat('#f2c94c', {metalness:.6, roughness:.3, flatShading:false})); lb.position.y = .45; lock.add(lb);
   const sh = new THREE.Mesh(new THREE.TorusGeometry(.2, .05, 8, 16, Math.PI), mat('#cfd8ee', {metalness:.8, roughness:.2, flatShading:false})); sh.position.y = .7; lock.add(sh);
   lock.position.copy(lp); root.add(shadowAll(lock));
+}
+// こがね町：電球をツリーから近い順に10のまとまりに分けて、幸せ度に合わせて1つずつ灯す
+if (COOPMAP){
+  const tp = NODE.T.p, G = 10, groups = Array.from({length:G}, () => []), mats = {};
+  townBulbs.sort((a, b) => a.bl.position.distanceToSquared(tp) - b.bl.position.distanceToSquared(tp));
+  townBulbs.forEach(({bl, ci}, r) => {
+    const g = Math.min(G - 1, Math.floor(r / townBulbs.length * G)), key = g * 10 + ci;
+    if (!mats[key]){ const m = bulbMats[ci].clone(); m.userData = {col:bulbMats[ci].color.clone(), on:0}; m.color.set('#30364d'); m.emissiveIntensity = 0; mats[key] = m; groups[g].push(m); }
+    bl.material = mats[key];
+  });
+  windows.forEach(m => { m.userData.on = 0; m.emissiveIntensity = .03; m.color.set('#3a3a48'); });
+  houseLights.forEach(l => { l.userData.full = l.intensity; l.intensity = 0; });
+  TOWN = {groups, lit:0, wins:windows, hl:houseLights, star:false,
+    // まとめる前に一度ぜんぶ「光る」ことにして、電球の材質を1つずつ残す（あとで1つずつ灯せるように）
+    prep(on){ groups.flat().concat(windows).forEach(m => { m.userData.on = on ? 1 : 0; if (on && m.userData.col) m.color.copy(m.userData.col); if (!on){ m.emissiveIntensity = m.userData.col ? 0 : .03; if (m.userData.col) m.color.set('#30364d'); else m.color.set('#3a3a48'); } }); }};
+  windows.forEach(m => { m.userData.wcol = new THREE.Color('#ffd36b'); });
+  const sign = new THREE.Sprite(new THREE.SpriteMaterial({map: canvasTex((g, w, h) => {
+    g.fillStyle = 'rgba(10,20,48,.82)'; g.beginPath(); g.roundRect(6, 6, w - 12, h - 12, 26); g.fill(); g.lineWidth = 6; g.strokeStyle = '#ffd23f'; g.stroke();
+    g.font = `900 64px ${JP_FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ffd23f'; g.fillText('こがね町', w/2, h/2 + 4);
+  }, 384, 128), depthWrite:false}));
+  sign.scale.set(4.2, 1.4, 1); sign.position.set(0, 1.6, -11.6); root.add(sign);
 }
 
 Object.values(NODE).forEach(n => makeTile(n, root));
@@ -3112,6 +3631,7 @@ let starMesh;
     gift.position.set(Math.cos(i*2.1)*1.2, .15, Math.sin(i*2.1)*1.2 + .4); gift.rotation.y = i; t.add(gift);
   }
   const tl = new THREE.PointLight('#ffcc66', 20, 9, 2); tl.position.y = 2.5; t.add(tl);
+  if (COOPMAP){ TOWN.tree = tl; TOWN.starM = starMesh.material; tl.intensity = 3; starMesh.material.emissiveIntensity = .12; }
   t.position.copy(NODE.T.p).add(new THREE.Vector3(2.5, 0, -2.2));
   root.add(shadowAll(t));
 }
@@ -3132,8 +3652,13 @@ return (T, dt) => {
   const pa = snowGeo.attributes.position.array;
   for (let i = 0; i < SNOW_N; i++){ pa[i*3+1] -= dt * (.8 + (i % 5) * .15); pa[i*3] += Math.sin(T + i) * dt * .15; if (pa[i*3+1] < -1) pa[i*3+1] = 24; }
   snowGeo.attributes.position.needsUpdate = true;
-  bulbMats.forEach((m, i) => m.emissiveIntensity = 1.2 + 1.4 * (.5 + .5 * Math.sin(T * 3 + i * 1.3)));
-  windows.forEach((m, i) => m.emissiveIntensity = 1.3 + .3 * Math.sin(T * 2 + i));
+  if (TOWN && COOPMAP){
+    TOWN.groups.forEach((gs, gi) => gs.forEach((m, i) => { const o = m.userData.on; if (o > 0) m.emissiveIntensity = o * (1.2 + 1.4 * (.5 + .5 * Math.sin(T * 3 + i * 1.3 + gi))); }));
+    windows.forEach((m, i) => { const o = m.userData.on; m.emissiveIntensity = o > 0 ? o * (1.3 + .3 * Math.sin(T * 2 + i)) : .03; });
+  } else {
+    bulbMats.forEach((m, i) => m.emissiveIntensity = 1.2 + 1.4 * (.5 + .5 * Math.sin(T * 3 + i * 1.3)));
+    windows.forEach((m, i) => m.emissiveIntensity = 1.3 + .3 * Math.sin(T * 2 + i));
+  }
   starMesh.rotation.y = T * .8;
   smokes.forEach(s => { const u = (s.userData.t + T * .25) % 1; s.position.set(s.userData.ox + u * .5, 2.5 + u * 2, s.userData.oz); s.scale.setScalar(.6 + u * 1.6); s.material.opacity = .55 * (1 - u); });
 };
@@ -3525,6 +4050,8 @@ const MAPS = {
     build:buildVillage, look:{bg:'#0a1430', fog:[48,100], hemi:['#8fb0f5','#1f2b52',.75], moon:['#dbe6ff',1.7,[-14,30,12]], bloom:[.45,.93], exposure:.95},
     overview:{pos:[0,27,21], look:[0,0,1], npos:[0,46,22], nlook:[0,0,2]}},
 };
+// 協力モードの「こがね町」：雪の村と同じ盤。明かりは町の幸せ度に合わせて灯る
+MAPS.town = Object.assign({}, MAPS.village, {name:'🏘️ こがね町', desc:'協力モードの町', coop:true, lapText:'🎄 町のツリーを通過！'});
 
 const hlRings = [];
 function hl(ids){
@@ -4265,7 +4792,9 @@ function camFollow(p, dist = 1){
 resize(); camOverview(); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook);
 
 /* ================= ゲームの状態 ================= */
-const H = {players:[], round:1, maxRound:8, phase:'setup', turn:0, busy:false, asking:false, t:120, timer:null, hist:[], watch:false, auto:false, view:false, cpuPending:false};
+const H = {players:[], round:1, maxRound:8, phase:'setup', turn:0, busy:false, asking:false, t:120, timer:null, hist:[], watch:false, auto:false, view:false, cpuPending:false,
+  mode:'coop', coop:null, coopEnd:null, vote:null};
+try { const m = localStorage.getItem('sg_mode'); if (m === 'coop' || m === 'versus') H.mode = m; const r = +localStorage.getItem('sg_rounds'); if ([6, 8, 10].includes(r)) H.maxRound = r; } catch(e){}
 const isBot = pl => pl.cpu || H.auto;
 const needsQ = pl => typeof pl.space === 'number';
 
@@ -4296,8 +4825,9 @@ function netPublish(now){
   clearTimeout(NETH.pubT);
   NETH.pubT = setTimeout(() => {
     const cur = H.players[H.turn];
-    const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0};
-    const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0}; });
+    const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0, mode:H.mode};
+    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; }
+    const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', yen:pl.lastYen == null ? null : pl.lastYen}; });
     const ji = JSON.stringify(info), jr = JSON.stringify(roster);
     if (ji !== NETH.last.i){ NETH.last.i = ji; NET.set(`rooms/${NETH.room}/info`, info); }
     if (jr !== NETH.last.r){ NETH.last.r = jr; NET.set(`rooms/${NETH.room}/roster`, roster); }
@@ -4313,6 +4843,7 @@ function onJoin(v){
     const ex = H.players.find(pl => pl.jid === jid);
     if (ex){
       if (j.course && (ex.course !== crs || ex.level !== lv)){ ex.course = crs; ex.level = lv; renderHUD.last = ''; renderHUD(); netPublish(); }
+      if (j.job && JOBS[j.job] && ex.job !== j.job && (H.phase === 'setup' || H.phase === 'lobby')){ ex.job = j.job; renderHUD.last = ''; renderHUD(); renderTown(); netPublish(); }
       if ((ex.name !== name || ex.char !== ch) && (H.phase === 'setup' || H.phase === 'lobby')){ ex.name = name; ex.char = ch; ex.emoji = CHARS[ch].emoji; const p0 = ex.obj && ex.obj.position.clone(); removePawn(ex); ex.obj = makePawn(ex); if (p0) ex.obj.position.copy(p0); placeAll(); renderHUD(); renderInvite(); }
       return;
     }
@@ -4320,7 +4851,7 @@ function onJoin(v){
     const used = new Set(H.players.map(p => p.slot)); let slot = -1; for (let i = 0; i < 6; i++) if (!used.has(i)){ slot = i; break; }
     if (slot < 0) return;
     const pl = {pos:MAP.start, stars:0, items:[], gear:[], got:[], okCount:0, tickets:0, pity:0, tkGot:false, space:null, res:null, resStar:null, double:false, plan:null,
-      id:slot, slot, name, char:ch, emoji:CHARS[ch].emoji, color:PCOLORS[slot], cpu:false, jid, obj:null, course:crs, level:lv};
+      id:slot, slot, name, char:ch, emoji:CHARS[ch].emoji, color:PCOLORS[slot], cpu:false, jid, obj:null, course:crs, level:lv, job:JOBS[j.job] ? j.job : autoJob()};
     NET.set(`rooms/${NETH.room}/claim/p${slot}`, {at:NET.now()});
     pl.obj = makePawn(pl); H.players.push(pl); H.players.sort((a, b) => a.slot - b.slot);
     if (H.phase === 'setup'){ H.phase = 'lobby'; closeModal('m-setup'); }
@@ -4333,7 +4864,8 @@ function onJoin(v){
 function onPref(v){
   if (!v) return; let ch = false;
   Object.entries(v).forEach(([k, o]) => { const pl = H.players.find(p => pkey(p) === k); if (!pl || !o || !COURSES[o.course]) return;
-    const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; } });
+    const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; }
+    if (o.job && JOBS[o.job] && pl.job !== o.job && (H.phase === 'setup' || H.phase === 'lobby')){ pl.job = o.job; ch = true; renderTown(); } });
   if (ch){ renderHUD.last = ''; renderHUD(); renderWatch(); netPublish(); }
 }
 const plCourse = pl => pl.cpu ? '' : `<span class="pcourse">${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}</span>`;
@@ -4482,9 +5014,12 @@ function renderHUD(){
     roll: cur ? `${cur.emoji} ${cur.name}さんの番！` : '',
     quizReady:'📝 全員そろった！ 問題タイム',
     quiz:'📝 問題タイム！ 自分の画面の問題を解こう',
-    score: H.players.some(needsQ) ? '⭐ 正解した人に ⭐ をあげよう（正解で 🎟️ ガチャ券）' : '今回は問題なし！',
+    score: H.players.some(needsQ) ? (isCoop() ? '💰 正解した人のお金が町の予算に入るよ（正解で 🎟️ ガチャ券）' : '⭐ 正解した人に ⭐ をあげよう（正解で 🎟️ ガチャ券）') : '今回は問題なし！',
     gacha:'🎰 ガチャタイム！',
-    end:'🏆 8ラウンド終了！',
+    meeting:'🏛 町の会議！ スマホで投票しよう',
+    build:'🏗 工事中！',
+    cards:'📜 こがね町のできごと',
+    end: isCoop() ? (H.coopEnd === 'win' ? '🎄 こがね町に明かりが戻った！' : H.coopEnd ? '🌙 ゲーム終了' : '🏗 さいごのラウンド終了！ 最後の大工事へ') : `🏆 ${H.maxRound}ラウンド終了！`,
   })[H.phase] || '';
   if (ph.dataset.t !== txt){ ph.dataset.t = txt; ph.textContent = txt; ph.classList.remove('pop'); void ph.offsetWidth; ph.classList.add('pop'); }
   const ft = $('#floorTag');
@@ -4498,9 +5033,12 @@ function renderHUD(){
     roll: cur ? `🎲 ${cur.name}さんのサイコロ` : '',
     quizReady:'📝 問題タイム スタート（2分）',
     quiz:'⏹ 問題タイムを終わる',
-    score: H.players.some(p => p.tickets > 0) ? `🎰 ガチャタイム（🎟️×${H.players.reduce((a, p) => a + (p.tickets || 0), 0)}）` : H.round >= H.maxRound ? '🏆 けっか発表' : '▶ 次のラウンドへ',
+    score: H.players.some(p => p.tickets > 0) ? `🎰 ガチャタイム（🎟️×${H.players.reduce((a, p) => a + (p.tickets || 0), 0)}）` : isCoop() ? '🏛 町の会議へ' : H.round >= H.maxRound ? '🏆 けっか発表' : '▶ 次のラウンドへ',
     gacha:'🎰 ガチャ中…',
-    end:'👑 ボス問題へ',
+    meeting:'🏛 会議中…',
+    build:'🏗 工事中…',
+    cards:'📜 できごと…',
+    end: isCoop() ? (H.coopEnd ? '🏆 けっかを見る' : '🏗 最後の大工事へ') : '👑 ボス問題へ',
   })[H.phase];
   if (H.phase === 'roll' && cur && isBot(cur)) label = `🤖 ${cur.name}の番…`;
   mb.textContent = label;
@@ -4508,8 +5046,13 @@ function renderHUD(){
   $('#watchBtn').classList.toggle('on', H.watch);
   $('#autoBtn').classList.toggle('on', H.auto);
   $('#viewBtn').classList.toggle('on', H.view);
-  const ranks = [...new Set(H.players.map(p => p.stars))].sort((a,b) => b - a);
+  const ranks = [...new Set(H.players.map(p => p.stars))].sort((a,b) => b - a), CO = isCoop();
+  document.body.classList.toggle('coopmode', CO);
   const stripHTML = H.players.map((pl, i) => { const rk = ranks.indexOf(pl.stars) + 1, top = rk === 1 && pl.stars > 0;
+    if (CO) return `<div class="pchip co ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
+      <span class="em">${ico(pl, 'cimg')}<span class="jb" title="${jobName(pl)}">${jobIc(pl)}</span></span>
+      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${jobName(pl)} ${spaceText(pl)}</small></span>
+      ${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}${pl.lastYen ? `<span class="st yen dela ${pl._bump ? 'bump' : ''}">+${fmtYen(pl.lastYen).replace('円', '')}</span>` : ''}</div>`;
     return `<div class="pchip ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
       <span class="em">${ico(pl, 'cimg')}<span class="rk dela ${top ? 'r1' : ''}">${top ? '👑' : rk}</span></span>
       <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${MAP && MAP.floors && NODE[pl.pos] ? `<b style="color:${MAP.floors[NODE[pl.pos].floor].col}">B${NODE[pl.pos].floor}</b> ` : ''}${spaceText(pl)}</small></span>
@@ -4517,7 +5060,7 @@ function renderHUD(){
   if (stripHTML !== renderHUD.last){ renderHUD.last = stripHTML; $('#strip').innerHTML = stripHTML; }
   netPublish();
   H.players.forEach(p => delete p._bump);
-  renderScore(); renderWatch(); updatePawns();
+  renderScore(); renderWatch(); updatePawns(); renderTown();
   if (H.phase === 'roll' && cur && isBot(cur) && !H.busy && !H.asking && !H.cpuPending){
     H.cpuPending = true;
     setTimeout(() => { H.cpuPending = false; if (H.phase === 'roll' && H.players[H.turn] === cur && !H.busy && isBot(cur)) takeTurn(cur); }, H.auto ? 500 : 900);
@@ -4527,12 +5070,13 @@ function renderScore(){
   const P2 = $('#scorePanel');
   if (H.phase !== 'score' || !H.players.some(needsQ)){ P2.classList.remove('on'); return; }
   P2.classList.add('on');
-  P2.innerHTML = `<h3>⭐ 正解した人の ⭐ をクリック</h3>` + H.players.filter(needsQ).map(pl => {
+  const CO = isCoop(), won = pl => CO ? `+${fmtYen(pl.lastYen || 0)}${pl.lastWhy && pl.lastWhy.length ? ` <small>${pl.lastWhy.join(' ')}</small>` : ''}` : `⭐+${pl.res}`;
+  P2.innerHTML = `<h3>${CO ? '💰 正解した人の ★ をクリック（町の予算に入ります）' : '⭐ 正解した人の ⭐ をクリック'}</h3>` + H.players.filter(needsQ).map(pl => {
     let body;
     if (isBot(pl)) body = pl.res == null ? '<div>🤖 答え合わせ中…</div>'
-      : `<div>🤖 ★${pl.plan.star}をえらんで… ${pl.res > 0 ? `<b style="color:var(--gold)">正解！ ⭐+${pl.res}</b>` : '❌ ざんねん'}</div>`;
-    else body = `<div class="sc">${[0,1,2,3].map(n => `<button class="btn ${pl.resStar === n ? 'gold' : ''}" data-give="${pl.id},${n}">${n ? '⭐' + n : '❌'}</button>`).join('')}</div>` +
-      (pl.double && pl.res ? `<div style="color:var(--gold)">🔥 2倍で ⭐+${pl.res}</div>` : '') + (pl.netAuto ? '<div class="wnote">📱 画面から自動で入りました（まちがいは直せます）</div>' : '');
+      : `<div>🤖 ★${pl.plan.star}をえらんで… ${pl.res > 0 ? `<b style="color:var(--gold)">正解！ ${won(pl)}</b>` : '❌ ざんねん'}</div>`;
+    else body = `<div class="sc">${[0,1,2,3].map(n => `<button class="btn ${pl.resStar === n ? 'gold' : ''}" data-give="${pl.id},${n}">${n ? (CO ? '★' : '⭐') + n : '❌'}</button>`).join('')}</div>` +
+      (pl.res ? `<div style="color:var(--gold)">${pl.double ? '🔥 2倍で ' : ''}${won(pl)}</div>` : '') + (pl.netAuto ? '<div class="wnote">📱 画面から自動で入りました（まちがいは直せます）</div>' : '');
     return `<div class="srow"><div class="top">${ico(pl)}<span>${esc(pl.name)}</span>${spaceText(pl)}</div>${plCourse(pl)}${body}</div>`;
   }).join('');
 }
@@ -4559,7 +5103,7 @@ function renderWatch(){
 
 /* ================= 進行 ================= */
 function snap(){
-  H.hist.push(JSON.stringify({players:H.players.map(p => Object.assign({}, p, {obj:undefined})), round:H.round, phase:H.phase, turn:H.turn}));
+  H.hist.push(JSON.stringify({players:H.players.map(p => Object.assign({}, p, {obj:undefined})), round:H.round, phase:H.phase, turn:H.turn, coop:H.coop}));
   if (H.hist.length > 80) H.hist.shift();
 }
 function undo(){
@@ -4569,6 +5113,7 @@ function undo(){
   H.players.forEach(p => { if (!s.players.some(q => q.id === p.id)) removePawn(p); });
   H.players = s.players.map(q => { let o = objs[q.id]; if (o && o.userData.gsig !== (q.gear || []).join(',')){ removePawn({obj:o}); o = null; } q.obj = o || makePawn(q); return q; });
   H.round = s.round; H.turn = s.turn; H.phase = s.phase === 'quiz' ? 'quizReady' : s.phase;
+  if (s.coop){ H.coop = s.coop; TV.budget = s.coop.budget; TV.happy = s.coop.happy; TV.lv = Object.assign({}, s.coop.lv); townLights(true); }
   clearInterval(H.timer); H.t = 120; drawTimer();
   placeAll(); camOverview(); renderHUD();
 }
@@ -4577,12 +5122,12 @@ function mainAction(){
   initAudio(); if (H.busy || H.asking) return;
   const cur = H.players[H.turn];
   if (H.phase === 'setup') openSetup();
-  else if (H.phase === 'lobby'){ if (!H.players.length){ openInvite(); return; } closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; openingShow(); }
+  else if (H.phase === 'lobby'){ if (!H.players.length){ openInvite(); return; } closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; H.coopEnd = null; if (isCoop()) coopStart(); else H.coop = null; openingShow(); }
   else if (H.phase === 'roll' && cur && !isBot(cur)) takeTurn(cur);
   else if (H.phase === 'quizReady') startQuiz();
   else if (H.phase === 'quiz') endQuiz();
   else if (H.phase === 'score') nextRound();
-  else if (H.phase === 'end') openBoss();
+  else if (H.phase === 'end'){ if (isCoop() && H.coopEnd) showResults(); else openBoss(); }
 }
 async function takeTurn(pl){
   if (H.busy) return;
@@ -4600,6 +5145,7 @@ async function takeTurn(pl){
   await land(pl);
   faceFront(pl);
   await bannerQ; await sleep(200);
+  if (isCoop() && H.coop && (H.coop.won || H.coop.lost)){ H.busy = false; coopFinish(H.coop.won ? 'win' : 'lose'); return; }
   H.busy = false; H.turn++;
   if (H.turn >= H.players.length){
     H.turn = 0;
@@ -4648,14 +5194,14 @@ async function rollDice(pl, count, plus){
   return n;
 }
 async function chooseRoute(pl, nd){
-  const opts = nd.next.filter(id => !NODE[id].gate || pl.items.includes('key'));
+  const opts = nd.next.filter(id => !NODE[id].gate || pl.items.includes('key') || isCoop());
   if (opts.length === 1) return opts[0];
   hl(opts); camFollow(nd.p, 1.25);
   let bp;
   if (isBot(pl)){ const gt = opts.find(id => NODE[id].gate); bp = gt ? (Math.random() < .85 ? gt : opts.find(id => id !== gt)) : pick(opts); }
   const v = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, '分かれ道！ どっちに進む？',
     opts.map(id => ({v:id, ic:ROUTE_LABEL[id][0], t:ROUTE_LABEL[id][1], s:ROUTE_LABEL[id][2]})), isBot(pl) ? bp : undefined);
-  if (NODE[v].gate){ removeItem(pl, 'key'); renderHUD(); await banner('🔑 カギで<br>氷の湖の門が開いた！', 1100); }
+  if (NODE[v].gate){ if (isCoop()){ await banner('❄️ 氷の湖の近道へ！', 1000); } else { removeItem(pl, 'key'); renderHUD(); await banner('🔑 カギで<br>氷の湖の門が開いた！', 1100); } }
   return v;
 }
 async function shop(pl, passing){
@@ -4759,8 +5305,9 @@ async function moveSteps(pl, n, auto){
     if (edge) await travelEdge(pl, nx, edge);
     else { camFollow(NODE[nx].p); await hopTo(pl, nx); }
     const now = NODE[nx];
-    if (now.lap){ gain(pl, now.lap); fireworkShow(scene, now.p.clone().add(new THREE.Vector3(0, 7, -2)), 3, 6, 250); await banner(`${MAP.lapText}<br>${esc(pl.name)}さん ⭐+${now.lap}`, 1300); }
-    else if (now.type === 'shop' && i < n - 1){ await sleep(200); await shop(pl, true); }
+    if (now.lap && isCoop()){ townYen(COOP_CFG.lapYen); fireworkShow(scene, now.p.clone().add(new THREE.Vector3(0, 7, -2)), 3, 6, 250); await banner(`${MAP.lapText}<br>町の予算 +${fmtYen(COOP_CFG.lapYen)}`, 1300); }
+    else if (now.lap){ gain(pl, now.lap); fireworkShow(scene, now.p.clone().add(new THREE.Vector3(0, 7, -2)), 3, 6, 250); await banner(`${MAP.lapText}<br>${esc(pl.name)}さん ⭐+${now.lap}`, 1300); }
+    else if (now.type === 'shop' && i < n - 1 && !isCoop()){ await sleep(200); await shop(pl, true); }
     await sleep(H.auto ? 20 : 60);
   }
 }
@@ -4769,7 +5316,11 @@ async function land(pl){
   const nd = NODE[pl.pos], nm = esc(pl.name);
   pl.double = false; ripple(nd.p); sfx.land();
   if (nd.type === 'q'){ pl.space = nd.topic; renderHUD(); await banner(`${chipHTML(nd.topic)}<br>${nm}さんの問題`, 1150); }
-  else if (nd.type === 'fire'){ pl.space = nd.topic; pl.double = true; ripple(nd.p, '#ff8a3d'); renderHUD(); await banner(`🔥 チャレンジマス！<br>${chipHTML(nd.topic)}<br>正解で ⭐ 2倍`, 1500); }
+  else if (nd.type === 'fire'){ pl.space = nd.topic; pl.double = true; ripple(nd.p, '#ff8a3d'); renderHUD(); await banner(`🔥 チャレンジマス！<br>${chipHTML(nd.topic)}<br>正解で ${isCoop() ? 'お金' : '⭐'} 2倍`, 1500); }
+  else if (nd.type === 'gift' && isCoop()){ pl.space = '🎁 問題なし'; townYen(COOP_CFG.giftYen); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.star(); await banner(`🎁 町に寄付が届いた！<br>町の予算 +${fmtYen(COOP_CFG.giftYen)}`); }
+  else if (nd.type === 'snow' && isCoop()){ pl.space = '⛄ 問題なし'; townHappy(COOP_CFG.snowHappy); sfx.chime(); await banner(`⛄ 雪だるまを作って<br>町の人がにっこり　😊 幸せ度 +${COOP_CFG.snowHappy}`); }
+  else if (nd.type === 'shop' && isCoop()){ pl.space = '💼 問題なし'; renderHUD(); await jobCenter(pl); }
+  else if (nd.type === 'event' && isCoop()){ pl.space = '❓ 問題なし'; renderHUD(); await banner('❓ 町のできごと！', 850); const S = H.coop, c = COOP.drawCard(S); await showCard(COOP.resolve(S, H.players, c), 0, 1); }
   else if (nd.type === 'gift'){ pl.space = '🎁 問題なし'; gain(pl, 2); await banner(`🎁 プレゼント！<br>${nm}さん ⭐+2`); }
   else if (nd.type === 'snow'){ pl.space = '⛄ 問題なし'; H.players.forEach(o => { if (o !== pl) gain(o, 1); }); await banner(`⛄ ${nm}さんから<br>ほかのみんなに ⭐+1`); }
   else if (nd.type === 'sled'){ await banner('🛷 そりに乗って<br>さらに3マス！', 1000); await moveSteps(pl, 3, true); await land(pl); }
@@ -4831,13 +5382,13 @@ async function endQuiz(){
     const a = ansOf(pl); if (!a || a.st !== 'done') continue;
     await sleep(400);
     pl.netAuto = true; pl.resStar = a.ok ? a.star : 0; pl.res = a.ok ? a.star * (pl.double ? 2 : 1) : 0;
-    if (pl.res){ gain(pl, pl.res); setTicket(pl, true); } else { floatText(pl, '❌', true); renderHUD(); }
+    if (pl.res){ if (isCoop()) coopAward(pl, pl.resStar); else gain(pl, pl.res); setTicket(pl, true); } else { floatText(pl, '❌', true); renderHUD(); }
   }
   for (const pl of H.players){
     if (!isBot(pl) || !needsQ(pl)) continue;
     await sleep(500);
-    pl.res = pl.plan.ok ? pl.plan.star * (pl.double ? 2 : 1) : 0;
-    if (pl.res){ gain(pl, pl.res); setTicket(pl, true); } else { floatText(pl, '❌', true); renderHUD(); }
+    pl.res = pl.plan.ok ? pl.plan.star * (pl.double ? 2 : 1) : 0; pl.resStar = pl.plan.ok ? pl.plan.star : 0;
+    if (pl.res){ if (isCoop()) coopAward(pl, pl.plan.star); else gain(pl, pl.res); setTicket(pl, true); } else { floatText(pl, '❌', true); renderHUD(); }
   }
   H.busy = false; renderHUD();
   if (H.auto) setTimeout(() => { if (H.phase === 'score' && H.auto && !H.busy) nextRound(); }, 2600);
@@ -4847,9 +5398,21 @@ function giveStars(id, n){
   initAudio(); snap();
   const award = n * (pl.double ? 2 : 1), d = award - (pl.res || 0);
   pl.res = award; pl.resStar = n;
-  if (d) gain(pl, d); else renderHUD();
+  if (isCoop()) coopAward(pl, n);
+  else if (d) gain(pl, d); else renderHUD();
   if (n === 0 && pl.obj) floatText(pl, '❌', true);
   setTicket(pl, n > 0);
+}
+/* 協力モード：このラウンドのこの人のお金を ★star に合わせる（先生が直したときは差だけ動かす） */
+function coopAward(pl, star){
+  const S = H.coop; if (!S) return;
+  const topic = typeof pl.space === 'number' ? pl.space : 0;
+  const e = star ? COOP.earn(S, pl, star, topic, pl.double) : {yen:0, why:[]}, prev = pl.lastYen || 0, d = e.yen - prev;
+  if (d) COOP.addEarn(S, pl, d, topic);
+  pl.lastYen = e.yen || null; pl.lastWhy = e.why; pl._bump = true;
+  if (d > 0 && pl.obj){ floatText(pl, '+' + fmtYen(d)); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.star(); }
+  else if (d < 0 && pl.obj) floatText(pl, fmtYen(d), true);
+  syncTown(); renderHUD();
 }
 function setTicket(pl, on){
   if (!!pl.tkGot === on) return;
@@ -4861,15 +5424,22 @@ async function nextRound(){
   if (H.busy) return;
   if (H.phase === 'score' && H.players.some(p => p.tickets > 0)){ await gachaTime(); H.phase = 'score'; }
   H.players.forEach(pl => { pl.tkGot = false; });
+  if (isCoop() && H.coop){ if (await coopRoundEnd()) return; }
   snap();
   if (H.round >= H.maxRound){ finishGame(); return; }
   H.round++; H.phase = 'roll'; H.turn = 0;
-  H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; });
+  H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; });
   H.t = 120; drawTimer(); roundSplash();
   camFollow(H.players[0].obj.position, 1.1);
   renderHUD();
 }
 function finishGame(){
+  if (isCoop() && H.coop){
+    const S = H.coop; if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return; }
+    H.phase = 'end'; H.auto = false; camOverview(); renderHUD(); BGM.play('boss');
+    banner(`🏗 さいごのラウンドが終わった！<br><small>幸せ度 ${Math.round(S.happy)} / 100　…あと ${Math.max(0, COOP_CFG.goal - Math.round(S.happy))}</small>`, 2400).then(() => banner(`👑 最後の大工事（ボス問題）に<br>みんなで挑戦しよう！<br><small>成功すると 😊 幸せ度 +${COOP_CFG.bossHappy}</small>`, 2600));
+    return;
+  }
   H.phase = 'end'; H.auto = false; camOverview(); renderHUD();
   BGM.play('title'); setTimeout(() => { if (H.phase === 'end') BGM.play('win'); }, 3200);
   H.players.forEach(pl => { if (pl.obj) burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.8, 0)), 8); });
@@ -4878,6 +5448,11 @@ function finishGame(){
   setTimeout(showResults, 1800);
 }
 function showResults(){
+  if (isCoop() && H.coop){
+    $('#resList').innerHTML = coopResultsHTML() + `<div class="resbtns"><button class="btn big gold" onclick="photoSession()">📸 みんなで記念写真</button><button class="btn big" onclick="makeCards()">🎴 思い出カードを作る</button></div><p class="resnote">できた画像はダウンロードして、Zoomのチャットに送れます</p>`;
+    openModal('m-res'); if (H.coopEnd === 'win'){ confetti(); sfx.fanfare(); }
+    return;
+  }
   const arr = [...H.players].sort((a,b) => b.stars - a.stars);
   if (!arr.length){ $('#resList').innerHTML = '<div class="rest">まだ参加者がいません</div>'; openModal('m-res'); return; }
   const pod = [[arr[1],2],[arr[0],1],[arr[2],3]].filter(x => x[0]);
@@ -4899,15 +5474,45 @@ function openSetup(){
       <button class="charbtn" id="cb-${i}" data-slot="${i}" title="コマをえらぶ">${charBtnHTML(i)}</button>
       <input type="text" id="sn-${i}" maxlength="10" placeholder="${i+1}人目の名前" value="${pl ? esc(pl.name) : ''}">
       <select id="sl-${i}" class="slv" title="コースとレベル">${COURSE_ORDER.map(c => `<optgroup label="${COURSES[c].ic} ${COURSES[c].name}">${LEVELS.map((L, l) => `<option value="${c}:${l}" ${(pl ? (pl.course || 'chu') + ':' + (pl.level == null ? 1 : pl.level) : 'chu:1') === c + ':' + l ? 'selected' : ''}>${COURSES[c].name.replace(/（.*）/, '')}・${L}</option>`).join('')}</optgroup>`).join('')}</select>
+      <select id="sj-${i}" class="sjob" title="職業（協力モード）">${JOB_ORDER.map(j => `<option value="${j}" ${(pl && pl.job ? pl.job : JOB_ORDER[i % JOB_ORDER.length]) === j ? 'selected' : ''}>${JOBS[j].ic} ${JOBS[j].name}</option>`).join('')}</select>
       <label><input type="checkbox" id="sc-${i}" ${pl && pl.cpu ? 'checked' : ''}>🤖</label></div>`);
   }
-  $('#setrows').innerHTML = rows.join(''); SETUP_MAP = MAPKEY; renderMapSel(); openModal('m-setup');
+  $('#setrows').innerHTML = rows.join(''); SETUP_MAP = MAPKEY; renderModeSel(); renderMapSel(); openModal('m-setup');
   $('#setrows').querySelectorAll('.charbtn').forEach(b => b.onclick = () => openPicker(+b.dataset.slot));
 }
 let SETUP_MAP = '';
+const canSetMode = () => H.phase === 'setup' || H.phase === 'lobby';
+function renderModeSel(){
+  const lock = !canSetMode();
+  $('#modesel').innerHTML = `<div class="modes">${[['coop', '🏘 協力モード', 'こがね町を救え！ みんなで町の困りごとを直して、幸せ度100をめざす'], ['versus', '⭐ 対戦モード', '⭐ をいちばん多く集めた人が勝ち']].map(([k, t, d]) =>
+    `<button class="modecard ${H.mode === k ? 'sel' : ''}" data-mode="${k}" ${lock ? 'disabled' : ''}><b>${t}</b><span>${d}</span></button>`).join('')}</div>
+    <div class="rsel"><span>ラウンド数</span>${[6, 8, 10].map(r => `<button class="btn ${H.maxRound === r ? 'gold' : ''}" data-r="${r}" ${lock ? 'disabled' : ''}>${r}ラウンド<small>${{6:'約50分', 8:'約65分', 10:'約80分'}[r]}</small></button>`).join('')}</div>
+    ${lock ? '<div class="mapnote">※ ゲームの途中は、モードとラウンド数を変えられません（「さいしょから」で変えられます）</div>' : ''}`;
+  $('#modesel').querySelectorAll('[data-mode]').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+  $('#modesel').querySelectorAll('[data-r]').forEach(b => b.onclick = () => setRounds(+b.dataset.r));
+  $('#mapsel').style.display = H.mode === 'coop' ? 'none' : '';
+}
+function switchMap(key){
+  if (MAPKEY === key) return;
+  clearInterval(H.timer); H.players.forEach(removePawn); loadMap(key); SETUP_MAP = key;
+  H.hist = []; H.round = 1; H.turn = 0; H.t = 120; drawTimer();
+  H.players.forEach(pl => { pl.pos = MAP.start; pl.obj = makePawn(pl); }); placeAll();
+}
+function setMode(m){
+  if (!canSetMode() || H.mode === m) return;
+  H.mode = m; try { localStorage.setItem('sg_mode', m); } catch(e){}
+  H.coop = null; H.coopEnd = null;
+  switchMap(m === 'coop' ? 'town' : (MAPKEY === 'town' ? 'dungeon' : MAPKEY));
+  sfx.star(); renderModeSel(); renderMapSel(); renderHUD(); renderTown(); townLights(true); netPublish(true);
+}
+function setRounds(r){
+  if (!canSetMode()) return;
+  H.maxRound = r; try { localStorage.setItem('sg_rounds', r); } catch(e){}
+  sfx.star(); renderModeSel(); renderHUD(); renderTown(); netPublish(true);
+}
 function renderMapSel(){
   const started = H.phase !== 'setup' && H.phase !== 'lobby';
-  $('#mapsel').innerHTML = Object.entries(MAPS).map(([k, m]) => `<button class="mapcard ${SETUP_MAP === k ? 'sel' : ''}" data-map="${k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join('') +
+  $('#mapsel').innerHTML = Object.entries(MAPS).filter(([k]) => k !== 'town').map(([k, m]) => `<button class="mapcard ${SETUP_MAP === k ? 'sel' : ''}" data-map="${k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join('') +
     (started ? `<div class="mapnote">※ マップを変えると、ゲームはさいしょからになります</div>` : '');
   $('#mapsel').querySelectorAll('.mapcard').forEach(b => b.onclick = () => { SETUP_MAP = b.dataset.map; renderMapSel(); sfx.star(); });
 }
@@ -4923,7 +5528,7 @@ function renderPicker(){
 }
 function fillTest(){
   const names = ['じぶん','ロボたろう','ロボはなこ','ロボじろう','ロボさくら'], chars = ['santa','robot','penguin','dragon','bunny'];
-  for (let i = 0; i < 6; i++){ $('#sn-' + i).value = names[i] || ''; $('#sc-' + i).checked = i > 0 && i < 5; if (chars[i]){ SETUP[i] = chars[i]; $('#cb-' + i).innerHTML = charBtnHTML(i); } }
+  for (let i = 0; i < 6; i++){ $('#sn-' + i).value = names[i] || ''; $('#sc-' + i).checked = i > 0 && i < 5; $('#sj-' + i).value = JOB_ORDER[i % JOB_ORDER.length]; if (chars[i]){ SETUP[i] = chars[i]; $('#cb-' + i).innerHTML = charBtnHTML(i); } }
 }
 function saveSetup(){
   if (H.busy || H.asking) return;
@@ -4937,7 +5542,7 @@ function saveSetup(){
     const name = $('#sn-' + i).value.trim(); if (!name) continue;
     const old = mapChanged ? null : H.players.find(x => x.slot === i);
     next.push(Object.assign({pos:MAP.start, stars:0, items:[], gear:[], got:[], okCount:0, tickets:0, pity:0, tkGot:false, space:null, res:null, resStar:null, double:false, plan:null}, old || {},
-      {id:i, slot:i, name, char:SETUP[i], emoji:CHARS[SETUP[i]].emoji, color:PCOLORS[i], cpu:$('#sc-' + i).checked, obj:null,
+      {id:i, slot:i, name, char:SETUP[i], emoji:CHARS[SETUP[i]].emoji, color:PCOLORS[i], cpu:$('#sc-' + i).checked, obj:null, job:canSetMode() || !(old && old.job) ? ($('#sj-' + i).value || JOB_ORDER[i % 5]) : old.job,
        course:($('#sl-' + i).value || 'chu:1').split(':')[0], level:+(($('#sl-' + i).value || 'chu:1').split(':')[1])}));
   }
   H.players.forEach(removePawn);
@@ -4954,6 +5559,7 @@ function resetGame(){
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
+  H.coop = null; H.coopEnd = null; H.vote = null; $('#meet').classList.remove('on'); $('#ccard').classList.remove('on'); townLights(true); renderTown(); renderModeSel();
   saveSetup();
 }
 
@@ -4971,6 +5577,336 @@ addEventListener('keydown', e => {
   if (!$('#v-host').classList.contains('on') || document.querySelector('.modal.on')) return;
   if (e.code === 'Space' && !$('#mainBtn').disabled){ e.preventDefault(); $('#mainBtn').click(); }
 });
+
+/* ================= 協力モード（こがね町を救え） ================= */
+COOP.itemMeta = id => ITEM[id] || null;
+const isCoop = () => H.mode === 'coop';
+const TV = {budget:0, happy:COOP_CFG.startHappy, lv:{}};   // 画面に出している町の数字（演出に合わせて少しおくれて変える）
+function syncTown(){ const S = H.coop; if (!S) return; const db = S.budget - TV.budget, dh = S.happy - TV.happy; TV.budget = S.budget; TV.happy = S.happy; TV.lv = Object.assign({}, S.lv); renderTown(db, dh); townLights(); netPublish(); }
+function autoJob(){
+  const cnt = {}; JOB_ORDER.forEach(j => { cnt[j] = 0; }); H.players.forEach(p => { if (p.job) cnt[p.job]++; });
+  const min = Math.min(...Object.values(cnt)); return pick(JOB_ORDER.filter(j => cnt[j] === min));
+}
+function coopStart(){
+  H.players.forEach(pl => { if (!JOBS[pl.job]) pl.job = autoJob(); pl.lastYen = null; });
+  H.coop = COOP.newState({n:H.players.length, rounds:H.maxRound}); H.coop.names = {};
+  H.players.forEach(pl => { H.coop.names[pl.id] = pl.name; });
+  TV.budget = 0; TV.happy = H.coop.happy; TV.lv = Object.assign({}, H.coop.lv);
+  renderTown(); townLights(true);
+}
+const jobIc = pl => JOBS[pl.job] ? JOBS[pl.job].ic : '';
+const jobName = pl => JOBS[pl.job] ? JOBS[pl.job].name : '';
+/* ---- 町のパネル（左上） ---- */
+function renderTown(db, dh){
+  const T = $('#town'); if (!T) return;
+  if (!isCoop()){ T.innerHTML = ''; delete T.dataset.built; return; }
+  if (!T.dataset.built){
+    T.dataset.built = 1;
+    T.innerHTML = `<div class="tn"><span class="dela">🏘 こがね町</span><span id="tRound"></span></div>
+      <div class="tyen dela"><span>💰</span><span id="tYen"></span><span class="tdelta" id="tYd"></span></div>
+      <div class="hap" id="tHap"><i id="tHapI"></i><b id="tHapB"></b><span class="tdelta" id="tHd"></span></div>
+      <div class="tprojs" id="tProjs">${PROJECTS.map(p => `<div class="tp" id="tp-${p.id}" title="${p.name}：${p.math}"><span class="tic">${p.ic}</span><span class="tnm">${p.name}</span><span class="pips"><i></i><i></i><i></i></span></div>`).join('')}</div>
+      <div class="tjobs" id="tJobs"></div>`;
+  }
+  const h = Math.max(0, Math.min(100, Math.round(TV.happy)));
+  $('#tRound').textContent = H.coop && H.phase !== 'setup' && H.phase !== 'lobby' ? `のこり ${Math.max(0, H.maxRound - H.round + 1)}ラウンド` : `${H.maxRound}ラウンド`;
+  $('#tYen').textContent = fmtYen(TV.budget);
+  $('#tHapI').style.width = h + '%'; $('#tHapB').textContent = `😊 幸せ度 ${h} / 100`;
+  $('#tHap').classList.toggle('low', h < 30); $('#tHap').classList.toggle('full', h >= 100);
+  PROJECTS.forEach(p => { const el = $('#tp-' + p.id), lv = TV.lv[p.id] || 0; el.classList.toggle('done', lv >= 3); el.querySelectorAll('.pips i').forEach((i, k) => i.classList.toggle('on', k < lv)); });
+  const jobs = {}; H.players.forEach(pl => { if (pl.job) (jobs[pl.job] = jobs[pl.job] || []).push(pl); });
+  $('#tJobs').innerHTML = JOB_ORDER.filter(j => jobs[j]).map(j => `<span title="${JOBS[j].name}：${JOBS[j].d}">${JOBS[j].ic}×${jobs[j].length}</span>`).join('');
+  const pop = (id, v, fmt) => { if (!v) return; const el = $(id); el.textContent = fmt(v); el.className = 'tdelta ' + (v > 0 ? 'up' : 'down'); void el.offsetWidth; el.classList.add('go'); };
+  pop('#tYd', db, v => (v > 0 ? '+' : '') + fmtYen(v)); pop('#tHd', dh, v => (v > 0 ? '+' : '') + v);
+}
+/* ---- 幸せ度に合わせて町の明かりを灯す ---- */
+let lightsT = null;
+function townLights(instant){
+  if (!TOWN) return;
+  const h = isCoop() && H.coop ? TV.happy : 100;
+  const target = Math.max(0, Math.min(10, Math.floor((h - COOP_CFG.startHappy) / (COOP_CFG.goal - COOP_CFG.startHappy) * 10 + 1e-9)));
+  const setG = (g, on) => TOWN.groups[g].forEach(m => { m.userData.on = on ? 1 : 0; if (on) m.color.copy(m.userData.col); else { m.color.set('#30364d'); m.emissiveIntensity = 0; } });
+  const setWin = () => TOWN.wins.forEach((m, i) => { const on = TOWN.lit >= (i + 1) * 2.5; m.userData.on = on ? 1 : 0; m.color.copy(on ? m.userData.wcol : new THREE.Color('#3a3a48')); if (TOWN.hl[i]) TOWN.hl[i].intensity = on ? TOWN.hl[i].userData.full : 0; });
+  const star = on => { TOWN.star = on; if (TOWN.starM) TOWN.starM.emissiveIntensity = on ? 2.2 : .12; if (TOWN.tree) TOWN.tree.intensity = on ? 20 : 3; };
+  clearInterval(lightsT);
+  if (instant){ for (let g = 0; g < 10; g++) setG(g, g < target); TOWN.lit = target; setWin(); star(target >= 10); return; }
+  lightsT = setInterval(() => {
+    if (TOWN.lit === target){ clearInterval(lightsT); setWin(); star(TOWN.lit >= 10); return; }
+    if (TOWN.lit < target){ setG(TOWN.lit, true); TOWN.lit++; try { sfx.ding(TOWN.lit); } catch(e){} }
+    else { TOWN.lit--; setG(TOWN.lit, false); try { tone(220, 0, .12, .05, 'triangle'); } catch(e){} }
+    setWin();
+  }, 260);
+}
+/* ---- お金・幸せ度の小さな変化（マスなど） ---- */
+function townYen(dy){ if (!H.coop || !dy) return; H.coop.budget = Math.max(0, H.coop.budget + dy); syncTown(); }
+function townHappy(dh){ if (!H.coop || !dh) return; H.coop.happy += dh; COOP.check(H.coop); syncTown(); }
+function coopSpaceText(nd){
+  return {gift:'🎁 寄付', snow:'⛄ 町がにっこり', shop:'💼 職業安定所', event:'❓ 町のできごと', tree:'🎄', sled:'🛷'}[nd.type] || '';
+}
+/* ---- 職業安定所 ---- */
+async function jobCenter(pl){
+  const cnt = {}; H.players.forEach(p => { cnt[p.job] = (cnt[p.job] || 0) + 1; });
+  const opts = JOB_ORDER.filter(j => j !== pl.job).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}`, s:JOBS[j].d}));
+  opts.push({v:null, ic:'👍', t:`${jobName(pl)}のまま`, s:JOBS[pl.job] ? JOBS[pl.job].d : ''});
+  let bp; if (isBot(pl)){ const free = opts.filter(o => o.v && !cnt[o.v]); bp = free.length && Math.random() < .7 ? free[0].v : null; }
+  const v = await ask('💼 職業安定所', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　職業を変える？`, opts, isBot(pl) ? bp : undefined);
+  if (v){ pl.job = v; sfx.shop(); renderHUD(); renderTown(); await banner(`${JOBS[v].ic} ${esc(pl.name)}さんは<br>${JOBS[v].name}になった！`, 1300); }
+}
+/* ---- 町のできごとカード ---- */
+async function showCard(r, i, n){
+  const c = r.card, C = $('#ccard'), fast = H.auto;
+  const eff = c.good ? [c.happy ? `幸せ度 +${c.happy}` : '', c.yen ? `+${fmtYen(COOP.yen(H.coop, c.yen))}` : '', c.tickets ? '全員に 🎟️ ガチャ券 1枚' : ''].filter(Boolean).join('　')
+    : [c.happy ? `幸せ度 ${Math.round(c.happy * COOP_CFG.cardMul)}` : '', c.yen ? fmtYen(COOP.yen(H.coop, c.yen * COOP_CFG.cardMul)) : ''].filter(Boolean).join('　');
+  C.innerHTML = `<div class="cc-in" id="ccIn"><div class="cc-face cc-back"><div class="cc-q dela">？</div><div class="cc-bt dela">こがね町の<br>できごと</div>${n > 1 ? `<div class="cc-no">${i + 1} / ${n}</div>` : ''}</div>
+    <div class="cc-face cc-front ${c.good ? 'good' : 'bad'}"><div class="cc-kind dela">${c.good ? 'いいこと' : 'こまったこと'}</div><div class="cc-ic">${c.ic}</div><div class="cc-nm dela">${c.name}</div><div class="cc-ef">${eff}</div><div class="cc-res" id="ccRes"></div></div></div>`;
+  C.classList.add('on'); sfx.whoosh();
+  await sleep(fast ? 350 : 900);
+  $('#ccIn').classList.add('flip'); await sleep(fast ? 450 : 900);
+  const res = $('#ccRes');
+  if (c.good){
+    sfx.chime(); setTimeout(() => sfx.fanfare(), 200);
+    if (r.tickets) H.players.forEach(pl => { pl.tickets = (pl.tickets || 0) + 1; });
+    res.innerHTML = r.tickets ? '🎟️ 次のガチャタイムで使えるよ！' : '町のみんながよろこんでいる！'; res.classList.add('show', 'good');
+    confetti3D(80, CONF_COLS.SR || ['#ffd23f'], 'rain');
+  } else if (r.by){
+    await sleep(fast ? 150 : 500);
+    const who = r.by.kind === 'proj' ? `${r.by.t}を<br>直しておいたので大丈夫！` : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
+    res.innerHTML = `<div class="cc-stamp dela">ふせいだ！</div>${who}`; res.classList.add('show', 'guard');
+    sfx.star(); setTimeout(() => sfx.chime(), 150); shockwave('#3ddc97', false, cam.look.clone(), 10, .8);
+  } else {
+    sfx.rumble(); sfx.boom();
+    const lines = [];
+    if (r.cut) lines.push(`🛡 ${esc(r.cut.pl.name)}さんの${esc(r.cut.t)}で ${r.cut.n} へらした`);
+    if (r.heal) lines.push(`🐾 ${esc(r.heal.pl.name)}さんの${esc(r.heal.t)}が<br>町の人をいやした（+${r.heal.n}）`);
+    res.innerHTML = `<div class="cc-dmg dela">${[r.dh ? `幸せ度 ${r.dh}` : '', r.dy ? fmtYen(r.dy) : ''].filter(Boolean).join('　') || 'ふせぎきった！'}</div>${lines.join('<br>')}`;
+    res.classList.add('show', 'bad');
+    $('#c').classList.remove('shake'); void $('#c').offsetWidth; $('#c').classList.add('shake');
+  }
+  syncTown();
+  await sleep(fast ? 1100 : 2600);
+  C.classList.remove('on');
+  await sleep(250);
+}
+/* ---- 町の会議（投票） ---- */
+const VOTE = {id:0, opts:[], human:{}, bot:{}, endsAt:0, off:null, open:false, law:null, k:0, decide:null, tie:null, teacher:false};
+function meetOptions(law){
+  return COOP.options(H.coop, H.players).map(o => { const cost = law ? Math.max(10, Math.round(o.price.cost * (1 - COOP_CFG.lawyerRate) / 10) * 10) : o.price.cost; return Object.assign(o, {cost, can:cost <= H.coop.budget, price:Object.assign({}, o.price, {cost})}); });
+}
+function voters(){ return H.players.filter(pl => isBot(pl) || connected(pl)); }
+function tally(){
+  const t = {}; const add = (pid, v) => { if (!v) return; (t[v] = t[v] || []).push(pid); };
+  Object.entries(VOTE.bot).forEach(([k, v]) => add(k, v));
+  Object.entries(VOTE.human).forEach(([k, o]) => { if (o && (o.v === 'save' || VOTE.opts.some(x => x.id === o.v && x.can))) add(k, o.v); });
+  return t;
+}
+function renderMeet(){
+  const M = $('#meet'); if (!VOTE.open && !VOTE.tie && !VOTE.teacher){ return; }
+  const t = tally(), S = H.coop, max = Math.max(0, ...Object.values(t).map(a => a.length));
+  const avatars = ids => ids.map(k => { const pl = H.players.find(p => pkey(p) === k); return pl ? `<img src="${THUMB[pl.char] || ''}" alt="" title="${esc(pl.name)}" style="--pc:${pl.color}">` : ''; }).join('');
+  const card = o => {
+    const p = PROJ[o.id], ids = t[o.id] || [], pr = o.price;
+    const cls = ['pc', o.can ? '' : 'no', VOTE.tie && VOTE.tie.includes(o.id) ? 'tie' : '', VOTE.teacher && o.can ? 'pickable' : ''].join(' ');
+    const dh = COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' && H.players.some(x => x.job === 'police') ? 2 : 0);
+    const disc = pr.disc.map(d => d.t).concat(VOTE.law ? ['⚖️ 弁護士'] : []);
+    return `<button class="${cls}" data-id="${o.id}" ${VOTE.teacher || VOTE.tie ? '' : 'tabindex="-1"'}>
+      <span class="cnt dela">${ids.length || ''}</span>
+      <div class="ph"><span class="ic">${p.ic}</span><span class="nm">${p.name}</span></div>
+      <div class="lvp">${[0,1,2].map(i => `<i class="${i < o.lv ? 'on' : i === o.lv ? 'next' : ''}"></i>`).join('')}<span>レベル${o.lv + 1}「${p.lv[o.lv]}」</span></div>
+      <div class="mh">${CAT[p.topic].ic} ${p.math}：${p.hint}</div>
+      <div class="pr dela">${pr.cost < pr.base ? `<s>${fmtYen(pr.base)}</s>` : ''}${fmtYen(pr.cost)}</div>
+      ${disc.length ? `<div class="dsc">${disc.join('・')} で割引</div>` : ''}
+      <div class="gain">😊 +${dh}${o.lv === 2 ? `　🎉 完成：${p.bonus}` : ''}</div>
+      ${o.can ? '' : '<div class="nomoney">お金が足りない</div>'}
+      <div class="votes">${avatars(ids)}</div></button>`;
+  };
+  const done = PROJECTS.filter(p => S.lv[p.id] >= 3);
+  const vs = voters(), nv = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).filter(k => VOTE.human[k]).length;
+  const html = `<div class="mt-box">
+    <div class="mt-head"><h3 class="dela">🏛 町の会議${VOTE.k ? '（2つめ）' : ''}</h3><span class="mt-yen dela">💰 ${fmtYen(S.budget)}</span>
+      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が直す工事をクリックしてください' : VOTE.law ? `⚖️ 弁護士の${esc(VOTE.law.name)}さんが、工事を2割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
+      ${VOTE.open ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
+    <div class="mt-grid">${VOTE.opts.map(card).join('')}
+      <button class="pc save ${VOTE.tie && VOTE.tie.includes('save') ? 'tie' : ''} ${VOTE.teacher ? 'pickable' : ''}" data-id="save"><span class="cnt dela">${(t.save || []).length || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}</div></button></div>
+    ${done.length ? `<div class="mt-done">完成：${done.map(p => `${p.ic} ${p.name}（${p.bonus}）`).join('　')}</div>` : ''}
+    <div class="mt-foot"><span>🗳 投票 ${nv} / ${vs.length}人${H.players.some(pl => !isBot(pl) && !connected(pl)) ? '（スマホのない人は、町長がかわりに決めてね）' : ''}</span>
+      <span style="display:flex;gap:8px">${VOTE.open ? `<button class="btn" onclick="meetTeacher()">🎓 町長（先生）が決める</button><button class="btn gold" onclick="meetClose()">⏹ 投票をしめきる</button>` : ''}</span></div></div>`;
+  M.classList.add('on');
+  const tm = () => { const el = $('#mtT'); if (el){ const left = Math.max(0, Math.ceil((VOTE.endsAt - NET.now()) / 1000)); el.textContent = left; el.classList.toggle('low', left <= 5); } };
+  if (html === renderMeet.last){ tm(); return; }
+  renderMeet.last = html; M.innerHTML = html; tm();
+  M.querySelectorAll('.pc').forEach(b => b.onclick = () => {
+    const id = b.dataset.id; if (!(VOTE.teacher || (VOTE.tie && VOTE.tie.includes(id)))) return;
+    if (id !== 'save' && !VOTE.opts.some(o => o.id === id && o.can)) return;
+    initAudio(); sfx.star(); if (VOTE.decide) VOTE.decide({id, by:'teacher'});
+  });
+}
+window.meetClose = () => { if (VOTE.open && VOTE.decide) VOTE.decide({close:true}); };
+window.meetTeacher = () => { VOTE.teacher = true; VOTE.open = false; renderMeet(); };
+async function runVote(opts, k, law){
+  const S = H.coop;
+  Object.assign(VOTE, {id:(Date.now() % 1e9), opts, human:{}, bot:{}, open:true, law, k, tie:null, teacher:false});
+  const secs = H.auto ? 4 : k ? 20 : 30;
+  VOTE.endsAt = NET.now() + secs * 1000;
+  H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' && H.players.some(x => x.job === 'police') ? 2 : 0)}))};
+  renderHUD(); netPublish(true);
+  if (VOTE.off) VOTE.off();
+  VOTE.off = NET.on(`rooms/${NETH.room}/vote/${VOTE.id}`, v => { VOTE.human = {}; Object.entries(v || {}).forEach(([pk, o]) => { const pl = H.players.find(p => pkey(p) === pk); if (pl && !isBot(pl)) VOTE.human[pk] = o; }); renderMeet(); checkAll(); });
+  // コンピューターの投票（少しずつ）
+  const bots = H.players.filter(isBot), timers = [];
+  bots.forEach(pl => { timers.push(setTimeout(() => { if (!VOTE.open) return; const ch = Math.random() < .12 ? 'save' : COOP.aiPick(S, H.players, opts.map(o => Object.assign({}, o))) || 'save'; VOTE.bot[pkey(pl)] = ch; sfx.tick ? sfx.tick() : sfx.step(); renderMeet(); checkAll(); }, H.auto ? 300 + Math.random() * 1500 : 1500 + Math.random() * 7000)); });
+  let tick;
+  function checkAll(){
+    if (!VOTE.open) return;
+    const vs = voters(); const n = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).length;
+    if (vs.length && n >= vs.length && VOTE.decide) setTimeout(() => { if (VOTE.open && VOTE.decide) VOTE.decide({close:true}); }, H.auto ? 600 : 2200);
+  }
+  renderMeet();
+  const res = await new Promise(resolve => {
+    VOTE.decide = resolve;
+    tick = setInterval(() => { renderMeet(); if (VOTE.open && NET.now() >= VOTE.endsAt){ resolve({close:true}); } }, 500);
+  });
+  clearInterval(tick); timers.forEach(clearTimeout);
+  let pickId;
+  if (res.id){ pickId = res.id; }
+  else {
+    VOTE.open = false;
+    const t = tally(), entries = Object.entries(t);
+    if (!entries.length){ pickId = COOP.aiPick(S, H.players, opts.map(o => Object.assign({}, o))) || 'save'; await banner('だれも投票しなかったので<br>町の人のおすすめで決めました', 1300); }
+    else {
+      const max = Math.max(...entries.map(([, a]) => a.length)), top = entries.filter(([, a]) => a.length === max).map(([id]) => id);
+      if (top.length === 1) pickId = top[0];
+      else if (H.auto || H.players.every(isBot)) pickId = pick(top);
+      else { VOTE.tie = top; renderMeet(); sfx.chime(); pickId = (await new Promise(r => { VOTE.decide = r; })).id; }
+    }
+  }
+  VOTE.open = false; VOTE.tie = null; VOTE.teacher = false; VOTE.decide = null; renderMeet.last = '';
+  if (VOTE.off){ VOTE.off(); VOTE.off = null; }
+  // 決まった工事を光らせる
+  const el = $(`#meet .pc[data-id="${pickId}"]`); if (el){ el.classList.add('win'); sfx.fanfare(); await sleep(H.auto ? 500 : 1300); }
+  $('#meet').classList.remove('on'); H.vote = null;
+  return pickId;
+}
+async function coopMeeting(){
+  const S = H.coop;
+  for (let k = 0; k < COOP_CFG.maxBuys; k++){
+    const law = COOP.lawyerFor(S, H.players), opts = meetOptions(law);
+    if (!opts.some(o => o.can)){ if (!k) await banner(`🏛 町の会議<br><small>まだお金が足りないので、今回は貯金！（${fmtYen(S.budget)}）</small>`, 1800); break; }
+    const id = await runVote(opts, k, law);
+    if (!id || id === 'save'){ await banner('💰 今回は貯金することにした！', 1300); break; }
+    await buildShow(id, law);
+    if (S.won) break;
+  }
+}
+async function buildShow(pid, law){
+  const S = H.coop, p = PROJ[pid], r = COOP.buy(S, H.players, pid, law);
+  if (!r) return;
+  H.phase = 'build'; renderHUD();
+  camOverview();
+  const at = NODE.T.p.clone().add(new THREE.Vector3(0, 6, 0));
+  if (law) await banner(`⚖️ 弁護士の${esc(law.name)}さんが交渉して<br>2割引きになった！`, 1300);
+  sfx.fanfare(); fireworkShow(scene, at, r.done ? 8 : 3, r.done ? 16 : 8, 220);
+  await banner(`${p.ic} ${p.name}<br><span class="bl">レベル${r.lv}「${p.lv[r.lv - 1]}」</span><br><small>${fmtYen(r.cost)} つかって　😊 幸せ度 +${r.dh}</small>`, H.auto ? 1300 : 2300);
+  syncTown();
+  if (r.done){ sfx.legend(); confetti(); await banner(`🎉 ${p.name}が完成！<br><small>${p.bonus}</small>`, H.auto ? 1300 : 2400); }
+  await sleep(H.auto ? 200 : 600);
+}
+async function coopCards(){
+  const S = H.coop, n = H.round <= 2 ? 1 : 2, used = {fire:0, police:0};
+  H.phase = 'cards'; renderHUD(); netPublish(true);
+  await banner(`📜 こがね町のできごと<br><small>カードを${n}枚ひきます</small>`, H.auto ? 800 : 1300);
+  for (let i = 0; i < n; i++){
+    const c = COOP.drawCard(S), r = COOP.resolve(S, H.players, c, used);
+    await showCard(r, i, n);
+    if (S.lost || S.won) break;
+  }
+}
+async function coopRoundEndFx(){
+  const S = H.coop, L = COOP.roundEnd(S, H.players);
+  if (L.length){
+    await banner(`<div class="rsum"><div class="dela">ラウンド ${H.round} のまとめ</div>${L.map(l => `<div>${l.ic} ${l.t}　<b class="${(l.dh || l.dy) < 0 ? 'neg' : ''}">${[l.dh ? `幸せ度 ${l.dh > 0 ? '+' : ''}${l.dh}` : '', l.dy ? (l.dy > 0 ? '+' : '') + fmtYen(l.dy) : ''].filter(Boolean).join('　')}</b></div>`).join('')}</div>`, H.auto ? 1400 : 2600);
+  }
+  syncTown();
+}
+/* ラウンドの終わり（ガチャのあと）：会議 → カード → まとめ。ゲームが終わったら true */
+async function coopRoundEnd(){
+  const S = H.coop; if (!S) return false;
+  H.busy = true; renderHUD();
+  S.round = H.round;
+  await coopMeeting();
+  if (!S.won && !S.lost) await coopCards();
+  if (!S.won && !S.lost) await coopRoundEndFx();
+  H.busy = false;
+  if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return true; }
+  renderHUD(); return false;
+}
+/* ---- ゲームのおわり ---- */
+async function coopFinish(kind){
+  const S = H.coop; if (!S || H.coopEnd) return;
+  H.coopEnd = kind; H.phase = 'end'; H.auto = false; H.busy = true; camOverview(); renderHUD(); netPublish(true);
+  $('#meet').classList.remove('on'); $('#ccard').classList.remove('on');
+  if (kind === 'win'){
+    BGM.play('win'); S.happy = Math.max(S.happy, COOP_CFG.goal); syncTown();
+    await sleep(600);
+    const fc = NODE.T.p.clone().add(new THREE.Vector3(0, 9, -2));
+    fireworkShow(scene, fc, 12, 22, 240); setTimeout(() => fireworkShow(scene, fc, 10, 26, 200), 2600);
+    sfx.legend(); confetti();
+    await banner('🎄 こがね町に<br>明かりが戻った！', 3200);
+    await banner(`みんなの数学の力で<br>町が元気になりました！`, 2200);
+  } else {
+    BGM.play('title');
+    if (S.happy <= 0){ await banner('😢 町の人たちが<br>町を出ていってしまった…', 2800); }
+    else { await banner(`🌙 あと少し…<br><small>幸せ度 ${Math.round(S.happy)} / 100</small>`, 2600); }
+    await banner('でも、みんなが直した場所には<br>ちゃんと明かりが灯っている！', 2400);
+  }
+  H.busy = false; renderHUD();
+  setTimeout(showResults, 400);
+}
+/* 最後のラウンドが終わって、まだ100にとどいていないとき：最後の大工事（ボス問題） */
+window.coopBoss = ok => {
+  const S = H.coop; if (!S || H.coopEnd) return;
+  closeModal('m-boss');
+  if (ok){ S.happy += COOP_CFG.bossHappy; COOP.check(S); syncTown(); banner(`🏗 最後の大工事、成功！<br>😊 幸せ度 +${COOP_CFG.bossHappy}`, 2200).then(() => coopFinish(S.happy >= COOP_CFG.goal ? 'win' : 'lose')); }
+  else coopFinish('lose');
+};
+/* ---- ガチャのアイテムが町でどう役に立つか ---- */
+function coopItemText(it){
+  const r = it.r, S = H.coop || {n:H.players.length || 4};
+  if (it.g === 'pet') return `🐾 町の人をいやす：悪いカードのあと 幸せ度を ${COOP_ITEM.pet[r]} 回復（1ラウンドに1回・町でいちばんレアなペットが働く）`;
+  if (it.g === 'fashion') return `👗 観光客が来る：毎ラウンド ${fmtYen(COOP.yen(S, COOP_ITEM.fashion[r]))}（町でいちばんレアなおしゃれが働く）`;
+  if (it.g === 'gear'){ const G = COOP_ITEM.gear[r]; return `🛡 町を守る：${G.all ? 'そのラウンドの悪いカードを ぜんぶ' : G.cut >= 99 ? '悪いカードを1枚' : `悪いカードの被害を ${G.cut}`}ふせぐ（使ったら${G.rest}ラウンド休む）`; }
+  const parts = [];
+  if (it.title && it.id in TITLE_TOPIC){ const tp = TITLE_TOPIC[it.id]; parts.push(`📜 ${tp ? TOPICS[tp] : 'ぜんぶ'}の問題のお金 +${Math.round(COOP_ITEM.title[r] * 100)}%（持っている人）`); }
+  if (it.slot === 'feet') parts.push(`💎 工事が ${Math.round(COOP_ITEM.ped[r] * 100)}%引き（町でいちばんレアな台座が働く）`);
+  return parts.join('<br>');
+}
+/* ---- 活躍のことば（順位のかわり） ---- */
+function coopHeroes(){
+  const S = H.coop, out = {}; if (!S) return out;
+  const earned = pl => (S.earned[pl.id] || {total:0}).total;
+  const top = [...H.players].sort((a, b) => earned(b) - earned(a))[0];
+  H.players.forEach(pl => {
+    const e = S.earned[pl.id] || {total:0, top:{}, ok:0}, bl = S.blocked[pl.id] || 0;
+    const tt = Object.entries(e.top || {}).sort((a, b) => b[1] - a[1])[0];
+    const proj = tt ? PROJECTS.filter(p => p.topic === +tt[0] && S.lv[p.id] > 0).sort((a, b) => S.lv[b.id] - S.lv[a.id])[0] : null;
+    let t;
+    if (pl === top && e.total > 0) t = `💰 町いちばんの稼ぎ頭（${fmtYen(e.total)}）`;
+    else if (bl >= 2) t = `🛡 町の守り神（${bl}回ふせいだ）`;
+    else if (proj) t = `${proj.ic} ${proj.name.replace(/が.*$/, '')}を直した立役者`;
+    else if (bl) t = `🛡 ピンチの町を守った`;
+    else t = `🤝 こがね町の大切な仲間`;
+    out[pl.id] = {t, total:e.total, ok:pl.okCount || 0, bl};
+  });
+  return out;
+}
+function coopResultsHTML(){
+  const S = H.coop, win = H.coopEnd === 'win', hero = coopHeroes(), h = Math.max(0, Math.min(100, Math.round(S.happy)));
+  return `<div class="cres ${win ? 'win' : 'lose'}"><div class="cr-big dela">${win ? '🎄 こがね町に明かりが戻った！' : H.coopEnd === 'lose' ? '🌙 あと少しだった…' : '🏘 こがね町のいま'}</div>
+    <div class="hap big"><i style="width:${h}%"></i><b>😊 幸せ度 ${h} / 100</b></div>
+    <div class="cr-sub">💰 のこった予算 ${fmtYen(S.budget)}　／　ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}</div>
+    <div class="cr-projs">${PROJECTS.map(p => `<div class="crp ${S.lv[p.id] >= 3 ? 'done' : S.lv[p.id] ? 'some' : ''}"><span>${p.ic}</span><b>${p.name}</b><span class="pips">${[0,1,2].map(i => `<i class="${i < S.lv[p.id] ? 'on' : ''}"></i>`).join('')}</span><small>${S.lv[p.id] ? p.lv[S.lv[p.id] - 1] : 'まだ'}</small></div>`).join('')}</div>
+    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}</span></div><div class="hero">${x.t}</div><div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
+    <div class="cr-math">💡 こがね町の名前は「黄金比（おうごんひ）」から。1 : 1.618… という、自然や建物にかくれている美しい比です</div></div>`;
+}
 
 /* ================= 花火 ================= */
 const FW = [];
@@ -5166,20 +6102,85 @@ async function lightningStrike(at, clip, onLand){
 
 /* ================= オープニングセレモニー ================= */
 const TOURS = {
+  town:[[[0,24,34],[0,0,0]], [[-15,8,13],[-10,0,5]], [[-15,8,-11],[-5,0,-5]], [[15,8,-11],[5,0,-5]], [[15,8,13],[9,0,6]], [[3,6,17],[2.5,1.5,7]], [[0,27,21],[0,0,1]]],
   dungeon:[[[0,24,34],[0,3,0]], [[-9,12,-1],[-8,7,-9]], [[8,12,-1],[8,7,-9]], [[11,8,7],[6,3.5,-1]], [[-8,8,7],[-8,3.5,-1]], [[-6,4,16],[0,0,8]], [[9,5,15],[14,2,6]], [[0,31,25],[0,3.3,-.6]]],
   village:[[[0,24,34],[0,0,0]], [[-15,8,13],[-10,0,5]], [[-15,8,-11],[-5,0,-5]], [[15,8,-11],[5,0,-5]], [[15,8,13],[9,0,6]], [[3,6,17],[2.5,1.5,7]], [[0,27,21],[0,0,1]]],
 };
 let showSkip = false;
+/* ---- 協力モードの導入ストーリー（字幕＋ナレーション。音声ファイルがあれば読み上げる） ---- */
+const STORY = [
+  '雪ぶかい山あいに、こがね町という小さな町がありました。',
+  'むかしは温泉と鉄道でにぎわい、クリスマスには町じゅうに明かりが灯りました。',
+  'けれど今は、電車は止まり、水道管は古くなり、若い人たちは町を出ていきました。',
+  '町のお金も、もうほとんど残っていません。',
+  '「今年のクリスマスは、明かりを灯せないかもしれない…」',
+  'そんなある夜、町のまん中に、大きな雷が落ちました。',
+  '雷が落ちたところから、金色の光が町に広がっていきます。',
+  'それは、問題を解く力、数学の力でした。',
+  'クリスマスまで、あと{R}週間。',
+  'みんなの力で、こがね町に明かりを取りもどそう！',
+];
+const NARR = {};   // narration/n01.mp3 〜 n10.mp3（8週間の行は n09_8.mp3 のようにラウンド数つきも使える）
+function narrSrc(i){ const n = String(i + 1).padStart(2, '0'); return i === 8 ? [`narration/n09_${H.maxRound}.mp3`, `narration/n09.mp3`] : [`narration/n${n}.mp3`]; }
+let narrProbe = null;
+function preloadNarr(){
+  // 1つめのファイルがあるときだけ、ほかも読みこむ（ないときは字幕だけで進む）
+  if (narrProbe) return; narrProbe = true;
+  const load = (i, list, ok) => { if (!list.length) return; const a = new Audio(); a.preload = 'auto'; a.onloadedmetadata = () => { NARR[i] = a; if (ok) ok(); }; a.onerror = () => load(i, list.slice(1)); a.src = list[0]; };
+  load(0, narrSrc(0), () => STORY.forEach((_, i) => { if (i) load(i, narrSrc(i)); }));
+}
+function waitSkip(ms){ return new Promise(res => { const t0 = performance.now(); const f = () => { if (showSkip || performance.now() - t0 >= ms) res(); else requestAnimationFrame(f); }; requestAnimationFrame(f); }); }
+async function storyLine(i){
+  const el = $('#stLine'), text = STORY[i].replace('{R}', H.maxRound);
+  el.textContent = text; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  let ms = Math.max(2600, text.length * 150);
+  const a = NARR[i];
+  if (a && !MUTE){ try { a.currentTime = 0; a.volume = 1; await a.play(); ms = Math.max(1200, (a.duration || 0) * 1000 + 450); } catch(e){} }
+  await waitSkip(ms);
+  if (a){ try { a.pause(); } catch(e){} }
+  el.classList.remove('on'); await waitSkip(320);
+}
+async function storyShow(strike, pc, lc){
+  const St = $('#story'); St.classList.add('on'); preloadNarr();
+  // はじめは暗い町。雷のあと、金色の光といっしょに明るくなる
+  const L0 = {h:hemi.intensity, m:moon.intensity, e:renderer.toneMappingExposure};
+  const dark = k => { hemi.intensity = L0.h * k; moon.intensity = L0.m * k; renderer.toneMappingExposure = L0.e * (.75 + .25 * k); };
+  dark(.32);
+  const brighten = () => tween(2600, t => dark(.32 + .68 * easeIO(t)));
+  // 暗い町を、ゆっくり近づきながら見せる
+  const p0 = pc.getPoint(0), l0 = lc.getPoint(0), p1 = p0.clone().lerp(l0, .3).add(new THREE.Vector3(-3, -2, 0));
+  const T0 = performance.now(); let moving = true;
+  const drift = () => { if (!moving) return; const u = Math.min(1, (performance.now() - T0) / 17000), e = easeIO(u); cam.pos.lerpVectors(p0, p1, e); cam.tpos.copy(cam.pos); cam.look.copy(l0); cam.tlook.copy(l0); requestAnimationFrame(drift); };
+  requestAnimationFrame(drift);
+  await waitSkip(900);
+  for (let i = 0; i < STORY.length && !showSkip; i++){
+    if (i === 5){ moving = false; const el = $('#stLine'); el.textContent = STORY[i]; el.classList.add('on'); const a = NARR[i]; if (a && !MUTE){ try { a.currentTime = 0; await a.play(); } catch(e){} } await waitSkip(1300); const sp = strike(); setTimeout(brighten, 700); await sp; await waitSkip(600); el.classList.remove('on'); await waitSkip(300); continue; }
+    await storyLine(i);
+  }
+  moving = false; St.classList.remove('on'); $('#stLine').classList.remove('on');
+  Object.values(NARR).forEach(a => { if (a) try { a.pause(); } catch(e){} });
+  if (hemi.intensity < L0.h * .99 && showSkip) dark(1);
+  if (showSkip){ camOverview(); }
+}
+function setLogo(co){
+  const L = $('#opening .op-logo');
+  L.querySelector('.t1').textContent = co ? `クリスマスまで あと${H.maxRound}週間` : 'WELCOME TO';
+  L.querySelector('.t2').innerHTML = co ? 'こがね町を<br>救え！' : '数学すごろく<br>クリスマス会';
+  L.querySelector('.t3').textContent = co ? '― 数学の力で、町に明かりを ―' : '― 冒険のはじまり ―';
+}
 async function openingShow(){
   showSkip = false; H.busy = true; renderHUD();
   const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go');
   const path = TOURS[MAPKEY] || TOURS.dungeon;
   const pc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[0]))), lc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[1])));
   cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
+  setLogo(isCoop());
   // まず雷が盤のまん中に落ちて、金色の枝分かれ模様が広がる → それからロゴと曲
-  { const la = lc.getPoint(0), d = n => Math.hypot(n.p.x - la.x, n.p.z - la.z), near = Object.values(NODE).reduce((b, n) => d(n) < d(b) ? n : b);
+  const strike = async () => { const la = lc.getPoint(0), d = n => Math.hypot(n.p.x - la.x, n.p.z - la.z), near = Object.values(NODE).reduce((b, n) => d(n) < d(b) ? n : b);
     const fl = MAPKEY === 'dungeon' ? Object.values(DF).find(F => Math.abs(F.y - near.p.y) < .5) : null;
-    BGM.stop(); await lightningStrike(new THREE.Vector3(la.x, near.p.y, fl ? (fl.z0 + fl.z1) / 2 : la.z), fl ? {z0:fl.z0, z1:fl.z1, x:19.8} : null); }
+    await lightningStrike(new THREE.Vector3(la.x, near.p.y, fl ? (fl.z0 + fl.z1) / 2 : la.z), fl ? {z0:fl.z0, z1:fl.z1, x:19.8} : null); };
+  BGM.stop();
+  if (isCoop()) await storyShow(strike, pc, lc); else await strike();
   void O.offsetWidth; O.querySelector('.op-logo').classList.add('go'); BGM.play('opening'); sfx.jingle();
   const fwAt = MAPKEY === 'dungeon' ? new THREE.Vector3(14, 9, 5) : new THREE.Vector3(2.5, 9, 7);
   setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt, 5, 12, 320); }, 900);
@@ -5200,7 +6201,7 @@ async function openingShow(){
   for (let i = 0; i < H.players.length && !showSkip; i++){
     const pl = H.players[i];
     camFollow(pl.obj.position, .7);
-    card.innerHTML = `<div class="ic-no dela">ENTRY No.${i + 1}</div><img src="${THUMB[pl.char]}" alt=""><div class="ic-name dela">${esc(pl.name)}</div><div class="ic-char">${CHARS[pl.char].name}${pl.cpu ? '（🤖コンピューター）' : ''}</div>`;
+    card.innerHTML = `<div class="ic-no dela">ENTRY No.${i + 1}</div><img src="${THUMB[pl.char]}" alt=""><div class="ic-name dela">${esc(pl.name)}</div><div class="ic-char">${isCoop() && JOBS[pl.job] ? `${JOBS[pl.job].ic} ${JOBS[pl.job].name}` : CHARS[pl.char].name}${pl.cpu ? '（🤖コンピューター）' : ''}</div>`;
     card.style.setProperty('--pc', pl.color);
     card.classList.remove('on'); void card.offsetWidth; card.classList.add('on');
     ripple(NODE[pl.pos].p, pl.color); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.cheer();
@@ -5506,7 +6507,7 @@ async function pullFor(pl){
   GS.scene.remove(cap); GS.curCap = null;
   if (GS.curModel) pawnCheer(GS.curModel, ri0);
   gUI('#gRes', `${isNew ? '<div class="gr-new dela">NEW!</div>' : ''}<div class="gr-stars" style="color:${RAR[r].col}">${starsHTML(r)}</div><div class="gr-rar dela ${r === 'LR' ? 'lr' : ''}" style="color:${RAR[r].col}">${RAR[r].name}</div>
-    <div class="gr-name dela">${it.name}</div><div class="gr-desc">${SLOT_NAME[it.slot]}　${it.d}</div><div class="gr-col">コレクション ${pl.got.length} / ${ITEMS_C.length}</div>`);
+    <div class="gr-name dela">${it.name}</div><div class="gr-desc">${SLOT_NAME[it.slot]}　${it.d}</div><div class="gr-col">コレクション ${pl.got.length} / ${ITEMS_C.length}</div>${isCoop() ? `<div class="gr-coop">${coopItemText(it)}</div>` : ''}`);
   for (let i = 0; i < RAR[r].stars; i++) setTimeout(() => sfx.ding(i), 150 + i * 220);
   await waitBtn('受けとる', isBot(pl));
   gUI('#gBig', null);
@@ -5772,8 +6773,8 @@ async function composePhoto(src, labels){
     const ly = Math.min(Hh - 120 * u, y + 14 * u + (li % 2) * 44 * u);
     g.fillStyle = pl.color; roundRect(g, x - tw / 2, ly, tw, 40 * u, 20 * u); g.fill(); g.lineWidth = 3 * u; g.strokeStyle = '#fff'; g.stroke();
     g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(nm, x + 12 * u, ly + 21 * u);
-    g.fillStyle = rk === 1 ? '#ffd23f' : rk === 2 ? '#dfe6f5' : rk === 3 ? '#e09a5b' : '#8fa3d9'; g.beginPath(); g.arc(x - tw / 2 + 18 * u, ly + 20 * u, 17 * u, 0, 7); g.fill();
-    g.fillStyle = '#2a1600'; g.font = `900 ${17 * u}px ${JP_FONT}`; g.fillText(rk, x - tw / 2 + 18 * u, ly + 21 * u);
+    g.fillStyle = isCoop() ? '#ffd23f' : rk === 1 ? '#ffd23f' : rk === 2 ? '#dfe6f5' : rk === 3 ? '#e09a5b' : '#8fa3d9'; g.beginPath(); g.arc(x - tw / 2 + 18 * u, ly + 20 * u, 17 * u, 0, 7); g.fill();
+    g.fillStyle = '#2a1600'; g.font = isCoop() ? `${18 * u}px ${EMOJI_FONT}` : `900 ${17 * u}px ${JP_FONT}`; g.fillText(isCoop() ? jobIc(pl) || '⭐' : rk, x - tw / 2 + 18 * u, ly + 21 * u);
   });
   // 上下の帯
   let gr = g.createLinearGradient(0, Hh - 70 * u, 0, Hh); gr.addColorStop(0, 'rgba(20,6,30,0)'); gr.addColorStop(1, 'rgba(20,6,30,.85)'); g.fillStyle = gr; g.fillRect(0, Hh - 70 * u, W, 70 * u);
@@ -5829,14 +6830,15 @@ window.savePhoto = savePhoto; window.saveCard = saveCard;
 const RANK_STYLE = {1:['#fff2b8', '#e2a51c', '#7a4a00', '🥇 優勝', '優勝おめでとう！ 最高のクリスマス！'], 2:['#f3f6ff', '#9eabcf', '#2a3560', '🥈 2位', '準優勝！ すばらしいチャレンジでした'], 3:['#ffe2c8', '#c27a3c', '#5a2a08', '🥉 3位', '3位入賞！ よくがんばりました'], 0:['#e7ddff', '#7b5cd6', '#2a1660', '', 'ナイスチャレンジ！ また冒険しよう']};
 async function composeCard({pl, rk, src}){
   const img = await loadImg(src), W = 800, Hh = 1120, c = document.createElement('canvas'); c.width = W; c.height = Hh; const g = c.getContext('2d');
-  const st = RANK_STYLE[rk <= 3 ? rk : 0];
+  const hero = isCoop() && H.coop ? coopHeroes()[pl.id] : null;
+  const st = hero ? ['#fff2b8', '#e2a51c', '#5a3400', `${jobIc(pl)} ${jobName(pl).replace('システムエンジニア', 'SE')}`, H.coopEnd === 'win' ? 'こがね町に明かりを取りもどした仲間！' : 'またいっしょに町を元気にしよう！'] : RANK_STYLE[rk <= 3 ? rk : 0];
   let gr = g.createLinearGradient(0, 0, W, Hh); gr.addColorStop(0, st[0]); gr.addColorStop(1, st[1]); g.fillStyle = gr; roundRect(g, 0, 0, W, Hh, 44); g.fill();
   // きらきら
   for (let i = 0; i < 70; i++){ g.fillStyle = `rgba(255,255,255,${.25 + Math.random() * .5})`; const x = Math.random() * W, y = Math.random() * Hh, r = 1 + Math.random() * 3; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
   g.lineWidth = 14; g.strokeStyle = '#ffffff'; roundRect(g, 12, 12, W - 24, Hh - 24, 36); g.stroke();
   g.lineWidth = 4; g.strokeStyle = st[1]; roundRect(g, 30, 30, W - 60, Hh - 60, 28); g.stroke();
   g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillStyle = st[2]; g.font = `900 34px ${TITLE_FONT}`; g.fillText('数学すごろく クリスマス会', W / 2, 82);
+  g.fillStyle = st[2]; g.font = `900 34px ${TITLE_FONT}`; g.fillText(hero ? 'こがね町を救え！ クリスマス会' : '数学すごろく クリスマス会', W / 2, 82);
   g.font = `700 20px ${JP_FONT}`; g.fillText(`${fmtDate()}　思い出カード`, W / 2, 120);
   // 写真
   const px = 60, py = 146, pw = W - 120, ph = 510;
@@ -5851,7 +6853,8 @@ async function composeCard({pl, rk, src}){
   if (tt){ g.fillStyle = RAR[titleRar(pl)].col; g.font = `900 26px ${JP_FONT}`; g.lineWidth = 6; g.strokeStyle = 'rgba(30,10,50,.75)'; g.strokeText(`《${tt}》`, W / 2, y - 14); g.fillText(`《${tt}》`, W / 2, y - 14); y += 40; }
   g.font = `900 ${Math.min(68, 520 / Math.max(3, pl.name.length))}px ${TITLE_FONT}`; g.lineWidth = 10; g.strokeStyle = '#ffffff'; g.strokeText(pl.name, W / 2, y + 8); g.fillStyle = st[2]; g.fillText(pl.name, W / 2, y + 8);
   y += 66;
-  g.font = `900 26px ${JP_FONT}`; g.fillStyle = st[2]; g.fillText(`⭐ ${pl.stars}　／　正解 ${pl.okCount || 0}問　／　コレクション ${(pl.got || []).length}`, W / 2, y);
+  g.font = `900 26px ${JP_FONT}`; g.fillStyle = st[2]; g.fillText(hero ? `💰 ${fmtYen(hero.total)}　／　正解 ${pl.okCount || 0}問　／　コレクション ${(pl.got || []).length}` : `⭐ ${pl.stars}　／　正解 ${pl.okCount || 0}問　／　コレクション ${(pl.got || []).length}`, W / 2, y);
+  if (hero){ y += 40; g.font = `900 24px ${JP_FONT}`; g.fillText(hero.t, W / 2, y); }
   y += 44;
   if (!pl.cpu){ g.font = `900 22px ${JP_FONT}`; g.fillStyle = st[2]; g.globalAlpha = .85; g.fillText(`${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}コース`, W / 2, y); g.globalAlpha = 1; y += 40; }
   (pl.gear || []).forEach(id => { const it = ITEM[id]; const lab = `${'★'.repeat(RAR[it.r].stars)}  ${it.name}`; g.font = `900 22px ${JP_FONT}`; const tw = g.measureText(lab).width + 40;
@@ -5945,15 +6948,19 @@ function loop(){
   composer.render();
 }
 renderHUD(); drawTimer(); loop();
-loadMap('dungeon');
+loadMap(H.mode === 'coop' ? 'town' : 'dungeon');
 makeThumbs();
 BGM.play('title'); hostRoom(); NET.onConn(() => { renderInvite(); renderWatch(); });
 $('#inviteBtn').onclick = openInvite;
-{ const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss'); }; }
-$('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? 'win' : H.phase === 'setup' ? 'title' : 'main'));
+{ const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss');
+  const co = isCoop() && H.coop && !H.coopEnd && H.phase === 'end';
+  $('#bossTitle').textContent = co ? '🏗 最後の大工事（ボス問題）― みんなで協力！' : '👑 さいごのボス問題（みんなで協力！）';
+  $('#bossCoop').innerHTML = co ? `<p>みんなで5組ぜんぶ見つけられたら、大工事は成功！（😊 幸せ度 +${COOP_CFG.bossHappy}）</p><div class="bcbtns"><button class="btn big gold" onclick="coopBoss(true)">🎉 みんなで解けた！ 大工事成功</button><button class="btn big" onclick="coopBoss(false)">😢 時間切れ… 大工事は失敗</button></div>` : ''; }; }
+$('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && H.coopEnd !== 'win' ? 'title' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
 setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
-window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land};
+window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
+  coop:{coopStart, coopRoundEnd, coopMeeting, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
 }
 
 </script>
