@@ -235,6 +235,33 @@ body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
 @keyframes tie{to{box-shadow:0 0 24px rgba(242,201,76,.7)}}
 .pc.win{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold),0 0 40px rgba(255,210,63,.75);transform:scale(1.04);z-index:2}
 .mt-done{margin-top:8px;font-size:13px;color:var(--gold)}
+.kt-want{margin:8px 0 2px;padding:8px 14px;border-radius:14px;background:linear-gradient(90deg,#7a3b00,#5a2600);border:2px solid #ffb347;color:#fff;font-weight:900;font-size:18px}
+.kt-want small{display:block;font-size:13px;color:#ffe0b0;font-weight:700}
+.kt-note{font-size:13px;color:#c7d6ff;margin:6px 0 2px}
+.kt-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.kt-list.many{grid-template-columns:repeat(3,1fr)}
+.kt-row{display:flex;flex-direction:column;gap:6px;border-radius:16px;padding:8px 10px;background:linear-gradient(180deg,#22397d,#142659);border:2px solid var(--pc)}
+.kt-who{display:flex;align-items:center;gap:10px}
+.kt-who .cimg{width:44px;height:44px;border-radius:50%;object-fit:contain;background:#0b1530;border:3px solid var(--pc)}
+.kt-who b{display:block;font-size:18px}
+.kt-who small{display:block;font-size:12.5px;color:#c7d6ff}
+.kt-ops{display:flex;gap:6px;flex-wrap:wrap}
+.kt-op{display:flex;flex-direction:column;align-items:center;min-width:92px;padding:5px 8px;border-radius:12px;border:2px solid rgba(255,255,255,.18);background:#0e1d47;color:var(--snow);font-family:inherit;cursor:pointer}
+.kt-op .kt-i{font-size:26px;line-height:1.1}
+.kt-op b{font-size:13.5px}
+.kt-op small{font-size:11px;color:var(--gold)}
+.kt-op.stay{background:#123329}
+.kt-op.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold) inset,0 0 18px rgba(255,210,63,.5);background:#2a2a14}
+.kt-op:hover{transform:translateY(-2px)}
+.kt-by{font-size:12px;color:var(--muted);text-align:right}
+.kt-by.ok{color:#7dffb0}
+.cc-want{margin-top:8px;padding:6px 10px;border-radius:12px;background:#ffe7c2;border:2px solid #e08a00;color:#6a3500;font-size:17px}
+.cc-want small{display:block;font-size:13px;font-weight:700}
+.pchip .jb.vet{text-shadow:0 0 6px #ffd23f,0 0 12px #ffd23f}
+.pchip .jb.nb{font-size:15px}
+.kwant{margin:6px 0 8px;padding:8px 12px;border-radius:14px;background:linear-gradient(90deg,#7a3b00,#5a2600);border:2px solid #ffb347;color:#fff;font-weight:900}
+.kwant small{display:block;font-weight:500;color:#ffe0b0}
+.wcar{font-size:13px;color:var(--muted);margin-top:4px}
 .mt-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
 /* できごとカード */
 .evcard{position:fixed;left:50%;top:50%;z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
@@ -718,7 +745,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <li>サイコロで町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
     <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どれを直すかスマホで<b>投票</b>します。直すと <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ直すと<b>完成ボーナス</b>！</li>
     <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、困りごとを直しておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
-    <li><b>職業</b>：💻システムエンジニア／🚒消防士／⚖️弁護士／🚛衛生のプロ／👮警察官。それぞれ得意なことがあります。みんなでちがう職業にすると強い！ 💼職業安定所のマスで変えられます。</li>
+    <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
     <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。</li>
     <li><b>幸せ度100</b>でみんなの勝ち！ 最後のラウンドまでにとどかなかったら、<b>最後の大工事（ボス問題）</b>に挑戦。成功すると幸せ度+15。幸せ度が0になったり、100にとどかなかったら負け…</li>
@@ -1619,6 +1646,12 @@ const COOP_CFG = {
   lawyerRate:.2, lawyerCool:1,    // 弁護士：何割引きか／何ラウンドに1回使えるか
   seMul:2, seAll:1.3, seTrain:.3,   // SE：関数のお金の倍率／ほかの分野の倍率／電車の割引
   policeLimit:1,                  // 警察官：1ラウンドに防げる犯罪カードの数
+  // キャリア：新人スタート・資格・転職・ベテラン・経験・求人
+  vetTenure:2,                    // 同じ職業でラウンドの終わりを何回むかえるとベテランか
+  vet:{seMul:2.5, seAll:1.5, seTrain:.4, fireLim:2, lawyerRate:.3, cleanDisc:.4, policeLim:2, shopHappy:3},
+  exp:{se:.1, fire:3, lawyer:.05, clean:5, police:3},   // 前の仕事の経験（転職しても少し残る力）
+  qualStar:2,                     // 何つ星以上の正解で資格がもらえるか
+  wantYen:200, wantHappy:2,       // 求人に応えたときのボーナス
   priceExp:1.35,                    // ラウンド数に合わせて値段を変える強さ
   kpExp:1.8,                       // 人数に合わせて値段を変える強さ
   kpTable:{1:.24, 2:.33, 3:.61, 4:1, 5:1.55, 6:2.04},  // 人数ごとの値段の倍率（自動対戦で決めた値）
@@ -1644,12 +1677,19 @@ const PROJECTS = [
 ];
 const PROJ = {}; PROJECTS.forEach(p => { PROJ[p.id] = p; });
 const JOBS = {
-  se:{ic:'💻', name:'システムエンジニア', d:'正解したときのお金がいつも1.3倍（関数の問題は2倍）。電車の工事が3割引き'},
-  fire:{ic:'🚒', name:'消防士', d:'災害カード（大雪・火事）を1ラウンドに1回防ぐ'},
-  lawyer:{ic:'⚖️', name:'弁護士', d:'会議のたびに交渉して、工事1つを2割引きにする'},
-  clean:{ic:'🚛', name:'衛生のプロ', d:'町の衛生を守るプロ。水道管の破裂を防ぐ。水道と雪かきの工事が3割引き'},
-  police:{ic:'👮', name:'警察官', d:'犯罪カード（詐欺電話・空き巣）を1ラウンドに1回防ぐ。商店街の工事で幸せ度＋2'},
+  se:{ic:'💻', name:'システムエンジニア', short:'SE', topic:3, d:'正解したときのお金がいつも1.3倍（関数の問題は2倍）。電車の工事が3割引き',
+    vd:'ベテラン：お金がいつも1.5倍（関数は2.5倍）。電車の工事が4割引き', ed:'元SEの経験：正解のお金 +10%'},
+  fire:{ic:'🚒', name:'消防士', short:'消防士', topic:1, d:'災害カード（大雪・火事）を1ラウンドに1回防ぐ',
+    vd:'ベテラン：災害カードを1ラウンドに2回防ぐ', ed:'元消防士の経験：災害カードの被害を3へらす（1ラウンドに1回）'},
+  lawyer:{ic:'⚖️', name:'弁護士', short:'弁護士', topic:2, d:'会議のたびに交渉して、工事1つを2割引きにする',
+    vd:'ベテラン：工事1つを3割引きにする', ed:'元弁護士の経験：工事がいつも5%引き'},
+  clean:{ic:'🚛', name:'衛生のプロ', short:'衛生のプロ', topic:4, d:'町の衛生を守るプロ。水道管の破裂を防ぐ。水道と雪かきの工事が3割引き',
+    vd:'ベテラン：水道と雪かきの工事が4割引き', ed:'元衛生のプロの経験：水道管の破裂の被害を5へらす'},
+  police:{ic:'👮', name:'警察官', short:'警察官', topic:5, d:'犯罪カード（詐欺電話・空き巣）を1ラウンドに1回防ぐ。商店街の工事で幸せ度＋2',
+    vd:'ベテラン：犯罪カードを1ラウンドに2回防ぐ。商店街の工事で幸せ度＋3', ed:'元警察官の経験：犯罪カードの被害を3へらす（1ラウンドに1回）'},
 };
+const NEWBIE = {ic:'🌱', name:'町の新人', short:'新人', d:'まだ職業なし。問題に正解すると、その分野の仕事に就ける'};
+const TOPIC_JOB = {1:'fire', 2:'lawyer', 3:'se', 4:'clean', 5:'police'};
 const JOB_ORDER = ['se', 'fire', 'lawyer', 'clean', 'police'];
 const CARDS = [
   {id:'snowfall', ic:'❄️', name:'大雪で道が通れない', happy:-9, yen:0, proj:'snow', plv:1, jobs:['fire']},
@@ -1687,7 +1727,7 @@ const COOP = {
   newState(o){
     const S = {round:1, rounds:o.rounds || 8, n:Math.max(1, o.n || 4), budget:0, happy:COOP_CFG.startHappy,
       lv:{}, lawyerUsed:{}, rest:{}, hospUsed:false, won:false, lost:false, festival:false,
-      earned:{}, blocked:{}, built:[], log:[], deck:[]};
+      earned:{}, blocked:{}, built:[], log:[], deck:[], wanted:null};
     PROJECTS.forEach(p => { S.lv[p.id] = 0; });
     return S;
   },
@@ -1696,6 +1736,50 @@ const COOP = {
   kr(S){ return Math.pow(S.rounds / 8, COOP_CFG.priceExp); },
   yen(S, base){ return Math.round(base * COOP.kp(S) / 10) * 10; },
   hasJob(players, j){ return players.filter(p => p.job === j); },
+  isVet(p){ return !!(p && p.job && (p.tenure || 0) >= COOP_CFG.vetTenure); },
+  hasExp(players, j){ return players.filter(p => p.job !== j && (p.exp || []).includes(j)); },
+  anyVet(players, j){ return players.some(p => p.job === j && COOP.isVet(p)); },
+  /* 正解したとき：新人なら就職、★2以上ならその分野の資格 */
+  onAnswer(S, pl, star, topic){
+    const ev = {}, j = TOPIC_JOB[topic]; if (!j || !star) return ev;
+    pl.quals = pl.quals || []; pl.exp = pl.exp || [];
+    if (!pl.job){ pl.job = j; pl.tenure = 0; ev.hired = j; }
+    else if (star >= COOP_CFG.qualStar && j !== pl.job && !pl.quals.includes(j)){ pl.quals.push(j); ev.qual = j; }
+    return ev;
+  },
+  /* 転職できる先（資格がある仕事・求人） */
+  careerOptions(S, pl){
+    const out = [], w = S.wanted;
+    (pl.quals || []).forEach(j => { if (j !== pl.job) out.push({job:j, via:w && w.job === j ? 'wanted' : 'qual'}); });
+    if (w && w.job !== pl.job && !out.some(o => o.job === w.job)) out.push({job:w.job, via:'wanted'});
+    return out;
+  },
+  changeJob(S, pl, job, via){
+    if (!JOBS[job] || pl.job === job) return null;
+    pl.exp = pl.exp || []; pl.quals = pl.quals || [];
+    const from = pl.job; if (from && !pl.exp.includes(from)) pl.exp.push(from);
+    pl.job = job; pl.tenure = 0; pl.changes = (pl.changes || 0) + 1;
+    const r = {pl, from, job, via};
+    if (S.wanted && S.wanted.job === job){ r.bonus = {yen:COOP.yen(S, COOP_CFG.wantYen), happy:COOP_CFG.wantHappy}; S.budget += r.bonus.yen; S.happy += r.bonus.happy; S.wanted = null; COOP.check(S); }
+    return r;
+  },
+  /* コンピューターの転職：町にいない仕事の求人・資格があれば、ベテランでなければ転職 */
+  aiCareer(S, players, pl, pending){
+    const opts = COOP.careerOptions(S, pl); if (!opts.length) return null;
+    pending = pending || [];
+    const missing = j => !players.some(p => p.job === j) && !pending.includes(j);
+    const w = opts.find(o => o.via === 'wanted');
+    if (w && !pending.includes(w.job) && (missing(w.job) || !pl.job) && !(COOP.isVet(pl) && COOP.rng() < .6)) return w.job;
+    const q = opts.find(o => o.via === 'qual' && missing(o.job));
+    if (q && !COOP.isVet(pl) && COOP.rng() < .6) return q.job;
+    return null;
+  },
+  /* ラウンドの終わり：同じ仕事をつづけた日数。ベテランになった人を返す */
+  tenureTick(S, players){
+    const nv = [];
+    players.forEach(p => { if (!p.job) return; p.tenure = (p.tenure || 0) + 1; if (p.tenure === COOP_CFG.vetTenure) nv.push(p); });
+    return nv;
+  },
   /* 町でいちばんレアなアイテム（種類ごと） */
   best(players, kind){
     let top = null;
@@ -1711,8 +1795,9 @@ const COOP = {
     const base = Math.round(COOP_CFG.lvCost[lv] * COOP.kp(S) * COOP.kr(S) / 10) * 10;
     const disc = [];
     if (S.lv.debt >= 3 && pid !== 'debt') disc.push({t:'💸 赤字ゼロ', r:.1});
-    if (pid === 'train' && COOP.hasJob(players, 'se').length) disc.push({t:'💻 SE', r:COOP_CFG.seTrain});
-    if ((pid === 'water' || pid === 'snow') && COOP.hasJob(players, 'clean').length) disc.push({t:'🚛 衛生のプロ', r:.3});
+    if (pid === 'train' && COOP.hasJob(players, 'se').length) disc.push({t:'💻 SE', r:COOP.anyVet(players, 'se') ? COOP_CFG.vet.seTrain : COOP_CFG.seTrain});
+    if ((pid === 'water' || pid === 'snow') && COOP.hasJob(players, 'clean').length) disc.push({t:'🚛 衛生のプロ', r:COOP.anyVet(players, 'clean') ? COOP_CFG.vet.cleanDisc : .3});
+    if (COOP.hasExp(players, 'lawyer').length) disc.push({t:'元弁護士', r:COOP_CFG.exp.lawyer});
     const pd = COOP.pedDisc(players); if (pd) disc.push({t:'💎 台座', r:pd});
     const mul = disc.reduce((m, d) => m * (1 - d.r), 1);
     return {base, disc, cost:Math.max(10, Math.round(base * mul / 10) * 10)};
@@ -1720,7 +1805,8 @@ const COOP = {
   /* 正解したときのお金 */
   earn(S, pl, star, topic, dbl){
     let mul = dbl ? 2 : 1; const why = [];
-    if (pl.job === 'se'){ const k = topic === 3 ? COOP_CFG.seMul : COOP_CFG.seAll; if (k > 1){ mul *= k; why.push(`💻×${k}`); } }
+    if (pl.job === 'se'){ const v = COOP.isVet(pl), k = topic === 3 ? (v ? COOP_CFG.vet.seMul : COOP_CFG.seMul) : (v ? COOP_CFG.vet.seAll : COOP_CFG.seAll); if (k > 1){ mul *= k; why.push(`💻×${k}`); } }
+    else if ((pl.exp || []).includes('se')){ mul *= 1 + COOP_CFG.exp.se; why.push(`元SE+${Math.round(COOP_CFG.exp.se * 100)}%`); }
     (pl.gear || []).forEach(id => { const m = COOP.itemMeta(id); if (!m || !m.title || !(id in TITLE_TOPIC)) return;
       const tp = TITLE_TOPIC[id]; if (tp === 0 || tp === topic){ const r = COOP_ITEM.title[m.r]; mul *= 1 + r; why.push(`《${m.title}》+${Math.round(r * 100)}%`); } });
     return {yen:Math.round(star * COOP_CFG.yenPerStar * mul / 10) * 10, why};
@@ -1730,16 +1816,17 @@ const COOP = {
   options(S, players){
     return PROJECTS.filter(p => S.lv[p.id] < 3).map(p => { const pr = COOP.price(S, players, p.id); return {id:p.id, lv:S.lv[p.id], price:pr, can:pr.cost <= S.budget}; });
   },
+  lawRate(l){ return COOP.isVet(l) ? COOP_CFG.vet.lawyerRate : COOP_CFG.lawyerRate; },
   lawyerFor(S, players){ return players.find(p => p.job === 'lawyer' && !(S.lawyerUsed[p.id] && S.round - S.lawyerUsed[p.id] < COOP_CFG.lawyerCool)) || null; },
   buy(S, players, pid, lawyer){
     const pr = COOP.price(S, players, pid); if (!pr) return null;
     let cost = pr.cost;
-    if (lawyer){ cost = Math.max(10, Math.round(cost * (1 - COOP_CFG.lawyerRate) / 10) * 10); S.lawyerUsed[lawyer.id] = S.round; }
+    if (lawyer){ cost = Math.max(10, Math.round(cost * (1 - COOP.lawRate(lawyer)) / 10) * 10); S.lawyerUsed[lawyer.id] = S.round; }
     if (cost > S.budget) return null;
     S.budget -= cost;
     const lv = S.lv[pid]; S.lv[pid] = lv + 1;
     let dh = COOP_CFG.lvHappy[lv];
-    if (pid === 'shop' && COOP.hasJob(players, 'police').length) dh += 2;
+    if (pid === 'shop' && COOP.hasJob(players, 'police').length) dh += COOP.anyVet(players, 'police') ? COOP_CFG.vet.shopHappy : 2;
     S.happy += dh; S.built.push({pid, lv:lv + 1, round:S.round});
     COOP.check(S);
     return {pid, lv:lv + 1, cost, dh, done:lv + 1 >= 3, lawyer:!!lawyer};
@@ -1758,18 +1845,23 @@ const COOP = {
     if (!c.good){
       if (c.proj && S.lv[c.proj] >= c.plv){ out.by = {kind:'proj', t:`${PROJ[c.proj].ic} ${PROJ[c.proj].name}（レベル${c.plv}）`}; }
       else {
-        const lim = {fire:COOP.hasJob(players, 'fire').length, police:COOP.hasJob(players, 'police').length * COOP_CFG.policeLimit};
+        const cap = j => COOP.hasJob(players, j).reduce((a, p) => a + (COOP.isVet(p) ? (j === 'fire' ? COOP_CFG.vet.fireLim : COOP_CFG.vet.policeLim) : (j === 'fire' ? 1 : COOP_CFG.policeLimit)), 0);
+        const lim = {fire:cap('fire'), police:cap('police')};
         const jp = (c.jobs || []).map(j => COOP.hasJob(players, j)).flat().filter(p => !(p.job in lim) || (used[p.job] || 0) < lim[p.job]);
         if (jp.length){ const p = jp[0]; if (p.job in lim) used[p.job] = (used[p.job] || 0) + 1; out.by = {kind:'job', pl:p, t:`${JOBS[p.job].ic} ${JOBS[p.job].name}の ${p.name || ''}`}; S.blocked[p.id] = (S.blocked[p.id] || 0) + 1; }
         else {
-          const g = COOP.guard(S, players, -out.dh, out.dh === 0, used);
+          // 前の仕事の経験で、被害を少しへらす
+          const ej = (c.jobs || [])[0], ep = ej ? COOP.hasExp(players, ej)[0] : null, en = ej ? COOP_CFG.exp[ej] : 0;
+          if (ep && out.dh < 0 && !used['exp_' + ej]){ used['exp_' + ej] = 1; const n = Math.min(-out.dh, en); out.dh += n; out.expCut = {pl:ep, job:ej, n}; S.blocked[ep.id] = (S.blocked[ep.id] || 0) + 1; }
+          const g = out.dh < 0 || (out.dh === 0 && out.dy < 0) ? COOP.guard(S, players, -out.dh, out.dh === 0, used) : null;
           if (g){ S.blocked[g.pl.id] = (S.blocked[g.pl.id] || 0) + 1;
             if (g.full){ out.by = {kind:'item', pl:g.pl, id:g.id, t:`${g.m.name}`}; }
             else { out.dh = Math.min(0, out.dh + g.cut); out.cut = {pl:g.pl, id:g.id, t:g.m.name, n:g.cut}; } }
         }
       }
       if (out.by){ out.dh = 0; out.dy = 0; }
-      else if (out.dh < 0 && !used.pet){
+      else if (c.jobs && c.jobs.length && COOP_CFG.career !== false){ S.wanted = {job:c.jobs[0], card:c.id, round:S.round}; out.wanted = c.jobs[0]; }
+      if (!out.by && out.dh < 0 && !used.pet){
         const pet = COOP.best(players, 'pet');
         if (pet){ used.pet = true; const h = Math.min(-out.dh, COOP_ITEM.pet[pet.m.r]); out.heal = {pl:pet.pl, id:pet.id, t:pet.m.name, n:h}; out.dh += h; S.blocked[pet.pl.id] = (S.blocked[pet.pl.id] || 0) + 1; }
       }
@@ -1823,7 +1915,7 @@ const COOP = {
   /* コンピューターが会議で選ぶ工事（よさそうな順に点数をつける） */
   score(S, players, o){
     const p = PROJ[o.id], lv = o.lv, left = S.rounds - S.round + 1, cost = o.price.cost;
-    let v = COOP_CFG.lvHappy[lv] + (o.id === 'shop' && COOP.hasJob(players, 'police').length ? 2 : 0);
+    let v = COOP_CFG.lvHappy[lv] + (o.id === 'shop' && COOP.hasJob(players, 'police').length ? (COOP.anyVet(players, 'police') ? COOP_CFG.vet.shopHappy : 2) : 0);
     const cardsLeft = left * (S.round <= 2 ? 1.5 : 2) * COOP_CFG.badRate;
     CARDS.forEach(c => { if (!c.good && c.proj === o.id && c.plv === lv + 1){
       const jobBlock = (c.jobs || []).some(j => COOP.hasJob(players, j).length);
@@ -1853,12 +1945,12 @@ function fmtYen(m){
 /* COOP-ENGINE-END */
 
 /* ============ 参加者画面 ============ */
-const P = {inited:false, stage:'setup', course:null, level:1, sel:null, name:'', topic:0, star:0, prob:null, t:120, timer:null, hist:[], room:'', pid:null, jid:null, char:'', info:null, roster:null, done:{}, subs:[], job:'', voteId:0, myVote:null};
+const P = {inited:false, stage:'setup', course:null, level:1, sel:null, name:'', topic:0, star:0, prob:null, t:120, timer:null, hist:[], room:'', pid:null, jid:null, char:'', info:null, roster:null, done:{}, subs:[], voteId:0, myVote:null, careerId:0, myCareer:null};
 const pCoop = () => !!(P.info && P.info.mode === 'coop');
 function loadCourse(){ try { const c = JSON.parse(localStorage.getItem('sg_course') || 'null'); if (c && COURSES[c.c]){ P.course = c.c; P.level = Math.max(0, Math.min(2, c.l | 0)); } } catch(e){} }
 function saveCourse(){ try { localStorage.setItem('sg_course', JSON.stringify({c:P.course, l:P.level})); } catch(e){} }
 /* コースとレベルを先生の画面に知らせる（表示用。問題はこの画面で作る） */
-function sendPref(){ if (!P.room || P.pid == null || !P.course) return; P.prefAt = Date.now(); NET.set(`rooms/${P.room}/pref/${P.pid}`, {course:P.course, level:P.level, job:P.job || '', at:NET.now()}); }
+function sendPref(){ if (!P.room || P.pid == null || !P.course) return; P.prefAt = Date.now(); NET.set(`rooms/${P.room}/pref/${P.pid}`, {course:P.course, level:P.level, at:NET.now()}); }
 function courseSelHTML(){
   const c = P.course;
   return `<div class="csel">${COURSE_ORDER.map(k => `<button type="button" class="copt ${c === k ? 'sel' : ''}" onclick="pPickCourse('${k}')"><span class="cic">${COURSES[k].ic}</span>${COURSES[k].name.replace(/（.*）/, '')}<small>${COURSES[k].name.match(/（(.*)）/) ? COURSES[k].name.match(/（(.*)）/)[1] : ''}</small></button>`).join('')}</div>
@@ -1867,13 +1959,19 @@ function courseSelHTML(){
 }
 function pPickCourse(k){ P.course = k; saveCourse(); sendPref(); try { sfx.star(); } catch(e){} const el = $('#csel'); if (el) el.innerHTML = courseSelHTML(); }
 function pPickLevel(i){ P.level = i; saveCourse(); sendPref(); try { sfx.star(); } catch(e){} const el = $('#csel'); if (el) el.innerHTML = courseSelHTML(); }
-function jobCounts(){ const c = {}; Object.entries(P.roster || {}).forEach(([k, r]) => { if (r && r.job && k !== P.pid) c[r.job] = (c[r.job] || 0) + 1; }); return c; }
-function jobPickHTML(){
-  const c = jobCounts();
-  if (!JOBS[P.job]){ const min = Math.min(...JOB_ORDER.map(j => c[j] || 0)); P.job = JOB_ORDER.find(j => (c[j] || 0) === min); }
-  return `<div class="jobgrid">${JOB_ORDER.map(j => `<button type="button" class="jobpick ${P.job === j ? 'sel' : ''}" data-j="${j}" onclick="pPickJob('${j}')"><span class="ji">${JOBS[j].ic}</span><span class="jt"><b>${JOBS[j].name}</b><small>${JOBS[j].d}</small></span><em>${c[j] ? `いま${c[j]}人` : 'まだいない！'}</em></button>`).join('')}</div>`;
+/* 協力モードのしごと（キャリア）の表示 */
+function pJobLine(me){
+  if (!JOBS[me.job]) return `${NEWBIE.ic} ${NEWBIE.name}`;
+  return `${JOBS[me.job].ic} ${me.vet ? 'ベテラン' : ''}${JOBS[me.job].name}`;
 }
-function pPickJob(j){ P.job = j; try { localStorage.setItem('sg_job', j); } catch(e){} document.querySelectorAll('.jobpick').forEach(b => b.classList.toggle('sel', b.dataset.j === j)); try { sfx.star(); } catch(e){} if (P.pid != null) sendPref(); }
+function pCareerTags(me){
+  const q = String(me.quals || '').split(',').filter(j => JOBS[j] && j !== me.job), e = String(me.exp || '').split(',').filter(j => JOBS[j] && j !== me.job);
+  return [q.length ? `📜 資格：${q.map(j => JOBS[j].ic + JOBS[j].short).join('・')}` : '', e.length ? `🎓 経験：${e.map(j => '元' + JOBS[j].short).join('・')}` : ''].filter(Boolean).join('　');
+}
+function pCareer(v){
+  const C = P.info && P.info.career; if (!C || !P.room || P.pid == null) return;
+  P.myCareer = v; NET.set(`rooms/${P.room}/career/${C.id}/${P.pid}`, {v, at:NET.now()}); initAudio(); try { sfx.star(); } catch(e){} renderPlay();
+}
 function pVote(id){
   const V = P.info && P.info.vote; if (!V || !P.room || P.pid == null) return;
   P.myVote = id; NET.set(`rooms/${P.room}/vote/${V.id}/${P.pid}`, {v:id, at:NET.now()}); initAudio(); try { sfx.star(); } catch(e){} renderPlay();
@@ -1929,14 +2027,16 @@ function netUpdate(){
   if (!me){ P.stage = 'join'; renderPlay(); return; }
   P.name = me.name;
   document.body.classList.toggle('coopmode', I.mode === 'coop');
-  if (me.job && !P.job) P.job = me.job;
+  if (I.mode === 'coop' && I.phase === 'career' && I.career && P.stage !== 'quiz'){
+    if (P.stage !== 'career' || P.careerId !== I.career.id){ P.careerId = I.career.id; P.myCareer = null; initAudio(); try { sfx.jingle(); } catch(e){} }
+    P.stage = 'career'; renderPlay(); return;
+  }
+  if (P.stage === 'career'){ P.stage = 'wait'; }
   if (I.mode === 'coop' && I.phase === 'meeting' && I.vote && P.stage !== 'quiz'){
     if (P.stage !== 'vote' || P.voteId !== I.vote.id){ P.voteId = I.vote.id; P.myVote = null; initAudio(); try { sfx.jingle(); } catch(e){} }
     P.stage = 'vote'; renderPlay(); return;
   }
   if (P.stage === 'vote'){ P.stage = 'wait'; }
-  if (P.stage === 'job' && !(I.phase === 'setup' || I.phase === 'lobby')) P.stage = 'wait';
-  if (P.stage === 'job'){ return; }
   if (!P.course && me.course && COURSES[me.course]){ P.course = me.course; P.level = me.level | 0; }
   if (P.course && (me.course !== P.course || (me.level | 0) !== P.level) && !(Date.now() - (P.prefAt || 0) < 4000)) sendPref();
   const qOpen = I.phase === 'quiz' && me.topic > 0 && I.quizId && !P.done[I.quizId];
@@ -1961,7 +2061,7 @@ function pSelfJoin(){
   if (!P.course){ $('#jmsg').textContent = 'コースをえらんでね'; return; }
   P.jid = P.jid || ('j' + Math.random().toString(36).slice(2, 10)); P.pid = null;
   try { localStorage.setItem('sg_jid_' + P.room, P.jid); localStorage.removeItem('sg_pid_' + P.room); } catch(e){}
-  const d = {name:nm, char:P.char, course:P.course, level:P.level, job:pCoop() ? P.job : ''}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
+  const d = {name:nm, char:P.char, course:P.course, level:P.level}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
   NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({at:NET.now()}, d)); watchMyJoin();
   initAudio(); try { sfx.star(); } catch(e){}
   P.name = nm; P.stage = 'wait'; renderPlay();
@@ -1980,6 +2080,7 @@ function waitHTML(){
     score:pCoop() ? ['💰', '町の予算を数えています…'] : ['⭐', '⭐ を数えています…'],
     gacha:['🎰', 'ガチャタイム！<br>先生の画面を見てね'],
     meeting:['🏛', '町の会議！'],
+    career:['🔄', '転職タイム！<br>先生の画面を見てね'],
     build:['🏗', '工事中！<br>先生の画面を見てね'],
     cards:['📜', 'こがね町のできごと！<br>先生の画面を見てね'],
     end:pCoop() ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🏗', '最後の大工事！<br>みんなで協力しよう']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
@@ -1987,10 +2088,10 @@ function waitHTML(){
   const last = P.hist[P.hist.length - 1], co = pCoop();
   return `<div class="wait">
     <div class="wme">${CHAR_THUMB[me.char] ? `<img class="wimg" src="${CHAR_THUMB[me.char]}" alt="" style="border-color:${me.color || '#888'}">` : `<span class="wdot" style="background:${me.color || '#888'}"></span>`}<b>${esc(me.name || '')}</b></div>
-    <div class="wst">${co ? (JOBS[me.job] ? `<span>${JOBS[me.job].ic} ${JOBS[me.job].name}</span>` : '') : `<span>⭐ ${me.stars || 0}</span>`}${me.tickets ? `<span>🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="wsp">📍 ${esc(me.space)}</span>` : ''}</div>
+    <div class="wst">${co ? `<span>${pJobLine(me)}</span>` : `<span>⭐ ${me.stars || 0}</span>`}${me.tickets ? `<span>🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="wsp">📍 ${esc(me.space)}</span>` : ''}</div>
     ${co ? townHTML() : ''}
     <div class="wbig">${msg[0]}</div><div class="wmsg">${msg[1]}</div>
-    ${co && JOBS[me.job] && (I.phase === 'setup' || I.phase === 'lobby') ? `<div class="wsub">${JOBS[me.job].d}　<button class="small-link" onclick="P.stage='job';renderPlay()">職業を変える</button></div>` : ''}
+    ${co ? `<div class="wsub">${JOBS[me.job] ? (me.vet ? JOBS[me.job].vd : JOBS[me.job].d) : `${NEWBIE.d}（${[1,2,3,4,5].map(t => `${CAT[t].ic}${TOPICS[t]}→${JOBS[TOPIC_JOB[t]].ic}`).join(' ')}）`}${pCareerTags(me) ? `<div class="wcar">${pCareerTags(me)}</div>` : ''}</div>` : ''}
     <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
     ${I.phase === 'roll' && I.round ? `<div class="wsub">ラウンド ${I.round} / ${I.maxRound}</div>` : ''}
     ${last && I.phase !== 'quiz' ? `<div class="wsub">前回：${last.ok ? (co ? `⭕ 正解${me.yen ? `　町の予算に +${fmtYen(me.yen)}` : ''}` : `⭕ 正解（⭐${last.st}）`) : '❌ ざんねん'}</div>` : ''}
@@ -2014,7 +2115,7 @@ function renderPlay(){
       <div class="cpgrid">${Object.entries(CHAR_LIST).map(([k, c]) => `<button class="cpick ${P.char === k ? 'sel' : ''}" data-k="${k}" ${taken.has(k) && P.char !== k ? 'disabled' : ''} onclick="pPickChar('${k}')"><img src="${CHAR_THUMB[k] || ''}" alt=""><span>${c[0]}</span></button>`).join('')}</div>
       <label>コースとレベル（あとで変えられます）</label>
       <div id="csel">${courseSelHTML()}</div>
-      ${pCoop() ? `<label>職業をえらぼう（こがね町でのしごと・みんなでちがう職業にすると強い！）</label>${jobPickHTML()}` : ''}
+      ${pCoop() ? `<div class="wsub" style="margin:10px 0 0">🌱 みんな「町の新人」からスタート！ 問題に正解すると、その分野の仕事に就職できるよ。★2以上で正解すると「資格」がもらえて、ほかの仕事にも転職できる！</div>` : ''}
       <div class="msg" id="jmsg"></div>
       <button class="btn green big" onclick="pSelfJoin()">この名前とコマで参加する</button>` : '<div class="wmsg" style="margin:14px 0">ゲームはもう始まっています。<br>先生に「参加者に入れてください」と伝えてね</div>'}
       ${ids.length ? `<details ${open ? '' : 'open'} style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted)">もう登録してある人は、自分の名前をタップ</summary>
@@ -2024,16 +2125,23 @@ function renderPlay(){
   }
   if (P.stage === 'vote' && P.info && P.info.vote){
     const V = P.info.vote, T = P.info.town || {b:0};
-    B.innerHTML = `<h2>🏛 町の会議${V.k ? '（2つめ）' : ''}</h2><p style="margin:0 0 8px;color:var(--muted)">どの工事に町のお金を使う？　💰 <b style="color:#fff">${fmtYen(T.b)}</b>${V.law ? `<br>⚖️ 弁護士の${esc(V.law)}さんが2割引きに交渉中！` : ''}</p>
+    B.innerHTML = `<h2>🏛 町の会議${V.k ? '（2つめ）' : ''}</h2><p style="margin:0 0 8px;color:var(--muted)">どの工事に町のお金を使う？　💰 <b style="color:#fff">${fmtYen(T.b)}</b>${V.law ? `<br>⚖️ 弁護士の${esc(V.law)}さんが${V.lawP || 2}割引きに交渉中！` : ''}</p>
       <div class="vgrid">${V.opts.map(o => { const p = PROJ[o.id]; return `<button class="vopt ${P.myVote === o.id ? 'sel' : ''}" ${o.can ? '' : 'disabled'} onclick="pVote('${o.id}')"><span class="vi">${p.ic}</span><span class="vt"><b>${p.name}</b><small>レベル${o.lv + 1}「${p.lv[o.lv]}」</small><small>${fmtYen(o.cost)}　😊 +${o.dh || COOP_CFG.lvHappy[o.lv]}${o.lv === 2 ? '　🎉 完成！' : ''}${o.can ? '' : '　（お金が足りない）'}</small></span></button>`; }).join('')}
       <button class="vopt save ${P.myVote === 'save' ? 'sel' : ''}" onclick="pVote('save')"><span class="vi">💰</span><span class="vt"><b>今回は貯金</b><small>次のラウンドで高い工事をする</small></span></button></div>
       <div class="vfoot">⏱ のこり <b id="vt">${Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000))}</b> 秒　${P.myVote ? '✅ 投票しました（変えられます）' : '👆 タップして投票'}</div>`;
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#vt'); if (!el || P.stage !== 'vote'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000)); }, 500);
     return;
   }
-  if (P.stage === 'job'){
-    B.innerHTML = `<h2>💼 職業をえらぶ</h2><p style="margin:0 0 8px;color:var(--muted)">みんなでちがう職業にすると、町を守る力が強くなるよ</p>${jobPickHTML()}
-      <button class="btn green big" onclick="sendPref();P.stage='wait';netUpdate()">OK</button>`;
+  if (P.stage === 'career' && P.info && P.info.career){
+    const C = P.info.career, me = pMe() || {}, my = (C.opts || {})[P.pid], W = C.wanted;
+    const left = me.job && !me.vet ? Math.max(1, COOP_CFG.vetTenure - (me.ten | 0)) : 0;
+    B.innerHTML = `<h2>🔄 転職タイム</h2><p style="margin:0 0 6px;color:var(--muted)">いまの仕事：<b style="color:#fff">${pJobLine(me)}</b>${pCareerTags(me) ? `<br>${pCareerTags(me)}` : ''}</p>
+      ${W ? `<div class="kwant">📢 町の求人：${JOBS[W.job].ic} ${JOBS[W.job].name} 募集中！<small>「${esc(W.card || '')}」をふせげなかった…。転職した人に ボーナス +${fmtYen(W.yen)}・😊+${W.h}（先着1人）</small></div>` : ''}
+      ${my ? `<div class="vgrid">${my.map(o => `<button class="vopt ${P.myCareer === o.job ? 'sel' : ''}" onclick="pCareer('${o.job}')"><span class="vi">${JOBS[o.job].ic}</span><span class="vt"><b>${JOBS[o.job].name}に転職</b><small>${o.via === 'wanted' ? '📢 求人に応える（ボーナス！）' : '📜 資格があるので転職できる'}</small><small>${JOBS[o.job].d}</small></span></button>`).join('')}
+        <button class="vopt save ${P.myCareer === 'stay' ? 'sel' : ''}" onclick="pCareer('stay')"><span class="vi">${me.job ? '👍' : '🌱'}</span><span class="vt"><b>このまま</b><small>${me.job ? (me.vet ? 'ベテランの強い力をつづけて使う' : `あと${left}ラウンドつづけるとベテラン！`) : '新人のまま、次の問題で就職をめざす'}</small></span></button></div>
+        <p style="margin:8px 0 0;font-size:12.5px;color:var(--muted)">転職すると、いまの仕事は「経験」として少し残ります（ベテランは0からやり直し）</p>` : `<div class="wmsg" style="margin:16px 0">今回は転職できる仕事がないよ</div><div class="wsub" style="text-align:center">★2以上で正解すると「📜資格」がもらえて、転職できるようになる！</div>`}
+      <div class="vfoot">⏱ のこり <b id="ct">${Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000))}</b> 秒　${my ? (P.myCareer ? '✅ 決めました（変えられます）' : '👆 タップして決めよう') : ''}</div>`;
+    clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#ct'); if (!el || P.stage !== 'career'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000)); }, 500);
     return;
   }
   if (P.stage === 'course'){
@@ -2092,11 +2200,18 @@ function renderPlay(){
     B.innerHTML = `<div class="result">
       <div class="mark">${r === 'ok' ? '⭕' : r === 'time' ? '⏰' : '❌'}</div>
       <div class="rt">${r === 'ok' ? `${'★'.repeat(P.star)} 正解！` : r === 'time' ? '時間切れ…' : 'ざんねん！'}</div>
-      ${r === 'ok' ? `<div class="tell">${pCoop() ? `町の予算に +${fmtYen(P.star * 100 * (P.double ? 2 : 1))}` : `⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！`}</div><p style="color:var(--muted);margin:0">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p style="margin:4px 0">今回は${pCoop() ? 'お金' : '⭐'}なし。次でとりかえそう！${P.room ? '<br><span style="color:var(--muted)">（先生の画面に届きました）</span>' : ''}</p>`}
+      ${r === 'ok' ? `<div class="tell">${pCoop() ? `町の予算に +${fmtYen(P.star * 100 * (P.double ? 2 : 1))}` : `⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！`}</div>${pCoop() && P.room ? pCareerNote() : ''}<p style="color:var(--muted);margin:0">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p style="margin:4px 0">今回は${pCoop() ? 'お金' : '⭐'}なし。次でとりかえそう！${P.room ? '<br><span style="color:var(--muted)">（先生の画面に届きました）</span>' : ''}</p>`}
       </div>
       <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>
       <button class="btn green big" onclick="P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">${P.room ? 'OK' : '次のラウンドへ'}</button>`;
   }
+}
+function pCareerNote(){
+  const j = TOPIC_JOB[P.topic], me = pMe() || {}; if (!j) return '';
+  const q = String(me.quals || '').split(',');
+  if (!JOBS[me.job]) return `<div class="kwant" style="text-align:center">🌱 → ${JOBS[j].ic} ${JOBS[j].name}に就職！<small>${TOPICS[P.topic]}の問題に正解したから</small></div>`;
+  if (P.star >= COOP_CFG.qualStar && j !== me.job && !q.includes(j)) return `<div class="kwant" style="text-align:center">📜 ${JOBS[j].ic} ${JOBS[j].name}の資格ゲット！<small>会議の前の「転職タイム」で転職できるよ</small></div>`;
+  return '';
 }
 function pStart(){ if (!P.course){ const el = $('#csel'); if (el) el.classList.remove('shake'), void el.offsetWidth, el.classList.add('shake'); return; } P.name = ($('#pname').value || '').trim(); P.stage = 'pick'; renderPlay(); }
 function pTopic(t){ P.topic = t; P.stage = 'star'; renderPlay(); }
@@ -4766,7 +4881,8 @@ const FACE_VAL = [3, 4, 1, 6, 2, 5];
 const FACE_N = [new THREE.Vector3(1,0,0), new THREE.Vector3(-1,0,0), new THREE.Vector3(0,1,0), new THREE.Vector3(0,-1,0), new THREE.Vector3(0,0,1), new THREE.Vector3(0,0,-1)];
 const PIPS = {1:[[.5,.5]],2:[[.27,.27],[.73,.73]],3:[[.27,.27],[.5,.5],[.73,.73]],4:[[.27,.27],[.73,.27],[.27,.73],[.73,.73]],
   5:[[.27,.27],[.73,.27],[.5,.5],[.27,.73],[.73,.73]],6:[[.27,.25],[.73,.25],[.27,.5],[.73,.5],[.27,.75],[.73,.75]]};
-const diceMats = FACE_VAL.map(v => new THREE.MeshStandardMaterial({roughness:.3, map: canvasTex((g, S) => {
+// サイコロは山や家のうしろでも見えるように、いつもいちばん手前に描く
+const diceMats = FACE_VAL.map(v => new THREE.MeshStandardMaterial({roughness:.3, depthTest:false, depthWrite:false, map: canvasTex((g, S) => {
   g.fillStyle = '#fbfcff'; g.fillRect(0, 0, S, S);
   PIPS[v].forEach(([x, y]) => {
     const r = v === 1 ? S*.13 : S*.085;
@@ -4776,7 +4892,7 @@ const diceMats = FACE_VAL.map(v => new THREE.MeshStandardMaterial({roughness:.3,
   });
 })}));
 const diceGeo = new RoundedBoxGeometry(1.1, 1.1, 1.1, 5, .2);
-const dices = [0, 1].map(() => { const d = new THREE.Mesh(diceGeo, diceMats); d.castShadow = true; d.visible = false; scene.add(d); return d; });
+const dices = [0, 1].map(() => { const d = new THREE.Mesh(diceGeo, diceMats); d.castShadow = true; d.visible = false; d.renderOrder = 20; scene.add(d); return d; });
 
 /* ================= アニメーション ================= */
 const tweens = [];
@@ -4830,8 +4946,8 @@ function netPublish(now){
   NETH.pubT = setTimeout(() => {
     const cur = H.players[H.turn];
     const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0, mode:H.mode};
-    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; }
-    const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', yen:pl.lastYen == null ? null : pl.lastYen}; });
+    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; }
+    const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', vet:COOP.isVet(pl) ? 1 : 0, ten:pl.tenure || 0, quals:(pl.quals || []).join(','), exp:(pl.exp || []).join(','), yen:pl.lastYen == null ? null : pl.lastYen}; });
     const ji = JSON.stringify(info), jr = JSON.stringify(roster);
     if (ji !== NETH.last.i){ NETH.last.i = ji; NET.set(`rooms/${NETH.room}/info`, info); }
     if (jr !== NETH.last.r){ NETH.last.r = jr; NET.set(`rooms/${NETH.room}/roster`, roster); }
@@ -4847,7 +4963,6 @@ function onJoin(v){
     const ex = H.players.find(pl => pl.jid === jid);
     if (ex){
       if (j.course && (ex.course !== crs || ex.level !== lv)){ ex.course = crs; ex.level = lv; renderHUD.last = ''; renderHUD(); netPublish(); }
-      if (j.job && JOBS[j.job] && ex.job !== j.job && (H.phase === 'setup' || H.phase === 'lobby')){ ex.job = j.job; renderHUD.last = ''; renderHUD(); renderTown(); netPublish(); }
       if ((ex.name !== name || ex.char !== ch) && (H.phase === 'setup' || H.phase === 'lobby')){ ex.name = name; ex.char = ch; ex.emoji = CHARS[ch].emoji; const p0 = ex.obj && ex.obj.position.clone(); removePawn(ex); ex.obj = makePawn(ex); if (p0) ex.obj.position.copy(p0); placeAll(); renderHUD(); renderInvite(); }
       return;
     }
@@ -4855,7 +4970,7 @@ function onJoin(v){
     const used = new Set(H.players.map(p => p.slot)); let slot = -1; for (let i = 0; i < 6; i++) if (!used.has(i)){ slot = i; break; }
     if (slot < 0) return;
     const pl = {pos:MAP.start, stars:0, items:[], gear:[], got:[], okCount:0, tickets:0, pity:0, tkGot:false, space:null, res:null, resStar:null, double:false, plan:null,
-      id:slot, slot, name, char:ch, emoji:CHARS[ch].emoji, color:PCOLORS[slot], cpu:false, jid, obj:null, course:crs, level:lv, job:JOBS[j.job] ? j.job : autoJob()};
+      id:slot, slot, name, char:ch, emoji:CHARS[ch].emoji, color:PCOLORS[slot], cpu:false, jid, obj:null, course:crs, level:lv, job:null};
     NET.set(`rooms/${NETH.room}/claim/p${slot}`, {at:NET.now()});
     pl.obj = makePawn(pl); H.players.push(pl); H.players.sort((a, b) => a.slot - b.slot);
     if (H.phase === 'setup'){ H.phase = 'lobby'; closeModal('m-setup'); }
@@ -4869,7 +4984,7 @@ function onPref(v){
   if (!v) return; let ch = false;
   Object.entries(v).forEach(([k, o]) => { const pl = H.players.find(p => pkey(p) === k); if (!pl || !o || !COURSES[o.course]) return;
     const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; }
-    if (o.job && JOBS[o.job] && pl.job !== o.job && (H.phase === 'setup' || H.phase === 'lobby')){ pl.job = o.job; ch = true; renderTown(); } });
+ });
   if (ch){ renderHUD.last = ''; renderHUD(); renderWatch(); netPublish(); }
 }
 const plCourse = pl => pl.cpu ? '' : `<span class="pcourse">${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}</span>`;
@@ -5054,8 +5169,8 @@ function renderHUD(){
   document.body.classList.toggle('coopmode', CO);
   const stripHTML = H.players.map((pl, i) => { const rk = ranks.indexOf(pl.stars) + 1, top = rk === 1 && pl.stars > 0;
     if (CO) return `<div class="pchip co ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
-      <span class="em">${ico(pl, 'cimg')}<span class="jb" title="${jobName(pl)}">${jobIc(pl)}</span></span>
-      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${jobName(pl)} ${spaceText(pl)}</small></span>
+      <span class="em">${ico(pl, 'cimg')}<span class="jb ${COOP.isVet(pl) ? 'vet' : pl.job ? '' : 'nb'}" title="${jobName(pl)}">${jobIc(pl)}</span></span>
+      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${jobName(pl).replace('システムエンジニア', 'SE')}${COOP.isVet(pl) ? '⭐' : ''} ${spaceText(pl)}</small></span>
       ${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}${pl.lastYen ? `<span class="st yen dela ${pl._bump ? 'bump' : ''}">+${fmtYen(pl.lastYen).replace('円', '')}</span>` : ''}</div>`;
     return `<div class="pchip ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
       <span class="em">${ico(pl, 'cimg')}<span class="rk dela ${top ? 'r1' : ''}">${top ? '👑' : rk}</span></span>
@@ -5412,7 +5527,13 @@ function giveStars(id, n){
 function coopAward(pl, star){
   const S = H.coop; if (!S) return;
   const topic = typeof pl.space === 'number' ? pl.space : 0;
+  // 先生が★を直したときにやり直せるように、このラウンドの最初のしごとの状態をとっておく
+  if (!pl._car) pl._car = {job:pl.job || null, tenure:pl.tenure || 0, quals:(pl.quals || []).slice()};
+  else { pl.job = pl._car.job; pl.tenure = pl._car.tenure; pl.quals = pl._car.quals.slice(); }
   const e = star ? COOP.earn(S, pl, star, topic, pl.double) : {yen:0, why:[]}, prev = pl.lastYen || 0, d = e.yen - prev;
+  const ev = star ? COOP.onAnswer(S, pl, star, topic) : {}, ce = ev.hired ? {k:'hired', j:ev.hired} : ev.qual ? {k:'qual', j:ev.qual} : null;
+  if (ce && !(pl.carEv && pl.carEv.k === ce.k && pl.carEv.j === ce.j) && pl.obj) setTimeout(() => { if (pl.obj){ floatText(pl, ce.k === 'hired' ? `${JOBS[ce.j].ic} 就職！` : `📜 ${JOBS[ce.j].ic}資格！`); try { sfx.chime(); } catch(er){} } }, 1300);
+  pl.carEv = ce;
   if (d) COOP.addEarn(S, pl, d, topic);
   pl.lastYen = e.yen || null; pl.lastWhy = e.why; pl._bump = true;
   if (d > 0 && pl.obj){ floatText(pl, '+' + fmtYen(d)); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.star(); }
@@ -5433,7 +5554,7 @@ async function nextRound(){
   snap();
   if (H.round >= H.maxRound){ finishGame(); return; }
   H.round++; H.phase = 'roll'; H.turn = 0;
-  H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; });
+  H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; pl._car = null; pl.carEv = null; });
   H.t = 120; drawTimer(); roundSplash(); if (isCoop()) closeCard();
   camFollow(H.players[0].obj.position, 1.1);
   renderHUD();
@@ -5479,7 +5600,6 @@ function openSetup(){
       <button class="charbtn" id="cb-${i}" data-slot="${i}" title="コマをえらぶ">${charBtnHTML(i)}</button>
       <input type="text" id="sn-${i}" maxlength="10" placeholder="${i+1}人目の名前" value="${pl ? esc(pl.name) : ''}">
       <select id="sl-${i}" class="slv" title="コースとレベル">${COURSE_ORDER.map(c => `<optgroup label="${COURSES[c].ic} ${COURSES[c].name}">${LEVELS.map((L, l) => `<option value="${c}:${l}" ${(pl ? (pl.course || 'chu') + ':' + (pl.level == null ? 1 : pl.level) : 'chu:1') === c + ':' + l ? 'selected' : ''}>${COURSES[c].name.replace(/（.*）/, '')}・${L}</option>`).join('')}</optgroup>`).join('')}</select>
-      <select id="sj-${i}" class="sjob" title="職業（協力モード）">${JOB_ORDER.map(j => `<option value="${j}" ${(pl && pl.job ? pl.job : JOB_ORDER[i % JOB_ORDER.length]) === j ? 'selected' : ''}>${JOBS[j].ic} ${JOBS[j].name}</option>`).join('')}</select>
       <label><input type="checkbox" id="sc-${i}" ${pl && pl.cpu ? 'checked' : ''}>🤖</label></div>`);
   }
   $('#setrows').innerHTML = rows.join(''); SETUP_MAP = MAPKEY; renderModeSel(); renderMapSel(); openModal('m-setup');
@@ -5533,7 +5653,7 @@ function renderPicker(){
 }
 function fillTest(){
   const names = ['じぶん','ロボたろう','ロボはなこ','ロボじろう','ロボさくら'], chars = ['santa','robot','penguin','dragon','bunny'];
-  for (let i = 0; i < 6; i++){ $('#sn-' + i).value = names[i] || ''; $('#sc-' + i).checked = i > 0 && i < 5; $('#sj-' + i).value = JOB_ORDER[i % JOB_ORDER.length]; if (chars[i]){ SETUP[i] = chars[i]; $('#cb-' + i).innerHTML = charBtnHTML(i); } }
+  for (let i = 0; i < 6; i++){ $('#sn-' + i).value = names[i] || ''; $('#sc-' + i).checked = i > 0 && i < 5; if (chars[i]){ SETUP[i] = chars[i]; $('#cb-' + i).innerHTML = charBtnHTML(i); } }
 }
 function saveSetup(){
   if (H.busy || H.asking) return;
@@ -5547,7 +5667,7 @@ function saveSetup(){
     const name = $('#sn-' + i).value.trim(); if (!name) continue;
     const old = mapChanged ? null : H.players.find(x => x.slot === i);
     next.push(Object.assign({pos:MAP.start, stars:0, items:[], gear:[], got:[], okCount:0, tickets:0, pity:0, tkGot:false, space:null, res:null, resStar:null, double:false, plan:null}, old || {},
-      {id:i, slot:i, name, char:SETUP[i], emoji:CHARS[SETUP[i]].emoji, color:PCOLORS[i], cpu:$('#sc-' + i).checked, obj:null, job:canSetMode() || !(old && old.job) ? ($('#sj-' + i).value || JOB_ORDER[i % 5]) : old.job,
+      {id:i, slot:i, name, char:SETUP[i], emoji:CHARS[SETUP[i]].emoji, color:PCOLORS[i], cpu:$('#sc-' + i).checked, obj:null, job:old && !canSetMode() ? old.job : null,
        course:($('#sl-' + i).value || 'chu:1').split(':')[0], level:+(($('#sl-' + i).value || 'chu:1').split(':')[1])}));
   }
   H.players.forEach(removePawn);
@@ -5564,7 +5684,7 @@ function resetGame(){
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
-  H.coop = null; H.coopEnd = null; H.vote = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
+  H.coop = null; H.coopEnd = null; H.vote = null; H.career = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
   saveSetup();
 }
 
@@ -5588,19 +5708,26 @@ COOP.itemMeta = id => ITEM[id] || null;
 const isCoop = () => H.mode === 'coop';
 const TV = {budget:0, happy:COOP_CFG.startHappy, lv:{}};   // 画面に出している町の数字（演出に合わせて少しおくれて変える）
 function syncTown(){ const S = H.coop; if (!S) return; const db = S.budget - TV.budget, dh = S.happy - TV.happy; TV.budget = S.budget; TV.happy = S.happy; TV.lv = Object.assign({}, S.lv); renderTown(db, dh); townLights(); netPublish(); }
-function autoJob(){
-  const cnt = {}; JOB_ORDER.forEach(j => { cnt[j] = 0; }); H.players.forEach(p => { if (p.job) cnt[p.job]++; });
-  const min = Math.min(...Object.values(cnt)); return pick(JOB_ORDER.filter(j => cnt[j] === min));
-}
 function coopStart(){
-  H.players.forEach(pl => { if (!JOBS[pl.job]) pl.job = autoJob(); pl.lastYen = null; });
+  // みんな「町の新人」からスタート
+  H.players.forEach(pl => { pl.job = null; pl.tenure = 0; pl.quals = []; pl.exp = []; pl.changes = 0; pl._car = null; pl.carEv = null; pl.lastYen = null; });
+  H.career = null;
   H.coop = COOP.newState({n:H.players.length, rounds:H.maxRound}); H.coop.names = {};
   H.players.forEach(pl => { H.coop.names[pl.id] = pl.name; });
   TV.budget = 0; TV.happy = H.coop.happy; TV.lv = Object.assign({}, H.coop.lv);
   renderTown(); townLights(true);
 }
-const jobIc = pl => JOBS[pl.job] ? JOBS[pl.job].ic : '';
-const jobName = pl => JOBS[pl.job] ? JOBS[pl.job].name : '';
+const jobIc = pl => JOBS[pl.job] ? JOBS[pl.job].ic : isCoop() ? NEWBIE.ic : '';
+const jobName = pl => JOBS[pl.job] ? (COOP.isVet(pl) ? 'ベテラン' : '') + JOBS[pl.job].name : isCoop() ? NEWBIE.name : '';
+const jobDesc = pl => JOBS[pl.job] ? (COOP.isVet(pl) ? JOBS[pl.job].vd : JOBS[pl.job].d) : NEWBIE.d;
+const careerTags = pl => [...(pl.quals || []).filter(j => j !== pl.job).map(j => `📜${JOBS[j].ic}`), ...(pl.exp || []).filter(j => j !== pl.job).map(j => `元${JOBS[j].ic}`)].join(' ');
+const shopBonus = () => COOP.hasJob(H.players, 'police').length ? (COOP.anyVet(H.players, 'police') ? COOP_CFG.vet.shopHappy : 2) : 0;
+const lawPct = law => Math.round(COOP.lawRate(law) * 10);
+/* 転職の結果のことば */
+function careerChangeHTML(r){
+  const nm = esc(r.pl.name), to = JOBS[r.job];
+  return `${r.from ? JOBS[r.from].ic : NEWBIE.ic} → ${to.ic}<br>${nm}さんは<br>${to.name}になった！${r.from ? `<br><small>🎓 元${JOBS[r.from].short}の経験が残る：${JOBS[r.from].ed.replace(/^.*?：/, '')}</small>` : ''}${r.bonus ? `<br><small>📢 求人に応えた！ +${fmtYen(r.bonus.yen)}　😊 +${r.bonus.happy}</small>` : ''}`;
+}
 /* ---- 町のパネル（左上） ---- */
 function renderTown(db, dh){
   const T = $('#town'); if (!T) return;
@@ -5620,7 +5747,9 @@ function renderTown(db, dh){
   $('#tHap').classList.toggle('low', h < 30); $('#tHap').classList.toggle('full', h >= 100);
   PROJECTS.forEach(p => { const el = $('#tp-' + p.id), lv = TV.lv[p.id] || 0; el.classList.toggle('done', lv >= 3); el.querySelectorAll('.pips i').forEach((i, k) => i.classList.toggle('on', k < lv)); });
   const jobs = {}; H.players.forEach(pl => { if (pl.job) (jobs[pl.job] = jobs[pl.job] || []).push(pl); });
-  $('#tJobs').innerHTML = JOB_ORDER.filter(j => jobs[j]).map(j => `<span title="${JOBS[j].name}：${JOBS[j].d}">${JOBS[j].ic}×${jobs[j].length}</span>`).join('');
+  const nb = H.players.filter(pl => !pl.job).length, w = H.coop && H.coop.wanted;
+  $('#tJobs').innerHTML = JOB_ORDER.filter(j => jobs[j]).map(j => `<span title="${JOBS[j].name}：${COOP.anyVet(jobs[j], j) ? JOBS[j].vd : JOBS[j].d}">${JOBS[j].ic}×${jobs[j].length}${COOP.anyVet(jobs[j], j) ? '⭐' : ''}</span>`).join('')
+    + (nb && H.coop ? `<span title="${NEWBIE.name}：${NEWBIE.d}">${NEWBIE.ic}×${nb}</span>` : '') + (w ? `<span title="町の求人：転職するとボーナス" style="color:#ffb347">📢${JOBS[w.job].ic}求人</span>` : '');
   const pop = (id, v, fmt) => { if (!v) return; const el = $(id); el.textContent = fmt(v); el.className = 'tdelta ' + (v > 0 ? 'up' : 'down'); void el.offsetWidth; el.classList.add('go'); };
   pop('#tYd', db, v => (v > 0 ? '+' : '') + fmtYen(v)); pop('#tHd', dh, v => (v > 0 ? '+' : '') + v);
 }
@@ -5650,12 +5779,95 @@ function coopSpaceText(nd){
 }
 /* ---- 職業安定所 ---- */
 async function jobCenter(pl){
-  const cnt = {}; H.players.forEach(p => { cnt[p.job] = (cnt[p.job] || 0) + 1; });
-  const opts = JOB_ORDER.filter(j => j !== pl.job).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}`, s:JOBS[j].d}));
-  opts.push({v:null, ic:'👍', t:`${jobName(pl)}のまま`, s:JOBS[pl.job] ? JOBS[pl.job].d : ''});
-  let bp; if (isBot(pl)){ const free = opts.filter(o => o.v && !cnt[o.v]); bp = free.length && Math.random() < .7 ? free[0].v : null; }
-  const v = await ask('💼 職業安定所', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　職業を変える？`, opts, isBot(pl) ? bp : undefined);
-  if (v){ pl.job = v; sfx.shop(); renderHUD(); renderTown(); await banner(`${JOBS[v].ic} ${esc(pl.name)}さんは<br>${JOBS[v].name}になった！`, 1300); }
+  const S = H.coop, cnt = {}, w = S && S.wanted; H.players.forEach(p => { if (p.job) cnt[p.job] = (cnt[p.job] || 0) + 1; });
+  const opts = JOB_ORDER.filter(j => j !== pl.job).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}${w && w.job === j ? '　📢 求人ボーナス！' : ''}`, s:JOBS[j].d}));
+  opts.push({v:null, ic:pl.job ? '👍' : NEWBIE.ic, t:`${jobName(pl)}のまま`, s:jobDesc(pl)});
+  let bp;
+  if (isBot(pl)){
+    const missing = opts.filter(o => o.v && !cnt[o.v]), want = w && opts.find(o => o.v === w.job);
+    if (!pl.job) bp = (want || missing[0] || pick(opts.filter(o => o.v))).v;
+    else if (COOP.isVet(pl)) bp = null;
+    else bp = want && !cnt[want.v] ? want.v : missing.length && Math.random() < .5 ? missing[0].v : null;
+  }
+  const v = await ask('💼 職業安定所', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
+  if (v){ const r = COOP.changeJob(S, pl, v, 'center'); if (!r) return; sfx.shop(); renderHUD(); renderTown(); await banner(careerChangeHTML(r), 1700); syncTown(); }
+}
+/* ---- 転職タイム（会議の前）：資格・求人で転職できる ---- */
+const CAREER = {id:0, open:false, rows:{}, endsAt:0, off:null, done:null};
+// スマホのない人の分は町長（先生）がクリックで決めるので、全員が決まるまで待つ（時間切れなら「このまま」）
+function careerDeciders(){ return Object.values(CAREER.rows); }
+function renderCareer(){
+  const M = $('#meet'); if (!CAREER.open) return;
+  const S = H.coop, w = S.wanted, rows = Object.values(CAREER.rows), others = H.players.filter(pl => !CAREER.rows[pkey(pl)]);
+  const row = r => { const pl = r.pl, v = COOP.isVet(pl), pk = pkey(pl), left = Math.max(1, COOP_CFG.vetTenure - (pl.tenure || 0));
+    return `<div class="kt-row" style="--pc:${pl.color}"><div class="kt-who">${ico(pl, 'cimg')}<div><b>${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}</b><small>いま：${jobIc(pl)} ${jobName(pl)}${pl.job && !v ? `（あと${left}ラウンドでベテラン）` : ''}</small>${careerTags(pl) ? `<small>${careerTags(pl)}</small>` : ''}</div></div>
+      <div class="kt-ops">${r.opts.map(o => `<button class="kt-op ${r.pick === o.job ? 'sel' : ''}" data-pk="${pk}" data-v="${o.job}"><span class="kt-i">${JOBS[o.job].ic}</span><b>${JOBS[o.job].short}に転職</b><small>${o.via === 'wanted' ? '📢 求人' : '📜 資格'}</small></button>`).join('')}
+        <button class="kt-op stay ${r.pick === 'stay' ? 'sel' : ''}" data-pk="${pk}" data-v="stay"><span class="kt-i">${pl.job ? '👍' : NEWBIE.ic}</span><b>このまま</b><small>${v ? '⭐ベテラン' : pl.job ? 'つづける' : '新人'}</small></button></div>
+      <div class="kt-by ${r.pick ? 'ok' : ''}">${r.pick ? `${r.by === 'bot' ? '🤖' : r.by === 'phone' ? '📱' : '🎓'} 決定！` : isBot(pl) || connected(pl) ? '…考え中' : '📵 町長（先生）がクリックで決めてね（決めないと「このまま」）'}</div></div>`; };
+  const html = `<div class="mt-box">
+    <div class="mt-head"><h3 class="dela">🔄 転職タイム</h3><span class="mt-msg">📜資格（★2以上で正解）がある仕事か、📢求人の仕事に転職できます。前の仕事は「経験」として少し残ります</span><span class="mt-t dela" id="ktT"></span></div>
+    ${w ? `<div class="kt-want">📢 町の求人：${JOBS[w.job].ic} ${JOBS[w.job].name} 募集中！<small>「${CARD[w.card] ? CARD[w.card].name : ''}」をふせげなかった…。転職した人に ボーナス +${fmtYen(COOP.yen(S, COOP_CFG.wantYen))}・😊+${COOP_CFG.wantHappy}（先着1人）</small></div>` : ''}
+    <div class="kt-list ${rows.length > 4 ? 'many' : ''}">${rows.map(row).join('')}</div>
+    ${others.length ? `<div class="kt-note">今回は転職先なし：${others.map(pl => `${jobIc(pl)} ${esc(pl.name)}`).join('　')}</div>` : ''}
+    <div class="mt-foot"><span>🗳 決定 ${rows.filter(r => r.pick).length} / ${rows.length}人</span><span><button class="btn gold" onclick="careerClose()">⏹ しめきる</button></span></div></div>`;
+  M.classList.add('on');
+  const tm = () => { const el = $('#ktT'); if (el){ const lf = Math.max(0, Math.ceil((CAREER.endsAt - NET.now()) / 1000)); el.textContent = lf; el.classList.toggle('low', lf <= 5); } };
+  if (html === renderCareer.last){ tm(); return; }
+  renderCareer.last = html; M.innerHTML = html; tm();
+  M.querySelectorAll('.kt-op').forEach(b => b.onclick = () => {
+    const r = CAREER.rows[b.dataset.pk]; if (!r || !CAREER.open) return;
+    initAudio(); sfx.star(); r.pick = b.dataset.v; r.by = 'teacher'; r.at = NET.now(); renderCareer(); careerCheck();
+  });
+}
+function careerCheck(){
+  if (!CAREER.open) return;
+  const ds = careerDeciders();
+  if (ds.length && ds.every(r => r.pick) && CAREER.done){ clearTimeout(CAREER.allT); CAREER.allT = setTimeout(() => { if (CAREER.open && CAREER.done) CAREER.done(); }, H.auto ? 500 : 1800); }
+}
+window.careerClose = () => { if (CAREER.open && CAREER.done) CAREER.done(); };
+async function coopCareerTime(){
+  const S = H.coop;
+  // 1) このラウンドのしごとのニュース（就職・資格）
+  const news = H.players.filter(pl => pl.carEv).map(pl => pl.carEv.k === 'hired'
+    ? `<div>${NEWBIE.ic}→${JOBS[pl.carEv.j].ic} <b>${esc(pl.name)}</b>さんが ${JOBS[pl.carEv.j].name}に就職！ <small>（${TOPICS[JOBS[pl.carEv.j].topic]}の問題に正解）</small></div>`
+    : `<div>📜 <b>${esc(pl.name)}</b>さんが ${JOBS[pl.carEv.j].ic} ${JOBS[pl.carEv.j].name}の資格をゲット！ <small>（★2以上で正解）</small></div>`);
+  H.players.forEach(pl => { pl.carEv = null; pl._car = null; });
+  if (news.length){ sfx.chime(); renderHUD(); renderTown(); await banner(`<div class="rsum"><div class="dela">💼 しごとのニュース</div>${news.join('')}</div>`, H.auto ? 1500 : 2200 + news.length * 450); }
+  // 2) 転職できる人がいれば「転職タイム」
+  const rows = {}; H.players.forEach(pl => { const o = COOP.careerOptions(S, pl); if (o.length) rows[pkey(pl)] = {pl, opts:o, pick:null, by:'', at:0}; });
+  if (!Object.keys(rows).length){ S.wanted = null; renderTown(); return; }
+  const secs = H.auto ? 4 : 20;
+  Object.assign(CAREER, {id:(Date.now() % 1e9), open:true, rows, endsAt:NET.now() + secs * 1000});
+  renderCareer.last = '';
+  const w = S.wanted;
+  H.phase = 'career'; H.career = {id:CAREER.id, endsAt:CAREER.endsAt, wanted:w ? {job:w.job, card:CARD[w.card] ? CARD[w.card].name : '', yen:COOP.yen(S, COOP_CFG.wantYen), h:COOP_CFG.wantHappy} : null,
+    opts:Object.fromEntries(Object.entries(rows).map(([k, r]) => [k, r.opts]))};
+  renderHUD(); netPublish(true); sfx.jingle();
+  if (CAREER.off) CAREER.off();
+  CAREER.off = NET.on(`rooms/${NETH.room}/career/${CAREER.id}`, v => {
+    Object.entries(v || {}).forEach(([pk, o]) => { const r = CAREER.rows[pk]; if (!r || !o || isBot(r.pl)) return;
+      if (!(o.v === 'stay' || r.opts.some(x => x.job === o.v))) return;
+      const at = o.at || NET.now(); if (r.by === 'teacher' && at <= r.at) return; if (r.pick === o.v && r.by === 'phone') return;
+      r.pick = o.v; r.by = 'phone'; r.at = at; try { sfx.step(); } catch(e){} });
+    renderCareer(); careerCheck();
+  });
+  const timers = Object.values(rows).filter(r => isBot(r.pl)).map(r => setTimeout(() => { if (!CAREER.open || r.pick) return; r.pick = COOP.aiCareer(S, H.players, r.pl, Object.values(CAREER.rows).map(x => x.pick).filter(v => v && v !== 'stay')) || 'stay'; r.by = 'bot'; r.at = NET.now(); try { sfx.step(); } catch(e){} renderCareer(); careerCheck(); }, H.auto ? 200 + Math.random() * 1200 : 1500 + Math.random() * 5000));
+  renderCareer();
+  let tick;
+  await new Promise(resolve => { CAREER.done = resolve; tick = setInterval(() => { renderCareer(); if (CAREER.open && NET.now() >= CAREER.endsAt) resolve(); }, 500); careerCheck(); });
+  clearInterval(tick); clearTimeout(CAREER.allT); timers.forEach(clearTimeout);
+  CAREER.open = false; CAREER.done = null; if (CAREER.off){ CAREER.off(); CAREER.off = null; }
+  $('#meet').classList.remove('on'); $('#meet').innerHTML = ''; renderCareer.last = ''; H.career = null;
+  // 3) 早く決めた人から転職（求人のボーナスは先着1人）
+  const picks = Object.values(CAREER.rows).filter(r => r.pick && r.pick !== 'stay').sort((a, b) => a.at - b.at), done = [];
+  picks.forEach(r => { const o = r.opts.find(x => x.job === r.pick); const x = o && COOP.changeJob(S, r.pl, r.pick, o.via); if (x) done.push(x); });
+  CAREER.rows = {};
+  H.phase = 'meeting'; renderHUD(); renderTown();
+  if (done.length){
+    sfx.shop();
+    for (const x of done){ await banner(careerChangeHTML(x), H.auto ? 1100 : 1900); syncTown(); }
+  } else await banner('🔄 みんな いまの仕事をつづける！', H.auto ? 700 : 1200);
+  S.wanted = null; syncTown(); renderTown();
 }
 /* ---- 町のできごとカード ---- */
 let cardTok = 0, cardActive = 0;
@@ -5688,29 +5900,30 @@ async function showCardInner(r, i, n, C){
     confetti3D(80, CONF_COLS.SR || ['#ffd23f'], 'rain');
   } else if (r.by){
     await sleep(fast ? 150 : 500);
-    const who = r.by.kind === 'proj' ? `${r.by.t}を<br>直しておいたので大丈夫！` : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
+    const who = r.by.kind === 'proj' ? `${r.by.t}を<br>直しておいたので大丈夫！` : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${COOP.isVet(r.by.pl) ? 'ベテラン' : ''}${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
     res.innerHTML = who; res.classList.add('show', 'guard');
     const st = document.createElement('div'); st.className = 'cc-stamp dela'; st.textContent = 'ふせいだ！'; C.querySelector('.cc-front').appendChild(st);
     sfx.star(); setTimeout(() => sfx.chime(), 150); shockwave('#3ddc97', false, cam.look.clone(), 10, .8);
   } else {
     sfx.rumble(); sfx.boom();
     const lines = [];
+    if (r.expCut) lines.push(`🎓 元${JOBS[r.expCut.job].short}の${esc(r.expCut.pl.name)}さんの経験で ${r.expCut.n} へらした`);
     if (r.cut) lines.push(`🛡 ${esc(r.cut.pl.name)}さんの${esc(r.cut.t)}で ${r.cut.n} へらした`);
     if (r.heal) lines.push(`🐾 ${esc(r.heal.pl.name)}さんの${esc(r.heal.t)}が<br>町の人をいやした（+${r.heal.n}）`);
     const base = Math.round(c.happy * COOP_CFG.cardMul), changed = lines.length && r.dh !== base;
-    res.innerHTML = `<div class="cc-dmg dela">${r.dh || r.dy ? 'ふせげなかった…' : 'ふせぎきった！'}</div>${lines.join('<br>')}${changed ? `<div class="cc-real">→ ${[r.dh ? `幸せ度 ${r.dh}` : '', r.dy ? fmtYen(r.dy) : ''].filter(Boolean).join('　')}</div>` : ''}`;
+    res.innerHTML = `<div class="cc-dmg dela">${r.dh || r.dy ? 'ふせげなかった…' : 'ふせぎきった！'}</div>${lines.join('<br>')}${changed ? `<div class="cc-real">→ ${[r.dh ? `幸せ度 ${r.dh}` : '', r.dy ? fmtYen(r.dy) : ''].filter(Boolean).join('　')}</div>` : ''}${r.wanted ? `<div class="cc-want">📢 町の求人：${JOBS[r.wanted].ic} ${JOBS[r.wanted].name} 募集中！<small>${JOBS[r.wanted].name}がいれば ふせげた…。次の転職タイムで転職するとボーナス！</small></div>` : ''}`;
     res.classList.add('show', 'bad');
     $('#c').classList.remove('shake'); void $('#c').offsetWidth; $('#c').classList.add('shake');
   }
   syncTown();
-  await sleep(fast ? 1100 : 2600);
+  await sleep(fast ? 1100 : r.wanted ? 3400 : 2600);
   C.classList.remove('on');
   await sleep(250);
 }
 /* ---- 町の会議（投票） ---- */
 const VOTE = {id:0, opts:[], human:{}, bot:{}, endsAt:0, off:null, open:false, law:null, k:0, decide:null, tie:null, teacher:false};
 function meetOptions(law){
-  return COOP.options(H.coop, H.players).map(o => { const cost = law ? Math.max(10, Math.round(o.price.cost * (1 - COOP_CFG.lawyerRate) / 10) * 10) : o.price.cost; return Object.assign(o, {cost, can:cost <= H.coop.budget, price:Object.assign({}, o.price, {cost})}); });
+  return COOP.options(H.coop, H.players).map(o => { const cost = law ? Math.max(10, Math.round(o.price.cost * (1 - COOP.lawRate(law)) / 10) * 10) : o.price.cost; return Object.assign(o, {cost, can:cost <= H.coop.budget, price:Object.assign({}, o.price, {cost})}); });
 }
 function voters(){ return H.players.filter(pl => isBot(pl) || connected(pl)); }
 function tally(){
@@ -5726,7 +5939,7 @@ function renderMeet(){
   const card = o => {
     const p = PROJ[o.id], ids = t[o.id] || [], pr = o.price;
     const cls = ['pc', o.can ? '' : 'no', VOTE.tie && VOTE.tie.includes(o.id) ? 'tie' : '', VOTE.teacher && o.can ? 'pickable' : ''].join(' ');
-    const dh = COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' && H.players.some(x => x.job === 'police') ? 2 : 0);
+    const dh = COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0);
     const disc = pr.disc.map(d => d.t).concat(VOTE.law ? ['⚖️ 弁護士'] : []);
     return `<button class="${cls}" data-id="${o.id}" ${VOTE.teacher || VOTE.tie ? '' : 'tabindex="-1"'}>
       <span class="cnt dela">${ids.length || ''}</span>
@@ -5743,7 +5956,7 @@ function renderMeet(){
   const vs = voters(), nv = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).filter(k => VOTE.human[k]).length;
   const html = `<div class="mt-box">
     <div class="mt-head"><h3 class="dela">🏛 町の会議${VOTE.k ? '（2つめ）' : ''}</h3><span class="mt-yen dela">💰 ${fmtYen(S.budget)}</span>
-      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が直す工事をクリックしてください' : VOTE.law ? `⚖️ 弁護士の${esc(VOTE.law.name)}さんが、工事を2割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
+      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が直す工事をクリックしてください' : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
       ${VOTE.open ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
     <div class="mt-grid">${VOTE.opts.map(card).join('')}
       <button class="pc save ${VOTE.tie && VOTE.tie.includes('save') ? 'tie' : ''} ${VOTE.teacher ? 'pickable' : ''}" data-id="save"><span class="cnt dela">${(t.save || []).length || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}</div></button></div>
@@ -5767,7 +5980,7 @@ async function runVote(opts, k, law){
   Object.assign(VOTE, {id:(Date.now() % 1e9), opts, human:{}, bot:{}, open:true, law, k, tie:null, teacher:false});
   const secs = H.auto ? 4 : k ? 20 : 30;
   VOTE.endsAt = NET.now() + secs * 1000;
-  H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' && H.players.some(x => x.job === 'police') ? 2 : 0)}))};
+  H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', lawP:law ? lawPct(law) : 0, opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0)}))};
   if (!voters().length && !H.auto){ VOTE.open = false; VOTE.teacher = true; }   // スマホで投票できる人がいないときは、町長（先生）がすぐ決める
   renderHUD(); netPublish(true);
   if (VOTE.off) VOTE.off();
@@ -5824,7 +6037,7 @@ async function buildShow(pid, law){
   H.phase = 'build'; renderHUD();
   camOverview();
   const at = NODE.T.p.clone().add(new THREE.Vector3(0, 6, 0));
-  if (law) await banner(`⚖️ 弁護士の${esc(law.name)}さんが交渉して<br>2割引きになった！`, 1300);
+  if (law) await banner(`⚖️ ${COOP.isVet(law) ? 'ベテラン' : ''}弁護士の${esc(law.name)}さんが交渉して<br>${lawPct(law)}割引きになった！`, 1300);
   sfx.fanfare(); fireworkShow(scene, at, r.done ? 8 : 3, r.done ? 16 : 8, 220);
   await banner(`${p.ic} ${p.name}<br><span class="bl">レベル${r.lv}「${p.lv[r.lv - 1]}」</span><br><small>${fmtYen(r.cost)} つかって　😊 幸せ度 +${r.dh}</small>`, H.auto ? 1300 : 2300);
   syncTown();
@@ -5842,19 +6055,24 @@ async function coopCards(){
   }
 }
 async function coopRoundEndFx(){
-  const S = H.coop, L = COOP.roundEnd(S, H.players);
+  const S = H.coop, L = COOP.roundEnd(S, H.players), nv = COOP.tenureTick(S, H.players);
   if (L.length){
     await banner(`<div class="rsum"><div class="dela">ラウンド ${H.round} のまとめ</div>${L.map(l => `<div>${l.ic} ${l.t}　<b class="${(l.dh || l.dy) < 0 ? 'neg' : ''}">${[l.dh ? `幸せ度 ${l.dh > 0 ? '+' : ''}${l.dh}` : '', l.dy ? (l.dy > 0 ? '+' : '') + fmtYen(l.dy) : ''].filter(Boolean).join('　')}</b></div>`).join('')}</div>`, H.auto ? 1400 : 2600);
   }
   syncTown();
+  if (nv.length && !S.won && !S.lost){
+    sfx.fanfare(); renderHUD(); renderTown();
+    await banner(`<div class="rsum"><div class="dela">⭐ ベテラン誕生！</div>${nv.map(pl => `<div>${JOBS[pl.job].ic} <b>${esc(pl.name)}</b>さんが ベテラン${JOBS[pl.job].name}に！<br><small>${JOBS[pl.job].vd}</small></div>`).join('')}</div>`, H.auto ? 1400 : 2400 + nv.length * 400);
+  }
 }
 /* ラウンドの終わり（ガチャのあと）：会議 → カード → まとめ。ゲームが終わったら true */
 async function coopRoundEnd(){
   const S = H.coop; if (!S) return false;
   H.busy = true; renderHUD();
   S.round = H.round;
-  const safe = async (name, f) => { try { await f(); } catch(e){ console.error(name, e); $('#meet').classList.remove('on'); closeCard(); H.vote = null; } };
-  await safe('meeting', coopMeeting);
+  const safe = async (name, f) => { try { await f(); } catch(e){ console.error(name, e); $('#meet').classList.remove('on'); closeCard(); H.vote = null; H.career = null; CAREER.open = false; } };
+  await safe('career', coopCareerTime);
+  if (!S.won && !S.lost) await safe('meeting', coopMeeting);
   if (!S.won && !S.lost) await safe('cards', coopCards);
   if (!S.won && !S.lost) await safe('roundEnd', coopRoundEndFx);
   closeCard(); H.busy = false;
@@ -5865,7 +6083,7 @@ async function coopRoundEnd(){
 async function coopFinish(kind){
   const S = H.coop; if (!S || H.coopEnd) return;
   H.coopEnd = kind; H.phase = 'end'; H.auto = false; H.busy = true; camOverview(); renderHUD(); netPublish(true);
-  $('#meet').classList.remove('on'); $('#evcard').classList.remove('on');
+  $('#meet').classList.remove('on'); closeCard(); H.career = null;
   if (kind === 'win'){
     BGM.play('win'); S.happy = Math.max(S.happy, COOP_CFG.goal); syncTown();
     await sleep(600);
@@ -5885,7 +6103,8 @@ async function coopFinish(kind){
 }
 /* 最後のラウンドが終わって、まだ100にとどいていないとき：最後の大工事（ボス問題） */
 window.coopBoss = ok => {
-  const S = H.coop; if (!S || H.coopEnd) return;
+  const S = H.coop; if (!S || H.coopEnd || S.bossDone) return;
+  S.bossDone = true;   // 2回押しても1回分だけ
   closeModal('m-boss');
   if (ok){ S.happy += COOP_CFG.bossHappy; COOP.check(S); syncTown(); banner(`🏗 最後の大工事、成功！<br>😊 幸せ度 +${COOP_CFG.bossHappy}`, 2200).then(() => coopFinish(S.happy >= COOP_CFG.goal ? 'win' : 'lose')); }
   else coopFinish('lose');
@@ -5913,6 +6132,8 @@ function coopHeroes(){
     let t;
     if (pl === top && e.total > 0) t = `💰 町いちばんの稼ぎ頭（${fmtYen(e.total)}）`;
     else if (bl >= 2) t = `🛡 町の守り神（${bl}回ふせいだ）`;
+    else if ((pl.changes || 0) >= 2) t = `🔄 いろんな仕事を経験した転職の達人（${(pl.exp || []).length + 1}つの仕事）`;
+    else if (COOP.isVet(pl)) t = `⭐ 町をささえたベテラン${JOBS[pl.job].short}`;
     else if (proj) t = `${proj.ic} ${proj.name.replace(/が.*$/, '')}を直した立役者`;
     else if (bl) t = `🛡 ピンチの町を守った`;
     else t = `🤝 こがね町の大切な仲間`;
@@ -5926,7 +6147,7 @@ function coopResultsHTML(){
     <div class="hap hbig"><i style="width:${h}%"></i><b>😊 幸せ度 ${h} / 100</b></div>
     <div class="cr-sub">💰 のこった予算 ${fmtYen(S.budget)}　／　ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}</div>
     <div class="cr-projs">${PROJECTS.map(p => `<div class="crp ${S.lv[p.id] >= 3 ? 'done' : S.lv[p.id] ? 'some' : ''}"><span>${p.ic}</span><b>${p.name}</b><span class="pips">${[0,1,2].map(i => `<i class="${i < S.lv[p.id] ? 'on' : ''}"></i>`).join('')}</span><small>${S.lv[p.id] ? p.lv[S.lv[p.id] - 1] : 'まだ'}</small></div>`).join('')}</div>
-    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}</span></div><div class="hero">${x.t}</div><div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
+    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}${(pl.exp || []).length ? `　🎓 ${pl.exp.map(j => '元' + JOBS[j].short).join('・')}` : ''}</span></div><div class="hero">${x.t}</div><div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
     <div class="cr-math">💡 こがね町の名前は「黄金比（おうごんひ）」から。1 : 1.618… という、自然や建物にかくれている美しい比です</div></div>`;
 }
 
@@ -6223,7 +6444,7 @@ async function openingShow(){
   for (let i = 0; i < H.players.length && !showSkip; i++){
     const pl = H.players[i];
     camFollow(pl.obj.position, .7);
-    card.innerHTML = `<div class="ic-no dela">ENTRY No.${i + 1}</div><img src="${THUMB[pl.char]}" alt=""><div class="ic-name dela">${esc(pl.name)}</div><div class="ic-char">${isCoop() && JOBS[pl.job] ? `${JOBS[pl.job].ic} ${JOBS[pl.job].name}` : CHARS[pl.char].name}${pl.cpu ? '（🤖コンピューター）' : ''}</div>`;
+    card.innerHTML = `<div class="ic-no dela">ENTRY No.${i + 1}</div><img src="${THUMB[pl.char]}" alt=""><div class="ic-name dela">${esc(pl.name)}</div><div class="ic-char">${isCoop() ? `${jobIc(pl)} ${jobName(pl)}` : CHARS[pl.char].name}${pl.cpu ? '（🤖コンピューター）' : ''}</div>`;
     card.style.setProperty('--pc', pl.color);
     card.classList.remove('on'); void card.offsetWidth; card.classList.add('on');
     ripple(NODE[pl.pos].p, pl.color); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.cheer();
@@ -6982,7 +7203,7 @@ $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ?
 addEventListener('pointerdown', () => initAudio(), {once:true});
 setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
 window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
-  coop:{coopStart, coopRoundEnd, coopMeeting, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
+  coop:{coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
 }
 
 </script>
