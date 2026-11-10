@@ -2016,12 +2016,14 @@ function dieHTML(n, rolling){
 const FM = (() => {
   const DIR = 'music/', pre = {};
   let T = null, asked = false, vol = .5, user = 1, live = [], cur = null, duckT = 1, duckV = 1, timer = null, last = 0, blocked = false, onReady = null, onNext = null;
-  const host = () => document.body.classList.contains('hostmode');
+  const host = () => document.body.classList.contains('hostmode'), home = () => document.body.classList.contains('homemode');   // スタート画面では、タイトルの曲だけ流す
+  let all = false;
   function load(){
-    if (asked || !host() || location.protocol === 'file:' || typeof fetch === 'undefined') return; asked = true;
+    if (asked || !(host() || home()) || location.protocol === 'file:' || typeof fetch === 'undefined') return; asked = true;
     fetch(DIR + 'tracks.json', {cache:'no-cache'}).then(r => r.ok ? r.json() : null).then(d => {
       if (!d || !d.tracks) return; T = d.tracks; if (d.vol) vol = d.vol;
-      warm(Object.keys(T)); if (onReady) onReady();
+      if (host()){ all = true; warm(Object.keys(T)); } else warm(['title']);
+      if (onReady) onReady();
     }).catch(() => {});
   }
   // 曲を1つずつ先に読みこんでおく（場面が変わったときに、すぐ鳴るように）
@@ -2061,8 +2063,8 @@ const FM = (() => {
     if (!live.length){ clearInterval(timer); timer = null; }
   }
   return {
-    load, has:n => !!(T && T[n] && host()),
-    play(name){ if (cur && cur.name === name && cur.to === 1 && !cur.a.ended){ this.kick(); return; } start(name); },
+    load, has:n => !!(T && T[n] && (host() || (home() && n === 'title'))),
+    play(name){ if (host() && !all){ all = true; warm(Object.keys(T)); } if (cur && cur.name === name && cur.to === 1 && !cur.a.ended){ this.kick(); return; } start(name); },
     stop(){ live.forEach(p => { p.to = 0; p.rate = 2; }); cur = null; },
     kick(){ if (blocked && cur){ blocked = false; const pl = cur.a.play(); if (pl && pl.catch) pl.catch(() => { blocked = true; }); } },
     duck(on){ duckT = on ? .45 : 1; },
@@ -4368,6 +4370,12 @@ PGEN.dai = {
 
 
 route();
+/* スタート画面でもタイトルの曲を流す。ブラウザが音を止めているときは、画面のどこかを押したところから流れる */
+if (document.body.classList.contains('homemode')){
+  try { BGM.play('title'); } catch(e){}
+  const wake = () => { try { initAudio(); if (!BGM.current()) BGM.play('title'); } catch(e){} };
+  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, wake, {once:true, capture:true}));
+}
 </script>
 <script type="module">
 window.hostInit3D = async function(){
