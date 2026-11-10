@@ -1439,6 +1439,7 @@ window.TroubleFx = (() => {
        guard(){ [523, 659, 784, 1047].forEach((f, i) => N(f, i * .09, .18, .07)); },
        hit(){ [196, 185, 147].forEach((f, i) => N(f, i * .22, .32, .07, 'sawtooth')); } })[id](); } catch(e){} }
 
+  const st = {id:'', ph:''};      // いま出している場面と、その進み具合（intro＝こまったこと／out＝結果）
   /* ---- 1コマ：暗くした画面のまん中に、わくつきの舞台を出す ---- */
   function paint(id, t, o, W, H, dpr, d1, d2){
     tt = t; const out = cl((t - d1) / d2, 0, 1), G = !!o.guard, sw = Math.min(W * .94, H * .76 * 1000 / 660), k = sw / 1000, sh = 560 * k;
@@ -1457,23 +1458,30 @@ window.TroubleFx = (() => {
     g.restore();
   }
 
-  /* 場面を流す。終わったら（画面がかくれていても）かならず先へ進む */
+  /* 場面を流す。終わったら（画面がかくれていても）かならず先へ進む。絵を出したら true、出さなかったら false を返す。
+     声と合わせる：o.wait1（こまったことの声）が終わるまで、結果には進まずに待つ。結果の絵が出た瞬間に o.onOut() を呼ぶ（結果の声を始める合図） */
   function play(id, o){ o = o || {}; return new Promise(res => {
-    if (!SC[id] || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ res(); return; }
+    if (!SC[id] || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ res(false); return; }
     if (!cv){ cv = document.createElement('canvas'); cv.id = 'trfx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;display:none'; document.body.appendChild(cv); g = cv.getContext('2d'); }
-    const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), fast = !!o.fast, d1 = fast ? 1.1 : 2.6, d2 = fast ? .9 : 2.0, d3 = .28, t0 = performance.now();
+    const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), fast = !!o.fast, d1 = fast ? 1.1 : 2.6, d2 = fast ? .9 : 2.0, d3 = .28, t0 = performance.now(), LIMIT = 30;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0';
-    let snd = 0, over = false;
-    const done = () => { if (over) return; over = true; cv.style.display = 'none'; try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(); };
-    setTimeout(done, (d1 + d2 + d3) * 1000 + 500);
-    const step = now => { if (over) return; const t = Math.max(0, (now - t0) / 1000), end = t - d1 - d2;
-      if (!snd){ snd = 1; cue(id); } if (snd === 1 && t >= d1){ snd = 2; cue(o.guard ? 'guard' : 'hit'); }
-      try { paint(id, t, o, W, H, dpr, d1, d2); } catch(e){ console.error('TroubleFx', e); done(); return; }
+    let snd = 0, over = false, v1 = !o.wait1, tOut = Infinity, lastFrame = t0, wd = 0;
+    if (o.wait1) Promise.resolve(o.wait1).catch(() => {}).then(() => { v1 = true; });
+    const done = () => { if (over) return; over = true; clearInterval(wd); st.id = ''; st.ph = ''; cv.style.display = 'none'; try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(true); };
+    st.id = id; st.ph = 'intro';
+    // 結果に進むのは、決まった時間がたって、こまったことの声も終わってから（声の合図が来ないときは LIMIT 秒で進む）
+    const advance = t => { if (tOut === Infinity && t >= d1 && (v1 || t >= LIMIT)){ tOut = t; st.ph = 'out'; cue(o.guard ? 'guard' : 'hit'); try { if (o.onOut) o.onOut(); } catch(e){} } return t - tOut - d2; };
+    const step = now => { if (over) return; lastFrame = now; const t = Math.max(0, (now - t0) / 1000);
+      if (!snd){ snd = 1; cue(id); }
+      const end = advance(t);
+      try { paint(id, t, o, W, H, dpr, tOut, d2); } catch(e){ console.error('TroubleFx', e); done(); return; }
       cv.style.opacity = String(Math.min(1, t / .2) * (1 - cl(end / d3, 0, 1)));
       if (end >= d3) done(); else requestAnimationFrame(step); };
+    // 画面がかくれていて絵が進まないときも、声に合わせて先へ進む
+    wd = setInterval(() => { const now = performance.now(); if (now - lastFrame < 700) return; const t = (now - t0) / 1000; if (advance(t) >= d3 || t > LIMIT + d2 + 2) done(); }, 400);
     requestAnimationFrame(step); }); }
 
-  return {play, ids: Object.keys(SC),
+  return {play, ids: Object.keys(SC), state: st,
     // 確認用：ある場面のある時点を、指定のキャンバスに描く
     still(canvas, id, t, o){ const pc = cv, pg = g; cv = canvas; g = canvas.getContext('2d'); try { paint(id, t, o || {}, canvas.width, canvas.height, 1, 2.6, 2.0); } finally { cv = pc; g = pg; } }};
 })();
@@ -2001,7 +2009,7 @@ sfx.ratchet = () => { if (!playBaked('ratchet')) sfx._live.ratchet(); };
 sfx.legend = () => { if (!playBaked('legend')) sfx._live.legend(); };
 sfx.boom = () => { if (!playBaked('boom', .9 + Math.random() * .2)) sfx._live.boom(); };
 sfx.cheer = () => { if (!playBaked('cheer')) sfx._live.cheer(); };
-function toggleMute(){ MUTE = !MUTE; $('#muteBtn').textContent = MUTE ? '🔇' : '🔊'; }
+function toggleMute(){ MUTE = !MUTE; $('#muteBtn').textContent = MUTE ? '🔇' : '🔊'; if (MUTE && window.__voCut) window.__voCut(); }      // 消音にしたら、流れている声もすぐ止める
 function toggleBgm(){ initAudio(); const r = BGM.cycle(), b = $('#bgmBtn'); b.classList.toggle('off', !r.on); b.textContent = '🎵' + r.tag; b.title = !r.on ? 'BGMを流す' : BGM.has('title') ? '音楽の大きさ（押すと 大 → 中 → 小 → オフ）' : 'BGMを止める'; }
 function dieHTML(n, rolling){
   const pos = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]}[n] || [];
@@ -6637,7 +6645,7 @@ function onJoin(v){
     pl.obj = makePawn(pl); H.players.push(pl); H.players.sort((a, b) => a.slot - b.slot);
     if (H.phase === 'setup'){ H.phase = 'lobby'; closeModal('m-setup'); }
     placeAll(); renderHUD(); renderInvite(); sfx.chime();
-    banner(`📱 ${esc(name)}さんが参加しました！`, 1300);
+    banner(`📱 ${esc(name)}さんが参加しました！`, 1300, {free:true});
     ripple(NODE[pl.pos].p, pl.color); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.4, 0)), 8);
   });
 }
@@ -6735,9 +6743,31 @@ function gain(pl, n){
   renderHUD();
 }
 let bannerQ = Promise.resolve();
+/* 音声を1つ読みこむ。読めたら ok(音声) を1回だけ呼ぶ。5秒たっても読めないときは、作りなおしてもう一度（合わせて tries 回まで）。
+   ファイルがないとき・何回やっても読めないときは ng()。パソコンが重いときに、読みこみが止まったままになることがあるため */
+function loadClip(src, ok, ng, tries = 4){
+  let fin = false, n = 0, timer = 0;
+  const go = () => {
+    if (fin) return;
+    if (n >= tries){ fin = true; if (ng) ng(); return; }
+    n++; const a = new Audio(); a.preload = 'auto';
+    a.onloadedmetadata = () => { if (fin) return; fin = true; clearTimeout(timer); ok(a); };
+    a.onerror = () => { if (fin) return; if (!a.error || a.error.code === 4){ fin = true; clearTimeout(timer); if (ng) ng(); } };   // 4＝ファイルがない（ためしなおしても同じ）
+    a.src = src; timer = setTimeout(go, 5000);
+  };
+  go();
+}
 /* ================= ナレーション（妖精のノエル・雪だるまのゆきまる・町長・村の人たち） =================
    narration/vo/ に音声（名前.mp3）があるときだけ、先生の画面で声と字幕が出る（2026-11-10 現在：司会たちのひとこと237個＋物語12個）。音声がなければ何も起きない。オート中と消音中は流さない
-   名前のきまり：「〜_exp数字」は、その場面がはじめて出たときに1回だけ順番に流す説明。「〜_数字」は、2回め以降にどれか1つ */
+   名前のきまり：「〜_exp数字」は、その場面がはじめて出たときに1回だけ順番に流す説明。「〜_数字」は、2回め以降にどれか1つ
+
+   ■ 声と画面をずらさないための決まり
+   1) 声は1つずつ。場面をまたいで声をためない（順番待ちの列を作らない）
+   2) 声は、その場面の文字や絵が画面に出た瞬間に始める（VO.cue）
+   3) 文字や絵は、声が終わるまで出しておく。次の場面は、声が終わってから始める（VO.idle を待つ）
+   4) それでも新しい場面の声が来たら、前の声はすぐ消して新しい声にする（古い声が、あとから流れることはない）
+   5) どの「待つ」にも時間切れがある。音が出せないとき・消音・オートのときは、待たない
+   声のファイルは、先生の画面を開いたときにメモリへ先読みする（通信がおそくても、文字と同時に声が出るように）。読めなかった行は、だまってとばす（あとから流さない） */
 const VO = (() => {
   const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ わたしは妖精のノエル。きょうの司会だよ。あっ、マイクがさかさまだった。えへへ。"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "それでは、はじまり、はじまり〜！ これは、みんなで力を合わせて、こがね町を救うすごろくだよ！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいるみんなが、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち！ えっと、まずは、そう、サイコロ！ サイコロで町を進もう！"], roll_1: ['mc', "次のラウンド、いくよ〜！ いい目が、出ますように！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], roll_5: ['mc', "サイコロ、えいっ！ あ、わたしが投げるんじゃなかった。"], half_1: ['mc', "ここで折り返し！ 幸せ度は、いくつになったかな？ 後半も、いっしょにがんばろう！"], lastround_1: ['mc', "いよいよ、最後のラウンドだよ！ みんな、がんばって！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイムだよ！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増えるの！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書くと、解きやすいよ！ わたしも書こうっと。あれ、えんぴつ、どこ？"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ いそいで、いそいで〜！ あ、でも、落ち着いてね！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだよ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、出てこ〜い！ わたしの魔法じゃ、出せないんだけどね。"], jobnews_exp1: ['mc', "しごとのニュースだよ！ 問題に正解すると、その分野の仕事につけるの。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュース！ 新しい仕事についた人がいるよ。すごーい！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでも大丈夫！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金で、どの困りごとを直すか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。直すと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どこを直しましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変えるよ！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金だね！ 次の会議で、大きく直そう！"], build_1: ['vil', "工事スタート！ トンテン、カンテン！"], build_2: ['vil', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_4: ['mc', "ぴかーん！ 明かりがついたよ！ まぶしくて、前が見えない〜！"], build_5: ['vil2', "ありがとう！ これで安心して暮らせるよ。"], build_6: ['vil3', "わあ、直ってる！ うれしいなあ！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['vil', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、直した工事でふせげるの。どきどきするね！"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！ こわいのは、いやだなあ。"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['vil', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['vil', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['vil', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['vil', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['vil', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['vil', "ふせいだー！ ナイス！"], tr_guard_2: ['vil', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_guard_5: ['mc', "やったあ！ 町が守られたよ！ うれしくて、くるくる回っちゃう！"], tr_guard_6: ['vil2', "たすかったよ。ほんとうに、ありがとう。"], tr_guard_7: ['vil3', "すごい、すごい！ さすがだね！"], tr_hit_1: ['vil', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['vil', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], tr_hit_5: ['mc', "あわわ、たいへん！ でも、だいじょうぶ。次はきっと、ふせげるよ！"], tr_hit_6: ['vil2', "こまったなあ。どうしよう。"], tr_hit_7: ['vil3', "うう、たいへんだ。だれか、たすけて〜。"], good_1: ['vil', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], good_4: ['mc', "わあ、いいニュース！ うれしいな！"], good_5: ['vil2', "よかった、よかった。いい日になったね。"], good_6: ['vil3', "やったあ！ うれしい！"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['vil', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。みんなで、ひとつの問題に挑戦しよう！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻ったよ！ みんな、ほんとうにありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], win_exp4: ['vil2', "明かりが戻った！ ありがとう、みなさん。"], win_exp5: ['vil3', "メリークリスマス！ また来てね！"], lose_exp1: ['mc', "あと少しだったね。でも、みんなが直した場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"], lobby_exp3: ['mc', "このゲームを作ったのは、須田先生。もと小学校の先生で、大学院では数の世界を研究していたんだよ。"], lobby_exp4: ['snow', "すごい先生なのに、ぼくにも、やさしく教えてくれるんだ。雪だるまなのに。"], lobby_exp5: ['mc', "はじめましての人も、きょうは同じチームのなかま。よかったら、「よろしく」って声をかけてみてね！"], start_exp5: ['mc', "わからないことがあったら、いつでも須田先生に聞いてね。急かさないし、だれかと比べたりもしないよ。"], roll_6: ['mc', "みんなのコマ、いってらっしゃ〜い！"], roll_7: ['snow', "いい目が出たら、ぼくにも分けてね。ぼくの目、ボタンだけど。"], roll_8: ['vil', "さあ、サイコロだ！ 町のみんなも、応援してるぞ！"], roll_9: ['mc', "サイコロの神さま、おねがいします！ あれ、妖精がお祈りしても、いいのかな。"], roll_10: ['vil3', "がんばれ〜！ こっちのマスに来てね！"], roll_11: ['mayor', "次のラウンドですな。みなさん、よろしくお願いしますぞ。"], half_2: ['snow', "もう半分？ はやいなあ。ぼく、まだ半分も、とけてないよ。"], half_3: ['mc', "折り返しだよ！ ここまで、町を助けてくれたみんなに、拍手〜！"], lastround_3: ['mayor', "最後のラウンドです。みなさんの力を、もう一度、かしてくだされ。"], lastround_4: ['mc', "ラストだよ！ みんなで、「がんばろう」って声をかけ合おう！"], quiz_5: ['mc', "数学は、時間がかかっても、ひとつひとつ分かっていけばいい。須田先生が、いつもそう言ってるよ。"], quiz_6: ['snow', "ヒントがほしいときは、須田先生に聞いてみて。ぼくに聞いても、雪の話しかできないから。"], quiz_7: ['mc', "星1つでも、正解は正解！ 自分に合ったむずかしさで、いこう！"], quiz_8: ['vil', "がんばれ！ 町のみんなが、ついてるぞ！"], quiz_9: ['mc', "問題タイム！ えっと、時間は2分。タイマー、スタート！ あ、もう動いてた。"], quiz_10: ['mayor', "あわてず、ていねいに。答えは、にげませんぞ。"], quiz_11: ['vil3', "すごいなあ、みんな。数学、やってみたくなってきた！"], quiz_12: ['snow', "できた人は、心の中でガッツポーズ。まだの人は、深呼吸。"], hurry_3: ['mc', "あと20秒！ 最後まで、あきらめないで！"], hurry_4: ['vil', "のこり20秒だ！ 見直しも、わすれずにな！"], gacha_4: ['snow', "なにが出ても、当たりだよ。ぼくは、はずれたことないもん。回したことも、ないけど。"], gacha_5: ['mc', "ガチャ、ガチャ〜！ いいのが出たら、みんなに見せてあげてね！"], gacha_6: ['vil2', "いいものが、出るといいですな。"], gacha_7: ['vil3', "わくわく！ なにが出るかな！"], jobnews_3: ['mc', "新しい仕事、おめでとう！ みんなで拍手〜！"], jobnews_4: ['vil', "新しいなかまが増えたぞ！ たのもしいな！"], jobnews_5: ['mayor', "町のために働いてくれて、ありがたいことです。"], career_3: ['mc', "転職タイム！ まよったら、みんなに「どの仕事がいいかな？」って聞いてみよう！"], career_4: ['mayor', "町に足りない仕事を、見てくだされ。求人が出ているかもしれませんぞ。"], vet_2: ['mc', "ベテランさんの誕生だよ！ かっこいい〜！"], meeting_4: ['mc', "町の会議だよ！ 「ここを直したい」って、声に出して相談してもいいよ！"], meeting_5: ['vil', "たのむ、うちの近くも直してくれ〜！"], meeting_6: ['vil2', "みなさんで決めたことなら、まちがいないでしょう。"], meeting_7: ['snow', "みんなで決めるって、いいね。ぼくは、いつも一人で立ってるから。"], meet_save_2: ['snow', "ためるのも、作戦だよ。ぼくも、雪をためて大きくなったんだ。"], build_7: ['mc', "工事かんりょう！ みんなのおかげだよ。ありがとう！"], build_8: ['mayor', "りっぱに直りましたな。みなさんに感謝です。"], build_9: ['vil', "おお、きれいになった！ さすがだな！"], build_done_3: ['mc', "ついに完成！ みんな、すごいよ！ 拍手、拍手〜！"], cards_4: ['mc', "カード、めくるよ。せーのっ！ あ、まだ心の準備が。"], cards_5: ['vil', "なにが起きても、みんなでなら乗りこえられるさ！"], cards_6: ['mayor', "町のできごとです。心して、聞いてくだされ。"], tr_snowfall_2: ['vil2', "これは大雪だ。道が、うまってしまう。"], tr_pipe_2: ['mc', "きゃあ、水が！ 水道管が、こわれちゃった！"], tr_fire_2: ['mc', "たいへん、火事だよ！ だれか、消防士さん！"], tr_scam_2: ['mc', "あやしい電話がかかってきたよ。おばあちゃん、出ちゃだめ〜！"], tr_thief_2: ['snow', "どろぼうだ！ ぼく、動けないから、だれか、つかまえて！"], tr_sick_2: ['vil2', "急病人だ。病院まで、遠いんだよなあ。"], tr_leave_2: ['mc', "えっ、引っこしちゃうの？ さびしいよ〜。"], tr_closed_2: ['vil3', "あのお店、しまっちゃうの？ よく行ってたのに。"], tr_bus_2: ['vil', "バスの本数が、またへるのか。こまったなあ。"], tr_interest_2: ['mc', "お金に羽がはえて、飛んでいっちゃう！ まって〜！"], tr_guard_8: ['mc', "守ってくれた人に、みんなで拍手〜！ パチパチパチ！"], tr_guard_9: ['vil', "たのもしいなあ！ これからも、たのむぞ！"], tr_guard_10: ['snow', "ナイス！ みんなも、「ナイス」って言ってあげて！"], tr_guard_11: ['mayor', "おみごと。町の人も、よろこんでおりますぞ。"], tr_hit_8: ['mc', "どんまい、どんまい！ みんなで力を合わせれば、大丈夫！"], tr_hit_9: ['vil', "しかたない。次は、みんなで守ろう！"], tr_hit_10: ['snow', "だれのせいでもないよ。雪のせいに、しておこう。"], tr_hit_11: ['mayor', "こういう日もあります。次の会議で、相談しましょう。"], good_7: ['mc', "やったね！ みんなで、ばんざ〜い！"], good_8: ['vil', "いいことがあると、町が明るくなるなあ！"], good_9: ['snow', "うれしいことは、みんなで分けよう。雪も、分けようか？"], ev_challenge_2: ['snow', "チャレンジマスだ！ 2倍だよ、2倍。ぼくが2人いたら、たいへんだね。"], ev_bonus_2: ['vil3', "ボーナス問題だって！ がんばって！"], ev_gift_2: ['mc', "わあ、寄付が届いたよ！ ありがとう！"], ev_snowman_2: ['mc', "雪だるま、できた！ ゆきまるに、なかまができたよ！"], ev_event_2: ['mc', "あれ？ 町で、なにか起きたみたい！"], summary_4: ['mc', "このラウンドも、おつかれさま！ がんばった自分と、なかまに、拍手〜！"], summary_5: ['mayor', "ここまでの町のようすを、ごらんくだされ。"], summary_6: ['vil', "みんなのおかげで、町が少しずつ、元気になってきたぞ！"], summary_7: ['snow', "まとめの時間だよ。ぼくは、いつも、まとまってるよ。雪だから。"], summary_8: ['mc', "いいチームになってきたね！ この調子で、いこう！"], boss_exp3: ['mc', "この式はね、「楕円曲線」っていうの。須田先生が大学院で研究していた、数学の世界の入り口だよ。"], boss_exp4: ['snow', "むずかしそう。でも、みんなで考えれば、こわくないよ。"], lose_exp3: ['mayor', "みなさんの力は、町にしっかり残りました。ありがとう。"], outro_exp1: ['mc', "きょうは、いっしょに遊んでくれて、ありがとう！"], outro_exp2: ['snow', "ありがとう〜！ ぼく、とけるまで、わすれないよ。"], outro_exp3: ['vil', "ありがとう！ また、いつでも来てくれよな！"], outro_exp4: ['vil2', "ありがとうございました。"], outro_exp5: ['vil3', "ありがとう！ たのしかった〜！"], outro_exp6: ['mc', "さいしょは、はじめましてだった人も、もう町のなかまだね。さいごに、みんなで「ありがとう」って言い合おう！"], outro_exp7: ['mayor', "このゲームを作ったのは、須田先生です。ストアカで、算数や数学を教えておられますぞ。"], outro_exp8: ['mc', "小学校の算数から、大学の数学まで。「なぜ？」を、いっしょに、ゆっくり考えてくれる先生だよ。"], outro_exp9: ['snow', "ぼくも習いたいな。雪だるまでも、いいかな？"], outro_exp10: ['mc', "よかったら、須田先生の講座も、のぞいてみてね。それじゃあ、またね〜！"], fork_exp1: ['mc', "分かれ道だよ！ こがね町には、山の上、上の町、下の町、地下の鉱山、4つの階があるの。"], fork_exp2: ['snow', "どこへ行くかは、自分で決めていいんだよ。ぼくは、どこにも行けないけど。"], fork_1: ['mc', "分かれ道！ どっちに行く？ まよったら、みんなに聞いてみよう！"], fork_2: ['vil', "どっちの道も、おもしろいぞ！ 好きなほうを選びな！"], fork_3: ['snow', "右かな、左かな。ぼくなら、ころがりやすいほう。"], fork_4: ['mayor', "分かれ道ですな。行きたいほうを、お選びくだされ。"], ev_ropeway_1: ['mc', "ロープウェイで、山の上へ出発！ わあ、町がどんどん小さくなる〜！"], ev_ropeway_2: ['snow', "高いところは、にがてだなあ。でも、山の上は雪がいっぱいで、うれしい。"], ev_ropeway_3: ['vil3', "いってらっしゃ〜い！ 山の上は、星がきれいだよ！"], ev_slide_1: ['mc', "そりの大すべり台！ しっかりつかまって〜！ きゃ〜！"], ev_slide_2: ['snow', "びゅーん！ いいなあ。ぼくがすべると、雪玉になっちゃう。"], ev_slide_3: ['vil', "山の上から下の町まで、ひとっとびだ！ 気をつけてな！"], ev_manhole_1: ['mc', "マンホールの近道だよ！ まっくらだけど、こわくない、こわくない。…ちょっとこわい。"], ev_manhole_2: ['vil2', "古い水道管を通って、地下の鉱山へ。足もとに、気をつけてくださいね。"], ev_geyser_1: ['mc', "間欠泉だ！ お湯の力で、地上までひとっとび！ あったかそう〜！"], ev_geyser_2: ['snow', "お湯！？ ぼくは、えんりょしておくよ。とけちゃうから。"], ev_geyser_3: ['vil', "どっかーん！ こがね鉱山の名物、間欠泉だ！"], ev_cart_1: ['mc', "トロッコに乗って、出発しんこう〜！ ガタンゴトン、ガタンゴトン！"], ev_cart_2: ['vil', "鉱山のトロッコだ！ しっかりつかまってな！"], ev_cart_3: ['snow', "はやい、はやい！ ぼくも乗りたい。重くて、動かないかな。"], ev_onsen_1: ['mc', "温泉だ〜！ ぽかぽか、いい気持ち。町の人も、にっこりだね！"], ev_onsen_2: ['vil2', "いいお湯ですよ。ゆっくり、あたたまっていってくださいね。"], ev_onsen_3: ['snow', "温泉かあ。ぼくは、見てるだけにするね。足湯も、だめ。"], ev_gold_1: ['mc', "わあ、金のかけらを見つけたよ！ きらきら！ 町の予算が増えるね！"], ev_gold_2: ['vil', "おお、金だ！ こがね町の名前は、この金から来てるんだぞ！"], ev_gold_3: ['mayor', "金のかけらですな。町のために、大切に使わせていただきます。"], ev_shrine_1: ['mc', "神社でおみくじ！ いいのが出ますように。どきどき！"], ev_shrine_2: ['mayor', "山の上の神社です。町を、むかしから見守ってくれております。"], ev_daikichi_1: ['mc', "大吉〜！ すごい、すごい！ 町にいいことが、2つも起きたよ！"], ev_daikichi_2: ['vil3', "大吉だ！ やったあ！ おめでとう！"], ev_kichi_1: ['mc', "いいおみくじだね！ 町に、いいことがあったよ！"], ev_kichi_2: ['snow', "吉だ。ぼくは、毎日が雪で、毎日が大吉。"], ev_hole_1: ['mc', "あっ、落とし穴！ きゃ〜！ …だいじょうぶ？ 下の階に落ちただけだよ！"], ev_hole_2: ['snow', "落ちちゃった。でも、だいじょうぶ。下にも、道はあるよ。"], ev_hole_3: ['vil', "おっと、落とし穴だ！ けがは、ないか？"], fl_2_1: ['mc', "上の町、温泉通りに到着！ ゆげが、もくもく。いいにおい〜。"], fl_2_2: ['vil2', "ようこそ、温泉通りへ。むかしは、お客さんでいっぱいだったんですよ。"], fl_3_1: ['mc', "下の町に、もどってきたよ！ ツリー広場は、もうすぐ！"], fl_3_2: ['vil', "おかえり！ 下の町は、商店街と駅がある、町のまん中だ！"], fl_4_1: ['mc', "地下のこがね鉱山に到着！ 金の結晶が、きらきら光ってるよ！"], fl_4_2: ['snow', "地下は、すずしくていいね。ぼく、ここに住もうかな。"], fl_4_3: ['mayor', "ここが、こがね鉱山です。むかし、町はこの金でさかえたのですぞ。"], lap_1: ['mc', "町のツリーを通過！ 町の予算が増えたよ。ぐるっと回ってきたね！"], lap_2: ['vil3', "おかえりなさい！ ツリーが、まってたよ！"]};
   const WHO = {mc: ["🧚", "ノエル", "#ffb3de"], snow: ["⛄", "ゆきまる", "#9fd8ff"], mayor: ["🎩", "町長", "#c9b3ff"], vil: ["👨", "村の人", "#b3f0d0"], vil2: ["🙂", "村の人", "#ffe9a6"], vil3: ["😊", "村の人", "#ffcfa6"]}, DIR = 'narration/vo/', ids = Object.keys(L);
@@ -6746,54 +6776,111 @@ const VO = (() => {
     [/温泉でぽかぽか/, 'ev_onsen'], [/金のかけら/, 'ev_gold'], [/神社でおみくじ/, 'ev_shrine'], [/大吉/, 'ev_daikichi'], [/中吉|小吉/, 'ev_kichi'], [/落とし穴/, 'ev_hole'], [/ツリーを通過/, 'lap'], [/ラストラウンド/, 'lastround'], [/のまとめ/, 'summary'], [/^ラウンド \d/, 'roll'], [/問題タイム/, 'quiz'], [/のこり20秒/, 'hurry'], [/ガチャタイム/, 'gacha'],
     [/チャレンジマス/, 'ev_challenge'], [/ボーナス問題/, 'ev_bonus'], [/寄付が届いた/, 'ev_gift'], [/雪だるまを作って/, 'ev_snowman'], [/こがね町のできごと/, 'cards'], [/町のできごと！/, 'ev_event'],
     [/しごとのニュース/, 'jobnews'], [/ベテラン誕生/, 'vet'], [/が完成！/, 'build_done'], [/貯金/, 'meet_save'], [/レベル\d「/, 'build'],
-    [/さいごのラウンドが終わった/, 'boss'], [/明かりが戻った/, 'win'], [/あと少し…|出ていってしまった/, 'lose']];
-  let ready = false, probed = false, q = [], busy = false, cur = null, done = {}, last = {}, el = null, ph = '';
+    [/さいごのラウンドが終わった/, 'boss'], [/最後の大工事（ボス問題）に/, 'boss2'], [/明かりが戻った/, 'win'], [/あと少し…|出ていってしまった/, 'lose']];
+  // 決まった行を、1ゲームに1回だけ流す場面（ボス問題の説明は、画面に出ているものに合わせて3つに分ける）
+  const SEQ = {boss:['boss_exp1'], boss2:['boss_exp2'], bossq:['boss_exp3', 'boss_exp4']};
+  let ready = false, probed = false, probeN = 0, done = {}, last = {}, el = null, txt = null, ph = '', act = null;   // act：いま流れている場面の声
   const host = () => document.body.classList.contains('hostmode');
-  function probe(){ if (probed) return; probed = true; const a = new Audio(); a.preload = 'auto'; a.onloadedmetadata = () => { ready = true; }; a.src = DIR + 'start_exp1.mp3'; }
+  const can = () => ready && !MUTE && !H.auto && host();
+  // 声のファイルがあるかを、1つ読んで確かめる。読めなかったら、15秒おいてもう一度（合わせて8回まで。通信が一時的に切れていただけ、ということがあるため）
+  function probe(){ if (probed || ready) return; probed = true; probeN++;
+    loadClip(DIR + 'start_exp1.mp3', () => { ready = true; warm(); }, () => { if (probeN < 8) setTimeout(() => { probed = false; }, 15000); }, 6); }
+  // 声のファイルを先に読みこんで、メモリに置いておく（mem）。こうしておくと、通信がおそいとき・切れたときでも、文字と同時に声が出る。
+  // まだ読みこめていない行は、そのつど読みこむ（いままでどおり）
+  const mem = {};
+  function warm(pass = 1){ if (typeof fetch === 'undefined' || typeof URL === 'undefined' || !URL.createObjectURL || location.protocol === 'file:') return;
+    const todo = ids.filter(id => !mem[id]); let i = 0, run = 2;      // 2つずつ読みこむ。読めなかった行があれば、30秒あとにもう一度だけためす
+    const nx = () => { if (i >= todo.length){ if (--run === 0 && pass < 2 && todo.some(id => !mem[id])) setTimeout(() => warm(pass + 1), 30000); return; } const id = todo[i++];
+      fetch(DIR + id + '.mp3').then(r => r.ok ? r.blob() : null).then(b => { if (b && b.size > 2000 && !mem[id]) mem[id] = URL.createObjectURL(new Blob([b], {type:'audio/mpeg'})); }).catch(() => {}).then(() => setTimeout(nx, 40)); };
+    nx(); nx(); }
   function box(){ if (!el){ el = document.createElement('div'); el.id = 'vo'; el.setAttribute('aria-live', 'polite');
       el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
+      txt = document.createElement('span'); el.appendChild(txt);
+      const sk = document.createElement('button'); sk.id = 'voSkip'; sk.type = 'button'; sk.textContent = '⏭'; sk.title = 'この声をとばす'; sk.setAttribute('aria-label', 'この声をとばす');
+      sk.style.cssText = 'pointer-events:auto;cursor:pointer;margin-left:.7em;padding:0 .45em;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-size:.8em;line-height:1.5;vertical-align:middle';
+      sk.onclick = e => { e.stopPropagation(); cut(); }; el.appendChild(sk);
       document.body.appendChild(el); } return el; }
-  function stop(){ q = []; if (cur) try { cur.pause(); } catch(e){} cur = null; busy = false; if (el) el.style.opacity = '0'; BGM.duck(false); }
-  function next(){
-    if (busy) return; const id = q.shift(); if (!id){ if (el) el.style.opacity = '0'; BGM.duck(false); return; }
-    busy = true; const w = WHO[L[id][0]], b = box(), a = new Audio(DIR + id + '.mp3'); cur = a; let fin = false;
-    const end = () => { if (fin) return; fin = true; if (cur === a){ cur = null; busy = false; setTimeout(next, 200); } };
-    a.onended = end; a.onerror = end;     // 音声がない行は、字幕も出さずにとばす
-    a.onplaying = () => { BGM.duck(true); if (id === 'outro_exp1' && BGM.has('finale')) BGM.play('finale'); b.innerHTML = `<b style="color:${w[2]};margin-right:.6em">${w[0]} ${w[1]}</b>${L[id][1]}`; b.style.borderColor = w[2]; b.style.opacity = '1'; };
-    setTimeout(end, 16000); a.play().catch(end);
-  }
-  function say(key){
-    if (!ready || MUTE || H.auto || !host()) return;
+  function hide(){ if (el){ el.style.opacity = '0'; el.lastChild.style.pointerEvents = 'none'; } BGM.duck(false); }
+  // 場面の名前 → 流す行。はじめての場面は説明（〜_exp）をぜんぶ、2回め以降はどれか1つ（前と同じ行はさける）
+  function pick(key){
+    if (SEQ[key]){ if (done[key]) return []; done[key] = 1; return SEQ[key].filter(i => L[i]); }
     const re = new RegExp('^' + key + '_(exp)?\\d+$'), all = ids.filter(i => re.test(i)), exp = all.filter(i => i.includes('_exp')), vars = all.filter(i => !i.includes('_exp'));
-    let pick = [];
-    if (exp.length && !done[key]){ done[key] = 1; pick = exp; }
-    else if (vars.length){ let c = vars.filter(i => i !== last[key]); if (!c.length) c = vars; last[key] = c[Math.floor(Math.random() * c.length)]; pick = [last[key]]; }
-    if (!pick.length || (pick.length === 1 && q.length >= 2)) return;     // たまりすぎたら、短いひとことは流さない
-    q.push(...pick); next();
+    if (exp.length && !done[key]){ done[key] = 1; return exp; }
+    if (vars.length){ let c = vars.filter(i => i !== last[key]); if (!c.length) c = vars; last[key] = c[Math.floor(Math.random() * c.length)]; return [last[key]]; }
+    return [];
   }
-  function hint(html){
-    if (!ready) return; const t = String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    for (const [re, k] of MAP) if (re.test(t)){
-      if (k === 'start'){ stop(); done = {lobby: 1}; }
-      say(k === 'roll' && H.round === Math.floor(H.maxRound / 2) + 1 ? 'half' : k);
-      if (k === 'win' || k === 'lose') say('outro');     // 勝っても負けても、さいごにみんなのお礼と先生の紹介
-      return; }
+  // 1行を流す。終わったら（音が出せなくても・時間切れでも）かならず先へ進む
+  function line(id, tok){ return new Promise(res => {
+    const w = WHO[L[id][0]], b = box(), a = new Audio(mem[id] || DIR + id + '.mp3'); let fin = false, t1 = 0, t2 = 0;
+    const end = () => { if (fin) return; fin = true; clearTimeout(t1); clearTimeout(t2); a.onended = a.onerror = a.onplaying = null;
+      // さいごまで流れなかった声（とちゅうで止めた・始まらなかった）は、小さくして0.1秒で止め、読みこみもやめる（あとから鳴りださないように）。
+      // さいごまで流れた声も、ここで片づける（ブラウザが同時に持てる音声の数には上限があるので、ためこまない）
+      const free = () => { try { a.pause(); a.removeAttribute('src'); a.load(); } catch(e){} };
+      if (a.ended) free(); else { try { a.volume = Math.min(a.volume, .3); } catch(e){} setTimeout(free, 110); }
+      if (tok.a === a){ tok.a = null; tok.end = null; } res(); };
+    tok.a = a; tok.end = end; a.dataset.vo = id;      // どの行の声かの目じるし（動きをしらべるとき用）
+    a.onended = end; a.onerror = end;     // 音声がない行は、字幕も出さずにとばす
+    a.onplaying = () => { if (fin || tok.dead) return; clearTimeout(t1); t2 = setTimeout(end, ((isFinite(a.duration) && a.duration) || 12) * 1000 + 2500);
+      BGM.duck(true); if (id === 'outro_exp1' && BGM.has('finale')) BGM.play('finale');
+      txt.innerHTML = `<b style="color:${w[2]};margin-right:.6em">${w[0]} ${w[1]}</b>${L[id][1]}`; b.style.borderColor = w[2]; b.style.opacity = '1'; b.lastChild.style.pointerEvents = 'auto'; };
+    t1 = setTimeout(end, 10000);          // 10秒たっても始まらない行は、とばす（ふつうは0.1秒ほどで始まる）
+    const pl = a.play(); if (pl && pl.catch) pl.catch(end);
+  }); }
+  /* 場面の声を流す。key は場面の名前（または行の名前のならび）。終わったら解決する Promise を返す（流す声がなければ、すぐ false）。
+     前の場面の声がまだ残っていたら、すぐに消してから始める（古い声が新しい画面にかぶらない） */
+  function cue(key){
+    if (!can()) return Promise.resolve(false);
+    if (key === 'start') done = {lobby: 1};          // 新しいゲーム：説明をもう一度はじめから
+    const list = Array.isArray(key) ? key.filter(i => L[i]) : pick(key);
+    if (!list.length) return Promise.resolve(false);
+    cut();
+    const tok = {a:null, end:null, dead:false, key:String(key)};
+    const p = (async () => {
+      for (const id of list){ if (tok.dead) break; await line(id, tok); if (tok.dead) break; await new Promise(r => setTimeout(r, 180)); }
+      if (act && act.tok === tok){ act = null; hide(); }
+      return tok.dead ? 'cut' : true;                 // true＝さいごまで流れた／'cut'＝とちゅうで止めた（新しい場面が来た・とばした・消音）
+    })();
+    act = {tok, p}; return p;
   }
-  // 転職タイム・町の会議・待合室は、ゲームの進み具合（H.phase）を見て流す
-  setInterval(() => { if (!host()){ if (busy || q.length) stop(); ph = ''; return; } probe(); try { preloadNarr(); } catch(e){} if (!ready) return; const p = H.phase; if (p === ph) return; ph = p;
-    if (p === 'lobby' || p === 'career' || p === 'meeting') say(p); }, 300);
-  return {say, hint, stop, lines: L};
+  // いま流れている声を、すぐ止める（止め方は line の end の中）
+  function cut(){
+    const c = act; if (!c) return; act = null; c.tok.dead = true;
+    if (c.tok.end) c.tok.end(); hide();
+  }
+  // 声が流れていない状態になったら解決する（次の場面に進む前に、これを待つ）
+  async function idle(){ let n = 0; while (act && n++ < 40){ try { await act.p; } catch(e){} } }
+  // 画面に出る文字から、どの場面かを見分ける。声を出せないときは null（＝待たない）
+  function keyOf(html){
+    if (!can()) return null; const t = String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    for (const [re, k] of MAP) if (re.test(t)) return k === 'roll' && H.round === Math.floor(H.maxRound / 2) + 1 ? 'half' : k;
+    return null;
+  }
+  // 待合室のおしゃべりだけは、待合室に入ったのを見て流す（先生がゲームを始めたら止める）
+  setInterval(() => { if (!host()){ if (act) cut(); ph = ''; return; } probe(); try { preloadNarr(); } catch(e){} if (!ready) return; const p = H.phase; if (p === ph) return; ph = p;
+    if (p === 'lobby') cue('lobby'); }, 300);
+  return {cue, idle, cut, keyOf, speaking: () => !!act, now: () => act ? act.tok.key : '', lines: L, say: cue, stop: cut};
 })();
-function banner(html, ms = 1400){
-  VO.hint(html);
+window.__voCut = () => VO.cut();
+/* 画面のまん中に文字を出す。前の場面の声が終わってから出し、この文字の声は文字と同時に始め、声が終わるまで文字を出しておく。
+   opt.free：声と関係のないお知らせ（参加のお知らせ）。待たずにすぐ出す */
+function banner(html, ms = 1400, opt){
   if (H.auto) ms = Math.round(ms * .8);
-  bannerQ = bannerQ.then(async () => { const b = $('#banner'); b.innerHTML = html; b.classList.add('on'); await sleep(ms); b.classList.remove('on'); await sleep(220); });
+  const free = !!(opt && opt.free);
+  bannerQ = bannerQ.then(async () => { try {
+    if (!free) await VO.idle();
+    const b = $('#banner'); b.innerHTML = html; b.classList.add('on');
+    const key = free ? null : VO.keyOf(html), t0 = performance.now();
+    const r = key ? await VO.cue(key) : false;                      // 声が終わるまで、文字を出しておく
+    if (r !== 'cut') await sleep(ms - (performance.now() - t0));     // 声が短いとき・ないときは、決まった長さまで出す。声がとちゅうで止められたら、文字もすぐ消す
+    b.classList.remove('on'); await sleep(220);
+  } catch(e){ console.error('banner', e); } });
   return bannerQ;
 }
+/* 大きな文字を出す。この文字の声は、文字と同時に始める（声が終わると解決する Promise を返す） */
 function splash(main, sub){
-  VO.hint(main);
   const s = $('#splash'); s.innerHTML = `<div class="sp-main dela">${main}</div>${sub ? `<div class="sp-sub">${sub}</div>` : ''}`;
   s.classList.remove('on'); void s.offsetWidth; s.classList.add('on');
+  const key = VO.keyOf(main); return key ? VO.cue(key) : Promise.resolve(false);
 }
 function roundSplash(){ splash(H.round >= H.maxRound ? 'ラストラウンド！' : `ラウンド ${H.round}`, `${H.round} / ${H.maxRound}`); sfx.jingle(); }
 function ask(title, sub, opts, botPick){
@@ -6873,8 +6960,9 @@ function renderHUD(){
     end: isCoop() ? (H.coopEnd ? '🏆 けっかを見る' : '🏗 最後の大工事へ') : '👑 ボス問題へ',
   })[H.phase];
   if (H.phase === 'roll' && cur && isBot(cur)) label = `🤖 ${cur.name}の番…`;
+  if (H.voWait) label = '🔈 声が終わったら進みます…';
   mb.textContent = label;
-  mb.disabled = H.busy || H.asking || (H.phase === 'roll' && cur && isBot(cur));
+  mb.disabled = H.busy || H.asking || !!H.voWait || (H.phase === 'roll' && cur && isBot(cur));
   $('#watchBtn').classList.toggle('on', H.watch);
   $('#autoBtn').classList.toggle('on', H.auto);
   $('#viewBtn').classList.toggle('on', H.view);
@@ -6940,6 +7028,7 @@ function snap(){
 }
 function undo(){
   if (H.busy || H.asking || !H.hist.length) return;
+  VO.cut();                           // 1つ戻すと画面が前の場面に変わるので、いまの声は止める
   const s = JSON.parse(H.hist.pop());
   const objs = {}; H.players.forEach(p => { objs[p.id] = p.obj; });
   H.players.forEach(p => { if (!s.players.some(q => q.id === p.id)) removePawn(p); });
@@ -6950,11 +7039,16 @@ function undo(){
   placeAll(); camOverview(); renderHUD();
 }
 function removeItem(pl, k){ const i = pl.items.indexOf(k); if (i >= 0) pl.items.splice(i, 1); }
-function mainAction(){
-  initAudio(); if (H.busy || H.asking) return;
+async function mainAction(){
+  initAudio(); if (H.busy || H.asking || H.voWait) return;
+  // 声が流れているあいだに押されたら、声が終わってから進む（待合室と、結果を見るだけのときは待たない）
+  if (VO.speaking() && ['roll', 'quizReady', 'quiz', 'score'].concat(H.coopEnd ? [] : ['end']).includes(H.phase)){
+    H.voWait = true; renderHUD(); try { await VO.idle(); } finally { H.voWait = false; } renderHUD();
+    if (H.busy || H.asking) return;
+  }
   const cur = H.players[H.turn];
   if (H.phase === 'setup') openSetup();
-  else if (H.phase === 'lobby'){ if (!H.players.length){ openInvite(); return; } closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; H.coopEnd = null; if (isCoop()) coopStart(); else H.coop = null; openingShow(); }
+  else if (H.phase === 'lobby'){ if (!H.players.length){ openInvite(); return; } VO.cut(); closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; H.coopEnd = null; if (isCoop()) coopStart(); else H.coop = null; openingShow(); }
   else if (H.phase === 'roll' && cur && !isBot(cur)) takeTurn(cur);
   else if (H.phase === 'quizReady') startQuiz();
   else if (H.phase === 'quiz') endQuiz();
@@ -6964,6 +7058,7 @@ function mainAction(){
 async function takeTurn(pl){
   if (H.busy) return;
   snap(); H.busy = true; renderHUD();
+  await VO.idle();                    // ラウンドのはじめの声が終わってから、サイコロをふる
   if (isCoop()) closeCard();
   camFollow(pl.obj.position, .9); await sleep(H.auto ? 250 : 450);
   let dice = 1, plus = 0;
@@ -7029,11 +7124,14 @@ async function rollDice(pl, count, plus){
 async function chooseRoute(pl, nd){
   const opts = nd.next.filter(id => !NODE[id].gate || pl.items.includes('key') || isCoop());
   if (opts.length === 1) return opts[0];
-  hl(opts); camFollow(nd.p, 1.25); if (!isBot(pl)) VO.say('fork');
+  if (!isBot(pl)) await VO.idle();                     // 前の声が終わってから、分かれ道を出す
+  hl(opts); camFollow(nd.p, 1.25);
+  const fv = isBot(pl) ? null : VO.cue('fork');        // 分かれ道の声は、選ぶ画面と同時に
   let bp;
   if (isBot(pl)){ const gt = opts.find(id => NODE[id].gate); bp = gt ? (Math.random() < .85 ? gt : opts.find(id => id !== gt)) : pick(opts); }
   const v = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, '分かれ道！ どっちに進む？',
     opts.map(id => { const L = ROUTE_LABEL[id], co = isCoop(); return {v:id, ic:co && NODE[id].gate ? '❄️' : L[0], t:L[1], s:co ? (NODE[id].gate ? '協力モードはカギなしで通れる！ ツリーまで一気に' : L[2].replace('🏪ショップ', '💼職業安定所')) : L[2]}; }), isBot(pl) ? bp : undefined);
+  if (fv && VO.speaking()){ hl([v]); await fv; hl([]); }      // 声が終わるまで、選んだ道を光らせて待つ
   if (NODE[v].gate){ if (isCoop()){ await banner('❄️ 氷の湖の近道へ！', 1000); } else { removeItem(pl, 'key'); renderHUD(); await banner('🔑 カギで<br>氷の湖の門が開いた！', 1100); } }
   return v;
 }
@@ -7056,6 +7154,8 @@ function others(pl){ H.players.forEach(o => { if (o !== pl && o.obj) o.obj.posit
 function faceAlong(pl, tg){ pl.obj.rotation.y = Math.atan2(tg.x, tg.z); }
 async function travelEdge(pl, toId, e){
   const from = pl.obj.position.clone(), b = pl.obj.userData.body;
+  let bp = null;                                       // 乗りものの文字（声つき）。乗り終わったら、声が終わるのを待つ
+  if (e.kind !== 'stairs') await VO.idle();            // 前の声が終わってから、乗りものに乗る
   if (e.kind === 'stairs'){
     const pts = [from, ...e.pts.map(q => V3(q[0], q[1] + .33, q[2]))];
     pl.pos = toId; const to = slotPos(pl); pts.push(to);
@@ -7066,16 +7166,16 @@ async function travelEdge(pl, toId, e){
       p.y += Math.sin(Math.PI * ph) * .32; pl.obj.position.copy(p); faceAlong(pl, curve.getTangentAt(t)); camFollow(p, 1.05);
       if (k !== last){ last = k; sfx.step(); }
     });
-    if (MAP.big) VO.say('fl_' + NODE[toId].floor);      // 階段でほかの階に着いたら、その階の紹介
+    if (MAP.big) VO.cue('fl_' + NODE[toId].floor);      // 階段でほかの階に着いたら、その階の紹介（歩きながら聞く。次のできごとは、この声が終わってから）
   } else if (e.kind === 'slide'){
     const cp = e.curve.points, pts = [from, ...cp.slice(1, -1)];
     pl.pos = toId; const to = slotPos(pl); pts.push(to);
     const curve = new THREE.CatmullRomCurve3(pts);
-    sfx.whoosh(); banner(e.label || '🍭 キャンディすべり台！', 900);
+    sfx.whoosh(); bp = banner(e.label || '🍭 キャンディすべり台！', 900);
     await tween(Math.min(4200, Math.max(1700, curve.getLength() * 150)), t => { const u = Math.pow(t, 1.5), p = curve.getPointAt(u); pl.obj.position.copy(p); pl.obj.rotation.y = t * Math.PI * 6; camFollow(p, 1.1); b.scale.set(1.05, .9, 1.05); });
     b.scale.set(1, 1, 1);
   } else if (e.kind === 'tunnel'){
-    sfx.whoosh(); banner(e.label || '🧊 氷のトンネルへ！', 1000);
+    sfx.whoosh(); bp = banner(e.label || '🧊 氷のトンネルへ！', 1000);
     const hole = DG.holeIn.clone(); hole.y += .1;
     await tween(450, t => { pl.obj.position.lerpVectors(from, hole, t); pl.obj.position.y += Math.sin(Math.PI * t) * .8; camFollow(hole, .9); });
     await tween(420, t => { pl.obj.position.copy(hole); pl.obj.position.y -= t * 1.4; pl.obj.scale.setScalar(1 - t * .8); pl.obj.rotation.y += .3; });
@@ -7086,7 +7186,7 @@ async function travelEdge(pl, toId, e){
     pl.obj.scale.setScalar(1);
   } else if (e.kind === 'gondola'){
     const G = DG.gondola, plat = G.low.clone().add(V3(0, .3, 0));
-    banner(e.label || '🚡 魔法のゴンドラで<br>B1へ！', 1200); sfx.chime();
+    bp = banner(e.label || '🚡 魔法のゴンドラで<br>B1へ！', 1200); sfx.chime();
     await tween(500, t => { pl.obj.position.lerpVectors(from, plat, t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; camFollow(plat, 1.2); });
     const start = G.cable.getPointAt(0), seat = () => G.cab.position.clone().add(V3(0, -2.05, 0));
     G.cab.position.copy(start); G.cab.visible = true; G.cab.scale.setScalar(.01); G.line.visible = true;
@@ -7101,7 +7201,7 @@ async function travelEdge(pl, toId, e){
   else if (e.kind === 'geyser'){
     // 間欠泉：お湯の柱にのって、上の階まで吹き上げられる
     const G = DG.geyser, vent = G.pos.clone().add(V3(0, .35, 0));
-    banner(e.label || '♨️ 間欠泉で<br>上の階へ！', 1300);
+    bp = banner(e.label || '♨️ 間欠泉で<br>上の階へ！', 1300);
     await tween(500, t => { pl.obj.position.lerpVectors(from, vent, t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; camFollow(vent, 1.2); });
     pl.pos = toId; const to = slotPos(pl), H1 = to.y - G.pos.y + 3.2;
     G.col.visible = true; sfx.whoosh(); try { sfx.rumble(); } catch(err){}
@@ -7113,11 +7213,12 @@ async function travelEdge(pl, toId, e){
     tween(700, t => { const h = Math.max(.05, H1 * (1 - t)); G.col.scale.set(1, h, 1); G.col.position.set(G.pos.x, G.pos.y + h / 2, G.pos.z); }).then(() => { G.col.visible = false; });
   }
   pl.obj.position.copy(slotPos(pl)); others(pl);
+  if (bp) await bp;
   const tl = tileMeshes[pl.pos]; if (tl) tween(220, t => { tl.position.y = tl.userData.baseY - Math.sin(Math.PI*t) * .12; });
 }
 async function rideCart(pl, nd){
   const C = DG.cart; if (!C){ return; }
-  await banner('🚃 トロッコに乗って出発！', 900);
+  await VO.idle(); const bp = banner('🚃 トロッコに乗って出発！', 900);      // 声は、乗っているあいだに流す
   const from = pl.obj.position.clone(), inCart = () => C.position.clone().add(V3(0, .62, 0));
   await tween(400, t => { pl.obj.position.lerpVectors(from, inCart(), t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; });
   const s0 = DG.cartHome.clone(), s1 = DG.cartEnd.clone(); sfx.rumble();
@@ -7127,13 +7228,14 @@ async function rideCart(pl, nd){
   await tween(450, t => { pl.obj.position.lerpVectors(p0, to, t); pl.obj.position.y += Math.sin(Math.PI * t) * 1.0; });
   pl.obj.position.copy(to); others(pl);
   tween(1600, t => { C.position.lerpVectors(s1, s0, easeIO(t)); });
+  await bp;                           // 声が終わってから、止まったマスのできごとへ
   await land(pl);
 }
 async function fallHole(pl){
   const nd = NODE[pl.pos], fl = Math.min(MAP.floors ? Object.keys(MAP.floors).length : 3, (nd.floor || 1) + 1);
   const cands = Object.values(NODE).filter(n => n.type === 'q' && !n.noWarp && n.floor === fl && n.id !== pl.pos);
   const to = pick(cands);
-  await banner(`🕳️ 落とし穴！<br>${esc(pl.name)}さんが下の階へ！`, 1300);
+  await VO.idle(); const bp = banner(`🕳️ 落とし穴！<br>${esc(pl.name)}さんが下の階へ！`, 1300); await sleep(H.auto ? 500 : 900);      // 声は、落ちているあいだに流す
   const p0 = pl.obj.position.clone(); sfx.whoosh();
   await tween(500, t => { pl.obj.position.copy(p0); pl.obj.position.y -= t * 1.2; pl.obj.scale.setScalar(1 - t * .75); pl.obj.rotation.y += .35; });
   pl.pos = to.id; const dst = slotPos(pl); camFollow(dst, 1.1); await sleep(450);
@@ -7141,6 +7243,7 @@ async function fallHole(pl){
   await tween(650, t => { pl.obj.scale.setScalar(.25 + .75 * Math.min(1, t * 1.5)); pl.obj.position.lerpVectors(top, dst, t * t); });
   sfx.land(); ripple(to.p); pl.obj.scale.setScalar(1); pl.obj.position.copy(dst); others(pl);
   const b = pl.obj.userData.body; await tween(260, t => { const s = Math.sin(Math.PI * t) * .25; b.scale.set(1 + s, 1 - s, 1 + s); }); b.scale.set(1, 1, 1);
+  await bp;                           // 声が終わってから、落ちたマスのできごとへ
   await land(pl);
 }
 
@@ -7204,7 +7307,9 @@ async function eventSpace(pl){
   }
   else { const t = ri(1,5); pl.space = t; pl.double = true; renderHUD(); await banner(`📚 ボーナス問題！<br>${chipHTML(t)}<br>正解で ⭐ 2倍`, 1600); }
 }
-function startQuiz(){
+async function startQuiz(){
+  if (H.phase !== 'quizReady' || H.qGate) return;
+  H.qGate = true; try { await VO.idle(); } finally { H.qGate = false; }      // 前の声が終わってから、問題タイムを始める
   if (H.phase !== 'quizReady') return;
   snap(); H.phase = 'quiz'; H.t = 120; camOverview(); splash('問題タイム！', '自分の画面に問題が出ます'); sfx.jingle(); if (isCoop()) closeCard();
   H.quizId = Date.now() % 1000000000; H.endsAt = NET.now() + 120000; NETH.ans = {}; H.players.forEach(pl => { pl._ansShown = false; });
@@ -7229,9 +7334,12 @@ function drawTimer(){
   if (H.t <= 0){ e.textContent = '終了'; e.classList.add('end'); }
 }
 async function endQuiz(){
-  clearInterval(H.timer); if (H.phase !== 'quiz') return;
+  clearInterval(H.timer); if (H.phase !== 'quiz' || H.qEnd) return;
+  H.qEnd = true; H.busy = true; renderHUD();
+  try { await VO.idle(); } finally { H.qEnd = false; }      // 問題タイムの声（「のこり20秒！」など）が終わってから、答え合わせへ
+  if (H.phase !== 'quiz'){ H.busy = false; renderHUD(); return; }
+  H.phase = 'score'; H.endsAt = 0; renderHUD();
   BGM.setIntensity(0); BGM.play('main');
-  H.phase = 'score'; H.busy = true; H.endsAt = 0; renderHUD();
   if (NETH.offAns){ NETH.offAns(); NETH.offAns = null; }
   for (const pl of H.players){
     if (isBot(pl) || !needsQ(pl)) continue;
@@ -7289,6 +7397,7 @@ async function nextRound(){
   if (isCoop() && H.coop){ if (await coopRoundEnd()) return; }
   snap();
   if (H.round >= H.maxRound){ finishGame(); return; }
+  if (VO.speaking()){ H.busy = true; renderHUD(); try { await VO.idle(); } finally { H.busy = false; } }      // 声が終わってから、次のラウンドへ
   H.round++; H.phase = 'roll'; H.turn = 0; BGM.play('main');
   H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; pl._car = null; pl.carEv = null; });
   H.t = 120; drawTimer(); roundSplash(); if (isCoop()) closeCard();
@@ -7298,8 +7407,8 @@ async function nextRound(){
 function finishGame(){
   if (isCoop() && H.coop){
     const S = H.coop; if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return; }
-    H.phase = 'end'; H.auto = false; camOverview(); renderHUD(); BGM.play('boss');
-    banner(`🏗 さいごのラウンドが終わった！<br><small>幸せ度 ${Math.round(S.happy)} / 100　…あと ${Math.max(0, COOP_CFG.goal - Math.round(S.happy))}</small>`, 2400).then(() => banner(`👑 最後の大工事（ボス問題）に<br>みんなで挑戦しよう！<br><small>成功すると 😊 幸せ度 +${COOP_CFG.bossHappy}</small>`, 2600));
+    H.phase = 'end'; H.auto = false; H.busy = true; camOverview(); renderHUD(); BGM.play('boss');
+    banner(`🏗 さいごのラウンドが終わった！<br><small>幸せ度 ${Math.round(S.happy)} / 100　…あと ${Math.max(0, COOP_CFG.goal - Math.round(S.happy))}</small>`, 2400).then(() => $('#m-boss').classList.contains('on') ? null : banner(`👑 最後の大工事（ボス問題）に<br>みんなで挑戦しよう！<br><small>成功すると 😊 幸せ度 +${COOP_CFG.bossHappy}</small>`, 2600)).then(() => { H.busy = false; renderHUD(); });
     return;
   }
   H.phase = 'end'; H.auto = false; camOverview(); renderHUD();
@@ -7313,6 +7422,7 @@ function showResults(){
   if (isCoop() && H.coop){
     $('#resList').innerHTML = coopResultsHTML() + `<div class="resbtns"><button class="btn big gold" onclick="photoSession()">📸 みんなで記念写真</button><button class="btn big" onclick="makeCards()">🎴 思い出カードを作る</button></div><p class="resnote">できた画像はダウンロードして、Zoomのチャットに送れます</p>`;
     openModal('m-res'); if (H.coopEnd === 'win'){ confetti(); sfx.fanfare(); }
+    if (H.coopEnd) VO.cue('outro');   // さいごのお礼と先生の紹介は、ゲームが終わったあとの結果の画面が出た瞬間に（1ゲームに1回）。とちゅうで結果を見たときは流さない
     return;
   }
   const arr = [...H.players].sort((a,b) => b.stars - a.stars);
@@ -7416,7 +7526,7 @@ function saveSetup(){
 }
 function resetGame(){
   if (H.busy || H.asking) return;
-  snap(); clearInterval(H.timer);
+  VO.cut(); snap(); clearInterval(H.timer);
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
@@ -7427,7 +7537,7 @@ function resetGame(){
 /* ---- ボタン ---- */
 $('#mainBtn').onclick = mainAction;
 $('#watchBtn').onclick = () => { H.watch = !H.watch; renderHUD(); };
-$('#autoBtn').onclick = () => { initAudio(); H.auto = !H.auto; renderHUD(); if (H.auto){ if (H.phase === 'lobby') mainAction(); else if (H.phase === 'quizReady') startQuiz(); else if (H.phase === 'score' && !H.busy) nextRound(); } };
+$('#autoBtn').onclick = () => { initAudio(); H.auto = !H.auto; if (H.auto) VO.cut(); renderHUD(); if (H.auto){ if (H.phase === 'lobby') mainAction(); else if (H.phase === 'quizReady') startQuiz(); else if (H.phase === 'score' && !H.busy) nextRound(); } };
 $('#viewBtn').onclick = () => { H.view = !H.view; if (H.view) camOverview(); else if (H.players[H.turn] && H.phase === 'roll') camFollow(H.players[H.turn].obj.position, 1.1); renderHUD(); };
 $('#undoBtn').onclick = undo;
 $('#setupBtn').onclick = openSetup;
@@ -7579,6 +7689,7 @@ async function coopCareerTime(){
   BGM.play('town'); H.phase = 'career'; H.career = {id:CAREER.id, endsAt:CAREER.endsAt, wanted:w ? {job:w.job, card:CARD[w.card] ? CARD[w.card].name : '', yen:COOP.yen(S, COOP_CFG.wantYen), h:COOP_CFG.wantHappy} : null,
     opts:Object.fromEntries(Object.entries(rows).map(([k, r]) => [k, r.opts]))};
   renderHUD(); netPublish(true); sfx.jingle();
+  VO.cue('career');                   // 転職タイムの声は、転職の画面が出た瞬間に
   if (CAREER.off) CAREER.off();
   CAREER.off = NET.on(`rooms/${NETH.room}/career/${CAREER.id}`, v => {
     Object.entries(v || {}).forEach(([pk, o]) => { const r = CAREER.rows[pk]; if (!r || !o || isBot(r.pl)) return;
@@ -7592,6 +7703,7 @@ async function coopCareerTime(){
   let tick;
   await new Promise(resolve => { CAREER.done = resolve; tick = setInterval(() => { renderCareer(); if (CAREER.open && NET.now() >= CAREER.endsAt) resolve(); }, 500); careerCheck(); });
   clearInterval(tick); clearTimeout(CAREER.allT); timers.forEach(clearTimeout);
+  await VO.idle();                    // 声が終わってから、転職の画面をとじる
   CAREER.open = false; CAREER.done = null; if (CAREER.off){ CAREER.off(); CAREER.off = null; }
   $('#meet').classList.remove('on'); $('#meet').innerHTML = ''; renderCareer.last = ''; H.career = null;
   // 3) 早く決めた人から転職（求人のボーナスは先着1人）
@@ -7628,13 +7740,16 @@ async function showCardInner(r, i, n, C){
   C.classList.add('on'); sfx.whoosh();
   await sleep(fast ? 350 : 900);
   $('#ccIn').classList.add('flip'); await sleep(fast ? 450 : 900);
-  if (c.good) VO.say('good');
+  let voice = c.good ? VO.cue('good') : null;        // いいことの声は、カードがめくれた瞬間に
   // こまったことは、町で何が起きたかを絵で見せてから結果へ（カードはそのあいだかくす）
   if (!c.good && window.TroubleFx){
     await sleep(fast ? 200 : 650); C.classList.add('away');
-    const hp = r.by && r.by.pl;
-    const okG = !!r.by || !(r.dh || r.dy); VO.say('tr_' + c.id); setTimeout(() => VO.say(okG ? 'tr_guard' : 'tr_hit'), 2700);
-    try { await window.TroubleFx.play(c.id, {fast, guard: !!r.by || !(r.dh || r.dy), ic: c.ic, name: c.name, hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null}); } catch(e){ console.error('TroubleFx', e); }
+    const hp = r.by && r.by.pl, okG = !!r.by || !(r.dh || r.dy);
+    // こまったことの声は絵が出た瞬間に始める。絵は、その声が終わってから結果に進む。結果の声は、結果の絵が出た瞬間に始める
+    let ran = false;
+    try { ran = await window.TroubleFx.play(c.id, {fast, guard: okG, ic: c.ic, name: c.name, hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null,
+      wait1: VO.cue('tr_' + c.id), onOut: () => { voice = VO.cue(okG ? 'tr_guard' : 'tr_hit'); }}); } catch(e){ console.error('TroubleFx', e); }
+    if (!ran){ await VO.idle(); voice = VO.cue(okG ? 'tr_guard' : 'tr_hit'); }      // 絵を出さなかったときも、声は順番に
     C.classList.remove('away');
   }
   const res = $('#ccRes');
@@ -7644,7 +7759,6 @@ async function showCardInner(r, i, n, C){
     res.innerHTML = r.tickets ? '🎟️ 次のガチャタイムで使えるよ！' : '町のみんながよろこんでいる！'; res.classList.add('show', 'good');
     confetti3D(80, CONF_COLS.SR || ['#ffd23f'], 'rain');
   } else if (r.by){
-    await sleep(fast ? 150 : 500);
     const who = r.by.kind === 'proj' ? `${r.by.t}を<br>直しておいたので大丈夫！` : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${COOP.isVet(r.by.pl) ? 'ベテラン' : ''}${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
     res.innerHTML = who; res.classList.add('show', 'guard');
     const st = document.createElement('div'); st.className = 'cc-stamp dela'; st.textContent = 'ふせいだ！'; C.querySelector('.cc-front').appendChild(st);
@@ -7661,7 +7775,7 @@ async function showCardInner(r, i, n, C){
     $('#c').classList.remove('shake'); void $('#c').offsetWidth; $('#c').classList.add('shake');
   }
   syncTown();
-  await sleep(fast ? 1100 : r.wanted ? 3400 : 2600);
+  await Promise.all([sleep(fast ? 1100 : r.wanted ? 3400 : 2600), voice]);      // 結果の声が終わるまで、カードを出しておく
   C.classList.remove('on');
   await sleep(250);
 }
@@ -7728,6 +7842,7 @@ async function runVote(opts, k, law){
   BGM.play('town'); H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', lawP:law ? lawPct(law) : 0, opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0)}))};
   if (!voters().length && !H.auto){ VOTE.open = false; VOTE.teacher = true; }   // スマホで投票できる人がいないときは、町長（先生）がすぐ決める
   renderHUD(); netPublish(true);
+  VO.cue('meeting');                  // 町の会議の声は、投票の画面が出た瞬間に
   if (VOTE.off) VOTE.off();
   VOTE.off = NET.on(`rooms/${NETH.room}/vote/${VOTE.id}`, v => { VOTE.human = {}; Object.entries(v || {}).forEach(([pk, o]) => { const pl = H.players.find(p => pkey(p) === pk); if (pl && !isBot(pl)) VOTE.human[pk] = o; }); renderMeet(); checkAll(); });
   // コンピューターの投票（少しずつ）
@@ -7745,6 +7860,7 @@ async function runVote(opts, k, law){
     tick = setInterval(() => { renderMeet(); if (VOTE.open && NET.now() >= VOTE.endsAt){ resolve({close:true}); } }, 500);
   });
   clearInterval(tick); timers.forEach(clearTimeout);
+  await VO.idle();                    // 声が終わってから、投票の結果へ
   let pickId;
   if (res.id){ pickId = res.id; }
   else {
@@ -7835,7 +7951,8 @@ async function coopFinish(kind){
     const fc = NODE.T.p.clone().add(new THREE.Vector3(0, 9, -2));
     fireworkShow(scene, fc, 12, 22, 240); setTimeout(() => fireworkShow(scene, fc, 10, 26, 200), 2600);
     sfx.legend(); confetti();
-    await banner('🎄 こがね町に<br>明かりが戻った！', 3200);
+    const fwT = setInterval(() => { try { fireworkShow(scene, fc, 8, 20, 220); } catch(e){} }, 3400);      // みんなのお礼の声が流れているあいだ、花火を上げつづける
+    await banner('🎄 こがね町に<br>明かりが戻った！', 3200); clearInterval(fwT);
     await banner(`みんなの数学の力で<br>町が元気になりました！`, 2200);
   } else {
     BGM.play('lose');
@@ -8110,11 +8227,13 @@ const STORY = [
 ];
 const NARR = {};   // 物語の声：narration/vo/story_01.mp3 〜 story_10.mp3（9行めは story_09_6・_8・_10 とラウンド数ごと）。前の名前 narration/n01.mp3 でも読める
 function narrSrc(i, r){ const n = String(i + 1).padStart(2, '0'); return i === 8 ? [`narration/vo/story_09_${r}.mp3`, `narration/n09_${r}.mp3`, `narration/n09.mp3`] : [`narration/vo/story_${n}.mp3`, `narration/n${n}.mp3`]; }
-let narrProbe = null;
+let narrProbe = null, narrN = 0;
 function preloadNarr(){
-  // 1つめのファイルがあるときだけ、ほかも読みこむ（ないときは字幕だけで進む）。先生の画面を開いたときに先に読んでおく
-  if (narrProbe) return; narrProbe = true;
-  const load = (key, list, ok) => { if (!list.length) return; const a = new Audio(); a.preload = 'auto'; a.onloadedmetadata = () => { NARR[key] = a; if (ok) ok(); }; a.onerror = () => load(key, list.slice(1), ok); a.src = list[0]; };
+  // 1つめのファイルがあるときだけ、ほかも読みこむ（ないときは字幕だけで進む）。先生の画面を開いたときに先に読んでおく。
+  // 1つめが読めなかったら、15秒おいてもう一度（合わせて8回まで）
+  if (narrProbe) return; narrProbe = true; narrN++;
+  const load = (key, list, ok) => { if (!list.length){ if (key === 0 && narrN < 8) setTimeout(() => { narrProbe = null; }, 15000); return; }
+    loadClip(list[0], a => { NARR[key] = a; if (ok) ok(); }, () => load(key, list.slice(1), ok), key === 0 ? 6 : 3); };
   load(0, narrSrc(0), () => { STORY.forEach((_, i) => { if (i && i !== 8) load(i, narrSrc(i)); }); [6, 8, 10].forEach(r => load('8_' + r, narrSrc(8, r))); });
 }
 function waitSkip(ms){ return new Promise(res => { const t0 = performance.now(); const f = () => { if (showSkip || performance.now() - t0 >= ms) res(); else requestAnimationFrame(f); }; requestAnimationFrame(f); }); }
@@ -8142,7 +8261,13 @@ async function storyShow(strike, pc, lc){
   requestAnimationFrame(drift);
   await waitSkip(900);
   for (let i = 0; i < STORY.length && !showSkip; i++){
-    if (i === 5){ moving = false; const el = $('#stLine'); el.textContent = STORY[i]; el.classList.add('on'); const a = NARR[i]; if (a && !MUTE){ try { a.currentTime = 0; await a.play(); } catch(e){} } await waitSkip(1300); const sp = strike(); setTimeout(brighten, 700); await sp; await waitSkip(600); el.classList.remove('on'); await waitSkip(300); continue; }
+    if (i === 5){ moving = false; const el = $('#stLine'); el.textContent = STORY[i]; el.classList.add('on'); const a = NARR[i], t0 = performance.now(); let ms = 0;
+      if (a && !MUTE){ try { a.currentTime = 0; a.volume = 1; await a.play(); ms = (a.duration || 0) * 1000; } catch(e){} }
+      await waitSkip(Math.max(1300, ms - 2000));                                   // 「大きな雷が落ちました」と言うころに、雷を落とす
+      const sp = strike(); setTimeout(brighten, 700); await sp;
+      await waitSkip(Math.max(600, ms + 450 - (performance.now() - t0)));          // 声が終わるまで待ってから、次の行へ（次の声と重ならないように）
+      if (a){ try { a.pause(); } catch(e){} }
+      el.classList.remove('on'); await waitSkip(300); continue; }
     await storyLine(i);
   }
   moving = false; St.classList.remove('on'); $('#stLine').classList.remove('on');
@@ -8537,6 +8662,7 @@ function burstStage(at, lv){
 async function gachaTime(){
   const list = H.players.filter(p => p.tickets > 0); if (!list.length) return;
   H.phase = 'gacha'; H.busy = true; GS.fast = H.auto; renderHUD();
+  await VO.idle();
   const prevSong = BGM.current(); BGM.play('gacha');
   const cover = $('#cover'); cover.classList.add('on'); await sleep(450);
   enterStage(); curtainSet(0); GS.cam.position.set(0, 4.5, 15); GS.camTarget = null;
@@ -8546,6 +8672,7 @@ async function gachaTime(){
   await gTween(1500, t => curtainSet(easeIO(t)));
   confetti3D(120, CONF_COLS.LR, 'cannonL'); confetti3D(120, CONF_COLS.LR, 'cannonR'); sfx.applause(1.8, .8);
   await gWait(900);
+  await VO.idle();                    // 「ガチャタイム！」の声が終わってから、ガチャを回しはじめる
   for (const pl of list){
     while (pl.tickets > 0){ await pullFor(pl); }
   }
@@ -8942,6 +9069,7 @@ BGM.play('title'); hostRoom(); NET.onConn(() => { renderInvite(); renderWatch();
 $('#inviteBtn').onclick = openInvite;
 { const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss');
   const co = isCoop() && H.coop && !H.coopEnd && H.phase === 'end';
+  if (co) VO.cue('bossq');            // 「この式はね…」の説明は、式が画面に出た瞬間に（1ゲームに1回）
   $('#bossTitle').textContent = co ? '🏗 最後の大工事（ボス問題）― みんなで協力！' : '👑 さいごのボス問題（みんなで協力！）';
   $('#bossCoop').innerHTML = co ? `<p>みんなで5組ぜんぶ見つけられたら、大工事は成功！（😊 幸せ度 +${COOP_CFG.bossHappy}）</p><div class="bcbtns"><button class="btn big gold" onclick="coopBoss(true)">🎉 みんなで解けた！ 大工事成功</button><button class="btn big" onclick="coopBoss(false)">😢 時間切れ… 大工事は失敗</button></div>` : ''; }; }
 $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && BGM.has('finale') ? 'finale' : isCoop() && H.coopEnd !== 'win' ? 'lose' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
