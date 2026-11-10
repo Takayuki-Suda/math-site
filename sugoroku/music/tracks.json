@@ -1,0 +1,79 @@
+{
+ "vol": 1,
+ "tracks": {
+  "title": {
+   "gain": 0.282,
+   "end": 84
+  },
+  "story": {
+   "gain": 0.8,
+   "once": true,
+   "ls": 0.3
+  },
+  "opening": {
+   "gain": 0.382,
+   "once": true,
+   "in": 0.05
+  },
+  "main": {
+   "gain": 0.27,
+   "ls": 1.0,
+   "end": 116
+  },
+  "main2": {
+   "gain": 0.356
+  },
+  "quiz": {
+   "gain": 0.347
+  },
+  "quiz_hot": {
+   "gain": 0.416,
+   "once": true,
+   "ls": 18,
+   "in": 0.3
+  },
+  "gacha": {
+   "gain": 0.289,
+   "in": 0.2
+  },
+  "shop": {
+   "gain": 0.272,
+   "in": 0.3
+  },
+  "town": {
+   "gain": 0.265,
+   "in": 0.3
+  },
+  "trouble": {
+   "gain": 0.41,
+   "ls": 0.6,
+   "end": 58.5
+  },
+  "boss": {
+   "gain": 0.414,
+   "end": 105.2,
+   "in": 0.2
+  },
+  "win": {
+   "gain": 0.399,
+   "once": true,
+   "next": "finale",
+   "ls": 1.2,
+   "end": 47.5,
+   "in": 0.05,
+   "dk": 0.7
+  },
+  "finale": {
+   "gain": 0.55,
+   "end": 160,
+   "xf": 3,
+   "dk": 0.45
+  },
+  "lose": {
+   "gain": 0.56,
+   "once": true,
+   "next": "finale",
+   "end": 43
+  }
+ }
+}
