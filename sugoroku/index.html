@@ -2001,7 +2001,7 @@ sfx.legend = () => { if (!playBaked('legend')) sfx._live.legend(); };
 sfx.boom = () => { if (!playBaked('boom', .9 + Math.random() * .2)) sfx._live.boom(); };
 sfx.cheer = () => { if (!playBaked('cheer')) sfx._live.cheer(); };
 function toggleMute(){ MUTE = !MUTE; $('#muteBtn').textContent = MUTE ? '🔇' : '🔊'; }
-function toggleBgm(){ initAudio(); const on = BGM.toggle(); $('#bgmBtn').classList.toggle('off', !on); $('#bgmBtn').title = on ? 'BGMを止める' : 'BGMを流す'; }
+function toggleBgm(){ initAudio(); const r = BGM.cycle(), b = $('#bgmBtn'); b.classList.toggle('off', !r.on); b.textContent = '🎵' + r.tag; b.title = !r.on ? 'BGMを流す' : BGM.has('title') ? '音楽の大きさ（押すと 大 → 中 → 小 → オフ）' : 'BGMを止める'; }
 function dieHTML(n, rolling){
   const pos = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]}[n] || [];
   let s = `<div class="die ${n===1?'r1':''} ${rolling?'roll':''}">`;
@@ -2011,10 +2011,73 @@ function dieHTML(n, rolling){
 
 /* ============ 問題（中学） ============ */
 
+/* ============ 録音した曲（music/ に曲があるときだけ・先生の画面だけ）。曲がないときは、下の「ブラウザの中で演奏」の曲が流れる ============
+   music/tracks.json … {"vol": 全体の音量, "tracks": {"title": {"gain": 曲ごとの音量, "once": くり返さない, "next": 終わったら流す曲, "in": 入りの秒数, "ls": 曲の頭（秒。はじめの無音をとばす）, "end": 曲の終わり（秒。ここから先の消えていく部分は使わない）, "xf": くり返しのつなぎ（秒）, "dk": 声が出ているあいだ下げる強さ（1＝ふつう、0＝下げない）}}} */
+const FM = (() => {
+  const DIR = 'music/', pre = {};
+  let T = null, asked = false, vol = .5, user = 1, live = [], cur = null, duckT = 1, duckV = 1, timer = null, last = 0, blocked = false, onReady = null, onNext = null;
+  const host = () => document.body.classList.contains('hostmode');
+  function load(){
+    if (asked || !host() || location.protocol === 'file:' || typeof fetch === 'undefined') return; asked = true;
+    fetch(DIR + 'tracks.json', {cache:'no-cache'}).then(r => r.ok ? r.json() : null).then(d => {
+      if (!d || !d.tracks) return; T = d.tracks; if (d.vol) vol = d.vol;
+      warm(Object.keys(T)); if (onReady) onReady();
+    }).catch(() => {});
+  }
+  // 曲を1つずつ先に読みこんでおく（場面が変わったときに、すぐ鳴るように）
+  function warm(names){
+    const n = names.find(k => !pre[k]); if (!n) return;
+    const a = new Audio(); a.preload = 'auto'; pre[n] = a; let ok = false;
+    const nx = () => { if (ok) return; ok = true; warm(names); }; a.oncanplaythrough = nx; a.onerror = nx; setTimeout(nx, 8000);
+    a.src = DIR + n + '.mp3';
+  }
+  function start(name, at, inRate = 0, outRate = 1 / 1.2){
+    const t = T[name]; if (at == null) at = t.ls || 0; live.forEach(p => { if (p.to !== 0){ p.to = 0; p.rate = outRate; } });
+    const a = pre[name] && !pre[name].__used ? pre[name] : new Audio(DIR + name + '.mp3'); a.__used = true; a.preload = 'auto'; a.volume = 0;
+    const p = {name, a, t, f:0, to:1, rate:inRate || 1 / (t.in || .6)};
+    const seek = () => { try { if (at > 0 && a.currentTime < at - .3) a.currentTime = at; } catch(e){} };      // 曲の頭（ls）から始める
+    if (a.readyState >= 1) seek(); else a.addEventListener('loadedmetadata', seek, {once:true});
+    a.onended = () => { if (cur !== p) return;
+      if (!t.once) start(name, t.ls || 0, 1 / .3);                      // つなぎが間に合わなかったときも、止まらずにくり返す
+      else { p.to = 0; p.f = 0; if (t.next && !p.chained){ p.chained = true; if (onNext) onNext(t.next); } } };
+    const pl = a.play(); if (pl && pl.catch) pl.catch(() => { blocked = true; });
+    live.push(p); cur = p; if (!timer){ last = performance.now(); timer = setInterval(tick, 40); }
+  }
+  function tick(){
+    const now = performance.now(), dt = Math.min(.5, Math.max(0, (now - last) / 1000)); last = now;
+    duckV += Math.sign(duckT - duckV) * Math.min(Math.abs(duckT - duckV), dt * 2.2);
+    live = live.filter(p => {
+      p.f += Math.sign(p.to - p.f) * Math.min(Math.abs(p.to - p.f), dt * p.rate);
+      if (p.to === 0 && p.f <= 0){ try { p.a.pause(); } catch(e){} return false; }
+      try { p.a.volume = Math.max(0, Math.min(1, p.f * (p.t.gain || 1) * vol * user * (1 - (1 - duckV) * (p.t.dk == null ? 1 : p.t.dk)))); } catch(e){}
+      return true;
+    });
+    const c = cur;
+    if (c && c.to === 1 && isFinite(c.a.duration) && c.a.duration > 0){
+      const left = (c.t.end || c.a.duration) - c.a.currentTime, xf = c.t.xf || 2.5;
+      if (c.t.once){ if (c.t.next && left < 3 && !c.chained){ c.chained = true; if (onNext) onNext(c.t.next); } }
+      else if (left < xf) start(c.name, c.t.ls || 0, 1 / xf, 1 / xf);    // 曲の終わりと頭を重ねて、切れ目なくくり返す
+    }
+    if (!live.length){ clearInterval(timer); timer = null; }
+  }
+  return {
+    load, has:n => !!(T && T[n] && host()),
+    play(name){ if (cur && cur.name === name && cur.to === 1 && !cur.a.ended){ this.kick(); return; } start(name); },
+    stop(){ live.forEach(p => { p.to = 0; p.rate = 2; }); cur = null; },
+    kick(){ if (blocked && cur){ blocked = false; const pl = cur.a.play(); if (pl && pl.catch) pl.catch(() => { blocked = true; }); } },
+    duck(on){ duckT = on ? .45 : 1; },
+    user(k){ user = k; },
+    current:() => cur ? cur.name : '',
+    _cur:() => cur && cur.a,
+    hook(ready, next){ onReady = ready; onNext = next; },
+    _dbg:() => ({cur:cur ? cur.name : '', duck:+duckV.toFixed(2), live:live.map(p => ({n:p.name, f:+p.f.toFixed(2), v:+p.a.volume.toFixed(3), t:+p.a.currentTime.toFixed(1), paused:p.a.paused}))}),
+  };
+})();
+
 /* ============ BGM（オリジナル曲・ブラウザの中で演奏） ============ */
 const BGM = (() => {
   let A = null, out = null, revIn = null, noiseBuf = null;
-  let cur = null, curName = '', enabled = true, timer = null, intensity = 0;
+  let cur = null, curName = '', enabled = true, timer = null, intensity = 0, fileOn = false, lv = 0;   // fileOn：録音した曲（FM）を流している
   const BUF = {}, LOOK = MOBILE_UA ? .4 : .25;   // 先に作っておいた曲（音とびしない）
   const VOL = .3;
   const NOTE = {C:0, D:2, E:4, F:5, G:7, A:9, B:11};
@@ -2305,6 +2368,7 @@ const BGM = (() => {
     return {name:curName, key, buf:true, src, g, t0:t - offset};
   }
   function start(force){
+    if (fileOn) return;
     if (!enabled || !curName || typeof actx === 'undefined' || !actx) return;
     if (A !== actx) setupCtx(actx);
     if (!force && cur && cur.name === curName && (!cur.buf || cur.key === bufKey(curName))) return;
@@ -2393,14 +2457,42 @@ const BGM = (() => {
       await new Promise(r => (window.requestIdleCallback ? requestIdleCallback(r, {timeout:1200}) : setTimeout(r, 300)));
     }
   }
+  /* 録音した曲（FM）があるときは、そちらを流す */
+  const FALL = {lose:'title'};
+  function filePlay(name){
+    FM.load();
+    const r = api.resolve ? api.resolve(name) : name, fn = FM.has(r) ? r : FM.has(name) ? name : '';
+    if (!fn) return false;
+    curName = name; fileOn = true; stopCur(); if (enabled) FM.play(fn);
+    return true;
+  }
+  FM.hook(() => { if (curName && enabled) filePlay(curName); }, n => { if (fileOn) filePlay(n); });
   const api = {
-    play(name){ if (!SONGS[name]) return; if (name !== curName){ curName = name; if (name !== 'quiz') intensity = 0; } start(); },
-    kick(){ start(); },
-    stop(){ curName = ''; stopCur(); },
+    play(name){
+      if (filePlay(name)) return;                                  // 録音した曲があれば、そちらを流す
+      name = SONGS[name] ? name : FALL[name]; if (!name) return;    // 曲のない場面は、今の曲のまま
+      if (fileOn){ fileOn = false; FM.stop(); }
+      if (name !== curName){ curName = name; if (name !== 'quiz') intensity = 0; } start(); },
+    kick(){ if (fileOn) FM.kick(); else start(); },
+    stop(){ curName = ''; stopCur(); fileOn = false; FM.stop(); },
     current:() => curName,
-    setIntensity(v){ const ch = (v > 0) !== (intensity > 0); intensity = v; if (ch && cur && cur.buf && curName === 'quiz') start(); },
+    has:n => FM.has(n),
+    resolve:null,                                                  // 場面の名前 → 曲の名前（すごろくの後半は main2、など）。ゲーム側で入れる
+    duck(on){ FM.duck(on); try { if (out && A && typeof actx !== 'undefined' && A === actx) out.gain.setTargetAtTime(VOL * (on ? .55 : 1), A.currentTime, .12); } catch(e){} },   // 声が出ているあいだは音楽を下げる
+    setIntensity(v){
+      if (fileOn){ intensity = v; if (v > 0 && curName === 'quiz' && FM.has('quiz_hot')) FM.play('quiz_hot'); return; }
+      const ch = (v > 0) !== (intensity > 0); intensity = v; if (ch && cur && cur.buf && curName === 'quiz') start(); },
     prerenderAll, loadData, ready:() => Object.keys(BUF), _buf:k => BUF[k] && BUF[k].buffer, _renderLoop:renderLoop,
-    toggle(){ enabled = !enabled; if (enabled) start(); else stopCur(); return enabled; },
+    toggle(){ enabled = !enabled; if (enabled){ if (fileOn) filePlay(curName); else start(); } else { stopCur(); FM.stop(); } return enabled; },
+    // 音楽ボタン：録音した曲のときは 大 → 中 → 小 → オフ と変わる。そうでないときは オン・オフ
+    cycle(){
+      if (!fileOn) return {on:api.toggle(), tag:''};
+      lv = (lv + 1) % 4;
+      if (lv === 3){ enabled = false; stopCur(); FM.stop(); return {on:false, tag:''}; }
+      FM.user([1, .6, .35][lv]); if (!enabled){ enabled = true; filePlay(curName); }
+      return {on:true, tag:['', '中', '小'][lv]};
+    },
+    _file:() => FM._dbg(),
     get enabled(){ return enabled; },
     async renderOffline(name, sec){
       const ctx = new OfflineAudioContext(2, Math.floor(44100 * sec), 44100);
@@ -6333,13 +6425,13 @@ const VO = (() => {
   function box(){ if (!el){ el = document.createElement('div'); el.id = 'vo'; el.setAttribute('aria-live', 'polite');
       el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
       document.body.appendChild(el); } return el; }
-  function stop(){ q = []; if (cur) try { cur.pause(); } catch(e){} cur = null; busy = false; if (el) el.style.opacity = '0'; }
+  function stop(){ q = []; if (cur) try { cur.pause(); } catch(e){} cur = null; busy = false; if (el) el.style.opacity = '0'; BGM.duck(false); }
   function next(){
-    if (busy) return; const id = q.shift(); if (!id){ if (el) el.style.opacity = '0'; return; }
+    if (busy) return; const id = q.shift(); if (!id){ if (el) el.style.opacity = '0'; BGM.duck(false); return; }
     busy = true; const w = WHO[L[id][0]], b = box(), a = new Audio(DIR + id + '.mp3'); cur = a; let fin = false;
     const end = () => { if (fin) return; fin = true; if (cur === a){ cur = null; busy = false; setTimeout(next, 200); } };
     a.onended = end; a.onerror = end;     // 音声がない行は、字幕も出さずにとばす
-    a.onplaying = () => { b.innerHTML = `<b style="color:${w[2]};margin-right:.6em">${w[0]} ${w[1]}</b>${L[id][1]}`; b.style.borderColor = w[2]; b.style.opacity = '1'; };
+    a.onplaying = () => { BGM.duck(true); if (id === 'outro_exp1' && BGM.has('finale')) BGM.play('finale'); b.innerHTML = `<b style="color:${w[2]};margin-right:.6em">${w[0]} ${w[1]}</b>${L[id][1]}`; b.style.borderColor = w[2]; b.style.opacity = '1'; };
     setTimeout(end, 16000); a.play().catch(end);
   }
   function say(key){
@@ -6846,7 +6938,7 @@ async function nextRound(){
   if (isCoop() && H.coop){ if (await coopRoundEnd()) return; }
   snap();
   if (H.round >= H.maxRound){ finishGame(); return; }
-  H.round++; H.phase = 'roll'; H.turn = 0;
+  H.round++; H.phase = 'roll'; H.turn = 0; BGM.play('main');
   H.players.forEach(pl => { pl.space = null; pl.res = null; pl.resStar = null; pl.double = false; pl.plan = null; pl.netAuto = false; pl.lastYen = null; pl.lastWhy = null; pl._car = null; pl.carEv = null; });
   H.t = 120; drawTimer(); roundSplash(); if (isCoop()) closeCard();
   camFollow(H.players[0].obj.position, 1.1);
@@ -7133,7 +7225,7 @@ async function coopCareerTime(){
   Object.assign(CAREER, {id:(Date.now() % 1e9), open:true, rows, endsAt:NET.now() + secs * 1000});
   renderCareer.last = '';
   const w = S.wanted;
-  H.phase = 'career'; H.career = {id:CAREER.id, endsAt:CAREER.endsAt, wanted:w ? {job:w.job, card:CARD[w.card] ? CARD[w.card].name : '', yen:COOP.yen(S, COOP_CFG.wantYen), h:COOP_CFG.wantHappy} : null,
+  BGM.play('town'); H.phase = 'career'; H.career = {id:CAREER.id, endsAt:CAREER.endsAt, wanted:w ? {job:w.job, card:CARD[w.card] ? CARD[w.card].name : '', yen:COOP.yen(S, COOP_CFG.wantYen), h:COOP_CFG.wantHappy} : null,
     opts:Object.fromEntries(Object.entries(rows).map(([k, r]) => [k, r.opts]))};
   renderHUD(); netPublish(true); sfx.jingle();
   if (CAREER.off) CAREER.off();
@@ -7155,7 +7247,7 @@ async function coopCareerTime(){
   const picks = Object.values(CAREER.rows).filter(r => r.pick && r.pick !== 'stay').sort((a, b) => a.at - b.at), done = [];
   picks.forEach(r => { const o = r.opts.find(x => x.job === r.pick); const x = o && COOP.changeJob(S, r.pl, r.pick, o.via); if (x) done.push(x); });
   CAREER.rows = {};
-  H.phase = 'meeting'; renderHUD(); renderTown();
+  H.phase = 'meeting'; BGM.play('town'); renderHUD(); renderTown();
   if (done.length){
     sfx.shop();
     for (const x of done){ await banner(careerChangeHTML(x), H.auto ? 1100 : 1900); syncTown(); }
@@ -7282,7 +7374,7 @@ async function runVote(opts, k, law){
   Object.assign(VOTE, {id:(Date.now() % 1e9), opts, human:{}, bot:{}, open:true, law, k, tie:null, teacher:false});
   const secs = H.auto ? 4 : k ? 20 : 30;
   VOTE.endsAt = NET.now() + secs * 1000;
-  H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', lawP:law ? lawPct(law) : 0, opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0)}))};
+  BGM.play('town'); H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', lawP:law ? lawPct(law) : 0, opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0)}))};
   if (!voters().length && !H.auto){ VOTE.open = false; VOTE.teacher = true; }   // スマホで投票できる人がいないときは、町長（先生）がすぐ決める
   renderHUD(); netPublish(true);
   if (VOTE.off) VOTE.off();
@@ -7348,7 +7440,7 @@ async function buildShow(pid, law){
 }
 async function coopCards(){
   const S = H.coop, n = H.round <= 2 ? 1 : 2, used = {fire:0, police:0};
-  H.phase = 'cards'; renderHUD(); netPublish(true);
+  H.phase = 'cards'; BGM.play('trouble'); renderHUD(); netPublish(true);
   await banner(`📜 こがね町のできごと<br><small>カードを${n}枚ひきます</small>`, H.auto ? 800 : 1300);
   for (let i = 0; i < n; i++){
     const c = COOP.drawCard(S), r = COOP.resolve(S, H.players, c, used);
@@ -7395,7 +7487,7 @@ async function coopFinish(kind){
     await banner('🎄 こがね町に<br>明かりが戻った！', 3200);
     await banner(`みんなの数学の力で<br>町が元気になりました！`, 2200);
   } else {
-    BGM.play('title');
+    BGM.play('lose');
     if (S.happy <= 0){ await banner('😢 町の人たちが<br>町を出ていってしまった…', 2800); }
     else { await banner(`🌙 あと少し…<br><small>幸せ度 ${Math.round(S.happy)} / 100</small>`, 2600); }
     await banner('でも、みんなが直した場所には<br>ちゃんと明かりが灯っている！', 2400);
@@ -7686,7 +7778,7 @@ async function storyLine(i){
   el.classList.remove('on'); await waitSkip(320);
 }
 async function storyShow(strike, pc, lc){
-  const St = $('#story'); St.classList.add('on'); preloadNarr(); VO.stop();   // 物語のあいだは、司会たちのひとことを止める
+  const St = $('#story'); St.classList.add('on'); preloadNarr(); VO.stop(); BGM.play('story');   // 物語のあいだは、司会たちのひとことを止める
   // はじめは暗い町。雷のあと、金色の光といっしょに明るくなる
   const L0 = {h:hemi.intensity, m:moon.intensity, e:renderer.toneMappingExposure};
   const dark = k => { hemi.intensity = L0.h * k; moon.intensity = L0.m * k; renderer.toneMappingExposure = L0.e * (.75 + .25 * k); };
@@ -8501,9 +8593,9 @@ $('#inviteBtn').onclick = openInvite;
   const co = isCoop() && H.coop && !H.coopEnd && H.phase === 'end';
   $('#bossTitle').textContent = co ? '🏗 最後の大工事（ボス問題）― みんなで協力！' : '👑 さいごのボス問題（みんなで協力！）';
   $('#bossCoop').innerHTML = co ? `<p>みんなで5組ぜんぶ見つけられたら、大工事は成功！（😊 幸せ度 +${COOP_CFG.bossHappy}）</p><div class="bcbtns"><button class="btn big gold" onclick="coopBoss(true)">🎉 みんなで解けた！ 大工事成功</button><button class="btn big" onclick="coopBoss(false)">😢 時間切れ… 大工事は失敗</button></div>` : ''; }; }
-$('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && H.coopEnd !== 'win' ? 'title' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
+$('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && BGM.has('finale') ? 'finale' : isCoop() && H.coopEnd !== 'win' ? 'lose' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
-setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
+setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.resolve = n => n === 'main' && H.phase !== 'setup' && H.phase !== 'lobby' && H.round > Math.floor(H.maxRound / 2) ? 'main2' : n; BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
 window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
   pawns:{makePawn, removePawn, placeAll, camFollow}, charShot:(k, size = 360, ry = -.4) => { const tr = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true}); tr.setSize(size, size); tr.toneMapping = THREE.ACESFilmicToneMapping; tr.toneMappingExposure = 1.05;
     const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight('#cfe0ff', '#40507a', 1.1)); const dl = new THREE.DirectionalLight('#ffffff', 2.2); dl.position.set(2, 4, 5); sc.add(dl);
