@@ -685,6 +685,73 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
   .pchip .tk{display:none}
   .gSkip{top:104px;right:10px}
 }
+
+/* ===== 幕あけ・幕おろし（カーテン・舞台の手前のオーケストラ・エンドロール） =====
+   下から：カーテン → エンドロールの文字 → 舞台の手前の床とオーケストラ → ボタンと文字。使っていないあいだは、カーテンとオーケストラの絵は消してある */
+.home.off{display:none}
+#curtainFx{position:fixed;inset:0;width:100%;height:100%;z-index:44;pointer-events:none;display:none}
+#pitFx{position:fixed;left:0;bottom:0;width:100%;z-index:46;pointer-events:none;will-change:transform;display:none}
+.sg-ui{position:fixed;inset:0;z-index:47;pointer-events:none}
+.sg-ui.block{pointer-events:auto}
+/* 幕の前の看板と「開演」ボタン */
+.sg-bill{position:absolute;left:50%;top:clamp(74px,22vh,230px);width:min(94vw,760px);transform:translateX(-50%);text-align:center;transition:opacity .3s ease,transform .5s ease}
+.sg-bill.gone{opacity:0;transform:translateX(-50%) scale(1.1);pointer-events:none;visibility:hidden;transition:opacity .3s ease,transform .5s ease,visibility 0s .5s}
+.sg-bill .b0{display:inline-block;padding:4px 18px;border-radius:999px;background:rgba(40,4,12,.6);border:1px solid rgba(255,226,140,.55);color:#ffe9a6;font-weight:700;font-size:clamp(13px,min(3.6vw,2.3vh),20px);letter-spacing:.14em}
+.sg-bill .b1{margin:.3em 0 0;font-size:clamp(34px,min(11vw,10.5vh),96px);line-height:1.15;white-space:nowrap;color:#ffd84d;text-shadow:0 .05em 0 #c9820f,0 .1em 0 #7a4705,0 .16em .22em rgba(0,0,0,.6),0 0 .5em rgba(255,200,80,.35)}
+.sg-open{pointer-events:auto;position:relative;overflow:hidden;display:inline-block;margin:clamp(16px,4vh,40px) auto 0;padding:clamp(12px,2.2vh,18px) clamp(52px,10vw,84px);font-size:clamp(26px,min(8vw,4.8vh),38px);letter-spacing:.3em;text-indent:.3em;color:#2a1e00;background:linear-gradient(180deg,#fff0a0,#ffd24a 45%,#f5a822);border:none;border-radius:999px;box-shadow:0 8px 0 #b07a10,0 14px 28px rgba(0,0,0,.45),0 0 0 0 rgba(255,214,90,.6);cursor:pointer;animation:startPulse 2.2s ease-in-out infinite}
+.sg-open::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-60%;width:38%;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));transform:skewX(-20deg);animation:startShine 3.2s ease-in-out 1s infinite}
+.sg-open:active{transform:translateY(6px);box-shadow:0 2px 0 #b07a10,0 6px 14px rgba(0,0,0,.4);animation:none}
+.sg-bill .b2{margin:clamp(12px,2.4vh,22px) 0 0;color:#ffe9c9;font-weight:700;font-size:clamp(12px,min(3.4vw,2vh),16px);text-shadow:0 1px 4px rgba(0,0,0,.7)}
+@media (orientation:landscape) and (max-height:500px){.sg-bill{top:20vh}.sg-bill .b1{font-size:clamp(28px,13vh,56px)}.sg-open{margin-top:10px;padding:8px 46px;font-size:22px}.sg-bill .b2{display:none}}
+/* ほかの町の人のふきだし・ノエルの字幕・大きな文字・さいごのボタン */
+.sg-bub{position:absolute;left:0;top:0;max-width:min(60vw,430px);padding:10px 16px;border-radius:18px;background:#fffdf5;border:3px solid #2a2145;color:#2a2145;font-weight:700;font-size:clamp(14px,min(3.9vw,2.6vh),22px);line-height:1.45;box-shadow:0 6px 0 rgba(0,0,0,.25);opacity:0;scale:.6;transform-origin:var(--tx,50%) 100%;transition:opacity .16s,scale .22s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
+.sg-bub.on{opacity:1;scale:1}
+.sg-bub::after{content:"";position:absolute;left:var(--tx,50%);bottom:-13px;width:18px;height:18px;margin-left:-9px;background:#fffdf5;border-right:3px solid #2a2145;border-bottom:3px solid #2a2145;transform:rotate(45deg) skew(8deg,8deg)}
+.sg-bub,.sg-vo,.sg-big small,.sg-chip,#endRoll .er-line,#endRoll .er-fact,#endRoll .er-who i{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+.sg-vo{position:absolute;left:50%;top:clamp(70px,17vh,170px);transform:translateX(-50%);width:max-content;max-width:min(920px,88vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffb3de;color:#fff;font-weight:700;font-size:clamp(15px,min(4vw,2.6vh),26px);line-height:1.5;text-align:center;opacity:0;transition:opacity .25s;pointer-events:none}
+.sg-vo.on{opacity:1}
+.sg-vo b{color:#ffb3de;margin-right:.5em;white-space:nowrap}
+.sg-big{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:max-content;max-width:94vw;text-align:center;font-size:clamp(28px,min(9vw,8.6vh),78px);line-height:1.25;color:#ffd84d;text-shadow:0 .05em 0 #c9820f,0 .1em 0 #7a4705,0 .16em .22em rgba(0,0,0,.6),0 0 .6em rgba(255,200,80,.4);opacity:0;scale:.7;transition:opacity .35s,scale .5s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+.sg-big.on{opacity:1;scale:1}
+.sg-big small{display:block;margin-top:.5em;font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:.36em;letter-spacing:.04em;color:#fff3cf;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+.sg-end{position:absolute;left:50%;top:calc(44% + clamp(70px,13vh,130px));transform:translateX(-50%);display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:94vw;opacity:0;transition:opacity .5s;pointer-events:none}
+.sg-end.on{opacity:1}
+.sg-end.on button{pointer-events:auto}
+.sg-end button,.sg-quit{padding:9px 18px;border-radius:999px;border:2px solid rgba(255,226,140,.6);background:rgba(40,4,12,.72);color:#ffe9a6;font-weight:700;font-size:clamp(13px,2.2vh,17px)}
+.sg-quit{position:absolute;right:10px;top:10px;padding:5px 13px;font-size:13px;border-width:1px;background:rgba(6,11,36,.6);color:#cfd8f5;border-color:rgba(255,255,255,.3);opacity:0;pointer-events:none;transition:opacity .4s}
+.sg-quit.on{opacity:.75;pointer-events:auto}
+.sg-quit.on:hover{opacity:1}
+.sg-chip{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 20px);padding:6px 16px;border-radius:999px;background:rgba(6,11,36,.88);border:1px solid rgba(255,226,140,.5);color:#ffe9a6;font-size:14px;font-weight:700;opacity:0;transition:opacity .4s;pointer-events:none}
+.sg-chip.on{opacity:1}
+/* エンドロール（幕の上を、下から上へ流れる。オーケストラのうしろから出てくる） */
+#endRoll{position:fixed;inset:0;z-index:45;overflow:hidden;pointer-events:none;opacity:0;visibility:hidden;transition:opacity 1s,visibility 0s 1s;
+  -webkit-mask-image:linear-gradient(to bottom,transparent var(--m0,6%),#000 var(--m1,17%),#000 var(--m2,60%),transparent var(--m3,70%));mask-image:linear-gradient(to bottom,transparent var(--m0,6%),#000 var(--m1,17%),#000 var(--m2,60%),transparent var(--m3,70%))}
+#endRoll.on{opacity:1;visibility:visible;transition:opacity 1s}
+#endRoll .er-in{position:absolute;left:50%;top:0;width:min(90vw,760px);margin-left:calc(min(90vw,760px) / -2);text-align:center;color:#fff;text-shadow:0 2px 3px rgba(20,0,8,.9),0 0 14px rgba(20,0,8,.75);will-change:transform}
+#endRoll section{margin:0 0 clamp(70px,15vh,150px)}
+#endRoll .er-k{margin:0;color:#ffe9a6;font-weight:700;letter-spacing:.14em;font-size:clamp(14px,min(3.8vw,2.6vh),22px)}
+#endRoll h2{margin:.2em 0 0;font-size:clamp(34px,min(10.5vw,9.5vh),86px);line-height:1.15;color:#ffd84d;text-shadow:0 .05em 0 #c9820f,0 .1em 0 #7a4705,0 .16em .22em rgba(0,0,0,.6)}
+#endRoll h3{margin:0 0 clamp(14px,3vh,28px);display:flex;align-items:center;justify-content:center;gap:14px;color:#ffe9a6;font-weight:900;letter-spacing:.2em;font-size:clamp(15px,min(4vw,2.8vh),24px)}
+#endRoll h3::before,#endRoll h3::after{content:"";height:2px;width:clamp(28px,8vw,80px);background:linear-gradient(90deg,transparent,#ffe9a6)}
+#endRoll h3::after{transform:scaleX(-1)}
+#endRoll .er-who{display:flex;align-items:center;gap:clamp(10px,2vw,20px);width:min(100%,560px);margin:0 auto clamp(14px,3vh,26px);text-align:left}
+#endRoll .er-who img{flex:none;width:clamp(58px,min(15vw,11vh),96px);height:clamp(58px,min(15vw,11vh),96px);object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.45))}
+#endRoll .er-who b{display:block;font-size:clamp(20px,min(5.6vw,4vh),34px);font-weight:900;line-height:1.25}
+#endRoll .er-who span{display:block;font-size:clamp(13px,min(3.6vw,2.4vh),20px);font-weight:700;color:#ffe9c9}
+#endRoll .er-who i{display:inline-block;margin-top:3px;padding:1px 12px;border-radius:999px;background:rgba(255,233,166,.94);color:#4a2800;text-shadow:none;font-style:normal;font-weight:900;font-size:clamp(12px,min(3.3vw,2.1vh),17px)}
+#endRoll .er-line{margin:0 0 clamp(10px,2.2vh,20px);font-size:clamp(19px,min(5.2vw,3.8vh),32px);font-weight:900;line-height:1.35}
+#endRoll .er-line small{display:block;font-size:.56em;font-weight:700;color:#ffe9c9;letter-spacing:.08em}
+#endRoll .er-faces{display:flex;justify-content:center;flex-wrap:wrap;gap:2px;margin:0 0 10px}
+#endRoll .er-faces img{width:clamp(44px,min(11vw,8.5vh),74px);height:clamp(44px,min(11vw,8.5vh),74px);filter:drop-shadow(0 3px 4px rgba(0,0,0,.45))}
+#endRoll .er-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin:0 auto;max-width:640px}
+#endRoll .er-chips span{padding:5px 14px;border-radius:999px;background:rgba(20,0,8,.5);border:1px solid rgba(255,226,140,.5);font-weight:700;font-size:clamp(14px,min(3.9vw,2.6vh),21px);text-shadow:none}
+#endRoll .er-eq{display:inline-block;margin-top:6px;font-size:clamp(26px,min(7.6vw,5.4vh),46px);color:#ffd84d;letter-spacing:.04em}
+#endRoll .er-fact{margin:0 auto clamp(12px,2.6vh,22px);max-width:600px;font-size:clamp(15px,min(4.2vw,2.9vh),24px);font-weight:700;line-height:1.5}
+#endRoll .er-fact b{color:#ffe07a}
+#endRoll .er-happy{margin:0 0 clamp(14px,3vh,26px);font-size:clamp(24px,min(7vw,5vh),44px);font-weight:900;color:#ffe07a}
+#endRoll .er-last{margin-bottom:0}
+#endRoll .er-last .er-line{font-size:clamp(22px,min(6.2vw,4.6vh),40px)}
+@media (prefers-reduced-motion:reduce){.sg-open,.sg-open::after{animation:none}}
 </style>
 <script type="importmap">
 {"imports":{
@@ -760,6 +827,24 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
   <div class="splash" id="splash"></div>
   <div class="banner" id="banner"></div>
 </section>
+
+<!-- ================= 幕あけ・幕おろし（カーテン・オーケストラ・エンドロール） ================= -->
+<canvas id="curtainFx" aria-hidden="true"></canvas>
+<div id="endRoll" aria-hidden="true"><div class="er-in" id="rollIn"></div></div>
+<canvas id="pitFx" aria-hidden="true"></canvas>
+<div class="sg-ui" id="sgUI">
+  <div class="sg-bill gone" id="sgBill">
+    <div class="b0">数学すごろく クリスマス会</div>
+    <div class="b1 dela">こがね町を救え！</div>
+    <button class="sg-open dela" id="sgOpen" onclick="Show.open()">開演</button>
+    <p class="b2">ボタンを押すと、幕が開きます（音が出ます）</p>
+  </div>
+  <div class="sg-vo" id="sgVo"></div>
+  <div class="sg-big dela" id="sgBig"></div>
+  <div class="sg-end" id="sgEnd"><button onclick="Show.again()">↺ もう一度見る</button><button onclick="Show.quit()">✕ とじる（結果にもどる）</button></div>
+  <div class="sg-chip" id="sgChip"></div>
+  <button class="sg-quit" id="sgQuit" onclick="Show.quit()" title="エンディングをやめて、結果にもどる">✕ とじる</button>
+</div>
 
 <!-- ================= MODALS ================= -->
 <div class="modal" id="m-rules"><div class="mbox">
@@ -977,7 +1062,8 @@ function route(){
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-' + v));
   document.body.classList.toggle('hostmode', v === 'host');
   document.body.classList.toggle('homemode', v === 'home');
-  if (window.TitleFx) window.TitleFx.set(v === 'home');
+  if (window.TitleFx) window.TitleFx.set(v === 'home' && !Show.isPre());      // 幕が閉じているあいだは、うしろの町を動かさない
+  if (v !== 'home') Show.leave();
   if (v === 'host'){ if (window.hostInit3D) window.hostInit3D(); else window.__wantHost = true; }
   if (v === 'play') playInit();
 }
@@ -1239,7 +1325,7 @@ window.CharArt = (() => {
       top(){ bangs('#8a5a3c', -.72, 3); for (const s of [-1, 1]) ball(s * .3, -.74, .045, .045, '#ffd23f', '#e0a93a'); }},
   };
 
-  /* ---- 1体を描く。ph = 歩く動きの位相、o = {T, bp, mood(0 さびしい〜1 うれしい), cheer(0〜1 ばんざい), still, col} ---- */
+  /* ---- 1体を描く。ph = 歩く動きの位相、o = {T, bp, mood(0 さびしい〜1 うれしい), cheer(0〜1 ばんざい), still, col, noArms（手を描かない。楽器を持つ手を別に描くとき）} ---- */
   function draw(ctx, key, s, ph, o){
     const d = CH[key] || VIL[key]; if (!d) return; o = o || {};
     g = ctx; T = o.T || 0;
@@ -1250,7 +1336,7 @@ window.CharArt = (() => {
     const ey = d.ey || -.605;
     if (d.behind) d.behind(k);
     if (!d.noFeet) for (const sd of [-1, 1]) ball(sd * .115, -.045 - (still ? 0 : Math.max(0, sd * Math.cos(ph)) * .04), .095, .05, d.fc || d.c, d.fd || d.d);
-    if (!d.noArms) for (const sd of [-1, 1]) ball(sd * (.235 + cheer * .1), -.3 - cheer * .2, .058, .1, d.ac || d.c, d.ad || d.d, -sd * (.42 + cheer * 1.9) + sw * .4 * (1 - cheer));
+    if (!d.noArms && !o.noArms) for (const sd of [-1, 1]) ball(sd * (.235 + cheer * .1), -.3 - cheer * .2, .058, .1, d.ac || d.c, d.ad || d.d, -sd * (.42 + cheer * 1.9) + sw * .4 * (1 - cheer));
     if (d.body) d.body(k); else body0(d.c, d.d);
     if (d.bc) dot(.005, -.225, .145, .15, d.bc);
     g.save(); g.translate(0, still ? 0 : Math.sin(ph * 2) * .012); g.rotate(sw * .035 + (1 - mood) * .0);
@@ -1276,7 +1362,9 @@ window.CharArt = (() => {
     try { TH[id] = c.toDataURL('image/png'); } catch(e){ TH[id] = ''; }
     return TH[id];
   }
-  return {draw, thumb, keys: Object.keys(CH), villagers: Object.keys(VIL), has: k => !!CH[k]};
+  /* 手の色（楽器を持つ手を、別に描くときに使う） */
+  const col = key => { const d = CH[key] || VIL[key] || {}; return {c: d.ac || d.c || '#ffffff', d: d.ad || d.d || '#d9dcf2', l: d.l || INK}; };
+  return {draw, thumb, col, keys: Object.keys(CH), villagers: Object.keys(VIL), has: k => !!CH[k]};
 })();
 /* ================= こまったことの場面（先生の画面）：カードをめくったあと、町で何が起きたかを絵で見せる =================
    1000×560 の舞台に描く。はじめに困りごとが起き、そのあと「ふせいだ」か「ふせげなかった」かで絵が変わる
@@ -1916,7 +2004,415 @@ window.TitleFx = (() => {
     /* ホーム画面にいるあいだだけ動かす */
     set(v){ v = !!v; if (v === on) return; on = v; if (on){ leave = 0; start(); } else stop(); },
     /* スタートを押したとき：ボタンから星がはじけて、金色の光に包まれる */
+    /* 幕が開くとき：暗い町から始めて、lead 秒あとに新しいひとまわりを始める（雷は、そこから約2秒あと） */
+    restart(lead){ lead = clamp(lead || 0, 0, 1.4); T = PERIOD - lead; cyc = 0; struck = true; trainN = 2; trains = []; dice = null; nextDice = 1e9; nextShoot = T + 4; nextSym = 0; leave = 0; },
     burst(x, y){ if (REDUCE) return; addSparks(x, y, 54, 420 * u); for (let i = 0; i < 10; i++) addSym(x + rnd(-60, 60) * u, y + rnd(-10, 10) * u, true); leave = .001; },
+  };
+})();
+/* ================= 幕あけ・幕おろし（カーテン・舞台の手前のオーケストラ・ほかの町から来た人） =================
+   絵はすべてここで描いている（画像ファイルは使わない）。キャラクターは CharArt の絵をそのまま使う。
+   オーケストラは、曲の時間に合わせて動く。テンポ・拍の位置・太鼓やベルの打点は、曲から先に取り出しておいた数字（SCORE）を使う。
+   画面は3枚重ね：下から カーテン（#curtainFx）→ エンドロールの文字（#endRoll）→ 舞台の手前の床とオーケストラ（#pitFx）。
+   スタート画面の幕あけと、ゲームのさいごの幕おろしで使う（進行は Show と curtainCall） */
+window.StageFx = (() => {
+  const TAU = Math.PI * 2, PI = Math.PI, INK = '#2a2145';
+  const FONT = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Meiryo",sans-serif';
+  const REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const sm = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  let cvC = null, gC = null, cvP = null, gP = null, g = null;      // g = いま描いている先
+  let W = 0, H = 0, dpr = 1, u = 1, s = 100, slot = 90, cx = 0, fy = 0, by = 0, floorTop = 0, hemY = 0, pitTop = 0, pitH = 0, land = true;
+  /* open：幕（0 閉じている〜1 開いた）　val：上の飾り幕（0 おりている〜1 上へ引っこんだ）　light：幕の明るさ
+     lift：オーケストラの床（0 上がっている〜1 下がって見えない）　pitLight：オーケストラの明るさ　ready：楽器をかまえる
+     bow：おじぎ（0〜1 で1回）　joy：よろこんではねる */
+  const S = {open: 0, val: 0, light: .45, lift: 0, pitLight: .3, ready: 0, bow: 0, joy: 0};
+  const tw = {};
+  let players = [], notes = [], sparks = [], motes = [], visitors = [], FOLD = [];
+  let track = null, clock = null, mt = 0, beat = 0, beatI = -1, Lnow = 0, on = false, frozen = null;
+  let raf = 0, tPrev = 0, T = 0, mv = 0, openPrev = 0, liftShown = -1, shown = false;
+
+  /* ---------------- 絵の部品 ---------------- */
+  const el = (x, y, rx, ry, r) => { g.beginPath(); g.ellipse(x, y, rx, ry, r || 0, 0, TAU); };
+  const pth = (p, close) => { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); if (close) g.closePath(); };
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const fs = (c, ln) => { g.fillStyle = c; g.fill(); if (ln !== 0){ g.strokeStyle = ln || INK; g.stroke(); } };
+  const dot = (x, y, rx, ry, c, r) => { el(x, y, rx, ry, r); g.fillStyle = c; g.fill(); };
+  function ball(x, y, rx, ry, c, dk, rot, ln){
+    el(x, y, rx, ry, rot); g.fillStyle = dk; g.fill(); g.strokeStyle = ln || INK; g.stroke();
+    el(x - rx * .06, y - ry * .08, rx * .9, ry * .89, rot); g.fillStyle = c; g.fill();
+  }
+  const seg = (x1, y1, x2, y2, c, w) => { g.strokeStyle = c; g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); g.lineWidth = .022; };
+  const stick = (x1, y1, x2, y2, c, w) => { seg(x1, y1, x2, y2, INK, w + .03); seg(x1, y1, x2, y2, c, w); };      // ふちどりのある棒
+  const curve = (f, c, w) => { g.strokeStyle = INK; g.lineWidth = w + .03; g.beginPath(); f(); g.stroke(); g.strokeStyle = c; g.lineWidth = w; g.beginPath(); f(); g.stroke(); g.lineWidth = .022; };
+  const hand = (x, y, col, k) => ball(x, y, .056 * (k || 1), .056 * (k || 1), col.c, col.d, 0, col.l);
+  const WOOD = ['#de9143', '#b96a2b'], GOLD = ['#ffd86b', '#e0a93a'], SILV = ['#f1f4ff', '#b9c2e0'], COPPER = ['#e09a62', '#b46a36'], BLACK = '#211d38';
+
+  /* 打点の一覧 list から、時刻 t の手の高さを出す（0 = たたいた瞬間、1 = ふり上げた）。h = 0 左手、1 右手（かわりばんこ） */
+  function mallet(list, t, h){
+    let lo = 0, hi = list.length; while (lo < hi){ const m = (lo + hi) >> 1; if (list[m] <= t) lo = m + 1; else hi = m; }
+    let pi = lo - 1; while (pi >= 0 && (pi & 1) !== h) pi--; let ni = lo; while (ni < list.length && (ni & 1) !== h) ni++;
+    const prev = pi >= 0 ? t - list[pi] : 9, next = ni < list.length ? list[ni] - t : 9;
+    let v = .38 * (1 - Math.exp(-prev / .08));                              // たたいたあと、はね返って、うかせて待つ
+    if (next < .36) v = next > .15 ? lerp(1, v, sm(.15, .36, next)) : Math.pow(next / .15, 1.7);   // 次の打点の前にふり上げて、ふりおろす
+    return v;
+  }
+  function lastHit(list, t){ let lo = 0, hi = list.length; while (lo < hi){ const m = (lo + hi) >> 1; if (list[m] <= t) lo = m + 1; else hi = m; } return lo - 1; }
+
+  /* ---------------- 楽器（原点はキャラクターの足もと、1 = からだの高さ。右向きに描き、flip で左右を反転） ----------------
+     k = {p かまえ（0 おろしている〜1 かまえた）, a 音の大きさ（0〜1）, b 拍, t 曲の時間（秒）, col 手の色, ph 人ごとのずれ, me その人} */
+  const INST = {
+    violin: {sec: 'str', sway: .55,
+      front(k){
+        const p = k.p, bw = Math.sin(k.b * PI + k.ph) * (.55 + .45 * k.a) * k.m;        // 1拍ごとに弓を返す
+        g.save(); g.translate(lerp(.04, .07, p), lerp(-.2, -.4, p)); g.rotate(lerp(.3, .08, p));
+        ball(.085, 0, .106, .088, ...WOOD); ball(.228, 0, .084, .072, ...WOOD); dot(.154, -.004, .062, .05, WOOD[0]);
+        stick(.275, 0, .5, 0, '#4a3324', .024); ball(.527, 0, .03, .03, WOOD[1], '#8f4f1e');
+        seg(.03, 0, .49, 0, 'rgba(255,255,255,.8)', .008); seg(.127, -.036, .127, .036, '#f6e7c8', .014); dot(.02, 0, .02, .034, '#4a3324');
+        hand(.425, .014, k.col, .88);
+        g.restore();
+        g.save(); g.translate(lerp(-.27, .205, p), lerp(-.5, -.415, p)); g.rotate(lerp(-1.45, -1.06, p)); g.translate(bw * .11, 0);
+        stick(-.3, 0, .36, 0, '#9a6a3a', .014); seg(-.28, .016, .35, .016, '#fff', .009); dot(-.285, .006, .024, .02, '#4a3324');
+        hand(-.29, .002, k.col, .92);
+        g.restore();
+      }},
+    cello: {sec: 'str', sway: .4,
+      front(k){
+        const p = k.p, bw = Math.sin(k.b * PI * .5 + 1) * (.55 + .45 * k.a) * k.m;
+        g.save(); g.translate(.25, 0); g.rotate(-.1 + lerp(.2, 0, p));
+        seg(0, -.05, 0, 0, '#9aa3c0', .018);
+        ball(0, -.2, .186, .16, ...WOOD); ball(0, -.415, .138, .12, ...WOOD); dot(-.008, -.31, .112, .09, WOOD[0]);
+        stick(0, -.52, 0, -.88, '#4a3324', .028); ball(0, -.916, .037, .037, WOOD[1], '#8f4f1e');
+        seg(0, -.1, 0, -.87, 'rgba(255,255,255,.75)', .009); seg(-.052, -.245, .052, -.245, '#f6e7c8', .014); dot(0, -.095, .024, .034, '#4a3324');
+        for (const sd of [-1, 1]) curve(() => { g.moveTo(sd * .085, -.33); g.quadraticCurveTo(sd * .06, -.29, sd * .085, -.25); }, '#4a3324', .004);
+        hand(.016, -.66, k.col, .9);
+        g.restore();
+        g.save(); g.translate(.05 + bw * .1, lerp(-.17, -.275, p)); g.rotate(lerp(.3, -.07, p));
+        stick(-.27, 0, .44, 0, '#9a6a3a', .014); seg(-.25, .016, .43, .016, '#fff', .009);
+        hand(-.26, .002, k.col, .92);
+        g.restore();
+      }},
+    flute: {sec: 'wood', sway: .6,
+      front(k){
+        const p = k.p; g.save(); g.translate(lerp(-.2, .03, p), lerp(-.27, -.535, p)); g.rotate(lerp(.14, -.06 + Math.sin(k.b * PI * .5) * .04 * k.m, p));
+        stick(-.07, 0, .52, 0, SILV[0], .026); dot(-.02, -.002, .016, .013, '#8e93ba');
+        for (let i = 0; i < 5; i++) dot(.2 + i * .062, -.003, .012, .012, SILV[1]);
+        hand(.15, .014, k.col); hand(.36, .014, k.col);
+        g.restore();
+      }},
+    trumpet: {sec: 'brass', hop: .03,
+      front(k){
+        const p = k.p, pf = 1 + Math.max(0, Math.sin(k.b * TAU)) * .07 * k.m;
+        g.save(); g.translate(lerp(.16, -.015, p), lerp(-.27, -.54, p)); g.rotate(lerp(-.3, .2 + .13 * k.a, p)); g.scale(1.22, 1.22);
+        stick(0, 0, -.33, 0, GOLD[0], .028);
+        curve(() => { g.moveTo(-.1, .012); g.lineTo(-.1, .05); g.arcTo(-.1, .075, -.13, .075, .025); g.lineTo(-.24, .075); g.arcTo(-.27, .075, -.27, .05, .025); g.lineTo(-.27, .012); }, GOLD[1], .02);
+        for (let i = 0; i < 3; i++) stick(-.14 - i * .044, -.008, -.14 - i * .044, -.052, GOLD[1], .016);
+        pth([-.3, -.022, -.47, -.1 * pf, -.47, .1 * pf, -.3, .022], 1); fs(GOLD[0]); el(-.47, 0, .026, .1 * pf); fs('#fff4c4');
+        hand(-.18, .034, k.col);
+        g.restore();
+      }},
+    horn: {sec: 'wood', hop: .02,
+      front(k){
+        const p = k.p; g.save(); g.translate(lerp(.1, .085, p), lerp(-.2, -.3, p)); g.rotate(lerp(.55, 0, p));
+        curve(() => { g.moveTo(-.085, -.06); g.quadraticCurveTo(-.13, -.2, -.068, -.238); }, GOLD[1], .016);       // 吹き口へ
+        pth([.05, .03, .25, -.035, .31, .17, .1, .13], 1); fs(GOLD[0]); el(.283, .068, .034, .105, -.28); fs('#fff4c4');
+        curve(() => g.arc(0, 0, .105, 0, TAU), GOLD[0], .05); curve(() => g.arc(0, 0, .05, 0, TAU), GOLD[1], .018);
+        hand(-.03, .01, k.col); hand(.2, .1, k.col);
+        g.restore();
+      }},
+    timpani: {sec: 'brass', hop: 0, sway: .25,
+      front(k){
+        for (const sd of [-1, 1]){ const x = sd * .275;
+          seg(x - .11, -.02, x - .07, -.14, '#4a3324', .026); seg(x + .11, -.02, x + .07, -.14, '#4a3324', .026);
+          g.beginPath(); g.ellipse(x, -.25, .205, .205, 0, 0, PI); g.closePath(); fs(COPPER[1]);
+          g.beginPath(); g.ellipse(x - .014, -.255, .18, .172, 0, .12, PI - .25); g.closePath(); fs(COPPER[0], 0);
+          el(x, -.25, .205, .052); fs('#fff7e6'); dot(x - .05, -.257, .09, .016, 'rgba(255,255,255,.7)');
+          curve(() => g.ellipse(x, -.243, .205, .052, 0, .15, PI - .15), '#8a4a22', .012); for (const q of [-.6, 0, .6]) dot(x + Math.sin(q) * .19, -.2 + Math.cos(q) * .012, .014, .02, GOLD[0]);
+        }
+        const low = k.low || [];
+        for (const h of [0, 1]){ const sd = h ? 1 : -1, v = lerp(.25, k.on ? mallet(low, k.t, h) : .38, k.p);
+          const hx = sd * .19, hy = -.47 - v * .15, tx = sd * (.27 - v * .03), ty = -.285 - v * .2;
+          stick(hx, hy, tx, ty, '#f1e2c2', .014); ball(tx, ty, .036, .036, '#ffffff', '#d9dcf2'); hand(hx, hy, k.col);
+        }
+      }},
+    glock: {sec: 'str', hop: .02,
+      front(k){
+        seg(-.2, -.02, -.13, -.2, '#4a3324', .022); seg(.2, -.02, .13, -.2, '#4a3324', .022);
+        pth([-.33, -.2, .33, -.2, .29, -.315, -.29, -.315], 1); fs('#5b4a7a');
+        for (let i = 0; i < 7; i++){ rr(-.268 + i * .078, -.305, .06, .09, .012); fs(['#ff9db8', '#ffd98a', '#fff3a6', '#b3f0d0', '#a6d8ff', '#c9b3ff', '#ffb3de'][i]); }
+        const hi = k.high || [], cols = [['#ff6fa3', '#e04f86'], ['#ffd23f', '#e0a93a']];
+        for (const h of [0, 1]){ const sd = h ? 1 : -1, v = lerp(.3, k.on ? mallet(hi, k.t, h) : .38, k.p);
+          const li = lastHit(hi, k.t), tx = sd * .1 + (li >= 0 && (li & 1) === h ? ((li * 37) % 7 - 3) * .028 : 0), ty = -.33 - v * .17, hx = sd * .2, hy = -.47 - v * .12;
+          stick(hx, hy, tx, ty, '#f1e2c2', .012); ball(tx, ty, .03, .03, ...cols[h]); hand(hx, hy, k.col);
+        }
+      }},
+    bells: {sec: 'wood', hop: .045,
+      front(k){
+        const p = k.p, sh = Math.sin(k.b * TAU) * .5 * k.m;
+        hand(-.25, -.29, k.col);
+        g.save(); g.translate(.27, lerp(-.3, -.42, p)); g.rotate(lerp(.5, -.35, p) + sh);
+        stick(0, 0, 0, -.27, WOOD[1], .026);
+        for (let i = 0; i < 3; i++) for (const sd of [-1, 1]){ ball(sd * .048, -.1 - i * .062, .034, .034, ...GOLD); dot(sd * .048, -.092 - i * .062, .012, .006, '#7a4705'); }
+        hand(0, .01, k.col);
+        g.restore();
+      }},
+    piano: {sec: 'piano', hop: 0, sway: .5,
+      back(){
+        pth([-.8, -.36, -.76, -.8, -.33, -.67, -.3, -.36], 1); fs(BLACK);
+        pth([-.755, -.4, -.725, -.74, -.37, -.63, -.345, -.4], 1); fs('#4b4570', 0);
+        stick(-.42, -.37, -.5, -.66, GOLD[1], .012);
+      },
+      front(k){
+        for (const x of [-.72, -.12, .15]){ pth([x - .032, -.13, x + .032, -.13, x + .018, -.025, x - .018, -.025], 1); fs(BLACK); ball(x, -.016, .026, .018, ...GOLD); }
+        rr(-.82, -.38, 1.05, .27, .065); fs(BLACK);
+        rr(-.78, -.352, .5, .04, .02); fs('rgba(255,255,255,.14)', 0);
+        seg(-.79, -.155, .2, -.155, GOLD[1], .012);
+        rr(-.25, -.425, .47, .066, .014); fs('#fffdf5');
+        for (let i = 1; i < 9; i++) seg(-.25 + i * .0522, -.42, -.25 + i * .0522, -.364, 'rgba(42,33,69,.45)', .006);
+        g.fillStyle = BLACK; for (const i of [1, 2, 4, 5, 6, 8]) g.fillRect(-.25 + i * .0522 - .013, -.424, .026, .036);
+        for (const sd of [-1, 1]){ const v = Math.max(0, Math.sin(k.b * TAU + (sd > 0 ? PI : 0) + Math.sin(k.b * 1.3) * .6)) * k.m;
+          hand(sd * .1 - .015 + Math.sin(k.b * .7 + sd) * .03 * k.m, lerp(-.3, -.435 - v * .06, k.p), k.col); }
+      }},
+    baton: {sec: 'cond', hop: 0, sway: .3, pod: 1,
+      front(k){
+        const p = k.p, bb = ((k.b % 4) + 4) % 4, i = Math.floor(bb), f = bb - i, e = f * f * (3 - 2 * f), amp = (.6 + .4 * k.a) * k.m;
+        const P = [[0, .2], [-.17, .05], [.2, .05], [0, -.24]];              // 1拍め 下、2拍め 左、3拍め 右、4拍め 上
+        const A = P[i], B = P[(i + 1) % 4], ox = lerp(A[0], B[0], e) * amp, oy = (lerp(A[1], B[1], e) - Math.sin(f * PI) * .07) * amp;
+        const hx = lerp(-.27, -.36 + ox, p), hy = lerp(-.25, -.44 + oy, p), ba = lerp(2.2, -1.9 + ox * 1.2, p);
+        stick(hx, hy, hx + Math.cos(ba) * .37, hy + Math.sin(ba) * .37, '#ffffff', .015); hand(hx, hy, k.col);
+        hand(lerp(.27, .36 + Math.sin(k.b * PI * .5) * .03 * amp, p), lerp(-.25, -.43 - (k.a - .5) * .16 * k.m - Math.sin(k.b * PI * .5 + 1) * .03 * amp, p), k.col);
+      }},
+  };
+
+  /* ---------------- ならび方：[キャラクター, 楽器, 横の位置（1 = 1人ぶん）, 列（0 前・1 後ろ）, 左右反転] ---------------- */
+  const CAST_WIDE = [
+    ['reindeer', 'horn', -2.2, 1, 0], ['penguin', 'trumpet', -1.32, 1, 1], ['mahou', 'glock', 1.32, 1, 0], ['santa', 'bells', 2.2, 1, 0],
+    ['poodle', 'piano', -2.62, 0, 0], ['bunny', 'violin', -1.75, 0, 0], ['cat', 'violin', -.9, 0, 0], ['owl', 'baton', 0, 0, 0], ['teddy', 'cello', .9, 0, 0], ['unicorn', 'flute', 1.75, 0, 0], ['dino', 'timpani', 2.72, 0, 0]];
+  const CAST_TALL = [
+    ['penguin', 'trumpet', -.58, 1, 1], ['dino', 'timpani', .6, 1, 0], ['teddy', 'cello', 1.62, 1, 0],
+    ['poodle', 'piano', -.98, 0, 0], ['owl', 'baton', 0, 0, 0], ['bunny', 'violin', 1.1, 0, 0]];
+  let castWide = CAST_WIDE, castTall = CAST_TALL;
+
+  function layout(){
+    const w = window.innerWidth, h = window.innerHeight; if (!w || !h) return false;
+    if (w === W && h === H) return true;
+    W = w; H = h; land = W > H * 1.05; cx = W / 2;
+    dpr = clamp(Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(3.2e6 / (W * H))), .75, 2);
+    u = clamp(Math.min(W / 400, H / 720), .6, 1.7);
+    s = clamp(land ? Math.min(H * .18, W / 9.2) : Math.min(H * .112, W * .232), 44, 210); slot = land ? Math.min(s * 1.3, W / 8.4) : s * .93;
+    fy = H - s * .3; by = fy - s * .62; floorTop = by - s * .17; hemY = H - 11 * u;
+    pitH = Math.ceil(H - floorTop + s * 2.3); pitTop = H - pitH;
+    cvC.width = Math.round(W * dpr); cvC.height = Math.round(H * dpr);
+    cvP.style.height = pitH + 'px'; cvP.width = Math.round(W * dpr); cvP.height = Math.round(pitH * dpr);
+    seat(); folds(); liftShown = -1; return true;
+  }
+  function seat(){
+    const cast = land ? castWide : castTall, old = players; players = [];
+    cast.forEach(([key, inst, px, row, flip], i) => { const o = old.find(q => q.key === key && q.inst === inst) || {};
+      players.push({key, inst, I: INST[inst], row, flip: flip ? -1 : 1, x: cx + (px + (land ? .1 : .06)) * slot, y: row ? by : fy, sc: (row ? .92 : 1) * (inst === 'baton' ? 1.06 : 1) * s,
+        act: o.act || 0, pose: o.pose || 0, bp: o.bp == null ? Math.random() : o.bp, ph: i * 1.7, col: CharArt.col(key), spark: -1}); });
+    players.sort((a, b) => b.row - a.row || Math.abs(b.x - cx) - Math.abs(a.x - cx));     // 後ろの列から。指揮者はいちばん手前
+  }
+  function folds(){ const n = clamp(Math.round(W / 2 / (36 * u)), 7, 22); FOLD = []; for (let i = 0; i < n; i++) FOLD.push(.72 + ((i * 7919 + 3) % 10) / 10 * .62); motes = []; for (let i = 0; i < 26; i++) motes.push({x: rnd(-.3, .3), y: rnd(.05, .8), r: rnd(.6, 1.7), v: rnd(.006, .02), p: rnd(0, TAU)}); }
+
+  /* ---------------- 曲に合わせる ---------------- */
+  const ZERO = {piano: 0, cond: 0, str: 0, wood: 0, brass: 0}, ALL = {piano: 1, cond: 1, str: 1, wood: 1, brass: 1};
+  function Lat(arr, t){ const x = clamp(t / .5, 0, arr.length - 1), i = Math.floor(x); return lerp(arr[i], arr[Math.min(arr.length - 1, i + 1)], x - i); }
+  function sections(t){
+    if (!track || t < 0 || t > track.end) return ZERO;
+    if (Lat(track.Ls, t) < .05) return ZERO;
+    const A = track.arr; if (!A) return ALL;                 // 決めていない曲は、はじめから全員で演奏する
+    return {piano: 1, cond: 1, str: within(A.str, t), wood: within(A.wood, t), brass: within(A.brass, t)};
+  }
+  /* 演奏する時間 [[はじめ, おわり], …]（秒）の中にいるか */
+  function within(list, t){ let v = 0; for (const [a, b] of list || []) v = Math.max(v, sm(a - .15, a + .15, t) * (1 - sm(b - .15, b + .15, t))); return v; }
+  function tick(dt, rdt){
+    let t = -1; if (frozen != null) t = frozen; else { try { t = clock ? clock() : -1; } catch(e){ t = -1; } }
+    on = !!track && t >= 0 && t <= track.end + .5;
+    if (on){ mt = t; beat = (t - track.t0) * track.bpm / 60; Lnow += (Lat(track.L, t) - Lnow) * Math.min(1, dt * 6 + (frozen != null ? 1 : 0)); } else Lnow += (0 - Lnow) * Math.min(1, dt * 3);
+    const now = on ? sections(t) : ZERO, soon = on ? sections(t + 1.1) : ZERO, jump = frozen != null;
+    for (const p of players){ const k = p.I.sec, tg = now[k], ps = S.ready * (on ? (Math.max(now[k], soon[k]) > .4 ? 1 : 0) : 1);
+      p.act = jump ? tg : p.act + clamp(tg - p.act, -dt / .9, dt / .3); p.pose = jump ? ps : p.pose + clamp(ps - p.pose, -dt / .6, dt / .26); }
+    // 拍の頭で、ときどき音符がうかぶ
+    const bi = Math.floor(beat);
+    if (on && bi !== beatI){ beatI = bi; if (!REDUCE) for (const p of players) if (p.act > .6 && p.inst !== 'baton' && notes.length < 26 && Math.random() < .17 + Lnow * .12)
+      notes.push({x: p.x + rnd(-.2, .2) * p.sc, y: p.y - p.sc * rnd(1.0, 1.2), vx: rnd(-10, 10) * u, vy: -rnd(26, 44) * u, age: 0, life: rnd(1.5, 2.3), ch: '♪♫♩'[Math.floor(Math.random() * 3)], r: rnd(-.3, .3), sz: p.sc * rnd(.3, .4), c: Math.random() < .6 ? '#ffe9a6' : '#ffffff'}); }
+    for (const n of notes){ n.age += dt; n.x += (n.vx + Math.sin(n.age * 4 + n.r * 9) * 14 * u) * dt; n.y += n.vy * dt; } notes = notes.filter(n => n.age < n.life);
+    for (const q of sparks){ q.age += dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 150 * u * dt; } sparks = sparks.filter(q => q.age < q.life);
+    for (const v of visitors){ v.t += rdt; v.talk += ((v.say ? 1 : 0) - v.talk) * Math.min(1, rdt * 8); }
+    // 動かしている数字
+    const nowMs = performance.now();      // 本当の時間で進める（パソコンが重くてコマ数が少ないときも、決めた秒数で終わる）
+    for (const k in tw){ const w = tw[k], f = w.d > 0 ? Math.min(1, (nowMs - w.t0) / (w.d * 1000)) : 1; S[k] = lerp(w.a, w.b, w.e(f)); if (f >= 1){ delete tw[k]; w.res(); } }
+    mv += (clamp(Math.abs(S.open - openPrev) / Math.max(dt, .001) * 2.2, 0, 1) - mv) * Math.min(1, dt * 5); openPrev = S.open;
+  }
+
+  /* ---------------- 舞台の手前：床・台・オーケストラ ---------------- */
+  function drawPit(){
+    g = gP; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, pitH);
+    g.save(); g.translate(0, -pitTop);
+    // 床（木の板）
+    let gr = g.createLinearGradient(0, floorTop, 0, H); gr.addColorStop(0, '#4a2e1c'); gr.addColorStop(.3, '#6a4428'); gr.addColorStop(1, '#2e1b10');
+    g.fillStyle = gr; g.fillRect(0, floorTop, W, H - floorTop + 2);
+    g.strokeStyle = 'rgba(20,10,5,.3)'; g.lineWidth = 1; g.beginPath();
+    for (let i = -16; i <= 16; i++){ g.moveTo(cx + i * W / 24, floorTop); g.lineTo(cx + i * W / 15, H); } g.stroke();
+    g.fillStyle = '#d9b25a'; g.fillRect(0, floorTop, W, Math.max(2, s * .03)); g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(0, floorTop + Math.max(2, s * .03), W, s * .045);
+    // 後ろの列がのる台
+    const xs = players.map(p => p.x), half = Math.max(...xs.map(x => Math.abs(x - cx))) + s * 1.1, r0 = by - s * .1, r1 = by + s * .12, r2 = by + s * .3;
+    g.fillStyle = '#7d5433'; pth([cx - half + s * .12, r0, cx + half - s * .12, r0, cx + half, r1, cx - half, r1], 1); g.fill();
+    gr = g.createLinearGradient(0, r1, 0, r2); gr.addColorStop(0, '#5b3a22'); gr.addColorStop(1, '#3c2415'); g.fillStyle = gr; g.fillRect(cx - half, r1, half * 2, r2 - r1);
+    g.fillStyle = '#d9b25a'; g.fillRect(cx - half, r1 - 1, half * 2, Math.max(1.5, s * .018));
+    // 足もとの影
+    g.fillStyle = 'rgba(0,0,0,.26)'; for (const p of players){ g.beginPath(); g.ellipse(p.x, p.y + p.sc * .012, p.sc * (p.inst === 'piano' ? .3 : .27), p.sc * .05, 0, 0, TAU); g.fill(); }
+    for (const p of players) drawPlayer(p);
+    // 明かりを落としているときは、絵だけを暗くする
+    const dk = (1 - S.pitLight) * .68;
+    if (dk > .01){ g.globalCompositeOperation = 'source-atop'; g.fillStyle = `rgba(7,9,34,${dk})`; g.fillRect(0, pitTop, W, pitH); g.globalCompositeOperation = 'source-over'; }
+    // フットライト
+    const n = clamp(Math.round(W / (150 * u)), 3, 11), fl = .25 + S.pitLight * .75;
+    for (let i = 0; i < n; i++){ const x = W * (i + .5) / n, y = H - 3 * u, r = s * .95;
+      gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(255,220,150,${.34 * fl})`); gr.addColorStop(1, 'rgba(255,220,150,0)');
+      g.globalCompositeOperation = 'lighter'; g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r); g.globalCompositeOperation = 'source-over';
+      g.fillStyle = '#1a120c'; g.beginPath(); g.ellipse(x, H, 9 * u, 7 * u, 0, PI, TAU); g.fill(); g.fillStyle = `rgba(255,236,170,${.5 + .5 * fl})`; g.beginPath(); g.ellipse(x, H, 5.5 * u, 3.6 * u, 0, PI, TAU); g.fill(); }
+    // 音符ときらきら
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (const nt of notes){ const a = Math.min(1, nt.age * 5) * (1 - sm(.55, 1, nt.age / nt.life)); g.globalAlpha = a * .95 * S.pitLight; g.fillStyle = nt.c; g.font = `700 ${nt.sz}px ${FONT}`;
+      g.save(); g.translate(nt.x, nt.y); g.rotate(nt.r + Math.sin(nt.age * 3) * .2); g.fillText(nt.ch, 0, 0); g.restore(); }
+    for (const q of sparks){ g.globalAlpha = (1 - q.age / q.life) * S.pitLight; g.fillStyle = q.c; star(q.x, q.y, q.r, q.r * .42, q.age * 5); g.fill(); }
+    g.globalAlpha = 1; g.restore();
+  }
+  function star(x, y, R, r, rot){ g.beginPath(); for (let i = 0; i < 8; i++){ const a = rot + i * PI / 4, q = i % 2 ? r : R; i ? g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q) : g.moveTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); }
+  function drawPlayer(p){
+    const I = p.I, m = p.act * (on ? 1 : 0), amp = on ? Lnow : 0;
+    const hop = (I.hop == null ? .028 : I.hop) * Math.abs(Math.sin(beat * PI)) * m * (.4 + .6 * amp);
+    const joy = S.joy > 0 ? Math.abs(Math.sin(T * 7 + p.ph * 2.3)) * .09 * S.joy : 0;
+    const bw = S.bow > 0 ? Math.sin(clamp(S.bow, 0, 1) * PI) : 0;
+    const sway = Math.sin(beat * PI * .5 + p.ph) * m * (I.sway == null ? .35 : I.sway) * (.5 + .5 * amp) + Math.sin(T * 1.2 + p.ph) * .14 * (1 - m);      // 待っているあいだも、耳やしっぽが少しゆれる
+    g.save(); g.translate(p.x, p.y); g.scale(p.sc * p.flip, p.sc); g.lineWidth = .022; g.lineJoin = g.lineCap = 'round';
+    if (I.pod){ rr(-.33, -.14, .66, .15, .03); fs('#b3202e'); g.fillStyle = '#7d1420'; g.fillRect(-.31, -.05, .62, .04); seg(-.3, -.125, .3, -.125, GOLD[0], .014); g.translate(0, -.14); }
+    g.translate(0, -hop - joy); g.scale(1 + bw * .05, 1 - bw * .17);
+    const k = {p: p.pose, a: amp, m, b: beat, t: mt, on, col: p.col, ph: p.ph, low: track && track.low, high: track && track.high};
+    if (I.back) I.back(k);
+    g.save(); CharArt.draw(g, p.key, 1, 0, {T, bp: p.bp, still: true, sw: sway * .6, noArms: true, mood: 1}); g.restore();
+    g.lineWidth = .022; g.lineJoin = g.lineCap = 'round';
+    I.front(k);
+    g.restore();
+    // ベルをたたいた瞬間に、きらきらが出る
+    if (p.inst === 'glock' && on && track.high && p.pose > .8){ const li = lastHit(track.high, mt);
+      if (li !== p.spark){ if (p.spark >= 0 && li > p.spark && mt - track.high[li] < .12 && !REDUCE) for (let i = 0; i < 4; i++) sparks.push({x: p.x + rnd(-.25, .25) * p.sc, y: p.y - p.sc * rnd(.32, .4), vx: rnd(-50, 50) * u, vy: -rnd(40, 120) * u, age: 0, life: rnd(.4, .8), r: rnd(3, 6) * u, c: ['#fff3a6', '#ffb3de', '#a6d8ff', '#ffffff'][i]}); p.spark = li; } }
+  }
+
+  /* ---------------- カーテン ---------------- */
+  let foldGrad = null;
+  function half(sd, e){
+    const m = 8 * u, full = W / 2 + 12 * u, gath = W * .085, inX = lerp(full, -m - 2, e); if (inX <= -m) return;
+    const wNow = Math.max(gath, Math.min(full + m, inX + m)), outX = inX - wNow, X = d => sd < 0 ? d : W - d;
+    let sum = 0; const ws = FOLD.map((w, i) => { const v = w * (1 + Math.sin(T * .6 + i * 1.3 + sd) * .05 + mv * Math.sin(T * 8 - i * .9) * .16); sum += v; return v; });
+    if (!foldGrad){ foldGrad = g.createLinearGradient(0, 0, 100, 0); [[0, '#4a0911'], [.2, '#86121f'], [.43, '#c2273a'], [.52, '#dc4455'], [.6, '#c2273a'], [.82, '#86121f'], [1, '#4a0911']].forEach(([o, c]) => foldGrad.addColorStop(o, c)); }
+    g.save(); g.beginPath(); g.rect(sd < 0 ? outX - 1 : W - inX - 1, 0, wNow + 2, H); g.clip();
+    const xs = [outX], hb = []; ws.forEach(w => xs.push(xs[xs.length - 1] + w / sum * wNow));      // ひだの境目
+    for (let i = 0; i <= ws.length; i++) hb.push(hemY + (Math.sin(i * 1.9 + sd) * 2.2 + mv * Math.sin(T * 7 - i * 1.1) * 5) * u);   // 境目ごとの、すその高さ
+    for (let i = 0; i < ws.length; i++){ const ww = xs[i + 1] - xs[i], x = sd < 0 ? xs[i] : W - xs[i + 1], ya = sd < 0 ? hb[i] : hb[i + 1], yb = sd < 0 ? hb[i + 1] : hb[i];
+      g.save(); g.translate(x, 0); g.scale((ww + .6) / 100, 1); g.fillStyle = foldGrad; g.beginPath(); g.moveTo(0, 0); g.lineTo(100, 0); g.lineTo(100, yb); g.lineTo(0, ya); g.closePath(); g.fill(); g.restore(); }
+    const hemLine = off => { g.beginPath(); for (let i = 0; i <= ws.length; i++){ const x = sd < 0 ? xs[i] : W - xs[i], y = hb[i] + off; i ? g.lineTo(x, y) : g.moveTo(x, y); } };
+    // 上は影、まん中はスポットライト
+    let gr = g.createLinearGradient(0, 0, 0, H * .3); gr.addColorStop(0, 'rgba(24,0,12,.62)'); gr.addColorStop(1, 'rgba(24,0,12,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H * .3);
+    g.fillStyle = `rgba(8,5,28,${(1 - S.light) * .66})`; g.fillRect(0, 0, W, H);
+    const R = Math.max(W, H) * .5, a = .1 + S.light * .16; gr = g.createRadialGradient(cx, H * .44, 0, cx, H * .44, R); gr.addColorStop(0, `rgba(255,214,150,${a})`); gr.addColorStop(.55, `rgba(255,190,120,${a * .35})`); gr.addColorStop(1, 'rgba(255,190,120,0)');
+    g.globalCompositeOperation = 'lighter'; g.fillStyle = gr; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
+    // すその金の帯とふさ
+    const bh = 7 * u, fr = 9 * u; g.lineJoin = 'round';
+    g.strokeStyle = '#a8730f'; g.lineWidth = bh; hemLine(-bh / 2); g.stroke(); g.strokeStyle = '#e9b83a'; g.lineWidth = bh * .62; hemLine(-bh * .58); g.stroke(); g.strokeStyle = '#fff0b0'; g.lineWidth = bh * .2; hemLine(-bh * .82); g.stroke();
+    g.strokeStyle = '#e9b83a'; g.lineWidth = fr; g.setLineDash([1.7 * u, 1.5 * u]); hemLine(fr / 2); g.stroke(); g.setLineDash([]);
+    g.restore();
+    // 内がわのふち（金のひも）
+    const ex = X(inX); gr = g.createLinearGradient(ex - 3 * u, 0, ex + 3 * u, 0); gr.addColorStop(0, '#a8730f'); gr.addColorStop(.5, '#ffe9a6'); gr.addColorStop(1, '#a8730f'); g.fillStyle = gr; g.fillRect(ex - 3 * u, 0, 6 * u, hemY + fr);
+  }
+  function valance(v){
+    const vh = land ? H * .125 : H * .078, n = clamp(Math.round(W / (170 * u)), 3, 9), sw = W / n;
+    g.save(); g.translate(0, -v * vh * 1.75);
+    let gr = g.createLinearGradient(0, 0, 0, vh * .5); gr.addColorStop(0, '#2c050c'); gr.addColorStop(1, '#6e0e1a'); g.fillStyle = gr; g.fillRect(0, -vh, W, vh * 1.42);
+    for (let i = 0; i < n; i++){ const x0 = i * sw, sag = () => { g.moveTo(x0, vh * .36); g.quadraticCurveTo(x0 + sw / 2, vh * 1.42, x0 + sw, vh * .36); };
+      gr = g.createLinearGradient(0, 0, 0, vh * .95); gr.addColorStop(0, '#7c101d'); gr.addColorStop(.55, '#c2273a'); gr.addColorStop(1, '#86121f');
+      g.beginPath(); g.moveTo(x0, -2); g.lineTo(x0 + sw, -2); g.lineTo(x0 + sw, vh * .36); g.quadraticCurveTo(x0 + sw / 2, vh * 1.42, x0, vh * .36); g.closePath(); g.fillStyle = gr; g.fill();
+      for (let j = 1; j <= 3; j++){ g.strokeStyle = j % 2 ? 'rgba(60,4,14,.42)' : 'rgba(255,150,150,.16)'; g.lineWidth = 2.2 * u; g.beginPath(); g.moveTo(x0 + sw * .03 * j, vh * (.36 - .1 * j)); g.quadraticCurveTo(x0 + sw / 2, vh * (1.42 - .36 * j), x0 + sw * (1 - .03 * j), vh * (.36 - .1 * j)); g.stroke(); }
+      g.strokeStyle = '#e9b83a'; g.lineWidth = 7 * u; g.setLineDash([1.7 * u, 1.5 * u]); g.beginPath(); sag(); g.stroke(); g.setLineDash([]);
+      g.strokeStyle = '#ffe9a6'; g.lineWidth = 2.4 * u; g.beginPath(); sag(); g.stroke(); }
+    for (let i = 0; i <= n; i++){ const x = i * sw, w = sw * .085;
+      gr = g.createLinearGradient(x - w, 0, x + w, 0); gr.addColorStop(0, '#5c0a15'); gr.addColorStop(.5, '#b01e2e'); gr.addColorStop(1, '#5c0a15');
+      g.fillStyle = gr; pth([x - w, -2, x + w, -2, x + w * .7, vh * .92, x, vh * 1.12, x - w * .7, vh * .92], 1); g.fill();
+      g.strokeStyle = '#ffe9a6'; g.lineWidth = 2 * u; g.beginPath(); g.moveTo(x - w * .7, vh * .92); g.lineTo(x, vh * 1.12); g.lineTo(x + w * .7, vh * .92); g.stroke();
+      g.fillStyle = '#e9b83a'; g.beginPath(); g.arc(x, vh * 1.17, 4.5 * u, 0, TAU); g.fill(); g.fillRect(x - 3 * u, vh * 1.17, 6 * u, 11 * u); }
+    g.restore();
+  }
+  function drawCurtain(){
+    g = gC; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    if (visitors.length) drawVisitors();
+    if (S.open < 1){ half(-1, S.open); half(1, S.open);
+      const a = (1 - sm(0, .35, S.open)) * (.25 + S.light * .5);        // 光の中のほこり
+      if (a > .01 && !REDUCE){ g.fillStyle = '#fff1cf'; for (const q of motes){ q.y -= q.v * .016; if (q.y < 0) q.y = .85; g.globalAlpha = a * (.3 + .5 * Math.abs(Math.sin(T * .7 + q.p))); g.beginPath(); g.arc(cx + (q.x + Math.sin(T * .2 + q.p) * .03) * Math.min(W, H * 1.2), q.y * H, q.r * u, 0, TAU); g.fill(); } g.globalAlpha = 1; } }
+    if (S.val < 1) valance(S.val);
+  }
+
+  /* ---------------- ほかの町から来た人（幕のうしろ＝舞台の上に立つ） ---------------- */
+  function drawVisitors(){
+    const sv = clamp(land ? H * .25 : Math.min(H * .15, W * .3), 70, 260);
+    for (const v of visitors){ const k = v.out ? 1 - sm(0, .6, v.t - v.out) : sm(0, .75, v.t), e = 1 - Math.pow(1 - k, 3);
+      const x = v.from === 'below' ? v.x * W : lerp(v.side < 0 ? -sv : W + sv, v.x * W, e), run = v.from === 'below' ? 0 : (1 - e);
+      const y = H - sv * .1 + (v.from === 'below' ? (1 - e) * sv * 1.4 : 0) - Math.abs(Math.sin(v.t * 9)) * sv * (.05 * run + .07 * v.talk) - Math.abs(Math.sin(v.t * 6.5 + v.x * 9)) * sv * .06 * (v.beg || 0);
+      v.bx = v.x * W; v.by = H - sv * 1.6;                  // ふきだしを出す位置（はねても動かない）
+      g.save(); g.translate(x, y);
+      g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(0, sv * .012, sv * .27, sv * .05, 0, 0, TAU); g.fill();
+      // 町の名前の看板（頭の上にかかげる。棒はからだのうしろ）
+      const fw = (.26 + v.name.length * .125) * sv, tilt = Math.sin(v.t * 5) * .04 * Math.min(1, v.talk + (v.beg || 0) * .8);
+      g.save(); g.scale(sv, sv); g.lineWidth = .022; g.lineJoin = g.lineCap = 'round'; stick(0, -.5, 0, -1.2, '#f1e2c2', .028); g.restore();
+      g.save(); g.translate(0, -1.2 * sv); g.rotate(tilt);
+      g.lineWidth = .024 * sv; g.lineJoin = 'round'; rr(-fw / 2, -.26 * sv, fw, .26 * sv, .055 * sv); fs(v.col || '#ffd86b');
+      g.fillStyle = INK; g.font = `900 ${(.128 * sv).toFixed(1)}px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(v.name, 0, -.125 * sv);
+      g.restore();
+      g.save(); CharArt.draw(g, v.key, sv, v.t * 9, {T, bp: v.bp, still: run < .05, sw: Math.sin(v.t * 3) * .3 * v.talk, noArms: true, mood: 1}); g.restore();
+      g.scale(sv, sv); g.lineWidth = .022; g.lineJoin = g.lineCap = 'round'; const c = v.c || (v.c = CharArt.col(v.key)), bg = v.beg || 0;
+      for (const sd of [-1, 1]) hand(sd * (.29 + bg * .05), -.32 - bg * .26 - Math.sin(v.t * 8 + sd) * .035 * Math.max(v.talk, bg), c);      // おねがいするときは、両手を上げる
+      g.restore(); }
+  }
+
+  /* ---------------- 1コマ ---------------- */
+  function busy(){ return S.open < 1 || S.val < 1 || S.lift < 1 || visitors.length > 0 || Object.keys(tw).length > 0; }
+  function frame(now){
+    raf = 0; const raw = (now - tPrev) / 1000 || 0, dt = clamp(raw, 0, .05), rdt = clamp(raw, 0, .25); tPrev = now; T += dt;
+    if (!layout()){ raf = requestAnimationFrame(frame); return; }
+    tick(dt, rdt);
+    drawCurtain();
+    if (S.lift < 1) drawPit(); else if (liftShown !== 1) gP.clearRect(0, 0, cvP.width, cvP.height);
+    if (S.lift !== liftShown){ liftShown = S.lift; cvP.style.transform = `translateY(${(S.lift * (pitH + 4)).toFixed(1)}px)`; }
+    const b = busy(); if (!b) show(false);                          // 使っていないあいだは、絵を消しておく（すごろく盤を重くしない）
+    if (b && !document.hidden) raf = requestAnimationFrame(frame);
+  }
+  function show(v){ if (shown === v) return; shown = v; cvC.style.display = cvP.style.display = v ? 'block' : 'none'; }
+  function kick(){ if (!raf && cvC){ show(true); tPrev = performance.now(); raf = requestAnimationFrame(frame); } }
+
+  return {
+    init(curtain, pit){ cvC = curtain; gC = cvC.getContext('2d'); cvP = pit; gP = cvP.getContext('2d');
+      addEventListener('resize', kick); document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); }); kick(); },
+    /* 数字をすぐ変える／時間をかけて変える（終わったら知らせる） */
+    set(o){ for (const k in o){ if (tw[k]){ const w = tw[k]; delete tw[k]; w.res(); } S[k] = o[k]; } kick(); },
+    to(key, v, dur, ease){ return new Promise(res => { if (tw[key]){ const w = tw[key]; delete tw[key]; w.res(); }
+      if (!(dur > 0) || REDUCE){ S[key] = v; kick(); res(); return; } tw[key] = {a: S[key], b: v, t0: performance.now(), d: dur, e: ease || (t => t), res}; kick(); }); },
+    get: k => S[k],
+    /* 幕が閉じきっていて、うしろの画面が見えないとき true（そのあいだ、すごろく盤は描かなくてよい） */
+    covered: () => shown && S.open <= 0,
+    /* 曲に合わせる：sc = SCORE の1曲ぶん、clockFn = いまの曲の時間（秒）を返す。鳴っていないときは -1 */
+    music(sc, clockFn){ track = sc || null; clock = clockFn || null; beatI = -1;
+      if (track && !track.Ls){ const L = track.L; track.Ls = L.map((_, i) => { let a = 0, n = 0; for (let j = Math.max(0, i - 4); j <= Math.min(L.length - 1, i + 4); j++){ a += L[j]; n++; } return a / n; }); }
+      players.forEach(p => { p.spark = -1; }); kick(); },
+    /* ほかの町から来た人：入ってくる／しゃべる／おねがいする／帰る */
+    visit(v){ const o = Object.assign({t: 0, talk: 0, say: false, beg: 0, bp: Math.random()}, v); visitors.push(o); kick(); return o; },
+    visitors: () => visitors, clearVisitors(){ visitors = []; kick(); },
+    cast(wide, tall){ if (wide) castWide = wide; if (tall) castTall = tall; players = []; W = 0; kick(); },
+    info: () => ({W, H, s, floorTop, pitTop, pitH, land, players: players.map(p => ({key: p.key, inst: p.inst, x: p.x, y: p.y, act: +p.act.toFixed(2), pose: +p.pose.toFixed(2)}))}),
+    /* 確かめ用：曲の時間を止めて、その瞬間の絵にする */
+    _freeze(t){ frozen = t; kick(); },
   };
 })();
 let actx = null;
@@ -4378,13 +4874,96 @@ PGEN.dai = {
 };
 
 
+/* ================= 幕あけ・幕おろしの進行（画面の文字とボタン、開演、片づけ） =================
+   スタート画面：はじめは幕が閉じている。「開演」を押すと、タイトルの曲が鳴り、舞台の手前のオーケストラが演奏を始めて、幕が開く。
+   4小節演奏したら、オーケストラは床ごと下がり、あとは今までどおりのタイトル画面。
+   ゲームのさいごの幕おろしは、すごろく盤のほうの curtainCall が、ここの部品を使って進める */
+/* 曲から取り出した数字：bpm テンポ、t0 1拍めの位置（秒）、L 0.5秒ごとの音の大きさ（0〜1）、low 太鼓の打点、high 高い音の打点（秒）。
+   曲を作り直したら、取り出し直す（道具は music/score.py） */
+const SCORE = {"title":{"bpm":104.0,"t0":0.023,"dur":90.0,"end":84,"L":[0.32,0.42,0.43,0.43,0.52,0.5,0.51,0.55,0.56,0.53,0.55,0.55,0.53,0.5,0.49,0.42,0.45,0.4,0.71,0.62,0.55,0.51,0.52,0.57,0.49,0.53,0.47,0.58,0.55,0.53,0.59,0.5,0.6,0.53,0.66,0.68,0.58,0.9,0.69,0.55,0.52,0.53,0.58,0.67,0.4,0.57,0.64,0.52,0.52,0.47,0.47,0.46,0.5,0.48,0.67,0.96,0.84,0.76,0.8,0.79,0.88,0.81,0.9,0.93,0.89,0.84,0.9,0.89,0.89,0.93,0.8,0.87,0.8,0.85,0.86,0.83,0.83,0.82,0.84,0.78,0.84,0.72,0.81,0.89,0.76,0.8,0.82,0.79,0.81,0.83,0.82,0.92,1.0,0.81,0.81,0.77,0.81,0.86,0.87,0.89,0.94,0.9,0.9,0.88,0.86,0.85,0.94,0.86,0.91,0.85,0.86,0.87,0.9,0.85,0.89,0.93,0.91,0.91,0.85,0.91,0.88,0.84,0.78,0.82,0.83,0.83,0.89,0.83,0.94,0.95,0.78,0.79,0.78,0.8,0.87,0.88,0.88,0.88,0.84,0.83,0.91,0.78,0.9,0.88,0.79,0.84,0.81,0.86,0.8,0.8,0.79,0.84,0.83,0.82,0.85,0.8,0.82,0.88,0.82,0.79,0.81,0.83,0.83,0.89,0.82,0.95,0.94,0.54,0.15,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"low":[0.02,4.38,5.79,6.94,9.25,10.41,12.71,13.87,15.02,18.48,20.28,23.1,27.0,27.62,28.07,28.62,28.94,29.47,29.77,30.35,30.92,31.21,31.5,31.94,32.3,32.65,33.2,33.52,34.1,34.39,34.7,35.26,35.55,35.99,36.42,36.97,37.26,37.57,37.95,38.7,39.28,39.58,40.14,40.44,41.02,41.33,41.62,41.94,42.47,42.86,43.31,43.87,44.21,44.74,45.12,45.62,45.91,46.23,46.8,47.09,47.43,47.93,48.23,48.58,49.08,49.38,49.68,50.26,50.81,51.11,51.41,51.98,52.31,52.9,53.41,53.72,54.01,54.58,54.87,55.45,56.02,56.33,56.65,57.16,57.45,58.33,58.8,59.48,59.78,60.12,60.63,60.92,61.54,62.35,62.65,62.94,63.39,63.81,64.1,64.45,64.98,65.54,66.12,66.41,66.7,67.0,67.48,67.83,68.13,68.43,68.94,69.3,70.15,71.0,71.59,71.89,72.46,72.75,73.5,73.86,74.15,74.49,74.85,75.34,75.73,76.2,76.78,77.07,77.39,77.95,78.51,78.88,79.42,80.16,80.45,80.82,81.42,81.85,82.2,82.58,82.87,83.2],"high":[0.02,0.62,2.35,2.94,4.64,5.22,6.95,8.14,9.85,13.89,15.64,17.91,19.08,20.22,23.68,24.83,25.41,27.71,29.47,30.02,30.88,31.75,32.33,33.19,33.51,34.06,34.63,35.5,36.36,36.94,38.67,38.97,39.25,40.12,40.98,41.56,42.42,42.75,43.28,43.86,44.73,45.59,46.18,47.36,47.93,48.48,49.34,49.64,50.21,50.79,51.39,51.65,51.95,52.52,52.95,53.7,53.96,54.83,55.12,55.4,56.01,57.13,57.71,58.31,58.57,58.9,59.44,60.01,60.88,61.46,61.75,62.33,62.95,63.19,63.51,64.08,64.63,65.49,65.81,66.37,66.95,67.54,67.8,68.12,68.7,69.25,69.85,70.12,70.98,71.56,72.17,72.42,72.76,73.29,73.87,74.73,75.6,75.88,76.17,76.79,77.04,77.9,78.48,79.34,79.92,80.2,80.79,81.65,81.97,82.23,82.52,82.8,83.1]},"finale":{"bpm":76.0,"t0":0.035,"dur":165.0,"end":158,"L":[0.4,0.46,0.46,0.45,0.46,0.42,0.45,0.41,0.43,0.42,0.38,0.37,0.58,0.65,0.41,0.42,0.37,0.4,0.44,0.84,0.5,0.37,0.35,0.36,0.38,0.66,0.53,0.39,0.37,0.35,0.42,0.67,0.73,0.52,0.52,0.46,0.44,0.46,0.74,0.57,0.5,0.5,0.47,0.47,0.76,0.63,0.52,0.46,0.42,0.46,0.67,0.64,0.51,0.5,0.41,0.44,0.55,0.75,0.57,0.48,0.5,0.51,0.52,0.88,0.74,0.61,0.66,0.56,0.64,0.78,0.77,0.66,0.67,0.6,0.59,0.71,0.77,0.55,0.54,0.66,0.54,0.63,0.89,0.73,0.64,0.63,0.55,0.56,0.86,0.82,0.8,0.74,0.64,0.58,0.74,0.89,0.68,0.55,0.67,0.55,0.57,0.79,0.61,0.49,0.63,0.52,0.62,0.8,0.77,0.66,0.63,0.54,0.59,0.85,0.8,0.7,0.66,0.68,0.62,0.7,0.88,0.77,0.67,0.7,0.66,0.67,0.85,0.71,0.63,0.64,0.62,0.67,0.8,0.84,0.75,0.71,0.68,0.62,0.71,0.89,0.74,0.65,0.67,0.64,0.67,0.89,0.8,0.67,0.7,0.65,0.7,0.84,0.71,0.59,0.64,0.66,0.62,0.68,0.87,0.75,0.68,0.72,0.73,0.81,0.99,0.9,0.9,0.84,0.76,0.84,0.92,0.93,0.84,0.86,0.87,0.86,0.86,0.93,0.89,0.89,0.87,0.83,0.85,0.95,0.89,0.9,0.8,0.83,0.88,0.94,0.9,0.86,0.83,0.81,0.81,0.87,0.93,0.9,0.94,0.88,0.84,0.82,0.95,0.94,0.83,0.86,0.83,0.85,0.9,0.93,0.84,0.76,0.71,0.77,0.89,0.86,0.75,0.65,0.72,0.65,0.7,0.93,0.8,0.65,0.71,0.67,0.77,0.88,0.75,0.66,0.69,0.63,0.65,0.82,0.87,0.76,0.68,0.72,0.71,0.88,1.0,0.99,0.89,0.84,0.83,0.8,0.89,0.88,0.84,0.85,0.83,0.86,0.94,0.92,0.92,0.88,0.89,0.85,0.86,0.98,0.89,0.92,0.86,0.9,0.9,0.99,0.94,0.9,0.9,0.87,0.82,0.92,0.88,0.91,0.9,0.9,0.88,0.86,0.99,0.92,0.87,0.87,0.87,0.83,0.93,0.93,0.84,0.81,0.8,0.82,0.9,0.75,0.62,0.53,0.49,0.4,0.36,0.62,0.45,0.36,0.34,0.34,0.25,0.66,0.48,0.38,0.35,0.38,0.34,0.63,0.63,0.51,0.41,0.4,0.37,0.48,0.66,0.12,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"low":[9.52,15.87,18.99,22.16,28.47,31.5,31.82,32.23,32.55,33.19,33.76,34.3,34.77,35.46,36.35,36.8,37.2,37.59,37.93,38.25,38.75,39.51,39.81,40.3,40.94,41.25,41.56,42.67,43.11,43.5,43.85,44.25,44.63,45.24,45.84,46.63,47.06,47.4,47.83,48.26,48.98,49.28,49.81,50.12,50.5,51.63,52.14,52.81,53.15,53.72,54.18,54.5,54.95,55.3,56.23,56.71,57.06,57.39,57.68,58.06,58.46,58.75,59.14,59.68,60.04,60.49,61.61,62.08,62.45,62.81,63.19,63.48,64.77,65.19,65.61,66.0,66.35,67.93,68.39,68.74,69.14,69.5,69.88,71.1,71.39,71.87,72.31,72.67,73.0,73.44,73.73,74.25,74.57,75.07,75.43,75.82,76.22,77.42,78.22,78.63,78.98,80.56,81.0,81.43,81.95,82.33,82.71,83.46,83.79,84.14,84.53,84.9,85.29,85.59,86.88,87.69,88.28,88.6,89.08,90.05,90.45,90.86,91.25,91.61,91.96,93.19,94.01,94.39,94.76,95.13,95.49,95.79,96.3,96.6,97.15,97.73,98.27,98.73,99.51,99.82,100.32,100.72,101.08,101.41,102.68,102.99,103.49,103.89,104.25,104.62,105.84,106.27,106.65,106.95,107.4,107.69,108.23,108.58,108.97,109.26,109.61,109.91,110.2,110.55,110.86,111.2,112.14,112.72,113.06,113.35,113.72,114.01,114.73,115.05,115.51,116.11,116.52,116.88,117.25,118.46,119.28,119.65,120.02,120.34,120.69,121.18,121.64,121.97,122.4,122.83,123.19,123.53,124.77,125.59,125.97,126.35,126.69,127.93,128.72,129.35,129.67,130.35,131.09,131.46,131.9,132.44,132.77,133.34,133.71,134.26,134.69,135.07,135.85,136.19,136.71,137.4,137.86,138.22,138.63,138.95,139.26,140.57,140.92,141.77,142.14,143.72,144.52,144.9,145.38,145.67,146.12,151.63,154.81,157.94],"high":[31.6,32.79,33.18,33.58,33.97,34.38,34.76,35.16,35.56,35.94,36.34,36.73,37.13,37.54,37.92,38.31,38.71,39.11,39.51,40.3,40.69,41.08,41.48,42.26,42.66,43.48,43.84,44.22,45.02,45.42,45.81,46.21,46.6,47.0,47.39,48.18,48.97,49.77,50.16,50.55,50.94,51.34,51.75,52.13,52.52,53.32,53.71,54.1,54.5,54.89,55.29,55.69,56.48,56.87,58.06,58.46,59.63,60.02,62.81,63.18,63.58,64.37,64.76,65.56,66.34,67.14,67.92,68.31,69.37,71.09,71.48,72.66,73.46,74.23,74.64,75.42,75.81,77.01,77.39,77.8,78.19,78.59,78.97,79.77,80.55,81.93,82.23,83.71,84.1,84.5,84.89,85.29,86.47,86.87,87.67,88.05,88.44,89.23,89.63,90.02,90.48,91.22,91.6,93.19,93.99,94.57,95.55,95.97,96.35,96.76,97.14,97.54,97.92,98.32,99.5,99.89,100.3,100.69,101.08,101.47,101.87,102.26,102.66,103.05,103.47,103.84,104.23,105.82,106.63,107.25,108.19,108.58,108.97,109.2,109.76,110.17,110.39,110.78,111.35,111.75,112.13,112.55,112.93,113.31,113.71,114.11,114.51,114.9,115.29,115.69,116.08,116.48,116.87,117.27,117.66,118.06,118.44,118.86,119.25,119.84,121.22,121.6,122.21,123.18,123.58,125.56,125.95,126.34,126.73,127.52,128.33,128.72,129.11,129.5,130.68,131.09,131.48,131.87,132.6,134.25,134.65,135.06,135.43,135.83,136.24,137.82,138.58,138.97,139.76,140.16,140.55,141.35,141.73,142.13,143.72,144.9,145.18,146.88,148.06,148.46,148.85,149.25,149.64,150.04,150.83,151.22,151.61,152.01,152.4,152.8,153.19,153.98,154.38,154.77,155.56,155.96,156.34,157.14,157.54,157.93]}};
+// フィナーレは、はじめはピアノだけ。曲の流れに合わせて、弦と鉄琴 → フルート・ホルン・すず → トランペット・ティンパニ の順に加わる（秒は、曲の音を調べて決めた）
+SCORE.finale.arr = {str: [[29.8, 147]], wood: [[57.5, 146]], brass: [[80, 108.5], [118.5, 145.5]]};
+const Show = (() => {
+  const q = s => document.querySelector(s), eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const ROLL = [3, 144];        // エンドロールが流れる時間（フィナーレの曲の 3秒 〜 144秒）
+  let run = 0, pre = false, on = false, inited = false, onQuit = null, onAgain = null, chipT = 0, rollKey = '', rollY = null; const bubs = [];
+  const alive = id => id === run;
+  const wait = (sec, id) => new Promise(r => setTimeout(() => r(alive(id)), sec * 1000));
+  const until = (fn, id, max) => new Promise(r => { const t0 = performance.now(), iv = setInterval(() => {
+    if (!alive(id)){ clearInterval(iv); r(false); } else if (fn() || performance.now() - t0 > max * 1000){ clearInterval(iv); r(true); } }, 40); });
+  function init(){ if (inited) return; inited = true; StageFx.init(q('#curtainFx'), q('#pitFx'));
+    addEventListener('resize', () => { rollKey = ''; }); addEventListener('keydown', e => { if (e.key === 'Escape' && on) quit(); }); }
+  /* 曲の時間（秒）。録音した曲がその曲を流しているあいだは、その時間。流れていないとき（音楽オフ・読みこみ中）は、時計で進める */
+  function clock(name, loop){ const t0 = performance.now();
+    return () => { try { const a = FM.current() === name ? FM._cur() : null; if (a && !a.paused && a.currentTime > .01) return a.currentTime; } catch(e){}
+      const t = (performance.now() - t0) / 1000; return loop ? t % loop : t; }; }
+
+  /* ---- 画面の文字 ---- */
+  function big(html, show){ const b = q('#sgBig'); if (html != null) b.innerHTML = html; b.classList.toggle('on', show !== false); }
+  function vo(html){ const v = q('#sgVo'); if (html){ v.innerHTML = html; v.classList.add('on'); } else v.classList.remove('on'); }
+  function chip(text, sec){ const c = q('#sgChip'); clearTimeout(chipT); if (!text){ c.classList.remove('on'); return; } c.textContent = text; c.classList.add('on'); if (sec) chipT = setTimeout(() => c.classList.remove('on'), sec * 1000); }
+  // ふきだし：しゃべる人の頭の上に出す。ほかのふきだしと重なるときは、上へずらす
+  function place(v){ const b = v.el; if (!b || v.bx == null) return; const W = innerWidth, bw = b.offsetWidth, bh = b.offsetHeight, left = Math.max(8, Math.min(W - bw - 8, v.bx - bw / 2)); let top = v.by - bh - 18;
+    for (let n = 0; n < 4; n++) for (const o of bubs){ const r = o._r; if (o === b || !r || !o.classList.contains('on')) continue;
+      if (left < r.l + r.w + 6 && r.l < left + bw + 6 && top < r.t + r.h + 8 && r.t < top + bh + 8) top = r.t - bh - 10; }
+    top = Math.max(8, top); b._r = {l: left, t: top, w: bw, h: bh};
+    b.style.transform = `translate(${left.toFixed(1)}px,${top.toFixed(1)}px)`; b.style.setProperty('--tx', Math.max(20, Math.min(bw - 20, v.bx - left)).toFixed(1) + 'px'); }
+  function bubble(v, text){ let b = v.el; if (!b){ b = v.el = document.createElement('div'); b.className = 'sg-bub'; q('#sgUI').appendChild(b); bubs.push(b); } b.textContent = text; v.say = true; place(v); requestAnimationFrame(() => { place(v); b.classList.add('on'); }); }
+  function unbubble(v){ if (v.el){ v.el.classList.remove('on'); v.el._r = null; } v.say = false; }
+  async function say(id, v, text, sec){ bubble(v, text); const ok = await wait(sec, id); unbubble(v); return ok && await wait(.3, id); }
+  function clean(){ big(null, false); vo(null); chip(''); q('#endRoll').classList.remove('on'); q('#sgEnd').classList.remove('on'); bubs.splice(0).forEach(b => b.remove()); }
+
+  /* ---- エンドロール：html を入れて、曲の時間 t に合わせて流す ---- */
+  function roll(html){ q('#rollIn').innerHTML = html; rollKey = ''; rollAt(0); q('#endRoll').classList.add('on'); }
+  function rollAt(t){ const i = StageFx.info(), H = innerHeight, r = q('#endRoll'), inn = q('#rollIn'); if (!i.s) return; const key = innerWidth + 'x' + H;
+    if (key !== rollKey){ rollKey = key; const top = H * (i.land ? .17 : .115), bottom = H - i.s * 2.3;      // 文字が見えるのは、上の飾り幕の下 〜 オーケストラの頭の上
+      r.style.setProperty('--m0', (top - H * .06).toFixed(0) + 'px'); r.style.setProperty('--m1', (top + H * .05).toFixed(0) + 'px'); r.style.setProperty('--m2', (bottom - H * .04).toFixed(0) + 'px'); r.style.setProperty('--m3', (bottom + i.s * .55).toFixed(0) + 'px');
+      rollY = [bottom + i.s * .3, top - inn.offsetHeight]; }
+    const f = Math.max(0, Math.min(1, (t - ROLL[0]) / (ROLL[1] - ROLL[0]))); inn.style.transform = `translateY(${(rollY[0] + (rollY[1] - rollY[0]) * f).toFixed(1)}px)`; }
+
+  /* ---- スタート画面：幕を閉じて、開演を待つ ---- */
+  function start(){ init(); ++run; pre = true; clean(); StageFx.clearVisitors(); StageFx.music(null);
+    StageFx.set({open: 0, val: 0, lift: 0, light: .45, pitLight: .32, ready: 0, bow: 0, joy: 0});
+    if (window.TitleFx) TitleFx.set(false); q('.home').classList.add('off'); q('#sgBill').classList.remove('gone'); }
+  /* ---- 開演 ---- */
+  async function open(){
+    if (!pre) return; pre = false; const id = ++run, tClick = performance.now();
+    initAudio(); try { BGM.loadData(); BGM.stop(); BGM.play('title'); } catch(e){}      // 押した瞬間に、曲が頭から始まる
+    const c = clock('title', SCORE.title.end); StageFx.music(SCORE.title, c);
+    q('#sgBill').classList.add('gone'); StageFx.set({ready: 1}); StageFx.to('pitLight', 1, .3); StageFx.to('light', 1, .9);
+    if (!await wait(.15, id)) return;
+    if (window.TitleFx){ TitleFx.set(true); TitleFx.restart(1.4); }      // 幕のむこうは、暗いこがね町。幕が開ききったころに、雷が落ちる
+    const op = StageFx.to('open', 1, 3.2, eio);
+    if (!await wait(1.15, id)) return;
+    q('.home').classList.remove('off');                                   // タイトルの文字が、はずんで出てくる
+    await op; if (!alive(id)) return;
+    StageFx.to('val', 1, 1.2, eio);
+    // 4小節（16拍）演奏したら、オーケストラの床が下がって、町の全体が見える。曲はそのまま続く
+    const t16 = SCORE.title.t0 + 16 * 60 / SCORE.title.bpm - .15;
+    if (!await until(() => c() >= t16, id, Math.max(.2, 9.6 - (performance.now() - tClick) / 1000))) return;
+    await StageFx.to('lift', 1, 2, eio); if (!alive(id)) return;
+    StageFx.music(null);
+  }
+  /* ---- スタート画面をはなれるとき（すごろく盤や参加者の画面へ）：幕とオーケストラを片づける ---- */
+  function leave(){ if (!inited || on) return; ++run; pre = false; clean(); q('#sgBill').classList.add('gone'); q('.home').classList.remove('off'); StageFx.music(null); StageFx.set({open: 1, val: 1, lift: 1}); }
+
+  /* ---- 幕おろしを始める：下のボタンを押せないように画面をおおう。quit = 閉じたときの片づけ、again =「もう一度見る」で呼ぶもの ---- */
+  function begin(quitFn, againFn){ init(); const id = ++run; on = true; pre = false; onQuit = quitFn; onAgain = againFn; clean();
+    q('#sgUI').classList.add('block'); q('#sgQuit').classList.add('on'); q('#sgBill').classList.add('gone');
+    StageFx.clearVisitors(); StageFx.music(null); StageFx.set({open: 1, val: 1, lift: 1, light: 1, pitLight: 1, ready: 1, bow: 0, joy: 0}); return id; }
+  /* ---- 閉じる（とちゅうでやめる・終わって閉じる）：幕を開けて、もとの画面に戻す ---- */
+  async function quit(){ if (!on) return; const id = ++run; clean(); q('#sgQuit').classList.remove('on'); StageFx.music(null); StageFx.clearVisitors();
+    StageFx.to('lift', 1, .8, eio); StageFx.to('val', 1, .8, eio); await StageFx.to('open', 1, 1.2, eio); if (!alive(id)) return;
+    on = false; q('#sgUI').classList.remove('block'); const f = onQuit; onQuit = onAgain = null; if (f) f(); }
+  function again(){ if (!on) return; const f = onAgain; ++run; clean(); on = false; onQuit = onAgain = null; q('#sgUI').classList.remove('block'); q('#sgQuit').classList.remove('on');
+    StageFx.music(null); StageFx.clearVisitors(); StageFx.set({open: 1, val: 1, lift: 1}); if (f) f(); }
+  return {start, open, leave, begin, quit, again, alive, wait, clock, eio, big, vo, chip, bubble, unbubble, say, roll, rollAt, ROLL,
+    endButtons(v){ q('#sgEnd').classList.toggle('on', !!v); }, hideRoll(){ q('#endRoll').classList.remove('on'); }, busy: () => on, isPre: () => pre};
+})();
+
 route();
-/* スタート画面でもタイトルの曲を流す。ブラウザが音を止めているときは、画面のどこかを押したところから流れる */
-if (document.body.classList.contains('homemode')){
-  try { BGM.play('title'); } catch(e){}
-  const wake = () => { try { initAudio(); if (!BGM.current()) BGM.play('title'); } catch(e){} };
-  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, wake, {once:true, capture:true}));
-}
+/* スタート画面：はじめは幕が閉じていて、「開演」を押すとタイトルの曲が鳴る（ブラウザは「押した」あとでないと音を出せない）。曲は先に読みこんでおく */
+if (document.body.classList.contains('homemode')){ Show.start(); try { FM.load(); } catch(e){} }
 </script>
 <script type="module">
 window.hostInit3D = async function(){
@@ -7420,7 +7999,7 @@ function finishGame(){
 }
 function showResults(){
   if (isCoop() && H.coop){
-    $('#resList').innerHTML = coopResultsHTML() + `<div class="resbtns"><button class="btn big gold" onclick="photoSession()">📸 みんなで記念写真</button><button class="btn big" onclick="makeCards()">🎴 思い出カードを作る</button></div><p class="resnote">できた画像はダウンロードして、Zoomのチャットに送れます</p>`;
+    $('#resList').innerHTML = coopResultsHTML() + `<div class="resbtns"><button class="btn big gold" onclick="photoSession()">📸 みんなで記念写真</button><button class="btn big" onclick="makeCards()">🎴 思い出カードを作る</button>${H.coopEnd ? `<button class="btn big red" onclick="curtainCall()">🎭 幕をおろす（エンディング）</button>` : ''}</div><p class="resnote">できた画像はダウンロードして、Zoomのチャットに送れます</p>`;
     openModal('m-res'); if (H.coopEnd === 'win'){ confetti(); sfx.fanfare(); }
     if (H.coopEnd) VO.cue('outro');   // さいごのお礼と先生の紹介は、ゲームが終わったあとの結果の画面が出た瞬間に（1ゲームに1回）。とちゅうで結果を見たときは流さない
     return;
@@ -9014,6 +9593,85 @@ function prewarmAll(){
 
 window.skipShow = () => { showSkip = true; };
 window.gachaFast = () => { GS.fast = true; };
+/* ================= 幕おろし（エンディング）：結果の画面の「幕をおろす」で始まる =================
+   町を救えたとき：ほかの町の人が「うちにも来て」と頼みに来る → 幕が閉じる →「つづく…？」→ フィナーレの演奏とエンドロール →「おしまい」
+   とどかなかったとき：ほかの町の場面はなし。幕が閉じて、フィナーレの演奏とエンドロール
+   ・絵は StageFx、画面の文字とボタンは Show（どちらも上のほうにある）。ここは進行だけ
+   ・お礼の声が流れているあいだは始めない（声が終わるのを待つ）。ほかの町の人のセリフは、今は字幕だけ（声はまだない）
+   ・幕が閉じきっているあいだは、すごろく盤を描かない（ループの中で StageFx.covered() を見ている）
+   ・右上の「✕ とじる」か Esc キーで、いつでもやめて結果の画面に戻れる */
+function endRollHTML(){
+  const S = H.coop, hero = coopHeroes(), h = Math.max(0, Math.min(100, Math.round(S.happy))), did = PROJECTS.filter(p => S.lv[p.id] > 0);
+  const face = (k, n) => `<img alt="" src="${CharArt.has(k) || CharArt.villagers.includes(k) ? CharArt.thumb(k, n) : THUMB[k] || ''}">`;
+  return `<section><p class="er-k">数学すごろく クリスマス会</p><h2 class="dela">こがね町を救え！</h2></section>
+<section><h3>出演</h3>${H.players.map(pl => `<div class="er-who">${face(pl.char, 192)}<div><b>${pl.cpu ? '🤖 ' : ''}${esc(pl.name)}${pl.cpu ? '' : ' さん'}</b><span>${jobIc(pl)} ${jobName(pl)}</span><i>${hero[pl.id].t}</i></div></div>`).join('')}</section>
+<section><h3>こがね町のみなさん</h3><p class="er-line"><small>司会</small>妖精の ノエル</p><p class="er-line">雪だるまの ゆきまる</p><p class="er-line">町長さん</p><div class="er-faces">${CharArt.villagers.map(k => face(k, 144)).join('')}</div><p class="er-line">村のみなさん</p></section>
+<section><h3>みんなでやったこと</h3><p class="er-happy">😊 幸せ度 ${COOP_CFG.startHappy} → ${h}</p>${did.length ? `<div class="er-chips">${did.map(p => `<span>${p.ic} ${p.lv[S.lv[p.id] - 1]}</span>`).join('')}</div>` : ''}</section>
+<section><h3>きょう使った数学</h3><div class="er-chips">${Object.values(CAT).map(c => `<span>${c.ic} ${c.name}</span>`).join('')}</div>${S.bossDone ? `<p class="er-line" style="margin-top:22px"><small>最後の大工事</small><span class="er-eq dela">y² = x³ + 1</span></p>` : ''}</section>
+<section><h3>数学のひみつ</h3><p class="er-fact">「こがね町」の名前は、<b>黄金比</b>から</p><p class="er-fact">雷の 金色のもようは、<b>リヒテンベルク図形</b>。 フラクタルの なかま</p><p class="er-fact">y² = x³ + 1 のグラフは、<b>楕円曲線</b>。 須田先生が 大学院で 研究していた世界</p></section>
+<section><h3>演奏</h3><p class="er-line">こがね町 クリスマス楽団</p></section>
+<section><h3>つくった人</h3><p class="er-line">須田先生<small>ストアカで、算数・数学を教えています</small></p></section>
+<section class="er-last"><h3>ありがとう</h3><p class="er-line">きょう いっしょに遊んでくれた<br>みんなへ</p></section>`;
+}
+/* 幕おろしを閉じたあと：画面をもとに戻して、結果の画面を出す */
+function curtainDone(){
+  $('#phase').style.visibility = ''; $('#floorTag').style.visibility = ''; document.body.classList.remove('showing'); H.busy = false; renderHUD();
+  if (H.phase === 'end' && H.coopEnd){ BGM.play(BGM.has('finale') ? 'finale' : H.coopEnd === 'win' ? 'win' : 'lose'); showResults(); }
+}
+let curtainWait = false;
+async function curtainCall(again){      // again = true：「もう一度見る」から（画面は、もう幕おろしのままになっている）
+  if (!isCoop() || !H.coop || !H.coopEnd || Show.busy() || curtainWait || (again !== true && (H.busy || H.asking))) return;
+  if (['m-boss', 'm-photo', 'm-cards'].some(m => $('#' + m).classList.contains('on'))) return;      // ボス問題・記念写真の画面が開いているあいだは始めない
+  ['m-res', 'm-rules', 'm-invite', 'm-setup', 'm-char'].forEach(closeModal); initAudio();
+  if (VO.speaking()){ curtainWait = true; Show.chip('🔈 声が終わったら、幕がおります…'); await VO.idle(); curtainWait = false; Show.chip(''); if (Show.busy() || !H.coopEnd) return; }
+  const id = Show.begin(curtainDone, () => curtainCall(true)), win = H.coopEnd === 'win', eio = Show.eio, ok = sec => Show.wait(sec, id);
+  H.busy = true; renderHUD(); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); camOverview();
+  if (win){
+    // ほかの町から、うわさを聞いた人たちが来る（曲は、勝ったときの曲を頭から）
+    BGM.stop(); if (!await ok(.35)) return; BGM.play('win');
+    if (!await ok(.9)) return;
+    const land = innerWidth > innerHeight * 1.05;
+    const v1 = StageFx.visit({key:'cookie', name:'そすう村', side:-1, x:land ? .17 : .2, col:'#ffd86b'});
+    if (!await ok(.85)) return;
+    if (!await Show.say(id, v1, 'たいへん、たいへん！ こがね町のうわさ、聞きました！', 3)) return;
+    if (!await Show.say(id, v1, 'うちの そすう村は、お金が 2円、3円、5円、7円…。はんぱな数しか のこってないんです！', 4.8)) return;
+    const v2 = StageFx.visit({key:'robot', name:'えんしゅう町', side:1, x:land ? .83 : .8, col:'#a6d8ff'});
+    if (!await ok(.85)) return;
+    if (!await Show.say(id, v2, 'まって！ えんしゅう町は、電車が ぐるぐる回って、止まりません！', 4)) return;
+    const v3 = StageFx.visit({key:'dragon', name:'むげん島', side:1, x:.5, from:'below', col:'#b3f0d0'});
+    if (!await ok(.85)) return;
+    if (!await Show.say(id, v3, 'むげん島は、こまりごとが むげんに あるんです〜！', 3.8)) return;
+    [v1, v2, v3].forEach(v => { v.beg = 1; });
+    Show.bubble(v1, 'つぎは、うちに来てください！'); if (!await ok(.4)) return; Show.bubble(v2, 'うちが先です！'); if (!await ok(.4)) return; Show.bubble(v3, 'うちも〜！');
+    if (!await ok(2.6)) return; [v1, v2, v3].forEach(Show.unbubble);
+    Show.vo('<b>🧚 ノエル</b>わわっ、どの町も たいへん！ みんな、また 力をかしてくれる？');
+    if (!await ok(3.8)) return; Show.vo(null);
+  } else if (!await ok(.6)) return;
+  // 幕が閉じる。閉じきったら、曲を止める
+  StageFx.to('val', 0, 1.1, eio); await StageFx.to('open', 0, 3.3, eio); if (!Show.alive(id)) return;
+  StageFx.clearVisitors(); StageFx.to('light', .62, 1); BGM.stop();
+  Show.big(win ? 'つづく…？' : 'また いっしょに<br>挑戦しよう！');
+  if (!await ok(win ? 1.9 : 2.4)) return; Show.big(null, false);
+  if (!await ok(.5)) return;
+  // フィナーレを頭から。オーケストラの床が上がってきて、幕の上をエンドロールが流れる
+  BGM.play(BGM.has('finale') ? 'finale' : win ? 'win' : 'lose');
+  const clock = Show.clock('finale'), end = SCORE.finale.end; let t = 0, tMax = 0, over = false, last = performance.now(), step = 0;
+  StageFx.music(SCORE.finale, () => t); StageFx.to('light', .5, 2); StageFx.to('lift', 0, 2.6, eio);
+  Show.roll(endRollHTML());
+  while (Show.alive(id)){
+    const now = performance.now(), c = clock();
+    if (over || c < tMax - 5){ over = true; t = tMax + (now - last) / 1000; } else t = c;      // 曲がくり返しに入ったら（＝さいごまで流れたら）、あとは時計で進める
+    last = now; tMax = Math.max(tMax, t); Show.rollAt(t);
+    if (step === 0 && t >= Show.ROLL[1] + 2.5){ step = 1; Show.hideRoll(); Show.big('おしまい<small>また いっしょに 遊ぼうね！</small>'); StageFx.to('light', .85, 3); }      // 曲が静かになったら「おしまい」
+    if (step === 1 && t >= 154.3){ step = 2; StageFx.to('bow', 1, 1.7).then(() => { if (Show.alive(id)){ StageFx.set({bow:0}); StageFx.to('joy', 1, .5); } }); }                 // さいごの和音で、おじぎ
+    if (step === 2 && t >= end + .5){ Show.endButtons(true); break; }
+    await new Promise(r => requestAnimationFrame(r));
+  }
+  if (!await ok(5)) return;
+  StageFx.to('joy', 0, 1.5); StageFx.music(null);
+}
+window.curtainCall = curtainCall;
+
 /* ================= ループ ================= */
 const clock = new THREE.Clock();
 const perfS = {last:0, sum:0, n:0, slow:0, good:0};
@@ -9060,7 +9718,7 @@ function loop(){
     pl.obj.userData.bub.position.y = pl.obj.userData.bubY + .06 * Math.sin(T * 3 + pl.id);
     if (!reduceMotion) pl.obj.userData.anim(T + pl.id * 1.7); updatePet(pl, T, dt); });
   floats.forEach(d => { const [x, y] = screenPos(d._anchor); d.style.left = x + 'px'; d.style.top = y + 'px'; });
-  composer.render();
+  if (!StageFx.covered()) composer.render();      // 幕が閉じきっているあいだは、描かない（エンドロールを軽くする）
 }
 renderHUD(); drawTimer(); loop();
 loadMap(H.mode === 'coop' ? 'town' : 'dungeon');
