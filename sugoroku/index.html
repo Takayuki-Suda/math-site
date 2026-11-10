@@ -405,7 +405,7 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 .qtext sub,.explain sub{font-size:.68em}
 .qtext small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
 .qhint{text-align:center;color:var(--muted);font-size:13px;margin:-8px 0 6px}
-.inwrap input.wide{width:110px}
+.inwrap input.wide{width:130px}
 .choices{display:grid;gap:8px;width:100%}
 .choice{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--snow);font-family:inherit;font-size:18px;font-weight:700;min-height:52px}
 .choice b{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--card2);font-size:15px}
@@ -425,7 +425,7 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 .pcourse{display:inline-block;font-size:12px;color:var(--muted);margin:2px 0}
 .pod .pcourse{display:block;font-size:11px}
 .setrow select.slv{font-size:14px;max-width:150px;padding:6px 4px}
-@media (max-width:420px){ .csel{grid-template-columns:repeat(3,1fr)} .choice{font-size:16px} .inwrap input{width:70px;font-size:22px} .inwrap input.wide{width:92px} .inwrap .pm{width:34px} .fields{font-size:20px} }
+@media (max-width:420px){ .csel{grid-template-columns:repeat(3,1fr)} .choice{font-size:16px} .inwrap input{width:84px;font-size:22px} .inwrap input.wide{width:112px} .fields{font-size:20px} }
 .sys{display:inline-flex;align-items:center;gap:6px;font-size:24px;font-weight:700;margin:10px auto}
 .sys .br{font-size:58px;font-weight:300;line-height:1;margin-top:-6px}
 .syswrap{text-align:center}
@@ -433,8 +433,16 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 .fields{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 8px;margin:16px 0;font-size:22px;font-weight:700}
 .fg{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .inwrap{display:inline-flex;align-items:center;gap:4px}
-.inwrap input{width:84px;font-family:inherit;font-size:24px;font-weight:700;text-align:center;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--snow)}
-.inwrap .pm{width:40px;height:44px;border-radius:10px;background:var(--card2);border:2px solid var(--line);font-size:20px;font-weight:900}
+.inwrap input{width:96px;font-family:inherit;font-size:24px;font-weight:700;text-align:center;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--snow)}
+.inwrap input{cursor:pointer;caret-color:transparent}
+.inwrap input::placeholder{color:var(--muted);opacity:.6}
+.inwrap input.act{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,210,63,.28)}
+.kpad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:0 auto 12px}
+.kp{min-height:54px;padding:2px;border-radius:14px;background:var(--card2);border:2px solid var(--line);color:var(--snow);font-size:26px;font-weight:900;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.kp:active{transform:translateY(2px);background:var(--line)}
+.kp.fn{font-size:22px;background:#24376f;color:#ffe9a6}
+.kp small{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0;white-space:nowrap}
+.kp:disabled{opacity:.28}
 .msg{min-height:24px;text-align:center;color:var(--gold);font-size:15px}
 .shake{animation:shake .12s 3}
 @keyframes shake{25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}}
@@ -3134,14 +3142,15 @@ function renderPlay(){
   } else if (P.stage === 'quiz'){
     const pr = P.prob;
     const flds = pr.choices ? `<div class="choices">${pr.choices.map((c, i) => `<button type="button" class="choice ${P.sel === i ? 'sel' : ''}" onclick="pChoice(${i})"><b>${'アイウエオカキク'[i]}</b><span>${c}</span></button>`).join('')}</div>`
-      : pr.fields.map(fl => `<span class="fg">${fl.pre ? `<span>${fl.pre}</span>` : ''}<span class="inwrap"><button class="pm" type="button" onclick="pm('${fl.k}')" aria-label="マイナスをつける・はずす">±</button><input id="in-${fl.k}" inputmode="decimal" autocomplete="off" aria-label="${(fl.pre || '答え').replace(/<[^>]*>/g, '')}" class="${fl.frac ? 'wide' : ''}">${fl.frac ? `<button class="pm" type="button" onclick="pSlash('${fl.k}')" aria-label="分数の線">／</button>` : ''}</span>${fl.post ? `<span>${fl.post}</span>` : ''}</span>`).join('');
+      : pr.fields.map(fl => `<span class="fg">${fl.pre ? `<span>${fl.pre}</span>` : ''}<span class="inwrap"><input id="in-${fl.k}" data-k="${fl.k}" data-frac="${fl.frac ? 1 : ''}" readonly inputmode="none" autocomplete="off" placeholder="？" onclick="kpSel('${fl.k}')" aria-label="${(fl.pre || '答え').replace(/<[^>]*>/g, '')}" class="${fl.frac ? 'wide' : ''}"></span>${fl.post ? `<span>${fl.post}</span>` : ''}</span>`).join('');
     B.innerHTML = `<div class="qhead"><span class="qtag">${COURSES[P.course || 'chu'].ic} ${COURSES[P.course || 'chu'].f[P.topic]}・${LEVELS[P.level]}　${'★'.repeat(P.star)}</span><span class="qtimer" id="qt">${fmtT(P.t)}</span></div>
       <div class="qtext">${pr.q}</div>
       <form onsubmit="event.preventDefault();pAnswer()"><div class="fields" id="flds">${flds}</div>
       ${pr.fields && pr.fields.some(fl => fl.frac) ? '<div class="qhint">分数は ／ ボタンで 3/4 のように。小数でもOK</div>' : ''}
+      ${pr.fields ? `<div class="kpad" id="kpad">${KP_KEYS.map(k => `<button type="button" class="kp${/^\d$/.test(k) ? '' : ' fn'}" data-k="${k}" onclick="kp('${k}')">${KP_LABEL[k] || k}</button>`).join('')}</div>` : ''}
       <div class="msg" id="qmsg"></div>
       <button class="btn green big" type="submit">答える</button></form>`;
-    const first = B.querySelector('.fields input'); if (first) first.focus({preventScroll:true});
+    if (pr.fields) kpSel(pr.fields[0].k);
   } else if (P.stage === 'result'){
     const r = P.res, pr = P.prob;
     const ansTxt = pr.ansText || (pr.choices ? pr.choices[pr.ans.c] : pr.fields.map(fl => (fl.pre ? fl.pre + ' ' : '') + fmtAns(pr.ans[fl.k]) + (fl.post ? ' ' + fl.post : '')).join('　'));
@@ -3173,18 +3182,39 @@ function pStar(s){
     if (P.t <= 0){ clearInterval(P.timer); finishQ('time'); }
   }, 1000);
 }
-function pm(k){
-  const el = $('#in-' + k); let v = el.value.trim();
-  v = /^[-−ー－]/.test(v) ? v.replace(/^[-−ー－]+/, '') : '−' + v;
-  el.value = v; el.focus();
+/* ---- 答えを入れる電卓のボタン（スマホの文字入力は出さない。パソコンではキーボードでも打てる） ---- */
+const KP_KEYS = ['7', '8', '9', 'bs', '4', '5', '6', 'clr', '1', '2', '3', 'neg', '0', 'dot', 'frac', 'next'];
+const KP_LABEL = {bs:'⌫<small>1字けす</small>', clr:'C<small>ぜんぶけす</small>', neg:'−<small>マイナス</small>', dot:'.<small>小数点</small>', frac:'／<small>分数</small>', next:'→<small>つぎのらん</small>'};
+let kpK = null;
+function kpSel(k){   // どのらんに入れるかを選ぶ（らんをタップしても選べる）
+  kpK = k; document.querySelectorAll('.fields input').forEach(e => e.classList.toggle('act', e.dataset.k === k));
+  const el = $('#in-' + k), fr = document.querySelector('#kpad [data-k="frac"]'), nx = document.querySelector('#kpad [data-k="next"]');
+  if (fr) fr.disabled = !(el && el.dataset.frac); if (nx) nx.disabled = !P.prob || !P.prob.fields || P.prob.fields.length < 2;
 }
+function kp(key){
+  const pr = P.prob; if (!pr || !pr.fields) return;
+  if (!kpK || !$('#in-' + kpK)) kpSel(pr.fields[0].k);
+  const el = $('#in-' + kpK); let v = el.value;
+  if (key === 'next'){ const i = pr.fields.findIndex(f => f.k === kpK); kpSel(pr.fields[(i + 1) % pr.fields.length].k); return; }
+  if (key === 'bs') v = v.slice(0, -1);
+  else if (key === 'clr') v = '';
+  else if (key === 'neg') v = /^−/.test(v) ? v.slice(1) : '−' + v;                                             // マイナスをつける・もう一度押すとはずす
+  else if (key === 'dot'){ if (!v.split('/').pop().includes('.')) v += (/\d$/.test(v) ? '' : '0') + '.'; }
+  else if (key === 'frac'){ if (el.dataset.frac && /\d$/.test(v) && !v.includes('/')) v += '/'; }
+  else if (/^\d$/.test(key)){ if (v.replace(/[−./]/g, '').length < 9) v += key; }
+  el.value = v; $('#qmsg').textContent = ''; try { sfx.tick && sfx.tick(); } catch(e){}
+}
+document.addEventListener('keydown', e => {
+  if (P.stage !== 'quiz' || !P.prob || !P.prob.fields || !$('#kpad') || e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key, m = /^\d$/.test(k) ? k : k === 'Backspace' ? 'bs' : k === 'Delete' || k === 'Escape' ? 'clr' : k === '-' || k === '−' ? 'neg' : k === '.' ? 'dot' : k === '/' ? 'frac' : k === 'Tab' ? 'next' : k === 'Enter' ? 'enter' : null;
+  if (!m) return; e.preventDefault(); if (m === 'enter') pAnswer(); else kp(m);
+});
 function norm(s){
   return String(s).trim()
     .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
     .replace(/[−ー－―‐–]/g, '-').replace(/＋/g, '+').replace(/\s+/g, '');
 }
 function fmtAns(v){ if (typeof v === 'number') return dsp(v); const q = toQ(v); return q ? frq(q) : String(v); }
-function pSlash(k){ const el = $('#in-' + k); if (!/[\/／]/.test(el.value)) el.value += '/'; el.focus(); }
 function pChoice(i){ P.sel = i; document.querySelectorAll('.choice').forEach((b, j) => b.classList.toggle('sel', j === i)); try { sfx.tick && sfx.tick(); } catch(e){} }
 function shakeF(msg){ $('#qmsg').textContent = msg; const fl2 = $('#flds'); fl2.classList.remove('shake'); void fl2.offsetWidth; fl2.classList.add('shake'); }
 function pAnswer(){
@@ -3195,7 +3225,7 @@ function pAnswer(){
   }
   for (const fl of pr.fields){
     const q = parseQ($('#in-' + fl.k).value);
-    if (!q) return shakeF(fl.frac ? '数を入れてね（分数は 3/4、マイナスは ± ボタン）' : '数字を入れてね（マイナスは ± ボタン）');
+    if (!q){ kpSel(fl.k); return shakeF(fl.frac ? '下のボタンで数を入れてね（分数は 3／4 のように）' : '下のボタンで数を入れてね'); }
     const a = toQ(pr.ans[fl.k]);
     if (!a || !qeq(q, a)) ok = false;
   }
@@ -4073,7 +4103,7 @@ PGEN.spi = {
     function(){ const N = ri(40,100), a = ri(15,35), b = ri(15,35), both = ri(3, Math.min(a, b) - 2); if (a + b - both > N) return null; return one(`${N} 人のうち、英語ができる人 ${a} 人、中国語ができる人 ${b} 人、両方できる人 ${both} 人。どちらもできない人は何人？`, N - (a + b - both), `${N} ${M} (${a} + ${b} ${M} ${both}) = <span class="ans">${N - (a + b - both)}</span> 人`, {post:'人'}); },
     function(){ const N = ri(40,80), a = ri(20,40), b = ri(15,35), none = ri(3,15), both = a + b - (N - none); if (both < 1 || both > Math.min(a, b)) return null; return one(`${N} 人のうち、A を持つ人 ${a} 人、B を持つ人 ${b} 人、どちらも持たない人 ${none} 人。両方持つ人は何人？`, both, `${a} + ${b} ${M} (${N} ${M} ${none}) = <span class="ans">${both}</span> 人`, {post:'人'}); },
     function(){ const N = 100, a = ri(40,80), b = ri(30,70); const mn = Math.max(0, a + b - N); return one(`100 人のうち ${a} 人が朝食をとり、${b} 人がジョギングをしています。両方している人は<b>少なくとも</b>何人？`, mn, `${a} + ${b} ${M} 100 = ${a + b - 100}${mn === 0 ? '（0 以下なので 0）' : ''} → <span class="ans">${mn}</span> 人`, {post:'人'}); },
-    function(){ const N = ri(100,200), pa = pick([40,50,60,70]), pb = pick([30,40,50]), pab = pick([10,20,30]); if (pab > Math.min(pa, pb) || pa + pb - pab > 100) return null; const v = N * (100 - (pa + pb - pab)) / 100; if (!Number.isInteger(v)) return null;
+    function(){ const N = ri(10,20) * 10, pa = pick([40,50,60,70]), pb = pick([30,40,50]), pab = pick([10,20,30]); if (pab >= Math.min(pa, pb) || pa + pb - pab > 100) return null; const v = N * (100 - (pa + pb - pab)) / 100; if (!Number.isInteger(v)) return null;
       return one(`${N} 人のうち ${pa}% が A、${pb}% が B を利用し、両方利用する人は ${pab}% でした。どちらも利用しない人は何人？`, v, `どちらかを利用 ${pa} + ${pb} ${M} ${pab} = ${pa + pb - pab}%<br>${N} × ${(100 - (pa + pb - pab)) / 100} = <span class="ans">${v}</span> 人`, {post:'人'}); },
     function(){ const a = ri(20,40), b = ri(20,40); return one(`ある集団で ${a} 人が A を、${b} 人が B を選びました。両方選んだ人は<b>最大で</b>何人？`, Math.min(a, b), `両方選んだ人は、少ないほうの人数をこえない → <span class="ans">${Math.min(a, b)}</span> 人`, {post:'人'}); },
     function(){ // 3集合
@@ -6286,12 +6316,60 @@ function gain(pl, n){
   renderHUD();
 }
 let bannerQ = Promise.resolve();
+/* ================= ナレーション（司会のノエル・雪だるまのゆきまる・町長） =================
+   narration/vo/ に音声（名前.mp3）があるときだけ、先生の画面で声と字幕が出る。音声がなければ何も起きない。オート中と消音中は流さない
+   名前のきまり：「〜_exp数字」は、その場面がはじめて出たときに1回だけ順番に流す説明。「〜_数字」は、2回め以降にどれか1つ */
+const VO = (() => {
+  const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ 司会のノエルです。みんながそろうまで、もう少し待っててね！"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "さあ、はじまるよ！ これは、みんなで力を合わせて、こがね町を救うすごろくです！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいる全員が、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち。まずはサイコロで、町を進もう！"], roll_1: ['mc', "次のラウンド、スタート！ いい目、出ろ〜！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "さあ、どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], half_1: ['mc', "折り返し地点！ 幸せ度は、いくつになったかな？ 後半もいくよ！"], lastround_1: ['mc', "いよいよ、最後のラウンド！ 全力でいこう！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイム！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増える！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書いて考えると、解きやすいよ！"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ ラストスパート！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、来い来い〜！"], jobnews_exp1: ['mc', "しごとのニュース！ 問題に正解すると、その分野の仕事につけるんだ。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュースです！ 新しい仕事についた人がいるよ！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでもOK！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金で、どの困りごとを直すか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。直すと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どこを直しましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変える！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金！ 次の会議で、大きく直そう！"], build_1: ['mc', "工事スタート！ トンテン、カンテン！"], build_2: ['mc', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['mc', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、直した工事でふせげるんだ。さあ、どうなる？"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['mc', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['mc', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['mc', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['mc', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['mc', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['mc', "ふせいだー！ ナイス！"], tr_guard_2: ['mc', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_hit_1: ['mc', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['mc', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], good_1: ['mc', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['mc', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。全員で、ひとつの問題に挑戦だ！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻りました！ みんな、ありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], lose_exp1: ['mc', "あと少しだった！ でも、みんなが直した場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"]};
+  const WHO = {mc: ["🎤", "ノエル", "#ffd23f"], snow: ["⛄", "ゆきまる", "#9fd8ff"], mayor: ["🎩", "町長", "#c9b3ff"]}, DIR = 'narration/vo/', ids = Object.keys(L);
+  // 画面に出る文字から、どの場面かを見分ける（上から順に調べる）
+  const MAP = [[/ゲームスタート/, 'start'], [/ラストラウンド/, 'lastround'], [/のまとめ/, 'summary'], [/^ラウンド \d/, 'roll'], [/問題タイム/, 'quiz'], [/のこり20秒/, 'hurry'], [/ガチャタイム/, 'gacha'],
+    [/チャレンジマス/, 'ev_challenge'], [/ボーナス問題/, 'ev_bonus'], [/寄付が届いた/, 'ev_gift'], [/雪だるまを作って/, 'ev_snowman'], [/こがね町のできごと/, 'cards'], [/町のできごと！/, 'ev_event'],
+    [/しごとのニュース/, 'jobnews'], [/ベテラン誕生/, 'vet'], [/が完成！/, 'build_done'], [/貯金/, 'meet_save'], [/レベル\d「/, 'build'],
+    [/さいごのラウンドが終わった/, 'boss'], [/明かりが戻った/, 'win'], [/あと少し…|出ていってしまった/, 'lose']];
+  let ready = false, probed = false, q = [], busy = false, cur = null, done = {}, last = {}, el = null, ph = '';
+  const host = () => document.body.classList.contains('hostmode');
+  function probe(){ if (probed) return; probed = true; const a = new Audio(); a.preload = 'auto'; a.onloadedmetadata = () => { ready = true; }; a.src = DIR + 'start_exp1.mp3'; }
+  function box(){ if (!el){ el = document.createElement('div'); el.id = 'vo'; el.setAttribute('aria-live', 'polite');
+      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
+      document.body.appendChild(el); } return el; }
+  function stop(){ q = []; if (cur) try { cur.pause(); } catch(e){} cur = null; busy = false; if (el) el.style.opacity = '0'; }
+  function next(){
+    if (busy) return; const id = q.shift(); if (!id){ if (el) el.style.opacity = '0'; return; }
+    busy = true; const w = WHO[L[id][0]], b = box(), a = new Audio(DIR + id + '.mp3'); cur = a; let fin = false;
+    const end = () => { if (fin) return; fin = true; if (cur === a){ cur = null; busy = false; setTimeout(next, 200); } };
+    a.onended = end; a.onerror = end;     // 音声がない行は、字幕も出さずにとばす
+    a.onplaying = () => { b.innerHTML = `<b style="color:${w[2]};margin-right:.6em">${w[0]} ${w[1]}</b>${L[id][1]}`; b.style.borderColor = w[2]; b.style.opacity = '1'; };
+    setTimeout(end, 16000); a.play().catch(end);
+  }
+  function say(key){
+    if (!ready || MUTE || H.auto || !host()) return;
+    const re = new RegExp('^' + key + '_(exp)?\\d+$'), all = ids.filter(i => re.test(i)), exp = all.filter(i => i.includes('_exp')), vars = all.filter(i => !i.includes('_exp'));
+    let pick = [];
+    if (exp.length && !done[key]){ done[key] = 1; pick = exp; }
+    else if (vars.length){ let c = vars.filter(i => i !== last[key]); if (!c.length) c = vars; last[key] = c[Math.floor(Math.random() * c.length)]; pick = [last[key]]; }
+    if (!pick.length || (pick.length === 1 && q.length >= 2)) return;     // たまりすぎたら、短いひとことは流さない
+    q.push(...pick); next();
+  }
+  function hint(html){
+    if (!ready) return; const t = String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    for (const [re, k] of MAP) if (re.test(t)){
+      if (k === 'start'){ stop(); done = {lobby: 1}; }
+      return say(k === 'roll' && H.round === Math.floor(H.maxRound / 2) + 1 ? 'half' : k); }
+  }
+  // 転職タイム・町の会議・待合室は、ゲームの進み具合（H.phase）を見て流す
+  setInterval(() => { if (!host()){ if (busy || q.length) stop(); ph = ''; return; } probe(); if (!ready) return; const p = H.phase; if (p === ph) return; ph = p;
+    if (p === 'lobby' || p === 'career' || p === 'meeting') say(p); }, 300);
+  return {say, hint, stop, lines: L};
+})();
 function banner(html, ms = 1400){
+  VO.hint(html);
   if (H.auto) ms = Math.round(ms * .8);
   bannerQ = bannerQ.then(async () => { const b = $('#banner'); b.innerHTML = html; b.classList.add('on'); await sleep(ms); b.classList.remove('on'); await sleep(220); });
   return bannerQ;
 }
 function splash(main, sub){
+  VO.hint(main);
   const s = $('#splash'); s.innerHTML = `<div class="sp-main dela">${main}</div>${sub ? `<div class="sp-sub">${sub}</div>` : ''}`;
   s.classList.remove('on'); void s.offsetWidth; s.classList.add('on');
 }
@@ -7105,10 +7183,12 @@ async function showCardInner(r, i, n, C){
   C.classList.add('on'); sfx.whoosh();
   await sleep(fast ? 350 : 900);
   $('#ccIn').classList.add('flip'); await sleep(fast ? 450 : 900);
+  if (c.good) VO.say('good');
   // こまったことは、町で何が起きたかを絵で見せてから結果へ（カードはそのあいだかくす）
   if (!c.good && window.TroubleFx){
     await sleep(fast ? 200 : 650); C.classList.add('away');
     const hp = r.by && r.by.pl;
+    const okG = !!r.by || !(r.dh || r.dy); VO.say('tr_' + c.id); setTimeout(() => VO.say(okG ? 'tr_guard' : 'tr_hit'), 2700);
     try { await window.TroubleFx.play(c.id, {fast, guard: !!r.by || !(r.dh || r.dy), ic: c.ic, name: c.name, hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null}); } catch(e){ console.error('TroubleFx', e); }
     C.classList.remove('away');
   }
