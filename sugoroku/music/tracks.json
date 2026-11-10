@@ -3,7 +3,8 @@
  "tracks": {
   "title": {
    "gain": 0.282,
-   "end": 84
+   "end": 84,
+   "in": 0.1
   },
   "story": {
    "gain": 0.8,
