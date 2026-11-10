@@ -283,6 +283,7 @@ body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
 /* できごとカード */
 .evcard{position:fixed;left:50%;top:50%;z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
 .evcard.on{display:block;animation:ccin .45s cubic-bezier(.3,1.5,.5,1)}
+.evcard.away{visibility:hidden}
 @keyframes ccin{from{transform:translate(-50%,-30%) scale(.5);opacity:0}}
 .cc-in{width:min(400px,86vw);height:min(540px,78vh);position:relative;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.3,1.3,.5,1)}
 .cc-in.flip{transform:rotateY(180deg)}
@@ -1267,6 +1268,205 @@ window.CharArt = (() => {
     return TH[id];
   }
   return {draw, thumb, keys: Object.keys(CH), villagers: Object.keys(VIL), has: k => !!CH[k]};
+})();
+/* ================= こまったことの場面（先生の画面）：カードをめくったあと、町で何が起きたかを絵で見せる =================
+   1000×560 の舞台に描く。はじめに困りごとが起き、そのあと「ふせいだ」か「ふせげなかった」かで絵が変わる
+   t＝はじまってからの秒、f＝ふせいだ度合い（0〜1）、b＝被害の度合い（0〜1） */
+window.TroubleFx = (() => {
+  const TAU = Math.PI * 2, FONT = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Meiryo",sans-serif', DELA = '"Dela Gothic One",' + FONT, GY = 430;
+  const cl = (v, a, b) => v < a ? a : v > b ? b : v, sm = (a, b, v) => { const t = cl((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const hash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const wrap = (v, n) => ((v % n) + n) % n;
+  let cv = null, g = null, tt = 0;
+  const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  const E = (x, y, rx, ry, c, rot) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, Math.max(0, rx), Math.max(0, ry), rot || 0, 0, TAU); g.fill(); };
+  const path = p => { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); };
+  const P = (p, c, st, lw) => { path(p); g.closePath(); g.fillStyle = c; g.fill(); if (st){ g.strokeStyle = st; g.lineWidth = lw || 3; g.lineJoin = 'round'; g.stroke(); } };
+  const Ln = (p, c, lw) => { path(p); g.strokeStyle = c; g.lineWidth = lw; g.lineCap = g.lineJoin = 'round'; g.stroke(); };
+  const rrp = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const RR = (x, y, w, h, r, c, st, lw) => { rrp(x, y, w, h, r); g.fillStyle = c; g.fill(); if (st){ g.strokeStyle = st; g.lineWidth = lw || 3; g.stroke(); } };
+  const Tx = (s, x, y, px, c, f, al) => { g.font = `900 ${px}px ${f || FONT}`; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillStyle = c; g.fillText(s, x, y); };
+  // 村の人やコマ（タイトル画面と同じ絵）
+  const who = (k, x, y, s, o) => { if (!window.CharArt) return; o = o || {}; g.save(); g.translate(x, y); if (o.flip) g.scale(-1, 1); window.CharArt.draw(g, k, s, o.ph || 0, Object.assign({T: tt, still: !o.walk, bp: hash(x)}, o)); g.restore(); };
+
+  /* ---- 背景の部品 ---- */
+  function sky(top, bot){ const gr = g.createLinearGradient(0, 0, 0, GY); gr.addColorStop(0, top || '#070d2a'); gr.addColorStop(1, bot || '#28397a'); g.fillStyle = gr; g.fillRect(0, 0, 1000, 560);
+    for (let i = 0; i < 40; i++) R(hash(i) * 1000, hash(i + 50) * 300, 2.5, 2.5, `rgba(255,255,255,${.3 + hash(i + 9) * .5})`); }
+  function ground(c1, c2){ const gr = g.createLinearGradient(0, GY, 0, 560); gr.addColorStop(0, c1 || '#3d4f92'); gr.addColorStop(1, c2 || '#1a2553'); g.fillStyle = gr; g.fillRect(0, GY - 4, 1000, 140); }
+  function house(x, w, h, col, lit){ const y = GY - h, rh = h * .5; R(x, y, w, h + 4, col); R(x + w * .72, y, w * .28, h + 4, 'rgba(6,10,36,.25)');
+    P([x - 10, y, x + w / 2, y - rh, x + w + 10, y], '#141b42'); Ln([x - 10, y - 3, x + w / 2, y - rh - 3, x + w + 10, y - 3], '#e4ecff', 11);
+    const n = Math.max(1, Math.floor(w / 46)), gap = (w - n * 26) / (n + 1);
+    for (let i = 0; i < n; i++){ const wx = x + gap + i * (26 + gap), on = lit > hash(x + i * 7); R(wx, y + 22, 26, 30, on ? '#ffd88a' : '#131a3e'); if (on){ g.globalAlpha = .22; E(wx + 13, y + 37, 36, 36, '#ffcf7a'); g.globalAlpha = 1; } R(wx + 12, y + 22, 2, 30, '#131a3e'); R(wx, y + 36, 26, 2, '#131a3e'); } }
+  const TOWN = [[20, 130, 120, '#28315f'], [180, 110, 150, '#2e2a5b'], [330, 150, 110, '#35294f'], [530, 120, 140, '#263b64'], [690, 140, 115, '#3a2d57'], [860, 130, 135, '#28315f']];
+  function town(lit, skip){ TOWN.forEach((h, i) => { if (!skip || !skip.includes(i)) house(h[0], h[1], h[2], h[3], lit); }); }
+  function snowfall(n, sp, t){ g.fillStyle = '#fff'; for (let i = 0; i < n; i++){ const s = 3 + hash(i + 4) * 4; g.globalAlpha = .5 + hash(i + 2) * .4; g.fillRect(wrap(hash(i) * 1100 + t * sp * (.3 + hash(i + 3) * .4), 1100) - 50, wrap(hash(i + 7) * 560 + t * sp * (.6 + hash(i + 5) * .8), 560), s, s); } g.globalAlpha = 1; }
+  function flame(x, y, s, t){ if (s < .03) return; [[1, '#ff5a1f'], [.68, '#ffa53d'], [.38, '#ffe58a']].forEach(([m, c], i) => { const h = 120 * s * m * (1 + .14 * Math.sin(t * 13 + i * 2)), w = 44 * s * m, sx = Math.sin(t * 9 + i) * 8 * s;
+    g.fillStyle = c; g.beginPath(); g.moveTo(x + sx, y - h); g.bezierCurveTo(x + w * .9, y - h * .45, x + w, y - h * .1, x, y + 6 * s); g.bezierCurveTo(x - w, y - h * .1, x - w * .9, y - h * .45, x + sx, y - h); g.fill(); }); }
+  function coin(x, y, r, wing){ if (wing){ const fl = Math.sin(tt * 18 + x) * .5; E(x - r * 1.2, y - r * .3, r * .8, r * .35, '#fff', -.5 + fl); E(x + r * 1.2, y - r * .3, r * .8, r * .35, '#fff', .5 - fl); }
+    E(x, y, r, r, '#b07a10'); E(x, y - 2, r * .86, r * .86, '#ffd23f'); Tx('¥', x, y, r * 1.2, '#8a5a00'); }
+  function bubble(x, y, s, t, col){ if (!s) return; const w = s.length * 30 + 44; g.save(); g.translate(x, y + Math.sin(t * 5) * 4); RR(-w / 2, -32, w, 64, 26, '#fff', col || '#2a2145', 5); Tx(s, 0, 2, 28, col || '#2a2145'); g.restore(); }
+
+  /* ---- 10の場面 ---- */
+  const SC = {
+    // ❄️ 大雪：雪がどんどんつもる。ふせぐと除雪車が走って道があく
+    snowfall(t, f, b){ sky('#1a2248', '#56659f'); town(.45 + f * .5); ground('#dfe7fb', '#9fb0e0');
+      const h = 40 + sm(0, 2.2, t) * 95 + b * 30, px = -260 + f * 1500;
+      g.fillStyle = '#f4f7ff'; g.beginPath(); g.moveTo(0, 560); for (let x = 0; x <= 1000; x += 20) g.lineTo(x, GY + 36 - h * (.75 + .25 * Math.sin(x * .013 + 1)) * (f > 0 && x < px + 190 ? .1 : 1)); g.lineTo(1000, 560); g.fill();
+      RR(420, GY - 20 - h * .2, 150, 60, 20, '#e0484f', '#7d1f27', 4); RR(446, GY - 52 - h * .2, 96, 44, 14, '#bfe6ff', '#7d1f27', 4);   // うまった車
+      E(495, GY + 40 - h * .2, 120, 36 * (f > 0 && px > 300 ? .2 : 1), '#f4f7ff');
+      if (f > 0){ g.save(); g.translate(px, GY + 40); RR(0, -80, 170, 80, 14, '#ff9a3d', '#b05a12', 5); RR(96, -126, 62, 52, 8, '#ffd23f', '#b05a12', 5); RR(106, -116, 42, 28, 4, '#bfe6ff'); P([170, 0, 222, 0, 196, -96, 172, -84], '#c9d2ee', '#5f6a96', 5);
+        E(40, 0, 24, 24, '#222a52'); E(132, 0, 24, 24, '#222a52'); const on = Math.sin(t * 16) > 0; E(127, -134, 10, 8, on ? '#ffe66b' : '#b08a2a'); g.restore();
+        for (let i = 0; i < 14; i++){ const p = wrap(t * 2 + hash(i), 1); E(px + 215 + p * 90, GY - 20 - Math.sin(p * 3) * 90 - hash(i) * 30, 9 * (1 - p) + 3, 9 * (1 - p) + 3, '#fff'); } }
+      who('grandpa', 770, GY + 112, 150, {flip: 1, mood: f, cheer: f, sw: Math.sin(t * 34) * .22 * (1 - f)}); if (f < .6) E(770, GY + 112, 70, 22, '#f4f7ff');
+      snowfall(170, 560 * (1 - f * .75), t); },
+    // 🚰 水道管の破裂：道から水がふき出し、マンホールのふたが飛ぶ
+    pipe(t, f, b){ sky(); town(.7); ground();
+      const k = sm(.45, 1.1, t) * (1 - f), x = 520, y0 = GY + 66;
+      E(x, y0 + 8, 150 * k + b * 70, 26 * k + b * 9, '#5fb8ff'); Ln([x - 100, y0 - 4, x - 44, y0 + 8, x, y0 - 6, x + 54, y0 + 10, x + 110, y0], '#141b42', 6);
+      if (k > .02){ const hg = 270 * k * (.92 + .08 * Math.sin(t * 22)), gr = g.createLinearGradient(0, y0 - hg, 0, y0); gr.addColorStop(0, '#e2f5ff'); gr.addColorStop(1, '#3a9bf0'); g.fillStyle = gr;
+        g.beginPath(); g.moveTo(x - 16, y0); g.quadraticCurveTo(x - 26, y0 - hg * .6, x - 74, y0 - hg); g.lineTo(x + 74, y0 - hg); g.quadraticCurveTo(x + 26, y0 - hg * .6, x + 16, y0); g.fill();
+        for (let i = 0; i < 28; i++){ const p = wrap(t * 1.3 + hash(i), 1), a = -1.57 + (hash(i + 4) - .5) * 2.4, v = 150 + hash(i + 8) * 170; E(x + Math.cos(a) * v * p, y0 - hg + Math.sin(a) * v * p + 270 * p * p, 8 * (1 - p) + 2, 8 * (1 - p) + 2, '#cfeaff'); } }
+      if (t > .45){ const q = Math.min(1, (t - .45) / 1.5); g.save(); g.translate(x + 150 * q, y0 - 6 - 340 * Math.sin(q * Math.PI)); g.rotate(q < 1 ? t * 9 : .2); E(0, 0, 40, 12, '#59628c'); E(0, -3, 34, 9, '#7a84ad'); g.restore(); }
+      who('girl', 240, GY + 104, 150, {mood: f, cheer: f, sw: Math.sin(t * 9) * .3 * (1 - f)}); who('boy', 810, GY + 106, 150, {flip: 1, mood: f, cheer: f, sw: Math.sin(t * 8 + 1) * .3 * (1 - f)}); },
+    // 🔥 空き家の火事：ふせぐと放水で火が消える
+    fire(t, f, b){ sky('#2a1220', '#7a3a2c'); town(.6, [2]); ground('#5a3f5c', '#2a1c3c'); house(330, 170, 150, '#3b3038', 0);
+      R(352, GY - 62, 42, 62, '#1b1420'); Ln([420, GY - 124, 478, GY - 96], '#6a5560', 8); Ln([478, GY - 124, 420, GY - 96], '#6a5560', 8);
+      const k = sm(.15, 1.2, t) * (1 - f) + b * .25;
+      for (let i = 0; i < 12; i++){ const p = wrap(t * .5 + hash(i), 1); g.globalAlpha = .4 * (1 - p) * Math.min(1, k * 2 + f * .5); E(415 + (hash(i + 2) - .5) * 120 + p * 90, GY - 230 - p * 260, 30 + p * 60, 30 + p * 60, f > .5 ? '#c9d5f5' : '#4a4456'); } g.globalAlpha = 1;
+      [[360, GY - 150, 1], [420, GY - 222, 1.6], [472, GY - 150, 1.15], [373, GY - 4, .7], [448, GY - 100, .8]].forEach((q, i) => flame(q[0], q[1], q[2] * k, t + i));
+      g.globalAlpha = .2 * Math.min(1, k) * (.7 + .3 * Math.sin(t * 17)); R(0, 0, 1000, 560, '#ff7a2a'); g.globalAlpha = 1;
+      if (f > 0 && f < 1) for (let i = 0; i < 44; i++){ const p = wrap(t * 1.6 + hash(i), 1); E(150 + p * 280, GY - 70 - Math.sin(p * 2.6) * 200 + (hash(i + 5) - .5) * 30, 8, 8, '#9fd8ff'); }
+      who('grandma', 770, GY + 104, 150, {flip: 1, mood: f, cheer: f, sw: Math.sin(t * 10) * .3 * (1 - f)}); },
+    // 📞 詐欺電話：あやしい人からの電話。ふせげないとお金が飛んでいく
+    scam(t, f, b){ sky('#141a3e', '#3a2f5e'); ground('#4a3f6e', '#241c44');
+      RR(540, 110, 410, 330, 24, '#f6e6c8', '#b89a6a', 6); R(580, 150, 120, 96, '#bfe0ff'); R(638, 150, 4, 96, '#b89a6a'); R(580, 196, 120, 4, '#b89a6a'); R(540, GY - 6, 410, 16, '#b89a6a');
+      who('grandma', 740, GY + 6, 200, {flip: 1, mood: f > .3 ? 1 : .35, cheer: f > .5 ? f : 0, sw: Math.sin(t * 6) * .2});
+      const rg = Math.sin(t * 44) * 5 * (1 - f); RR(858 + rg, GY - 124, 48, 84, 10, '#2b2440', '#11102a', 4); R(866 + rg, GY - 114, 32, 50, '#7df9ff');
+      for (let i = 0; i < 3; i++){ const p = wrap(t * 2 + i * .33, 1); g.globalAlpha = (1 - f) * (1 - p); g.strokeStyle = '#ffd23f'; g.lineWidth = 6; g.beginPath(); g.arc(882, GY - 86, 56 + p * 56, -1.3, .3); g.stroke(); } g.globalAlpha = 1;
+      const ex = 250 - f * 620; g.globalAlpha = .92; E(ex, 300, 200, 200, '#0b0a1e'); g.globalAlpha = 1;
+      E(ex, GY - 30, 76, 96, '#2a2740'); E(ex, GY - 150, 64, 58, '#4a4666'); RR(ex - 88, GY - 212, 176, 24, 8, '#15132a'); RR(ex - 54, GY - 258, 108, 54, 12, '#15132a'); RR(ex - 54, GY - 170, 108, 28, 10, '#0b0a1e'); Ln([ex - 24, GY - 118, ex, GY - 108, ex + 26, GY - 124], '#e8e2ff', 6);
+      bubble(ex + 30, 62, f > .3 ? '' : 'オレだよ、オレ！', t); if (f > .3) bubble(330, 250, 'それ、詐欺です！', t, '#e0484f');
+      if (b > 0) for (let i = 0; i < 9; i++){ const p = b * 1.7 - i * .08; if (p > 0 && p < 1) coin(800 - p * 560, GY - 70 - Math.sin(p * 3.14) * 150, 22); } },
+    // 🕵️ 空き巣：ふくろをかついだどろぼう。ふせぐとライトで見つかる
+    thief(t, f, b){ sky('#05081c', '#141c48'); town(.15, [2]); ground('#232d5e', '#0e1433'); house(330, 170, 150, '#2a2a44', 0);
+      const x = 440 + sm(.3, 2.4, t) * 200 + b * 620, hop = Math.abs(Math.sin(t * 7)) * 12 * (f > 0 ? 0 : 1), big = f > 0 ? 1.5 : 1;
+      g.globalAlpha = .45 * (1 - f); R(0, 0, 1000, 560, '#03051a'); g.globalAlpha = 1;
+      if (f > 0){ g.globalAlpha = .3 * f; P([40, 0, x - 170, GY + 110, x + 170, GY + 110], '#fff7c2'); E(x, GY + 100, 170, 26, '#fff7c2'); g.globalAlpha = 1; }
+      g.save(); g.translate(x, GY + 100 - hop - (f > 0 && f < 1 ? Math.sin(f * 3.14) * 46 : 0));
+      E(-56, -84, 48, 56, '#d9c79a'); Ln([-76, -128, -56, -142, -36, -128], '#8a6a3a', 7);
+      E(0, -62, 54, 62, '#2a2740'); for (let i = 0; i < 3; i++) R(-46, -94 + i * 27, 92, 11, '#e8e2ff');
+      E(0, -152, 52, 48, '#ffdcbc'); RR(-54, -170, 108, 28, 10, '#15132a'); E(-18, -156, 8, 9 * big, '#fff'); E(20, -156, 8, 9 * big, '#fff'); E(-18, -156, 4, 4, '#111'); E(20, -156, 4, 4, '#111');
+      RR(-46, -204, 92, 40, 16, '#3a3656'); E(-30, 0, 26, 12, '#15132a'); E(30, 0, 26, 12, '#15132a'); if (f > 0) Tx('！', 0, -250, 76, '#ffd23f', DELA);
+      g.restore(); },
+    // 🚑 急病人：救急車が走りつづける。ふせぐと病院がすぐそこに
+    sick(t, f, b){ sky(); const v = 1 - f; for (let i = 0; i < 4; i++) E(wrap(i * 330 - t * 60 * v, 1320) - 160, GY + 10, 240, 80, '#1c2a63'); ground();
+      R(0, GY + 50, 1000, 80, '#3a4270'); for (let i = 0; i < 9; i++) R(wrap(i * 130 - t * 520 * v, 1170) - 90, GY + 86, 70, 8, '#e4ecff');
+      for (let i = 0; i < 4; i++){ const x = wrap(i * 290 - t * 300 * v, 1160) - 80; P([x - 30, GY + 30, x, GY - 60, x + 30, GY + 30], '#0f3d2e'); P([x - 22, GY - 10, x, GY - 84, x + 22, GY - 10], '#14503a'); }
+      if (!f){ const sx = wrap(760 - t * 300, 1500) - 220; R(sx - 5, GY - 56, 10, 96, '#59628c'); RR(sx - 112, GY - 130, 224, 76, 10, '#fff', '#2a2145', 4); Tx('病院まで 40km', sx, GY - 92, 27, '#e0484f'); }
+      else { const x = 1090 - f * 430; RR(x, GY - 240, 310, 300, 12, '#f4f7ff', '#5f6a96', 5); RR(x + 112, GY - 296, 86, 66, 8, '#f4f7ff', '#5f6a96', 5); R(x + 143, GY - 284, 24, 42, '#e0484f'); R(x + 134, GY - 275, 42, 24, '#e0484f');
+        for (let i = 0; i < 6; i++) R(x + 30 + (i % 3) * 92, GY - 206 + Math.floor(i / 3) * 84, 62, 52, '#ffd88a'); RR(x + 118, GY - 44, 74, 104, 6, '#7fb2ff'); }
+      g.save(); g.translate(260 + f * 330, GY + 84 + Math.sin(t * 24) * 3 * v);
+      RR(-124, -114, 248, 104, 16, '#fff', '#5f6a96', 5); RR(62, -100, 52, 46, 8, '#9fd0ff'); R(-124, -54, 248, 14, '#e0484f'); R(-52, -102, 16, 42, '#e0484f'); R(-65, -89, 42, 16, '#e0484f');
+      E(-72, -6, 25, 25, '#222a52'); E(72, -6, 25, 25, '#222a52'); E(-72, -6, 10, 10, '#c3cfec'); E(72, -6, 10, 10, '#c3cfec');
+      const on = Math.sin(t * 16) > 0; RR(-15, -134, 30, 22, 6, on ? '#ff4d4d' : '#a02020'); if (on){ g.globalAlpha = .35; E(0, -124, 74, 74, '#ff6b6b'); g.globalAlpha = 1; } g.restore();
+ },
+    // 🎒 若い家族が出ていく：家の明かりが消えていく。ふせぐと引き返す
+    leave(t, f, b){ sky(); town(.8 - sm(.4, 2.2, t) * .6 * (1 - f)); ground();
+      R(900, GY - 66, 10, 106, '#59628c'); RR(826, GY - 130, 158, 66, 8, '#2fa46b', '#14503a', 4); Tx('となり町 →', 905, GY - 96, 25, '#fff');
+      const x = 280 + sm(.2, 2.6, t) * 300 + b * 620 - f * 220, back = f > .3;
+      [['shop', 0, 178], ['girl', -100, 134], ['boy', 92, 138]].forEach(([k, dx, s], i) => { const px = x + (back ? -dx : dx);
+        if (!back) RR(px + 30, GY + 58, 46, 38, 6, ['#b8433f', '#ffb347', '#4c8dff'][i], '#2a2145', 3);
+        who(k, px, GY + 104, s, {walk: f < .8, ph: t * 7 + i, flip: back ? 1 : 0, mood: back ? 1 : .4, cheer: f > .8 ? 1 : 0}); }); },
+    // 🏪 お店が閉まる：シャッターが下りて「閉店」。ふせぐとまた開く
+    closed(t, f, b){ sky(); town(.6, [2, 3]); ground();
+      const x = 320, w = 360, y = GY - 214, k = sm(.3, 1.9, t) * (1 - f);
+      RR(x, y, w, 218, 6, '#4a3a5c', '#241c44', 5); R(x + 30, y + 60, w - 60, 154, '#ffd88a'); who('shop', x + w / 2, GY, 124, {mood: f > .5 ? 1 : .3, cheer: f > .7 ? f : 0, sw: 0});
+      for (let i = 0; i < 10; i++) if (i < k * 10) R(x + 30, y + 60 + i * 15.4, w - 60, 15.4, i % 2 ? '#8f9fc6' : '#a9b8da');
+      P([x - 22, y + 44, x + w + 22, y + 44, x + w, y - 6, x, y - 6], '#e0484f', '#7d1f27', 4); for (let i = 0; i < 6; i += 2) P([x - 22 + i * 67.3, y + 44, x - 22 + (i + 1) * 67.3, y + 44, x + (i + 1) * 60, y - 6, x + i * 60, y - 6], '#fff');
+      Tx('こがね商店', x + w / 2, y - 36, 36, '#ffd23f', DELA);
+      if (k > .95){ g.save(); g.translate(x + w / 2, y + 134); g.rotate(-.06); RR(-76, -38, 152, 76, 6, '#fff', '#2a2145', 4); Tx('閉店', 0, 4, 44, '#e0484f', DELA); g.restore(); }
+      if (f > .8){ RR(x + w / 2 - 88, y + 66, 176, 50, 8, '#3cbf7e', '#14503a', 4); Tx('営業中', x + w / 2, y + 93, 30, '#fff', DELA); }
+      who('grandma', 830, GY + 104, 150, {flip: 1, mood: f, cheer: f, sw: Math.sin(t * 3) * .15}); },
+    // 🚌 バスの減便：時刻表に線が引かれ、バスが行ってしまう。ふせぐと次のバスが来る
+    bus(t, f, b){ sky(); town(.6); ground(); R(0, GY + 50, 1000, 80, '#3a4270');
+      R(196, GY - 156, 10, 206, '#59628c'); E(201, GY - 180, 36, 36, '#ffb347'); Tx('バス', 201, GY - 178, 22, '#2a2145');
+      RR(106, GY - 130, 190, 160, 8, '#fff', '#2a2145', 4); const n = Math.floor(sm(.4, 2.2, t) * 4.99 * (1 - f));
+      for (let i = 0; i < 5; i++){ Tx(`${7 + i * 2}:00`, 201, GY - 106 + i * 29, 24, '#2a2145'); if (i >= 1 && i <= n) Ln([138, GY - 106 + i * 29, 264, GY - 106 + i * 29], '#e0484f', 6); }
+      who('grandpa', 360, GY + 46, 150, {mood: f, cheer: f, sw: Math.sin(t * 3) * .12});
+      const bx = f > 0 ? -320 + f * 880 : 480 + sm(.2, 2.6, t) * 420 + b * 520;
+      if (!f) for (let i = 0; i < 5; i++){ const p = wrap(t * 1.2 + i * .2, 1); g.globalAlpha = .3 * (1 - p); E(bx - 176 - p * 80, GY + 74 - p * 30, 14 + p * 20, 14 + p * 20, '#c9d5f5'); } g.globalAlpha = 1;
+      g.save(); g.translate(bx, GY + 104 + Math.sin(t * 20) * 2); RR(-156, -156, 312, 136, 18, '#ffb347', '#9a5a12', 5); for (let i = 0; i < 4; i++) RR(-138 + i * 71, -140, 56, 52, 6, '#bfe6ff'); R(-156, -70, 312, 12, '#e0484f');
+      E(-94, -18, 27, 27, '#222a52'); E(94, -18, 27, 27, '#222a52'); E(-94, -18, 11, 11, '#c3cfec'); E(94, -18, 11, 11, '#c3cfec'); g.restore(); },
+    // 💸 借金の利子：役場からお金が羽をつけて飛んでいく
+    interest(t, f, b){ sky(); town(.55, [2, 3]); ground();
+      const x = 350, y = GY - 204; R(x, y, 290, 208, '#e9e3d2'); for (let i = 0; i < 5; i++) R(x + 21 + i * 58, y + 22, 26, 186, '#f8f4e6'); R(x - 16, y - 2, 322, 22, '#cfc6ae'); P([x - 26, y, x + 145, y - 84, x + 316, y], '#cfc6ae', '#8a8068', 4);
+      Tx('こがね町役場', x + 145, y - 26, 23, '#5a5340');
+      if (f < 1) for (let i = 0; i < 14; i++){ const p = wrap(t * .5 + hash(i), 1); g.globalAlpha = (1 - f) * (1 - p * .5); coin(x + 145 + (hash(i + 3) - .25) * 620 * p, y + 70 - p * (360 + b * 80) + Math.sin(p * 9 + i) * 14, 22, 1); } g.globalAlpha = 1;
+      RR(700, 196, 250, 176, 12, 'rgba(6,11,36,.85)', '#ffd23f', 4); const k = sm(.2, 2.2, t); Ln([722, 236, 782, 252, 834, 272 + k * 16, 916, 278 + k * 50 * (1 - f) - f * 46], f > .5 ? '#3cbf7e' : '#ff5a5f', 9); Tx(f > .5 ? '利子ストップ！' : '借金の利子', 825, 346, 24, '#fff');
+      who('station', 210, GY + 104, 150, {mood: f, cheer: f, sw: Math.sin(t * 4) * .15}); },
+  };
+
+  const SAD = {snowfall: '道が通れない…', pipe: '水が止まらない…', fire: '燃えてしまった…', scam: 'お金をとられた…', thief: 'にげられた…', sick: 'まだ つかない…', leave: 'いってしまった…', closed: 'お店がなくなった…', bus: 'しばらく来ない…', interest: 'お金がへった…'};
+
+  /* ---- ふせいだとき：守った人（コマと仕事のマーク）か、直しておいた工事のたてが出てくる ---- */
+  function hero(o, out, t){ if (!o.guard || out <= 0) return; const e = sm(0, .32, out), x = -150 + e * 245, y = GY + 116;
+    if (o.hero && window.CharArt && window.CharArt.has(o.hero.char)){ who(o.hero.char, x, y - Math.abs(Math.sin(t * 10)) * 16 * (1 - sm(.3, .5, out)), 190, {cheer: sm(.35, .7, out), sw: 0});
+      RR(x - 46, y - 316, 92, 80, 22, '#fff', '#3ddc97', 6); Tx(o.hero.ic || '🛡', x, y - 274, 48, '#000'); }
+    else { g.save(); g.translate(x, y - 116); g.scale(e, e); P([0, -104, 84, -72, 72, 32, 0, 98, -72, 32, -84, -72], '#ffd23f', '#b07a10', 9); Ln([-36, -6, -8, 26, 42, -38], '#fff', 18); g.restore(); }
+    if (out > .4){ const s = 1 + (1 - sm(.4, .58, out)) * 1.5; g.save(); g.translate(735, 104); g.rotate(-.1); g.scale(s, s); g.globalAlpha = sm(.4, .5, out); RR(-196, -54, 392, 108, 18, 'rgba(6,30,20,.8)', '#3ddc97', 8); Tx('ふせいだ！', 0, 5, 68, '#7dffb0', DELA); g.restore(); g.globalAlpha = 1; } }
+
+  /* ---- 音 ---- */
+  function cue(id){ try { const N = (f, t, d, v, ty) => tone(f, t, d, v == null ? .06 : v, ty || 'triangle');
+    ({ snowfall(){ sfx.whoosh(); for (let i = 0; i < 6; i++) N(300 - i * 30, i * .14, .3, .04, 'sine'); },
+       pipe(){ setTimeout(() => sfx.boom(), 450); for (let i = 0; i < 5; i++) N(500 + i * 120, .6 + i * .05, .08, .05); },
+       fire(){ for (let i = 0; i < 3; i++){ N(700, i * .6, .3, .05, 'sawtooth'); N(520, i * .6 + .3, .3, .05, 'sawtooth'); } },
+       scam(){ for (let r = 0; r < 3; r++) for (let i = 0; i < 6; i++) N(i % 2 ? 1480 : 1245, r * .65 + i * .05, .05, .045, 'square'); },
+       thief(){ [392, 370, 349, 330, 311, 294].forEach((f, i) => N(f, .2 + i * .3, .12, .07)); },
+       sick(){ for (let i = 0; i < 3; i++){ N(960, i * .7, .35, .05, 'sine'); N(770, i * .7 + .35, .35, .05, 'sine'); } },
+       leave(){ [523, 494, 440, 392].forEach((f, i) => N(f, .2 + i * .45, .42, .06, 'sine')); },
+       closed(){ for (let i = 0; i < 10; i++) N(180 + (i % 2) * 40, .3 + i * .15, .06, .06, 'square'); },
+       bus(){ N(110, .1, 1.3, .05, 'sawtooth'); [440, 392].forEach((f, i) => N(f, 1.5 + i * .35, .3, .05, 'sine')); },
+       interest(){ [1319, 1175, 1047, 988, 880, 784].forEach((f, i) => N(f, .2 + i * .24, .12, .05)); },
+       guard(){ [523, 659, 784, 1047].forEach((f, i) => N(f, i * .09, .18, .07)); },
+       hit(){ [196, 185, 147].forEach((f, i) => N(f, i * .22, .32, .07, 'sawtooth')); } })[id](); } catch(e){} }
+
+  /* ---- 1コマ：暗くした画面のまん中に、わくつきの舞台を出す ---- */
+  function paint(id, t, o, W, H, dpr, d1, d2){
+    tt = t; const out = cl((t - d1) / d2, 0, 1), G = !!o.guard, sw = Math.min(W * .94, H * .76 * 1000 / 660), k = sw / 1000, sh = 560 * k;
+    const shake = !G && out > 0 && out < .5 ? Math.sin(t * 60) * 7 * (1 - out * 2) : 0, pop = .88 + .12 * sm(0, .3, t);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H); g.globalAlpha = .82; g.fillStyle = '#04081c'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+    g.save(); g.translate(W / 2 + shake, Math.max(H * .06, (H - sh) / 2 - 50 * k) + sh / 2); g.scale(pop * k, pop * k); g.translate(-500, -280);
+    RR(-9, -9, 1018, 578, 26, G && out > .3 ? '#3ddc97' : !G && out > 0 ? '#ff5a5f' : '#ffd23f');
+    g.save(); rrp(0, 0, 1000, 560, 18); g.clip();
+    SC[id](t, G ? sm(0, .8, out) : 0, G ? 0 : out);
+    if (!G && out > 0){ g.globalAlpha = .26 * sm(0, .3, out); R(0, 0, 1000, 560, '#8a0020'); g.globalAlpha = 1; }
+    hero(o, out, t);
+    if (!G && out > .35 && SAD[id]){ g.globalAlpha = sm(.35, .5, out); g.save(); g.translate(735, 104); g.rotate(-.06); RR(-200, -46, 400, 92, 18, 'rgba(40,6,16,.82)', '#ff5a5f', 7); Tx(SAD[id], 0, 4, 44, '#ffd0d4', DELA); g.restore(); g.globalAlpha = 1; }
+    g.restore();
+    g.save(); g.translate(34, -4); g.rotate(-.03); RR(0, -26, 250, 54, 12, '#e0484f', '#fff', 4); Tx('こまったこと！', 125, 3, 30, '#fff', DELA); g.restore();
+    g.lineJoin = 'round'; g.font = `900 46px ${DELA}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.strokeStyle = '#04081c'; g.lineWidth = 12; const cap = `${o.ic || ''} ${o.name || ''}`; g.strokeText(cap, 500, 618); g.fillStyle = '#fff'; g.fillText(cap, 500, 618);
+    g.restore();
+  }
+
+  /* 場面を流す。終わったら（画面がかくれていても）かならず先へ進む */
+  function play(id, o){ o = o || {}; return new Promise(res => {
+    if (!SC[id] || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ res(); return; }
+    if (!cv){ cv = document.createElement('canvas'); cv.id = 'trfx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;display:none'; document.body.appendChild(cv); g = cv.getContext('2d'); }
+    const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), fast = !!o.fast, d1 = fast ? 1.1 : 2.6, d2 = fast ? .9 : 2.0, d3 = .28, t0 = performance.now();
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0';
+    let snd = 0, over = false;
+    const done = () => { if (over) return; over = true; cv.style.display = 'none'; try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(); };
+    setTimeout(done, (d1 + d2 + d3) * 1000 + 500);
+    const step = now => { if (over) return; const t = Math.max(0, (now - t0) / 1000), end = t - d1 - d2;
+      if (!snd){ snd = 1; cue(id); } if (snd === 1 && t >= d1){ snd = 2; cue(o.guard ? 'guard' : 'hit'); }
+      try { paint(id, t, o, W, H, dpr, d1, d2); } catch(e){ console.error('TroubleFx', e); done(); return; }
+      cv.style.opacity = String(Math.min(1, t / .2) * (1 - cl(end / d3, 0, 1)));
+      if (end >= d3) done(); else requestAnimationFrame(step); };
+    requestAnimationFrame(step); }); }
+
+  return {play, ids: Object.keys(SC),
+    // 確認用：ある場面のある時点を、指定のキャンバスに描く
+    still(canvas, id, t, o){ const pc = cv, pg = g; cv = canvas; g = canvas.getContext('2d'); try { paint(id, t, o || {}, canvas.width, canvas.height, 1, 2.6, 2.0); } finally { cv = pc; g = pg; } }};
 })();
 /* ================= タイトル画面：動く こがね町（夜空・雷・金色の光・町の明かり・キャラクター） =================
    画面いっぱいの絵を canvas に描く。30秒でひとまわり：
@@ -6905,6 +7105,13 @@ async function showCardInner(r, i, n, C){
   C.classList.add('on'); sfx.whoosh();
   await sleep(fast ? 350 : 900);
   $('#ccIn').classList.add('flip'); await sleep(fast ? 450 : 900);
+  // こまったことは、町で何が起きたかを絵で見せてから結果へ（カードはそのあいだかくす）
+  if (!c.good && window.TroubleFx){
+    await sleep(fast ? 200 : 650); C.classList.add('away');
+    const hp = r.by && r.by.pl;
+    try { await window.TroubleFx.play(c.id, {fast, guard: !!r.by || !(r.dh || r.dy), ic: c.ic, name: c.name, hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null}); } catch(e){ console.error('TroubleFx', e); }
+    C.classList.remove('away');
+  }
   const res = $('#ccRes');
   if (c.good){
     sfx.chime(); setTimeout(() => sfx.fanfare(), 200);
