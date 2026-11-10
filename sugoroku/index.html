@@ -773,7 +773,8 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、困りごとを直しておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
     <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
-    <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。</li>
+    <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。♨️ 温泉（＋幸せ度）、⛏️ 金のかけら（＋予算）、⛩️ 神社のおみくじ、🕳️ 落とし穴（下の階へ）。</li>
+    <li><b>こがね町は4つの階</b>（⭐山の上・♨️上の町・🎄下の町・⛏地下の鉱山）。階段・🚡ロープウェイ・🛷そりの大すべり台・🚃トロッコ・🕳マンホール・♨️間欠泉で上下に移動します。<b>分かれ道</b>では、どこへ行くかを選べます。</li>
     <li><b>幸せ度100</b>でみんなの勝ち！ 最後のラウンドまでにとどかなかったら、<b>最後の大工事（ボス問題）</b>に挑戦。成功すると幸せ度+15。幸せ度が0になったり、100にとどかなかったら負け…</li>
   </ol></div>
   <div id="rulesVs">
@@ -4537,6 +4538,50 @@ const DUNGEON_EDGES = {
   'H>S':{kind:'gondola'},
 };
 
+/* ---- こがね町（協力モードの大きな町・4つの階） ---- */
+const TF = {1:{y:10.5, z0:-24, z1:-15, name:'山の上 星見の丘', col:'#b9c8ff'}, 2:{y:7, z0:-15, z1:-6, name:'上の町 温泉通り', col:'#ff9fb5'}, 3:{y:3.5, z0:-6, z1:5, name:'下の町 ツリー広場', col:'#ffd23f'}, 4:{y:0, z0:5, z1:16.5, name:'地下 こがね鉱山', col:'#f2a93b'}};
+const TOWN_RAW = [
+  // 下の町（ツリー広場・商店街・駅前）
+  ['T',0,3.5,0,'tree',['a1','s1'],{lap:3, big:true}],
+  ['a1',2.7,3.5,-1.6,'q',['a2']],['a2',5.0,3.5,-2.5,'q',['a3']],['a3',7.4,3.5,-2.8,'shop',['a4']],['a4',9.8,3.5,-2.8,'q',['a5']],['a5',12.2,3.5,-2.8,'gift',['a6']],
+  ['a6',14.6,3.5,-2.8,'q',['a7','k1']],['a7',17.0,3.5,-2.8,'event',['a8']],['a8',19.4,3.5,-2.8,'q',['u1']],
+  ['k1',14.6,3.5,-0.3,'gift',['m11'],{noWarp:true}],
+  ['w1',-21.5,3.5,-2.5,'q',['w2']],['w2',-19.0,3.5,-2.8,'snow',['w3']],['w3',-16.6,3.5,-2.8,'q',['w4']],['w4',-14.2,3.5,-2.8,'event',['w5']],['w5',-11.8,3.5,-2.8,'q',['w6']],
+  ['w6',-9.4,3.5,-2.8,'shop',['w7']],['w7',-7.0,3.5,-2.8,'q',['w8']],['w8',-4.6,3.5,-2.4,'gift',['w9']],['w9',-2.3,3.5,-1.2,'q',['T']],
+  ['s1',-1.0,3.5,2.4,'q',['n1']],
+  ['e1',19.6,3.5,2.8,'q',['e2']],['e2',17.2,3.5,3.0,'gift',['e3']],['e3',14.8,3.5,3.0,'q',['e4']],['e4',12.4,3.5,3.0,'event',['e5']],['e5',10.0,3.5,3.0,'q',['e6']],
+  ['e6',7.6,3.5,2.8,'snow',['e7']],['e7',5.2,3.5,2.4,'q',['e8']],['e8',2.7,3.5,1.4,'q',['T']],
+  // 上の町（温泉通り）
+  ['u1',21.6,7,-10.4,'q',['u2']],['u2',19.2,7,-10.7,'onsen',['u3']],['u3',16.8,7,-10.8,'q',['u4']],['u4',14.4,7,-10.8,'fire',['u5']],['u5',12.0,7,-10.8,'q',['u6']],
+  ['u6',9.6,7,-10.8,'gift',['u7']],['u7',7.2,7,-10.8,'q',['u8','r1']],['u8',4.8,7,-10.8,'event',['u9']],['u9',2.4,7,-10.8,'q',['u10']],['u10',0.0,7,-10.8,'hole',['u11']],
+  ['u11',-2.4,7,-10.8,'q',['u12']],['u12',-4.8,7,-10.8,'onsen',['u13']],['u13',-7.2,7,-10.8,'q',['u14']],['u14',-9.6,7,-10.8,'fire',['u15']],['u15',-12.0,7,-10.8,'q',['u16']],
+  ['u16',-14.4,7,-10.8,'gift',['u17']],['u17',-16.8,7,-10.8,'q',['u18']],['u18',-19.2,7,-10.7,'event',['u19']],['u19',-21.6,7,-10.4,'q',['w1']],
+  // 山の上（星見の丘）
+  ['r1',15.0,10.5,-18.6,'q',['r2']],['r2',12.4,10.5,-19.6,'shrine',['r3']],['r3',9.8,10.5,-20.1,'q',['r4']],['r4',7.2,10.5,-20.3,'fire',['r5']],['r5',4.6,10.5,-20.3,'gift',['r6']],
+  ['r6',2.0,10.5,-20.1,'q',['r7']],['r7',-0.6,10.5,-19.8,'snow',['r8']],['r8',-3.2,10.5,-19.4,'q',['r9']],['r9',-5.8,10.5,-18.9,'event',['r10']],['r10',-8.4,10.5,-18.3,'q',['w4']],
+  // 地下（こがね鉱山）
+  ['n1',-1.5,0,9.6,'q',['n2']],['n2',-4.0,0,9.8,'gold',['n3']],['n3',-6.5,0,9.8,'q',['n4']],['n4',-9.0,0,9.8,'fire',['n5']],['n5',-11.5,0,9.8,'q',['n6']],
+  ['n6',-14.0,0,9.8,'event',['n7']],['n7',-16.5,0,9.8,'q',['n8']],['n8',-18.8,0,11.7,'gift',['m0']],
+  ['m0',-17.2,0,13.9,'cart',['m1'],{ride:'m9'}],['m1',-14.6,0,14.0,'q',['m2']],['m2',-12.2,0,14.0,'gold',['m3']],['m3',-9.8,0,14.0,'q',['m4']],['m4',-7.4,0,14.0,'event',['m5']],
+  ['m5',-5.0,0,14.0,'q',['m6']],['m6',-2.6,0,14.0,'shop',['m7']],['m7',-0.2,0,14.0,'q',['m8']],['m8',2.2,0,14.0,'fire',['m9']],['m9',4.6,0,14.0,'q',['m10']],
+  ['m10',7.0,0,14.0,'gold',['m11']],['m11',9.4,0,14.0,'q',['m12']],['m12',11.8,0,14.0,'event',['m13']],['m13',14.2,0,14.0,'q',['m14']],['m14',16.6,0,13.4,'onsen',['m15']],
+  ['m15',18.8,0,11.8,'q',['e1']],
+];
+const TOWN_ROUTES = {
+  a1:['🏮','商店街から上の町へ','階段をのぼると ♨️温泉通り。その先に 🚡ロープウェイ'], s1:['⛏','地下のこがね鉱山へ','🚃トロッコと ♨️間欠泉がある'],
+  a7:['➡️','商店街をまっすぐ','階段で上の町へ'], k1:['🕳','マンホールの近道','地下の鉱山へ、ひとっとび'],
+  u8:['♨️','温泉通りをまっすぐ','♨️温泉がある。🕳落とし穴に注意'], r1:['🚡','ロープウェイで山の上へ','⛩神社と 🛷そりの大すべり台'],
+};
+const TOWN_EDGES = {
+  'a8>u1':{kind:'stairs', pts:[[22.6,3.5,-3.0],[22.6,7,-6.8]]},
+  'u19>w1':{kind:'stairs', pts:[[-23,7,-6.8],[-23,3.5,-3.0]]},
+  's1>n1':{kind:'stairs', pts:[[-1.5,3.5,4.2],[-1.5,0,8.0]]},
+  'u7>r1':{kind:'gondola', label:'🚡 ロープウェイで<br>山の上へ！'},
+  'r10>w4':{kind:'slide', label:'🛷 そりの大すべり台！', pts:[[-9.8,10.9,-17.0],[-11.4,10.7,-14.6],[-12.8,9.3,-11.5],[-13.6,8.0,-8.2],[-14.0,7.3,-5.8],[-14.2,5.2,-4.2]]},
+  'k1>m11':{kind:'tunnel', label:'🕳 マンホールから<br>地下の鉱山へ！'},
+  'm15>e1':{kind:'geyser', label:'♨️ 間欠泉で<br>地上へ ひとっとび！'},
+};
+
 let NODE = {}, ROUTE_LABEL = {}, EDGES = {}, MAP = null, MAPKEY = '';
 const mapRoot = new THREE.Group(); scene.add(mapRoot);
 const tileMeshes = {};
@@ -4629,6 +4674,10 @@ function makeTile(n, root, shopSide){
   else if (n.type === 'event'){ fill = '#2a1f5c'; label = '❓'; }
   else if (n.type === 'tree'){ fill = '#14532d'; label = '🎄'; r = 1.3; }
   else if (n.type === 'cart'){ fill = '#8a5a3a'; label = '🚃'; }
+  else if (n.type === 'onsen'){ fill = '#ff9fb5'; label = '♨️'; }
+  else if (n.type === 'gold'){ fill = '#c9961a'; label = '⛏️'; }
+  else if (n.type === 'shrine'){ fill = '#d6453d'; label = '⛩️'; r = 1.0; }
+  else if (n.type === 'hole'){ fill = '#39414f'; label = '🕳️'; }
   else if (n.type === 'start'){ fill = '#6b3a1e'; label = '🚪'; r = 1.2; }
   else if (n.type === 'hall'){ fill = '#b8860b'; label = '👑'; r = 1.5; }
   const g = new THREE.Group();
@@ -4636,7 +4685,7 @@ function makeTile(n, root, shopSide){
   side.position.y = .16; g.add(side);
   const top = new THREE.Mesh(new THREE.CircleGeometry(r, 48), new THREE.MeshStandardMaterial({map:labelTex(fill, label, emoji, n.type === 'snow'), roughness:.35}));
   top.rotation.x = -Math.PI/2; top.position.y = .325; g.add(top);
-  if (['tree','shop','event','start','hall','cart'].includes(n.type) || n.gate){
+  if (['tree','shop','event','start','hall','cart','shrine'].includes(n.type) || n.gate){
     const ring = new THREE.Mesh(new THREE.TorusGeometry(r + .02, .06, 8, 48), new THREE.MeshStandardMaterial({color:n.gate ? '#9fe3ff' : '#f2c94c', emissive:n.gate ? '#3ab8ff' : '#f2a91c', emissiveIntensity:1.3}));
     ring.rotation.x = Math.PI/2; ring.position.y = .33; g.add(ring);
   }
@@ -4668,10 +4717,11 @@ function loadMap(key){
   hemi.color.set(L.hemi[0]); hemi.groundColor.set(L.hemi[1]); hemi.intensity = L.hemi[2];
   moon.color.set(L.moon[0]); moon.intensity = L.moon[1]; moon.position.set(...L.moon[2]);
   bloom.strength = L.bloom[0]; bloom.threshold = L.bloom[1]; renderer.toneMappingExposure = L.exposure;
+  Object.assign(moon.shadow.camera, MAP.shadow || {left:-24, right:24, top:16, bottom:-16, near:1, far:80}); moon.shadow.camera.updateProjectionMatrix();
   MAP.anim = MAP.build(mapRoot);
   try {
     const ex = Object.values(tileMeshes);
-    if (MAPKEY === 'dungeon' && typeof DG !== 'undefined'){ if (DG.cart) ex.push(DG.cart); if (DG.gondola) ex.push(DG.gondola.cab, DG.gondola.cable, DG.gondola.line); }
+    if ((MAPKEY === 'dungeon' || MAP.dg) && typeof DG !== 'undefined'){ if (DG.cart) ex.push(DG.cart); if (DG.gondola) ex.push(DG.gondola.cab, DG.gondola.cable, DG.gondola.line); }
     if (TOWN) TOWN.prep(true);
     Q.freeze = freezeStatic(mapRoot, {exclude:ex, anim:MAP.anim});
     if (TOWN) TOWN.prep(false);
@@ -5237,6 +5287,265 @@ function buildDungeon(root){
 }
 
 
+/* ---- こがね町（大きな町・4つの階）をつくる：山の上 → 上の町 → 下の町 → 地下の鉱山 ---- */
+function buildBigTown(root){
+  const anims = [], add = o => { root.add(o); return o; }, WID = 62, v3 = (x, y, z) => new THREE.Vector3(x, y, z);
+  const smokes = [], steams = [], houseLights = [], townBulbs = [];
+  const windows = [0, 1, 2, 3].map(() => new THREE.MeshStandardMaterial({color:'#ffd36b', emissive:'#ffb347', emissiveIntensity:1.6}));
+  const text = (s, x, y, z, w = 3.4, col = '#e6f6ff') => { const sp = add(new THREE.Sprite(new THREE.SpriteMaterial({map:canvasTex((g, cw, ch) => {
+      g.font = `900 46px ${JP_FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 10; g.strokeStyle = 'rgba(10,20,48,.8)'; g.strokeText(s, cw/2, ch/2); g.fillStyle = col; g.fillText(s, cw/2, ch/2);
+    }, 320, 80), depthWrite:false}))); sp.scale.set(w, w / 4, 1); sp.position.set(x, y, z); return sp; };
+
+  /* --- 4つの階（段々の地面） --- */
+  const ground = add(new THREE.Mesh(new THREE.CircleGeometry(150, 48), mat('#0d1838', {flatShading:false, roughness:1}))); ground.rotation.x = -Math.PI/2; ground.position.y = -1.45;
+  [1, 2, 3, 4].forEach(f => {
+    const F = TF[f], depth = F.z1 - F.z0, h = F.y + 1.4, zc = (F.z0 + F.z1) / 2;
+    const blk = add(new THREE.Mesh(new THREE.BoxGeometry(WID, h, depth), mat(f === 4 ? '#2a2233' : '#4f4638', {flatShading:false, roughness:.95}))); blk.position.set(0, F.y - h/2, zc); blk.receiveShadow = true;
+    let top;
+    if (f === 4){ const tx = floorTex('stone'); tx.repeat.set(18, 3.4); top = new THREE.Mesh(new THREE.PlaneGeometry(WID - .2, depth - .1), new THREE.MeshStandardMaterial({map:tx, color:'#8d84a6', roughness:.85})); }
+    else { top = new THREE.Mesh(new THREE.PlaneGeometry(WID - .2, depth - .1, 60, 10), mat(['#e3ebfb', '#d6e0f5', '#cdd9f1'][f - 1], {roughness:.95, flatShading:false}));
+      const p = top.geometry.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.random() * .05); top.geometry.computeVertexNormals(); }
+    top.rotation.x = -Math.PI/2; top.position.set(0, F.y + .005, zc); top.receiveShadow = true; add(top);
+    if (f < 4){
+      const below = TF[f + 1].y, ch = F.y - below;
+      const face = add(rockFace(WID, ch, f === 3 ? '#6b4a32' : f === 2 ? '#5d6b94' : '#6f7fae', f + 3)); face.position.set(0, below + ch/2, F.z1 + .02); face.receiveShadow = true;
+      const lip = add(new THREE.Mesh(new THREE.BoxGeometry(WID, .34, .6), mat('#f1f5fd', {flatShading:false}))); lip.position.set(0, F.y - .1, F.z1 + .12);
+    }
+  });
+  // 町の地面の断面に見える、古い水道管
+  { const pm = mat('#8a6a4f', {metalness:.5, roughness:.5, flatShading:false});
+    [[-30, 14, 2.3], [-12, 30, 1.2]].forEach(([x0, x1, y]) => { const p = add(new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, x1 - x0, 12), pm)); p.rotation.z = Math.PI/2; p.position.set((x0 + x1) / 2, y, 5.5);
+      for (let x = x0 + 3; x < x1; x += 6){ const j = add(new THREE.Mesh(new THREE.CylinderGeometry(.3, .3, .3, 12), mat('#5f4a3a', {flatShading:false}))); j.rotation.z = Math.PI/2; j.position.set(x, y, 5.5); } }); }
+
+  /* --- 道と電球 --- */
+  const bulbMats = ['#ff5a5f','#ffd23f','#3ddc97','#4cc9f0','#f15bb5'].map(c => new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:2.2}));
+  const roadMat = mat('#bccae6', {flatShading:false, roughness:.9}), mineRoad = mat('#b89a5e', {flatShading:false, roughness:.7});
+  const bulbGeo = new THREE.SphereGeometry(.09, 8, 6), poleGeo = new THREE.CylinderGeometry(.03, .03, .35, 5), poleMat = mat('#2b2b38');
+  let li = 0;
+  function road(a, b){
+    const d = b.clone().sub(a), L = d.length(); if (L < .2) return;
+    const r = add(new THREE.Mesh(new THREE.BoxGeometry(1.15, .06, L), a.y < 1 ? mineRoad : roadMat)); r.position.copy(a).add(b).multiplyScalar(.5); r.position.y = a.y + .05; r.rotation.y = Math.atan2(d.x, d.z); r.receiveShadow = true;
+    const ux = -d.z / L, uz = d.x / L;
+    [.3, .7].forEach((t, j) => { if (L < 1.6 && j) return; const side = j ? 1 : -1, px = a.x + d.x*t + ux*.78*side, pz = a.z + d.z*t + uz*.78*side;
+      const pole = add(new THREE.Mesh(poleGeo, poleMat)); pole.position.set(px, a.y + .17, pz);
+      const ci = li % bulbMats.length, bl = add(new THREE.Mesh(bulbGeo, bulbMats[li++ % bulbMats.length])); bl.position.set(px, a.y + .4, pz); townBulbs.push({bl, ci}); });
+  }
+  function stairs(x, yTop, zTop, yBot, zBot){
+    const n = 8, dz = (zBot - zTop) / n, dy = (yTop - yBot) / n;
+    for (let i = 0; i < n; i++){ const st = add(new THREE.Mesh(new THREE.BoxGeometry(1.8, dy * (n - i) + .02, Math.abs(dz) + .02), mat(i % 2 ? '#8791b3' : '#7a84a6')));
+      st.position.set(x, yBot + dy * (n - i) / 2 - .01, zTop + dz * (i + .5)); st.receiveShadow = true; st.castShadow = true; }
+    [-1, 1].forEach(s => { for (let i = 0; i <= n; i += 2){
+      const post = add(new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, .7, 6), mat('#c0392b', {flatShading:false}))); post.position.set(x + s * .95, yTop - dy * i + .35, zTop + dz * i);
+      const lamp = add(new THREE.Mesh(bulbGeo, bulbMats[(i + (s > 0 ? 2 : 0)) % bulbMats.length])); lamp.position.set(x + s * .95, yTop - dy * i + .78, zTop + dz * i); lamp.scale.setScalar(1.4); townBulbs.push({bl:lamp, ci:(i + (s > 0 ? 2 : 0)) % bulbMats.length}); } });
+  }
+  Object.values(NODE).forEach(n => n.next.forEach(id => {
+    const e = EDGES[`${n.id}>${id}`], m = NODE[id];
+    if (!e){ road(n.p, m.p); return; }
+    if (e.kind === 'stairs'){
+      const P = e.pts.map(q => v3(...q)), hi = P[0].y > P[1].y ? P[0] : P[1], lo = P[0].y > P[1].y ? P[1] : P[0];
+      stairs(hi.x, hi.y, hi.z + (lo.z > hi.z ? .2 : -.2), lo.y, lo.z + (lo.z > hi.z ? -.1 : .1)); road(n.p, P[0]); road(P[1], m.p);
+    }
+  }));
+
+  /* --- マス --- */
+  Object.values(NODE).forEach(n => makeTile(n, root, () => 'back'));
+
+  /* --- そりの大すべり台（山の上 → 下の町） --- */
+  { const e = EDGES['r10>w4'], up = v3(0, .45, 0);
+    const pts = [NODE.r10.p.clone().add(up), ...e.pts.map(q => v3(...q)), NODE.w4.p.clone().add(up)];
+    const curve = new THREE.CatmullRomCurve3(pts); e.curve = curve;
+    const stripe = canvasTex((g, w, h) => { for (let i = 0; i < 8; i++){ g.fillStyle = i % 2 ? '#ffffff' : '#38bdf8'; g.fillRect(i * w/8, 0, w/8, h); } }, 256, 64);
+    stripe.wrapS = stripe.wrapT = THREE.RepeatWrapping; stripe.repeat.set(22, 2);
+    const tube = add(new THREE.Mesh(new THREE.TubeGeometry(curve, 140, .55, 20, false), new THREE.MeshStandardMaterial({map:stripe, roughness:.3, transparent:true, opacity:.5, side:THREE.DoubleSide, depthWrite:false}))); tube.renderOrder = 2;
+    const rim = add(new THREE.Mesh(new THREE.TorusGeometry(.6, .09, 10, 28), mat('#38bdf8', {flatShading:false}))); rim.position.copy(pts[0]); rim.lookAt(pts[1]);
+    [.3, .55, .8].forEach(u => { const p = curve.getPointAt(u), base = p.y > 10.5 ? 10.5 : p.z < -6 ? 7 : 3.5, hgt = p.y - base - .5; if (hgt < .3) return;
+      const leg = add(new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, hgt, 6), mat('#7a84a6'))); leg.position.set(p.x, base + hgt / 2, p.z); });
+    text('🛷 そりの大すべり台', -9.6, 12.6, -17, 4.2); }
+
+  /* --- ロープウェイ（上の町 → 山の上） --- */
+  { const low = v3(7.2, 7, -13.3), high = v3(17.4, 10.5, -20.6);
+    const tower = (p, h) => { const g = new THREE.Group();
+      [-1, 1].forEach(s => { const leg = new THREE.Mesh(new THREE.BoxGeometry(.18, h, .18), mat('#5a5f7a', {metalness:.5})); leg.position.set(s * .6, h/2, 0); leg.rotation.z = -s * .08; g.add(leg); });
+      const top = new THREE.Mesh(new THREE.BoxGeometry(1.8, .3, .6), mat('#e0484f', {metalness:.3, roughness:.4})); top.position.y = h; g.add(top);
+      const wheel = new THREE.Mesh(new THREE.TorusGeometry(.35, .06, 8, 20), mat('#2b2b38')); wheel.position.set(0, h + .2, 0); g.add(wheel);
+      const plat = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.1, .2, 24), mat('#8791b3')); plat.position.y = .1; g.add(plat);
+      g.position.copy(p); return add(shadowAll(g)); };
+    tower(low, 4.6); tower(high, 4.6);
+    const a = low.clone().add(v3(0, 4.8, 0)), b = high.clone().add(v3(0, 4.8, 0)), mid = a.clone().lerp(b, .5); mid.y -= 1.0;
+    const cable = new THREE.CatmullRomCurve3([a, a.clone().lerp(b, .25).add(v3(0, -.7, 0)), mid, a.clone().lerp(b, .75).add(v3(0, -.7, 0)), b]);
+    add(new THREE.Mesh(new THREE.TubeGeometry(cable, 60, .03, 5, false), mat('#2b2b38')));
+    const line = new THREE.Group(); line.visible = false; add(line);
+    const lineM = new THREE.MeshStandardMaterial({color:'#ffe9a8', emissive:'#ffcf4a', emissiveIntensity:1.6, transparent:true, opacity:0});
+    line.add(new THREE.Mesh(new THREE.TubeGeometry(cable, 80, .06, 6, false), lineM));
+    const cab = new THREE.Group();
+    const box = new THREE.Mesh(new RoundedBoxGeometry(1.3, 1.1, 1.3, 3, .12), new THREE.MeshStandardMaterial({color:'#e0484f', roughness:.35, metalness:.2, transparent:true, opacity:.6})); box.position.y = -1.55; cab.add(box);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(1.0, .45, 4), mat('#f5f7fb')); roof.rotation.y = Math.PI/4; roof.position.y = -.8; cab.add(roof);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(.04, .04, .8, 6), mat('#2b2b38')); arm.position.y = -.4; cab.add(arm);
+    const fl = new THREE.Mesh(new THREE.BoxGeometry(1.3, .08, 1.3), mat('#5a3a1e')); fl.position.y = -2.08; cab.add(fl);
+    cab.position.copy(a); add(shadowAll(cab)); cab.visible = false;
+    DG.gondola = {cab, cable, low, high, line, lineM};
+    road(NODE.u7.p, v3(low.x, 7, low.z + 1.1)); road(v3(high.x - .9, 10.5, high.z + .6), NODE.r1.p);
+    text('🚡 ロープウェイ', 7.2, 13.2, -13.3, 3.4); }
+
+  /* --- 鉱山のトロッコ --- */
+  { const z = 15.5, x0 = -17.4, x1 = 5.8, railM = mat('#9aa6c4', {metalness:.7, roughness:.3, flatShading:false}), tieM = mat('#6b4226');
+    [-.25, .25].forEach(o => { const r = add(new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, .06, .06), railM)); r.position.set((x0 + x1) / 2, .08, z + o); });
+    for (let x = x0; x <= x1; x += .5){ const t = add(new THREE.Mesh(new THREE.BoxGeometry(.12, .05, .75), tieM)); t.position.set(x, .03, z); }
+    const cart = new THREE.Group();
+    const body = new THREE.Mesh(new RoundedBoxGeometry(1.1, .55, .8, 3, .08), mat('#c0392b', {flatShading:false, roughness:.4, metalness:.3})); body.position.y = .45; cart.add(body);
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(1.14, .08, .84), mat('#f2c94c', {metalness:.7, roughness:.3, flatShading:false})); trim.position.y = .72; cart.add(trim);
+    [-.35, .35].forEach(x => [-.25, .25].forEach(zz => { const w = new THREE.Mesh(new THREE.CylinderGeometry(.13, .13, .06, 14), mat('#2b2b38', {flatShading:false})); w.rotation.x = Math.PI/2; w.position.set(x, .15, zz * 1.2); cart.add(w); }));
+    cart.position.set(NODE.m0.p.x + .4, 0, z); add(shadowAll(cart));
+    DG.cart = cart; DG.cartHome = cart.position.clone(); DG.cartEnd = v3(NODE.m9.p.x, 0, z); }
+
+  /* --- マンホール（下の町 → 鉱山）と、出口の大きな水道管 --- */
+  { const k = NODE.k1.p;
+    const hole = add(new THREE.Mesh(new THREE.CircleGeometry(.75, 32), new THREE.MeshBasicMaterial({color:'#05131f'}))); hole.rotation.x = -Math.PI/2; hole.position.set(k.x, k.y + .02, k.z + 1.35);
+    const hr = add(new THREE.Mesh(new THREE.TorusGeometry(.78, .1, 8, 32), new THREE.MeshStandardMaterial({color:'#9aa6c4', metalness:.7, roughness:.35, emissive:'#3ab8ff', emissiveIntensity:.6}))); hr.rotation.x = Math.PI/2; hr.position.copy(hole.position);
+    DG.holeIn = hole.position.clone();
+    const pipe = add(new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 2.4, 20, 1, true), mat('#8a6a4f', {metalness:.5, roughness:.5, flatShading:false, side:THREE.DoubleSide}))); pipe.rotation.x = Math.PI/2; pipe.position.set(10.4, 1.0, 6.2);
+    const dark = add(new THREE.Mesh(new THREE.CircleGeometry(.95, 24), new THREE.MeshBasicMaterial({color:'#05131f'}))); dark.position.set(10.4, 1.0, 6.0);
+    DG.portal = v3(10.4, 1.0, 7.6);
+    anims.push(T => { hr.material.emissiveIntensity = .5 + .4 * Math.sin(T * 3); }); }
+
+  /* --- 間欠泉（鉱山 → 下の町） --- */
+  { const pos = v3(20.8, 0, 9.4);
+    const pool = add(new THREE.Mesh(new THREE.CircleGeometry(1.1, 28), new THREE.MeshStandardMaterial({color:'#8fe3ff', emissive:'#2aa9d6', emissiveIntensity:.5, roughness:.1, transparent:true, opacity:.85}))); pool.rotation.x = -Math.PI/2; pool.position.copy(pos).add(v3(0, .04, 0));
+    const ring = add(new THREE.Mesh(new THREE.TorusGeometry(1.15, .16, 8, 28), mat('#6b6480', {flatShading:false}))); ring.rotation.x = Math.PI/2; ring.position.copy(pos).add(v3(0, .08, 0));
+    const col = add(new THREE.Mesh(new THREE.CylinderGeometry(.55, .8, 1, 16, 1, true), new THREE.MeshStandardMaterial({color:'#dff6ff', emissive:'#7fd8ff', emissiveIntensity:.8, transparent:true, opacity:.6, side:THREE.DoubleSide, depthWrite:false})));
+    col.position.copy(pos); col.visible = false;
+    DG.geyser = {pos, col};
+    road(NODE.m15.p, v3(pos.x - .9, 0, pos.z + .9));
+    for (let i = 0; i < 3; i++){ const s = add(new THREE.Mesh(new THREE.SphereGeometry(.22, 8, 6), new THREE.MeshStandardMaterial({color:'#eaf6ff', transparent:true, opacity:.5, roughness:1}))); s.userData = {x:pos.x, y:.3, z:pos.z, t:i / 3, h:2.2}; steams.push(s); }
+    text('♨️ 間欠泉', pos.x, 2.6, pos.z, 2.6); }
+
+  /* --- 建物・木・かざり --- */
+  let hN = 0;
+  function house(x, y, z, col, rot = 0, lit = false){
+    const g = new THREE.Group(), wm = windows[hN++ % 4];
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2, 1.4, 1.6), mat(col)); body.position.y = .7; g.add(body);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(1.75, 1.1, 4), mat('#f5f7fb')); roof.position.y = 1.95; roof.rotation.y = Math.PI/4; roof.scale.set(1, 1, .82); g.add(roof);
+    const roof2 = new THREE.Mesh(new THREE.ConeGeometry(1.8, .5, 4), mat('#8a2f3c')); roof2.position.y = 1.55; roof2.rotation.y = Math.PI/4; roof2.scale.set(1, 1, .82); g.add(roof2);
+    const chim = new THREE.Mesh(new THREE.BoxGeometry(.3, .7, .3), mat('#5a3a2a')); chim.position.set(.55, 2.1, -.2); g.add(chim);
+    [-.5, .5].forEach(wx => { const w = new THREE.Mesh(new THREE.PlaneGeometry(.38, .38), wm); w.position.set(wx, .85, .81); g.add(w); });
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(.36, .6), mat('#4a2a1a')); door.position.set(0, .3, .81); g.add(door);
+    const s = add(new THREE.Mesh(new THREE.SphereGeometry(.16, 8, 6), new THREE.MeshStandardMaterial({color:'#dfe7f7', transparent:true, opacity:.6, roughness:1}))); s.userData = {ox:x + .55, oy:y, oz:z - .2, t:Math.random()}; smokes.push(s);
+    g.position.set(x, y, z); g.rotation.y = rot;
+    if (lit){ const light = new THREE.PointLight('#ffb347', 6, 5, 2); light.position.set(0, 1, 1.3); g.add(light); houseLights.push(light); }
+    add(shadowAll(g));
+  }
+  function pine(x, y, z, s = 1){
+    const g = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.12, .15, .5, 6), mat('#5a3a2a')); trunk.position.y = .25; g.add(trunk);
+    [[.9, 1.1, .85], [.7, .95, 1.5], [.48, .8, 2.1]].forEach(([r, h, yy]) => { const c = new THREE.Mesh(new THREE.ConeGeometry(r, h, 7), mat('#1f7a4d')); c.position.y = yy; g.add(c); });
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(.25, .35, 7), mat('#f5f7fb')); cap.position.y = 2.42; g.add(cap);
+    g.position.set(x, y, z); g.scale.setScalar(s); g.rotation.y = Math.random() * 6; add(shadowAll(g));
+  }
+  function onsen(x, y, z){
+    const w = add(new THREE.Mesh(new THREE.CircleGeometry(1.25, 24), new THREE.MeshStandardMaterial({color:'#9fe8f0', emissive:'#3fb6c8', emissiveIntensity:.35, roughness:.1, transparent:true, opacity:.9}))); w.rotation.x = -Math.PI/2; w.position.set(x, y + .12, z);
+    for (let i = 0; i < 9; i++){ const a = i / 9 * 6.283, r = add(new THREE.Mesh(new THREE.DodecahedronGeometry(.3 + (i % 3) * .06, 0), mat('#6f7791'))); r.position.set(x + Math.cos(a) * 1.4, y + .18, z + Math.sin(a) * 1.4); r.castShadow = true; }
+    for (let i = 0; i < 3; i++){ const s = add(new THREE.Mesh(new THREE.SphereGeometry(.2, 8, 6), new THREE.MeshStandardMaterial({color:'#eaf6ff', transparent:true, opacity:.5, roughness:1}))); s.userData = {x:x + (i - 1) * .5, y:y + .3, z, t:i / 3, h:1.8}; steams.push(s); }
+  }
+  // 下の町：商店街の家と、止まったままの電車
+  [[5.6,'#c95a4a'],[10.4,'#3f7fbf'],[15.4,'#b07ad6'],[20.2,'#5aa36e'],[-6.0,'#d08a3f'],[-10.8,'#5aa36e'],[-15.6,'#c95a4a'],[-20.4,'#3f7fbf']].forEach(([x, c], i) => house(x, 3.5, -4.95, c, 0, i === 1 || i === 5));
+  { const z = 4.2, rm = mat('#9aa6c4', {metalness:.7, roughness:.3, flatShading:false});
+    [-.3, .3].forEach(o => { const r = add(new THREE.Mesh(new THREE.BoxGeometry(22, .06, .06), rm)); r.position.set(-17, 3.58, z + o); });
+    for (let x = -28; x <= -6; x += .55){ const t = add(new THREE.Mesh(new THREE.BoxGeometry(.12, .05, .9), mat('#6b4226'))); t.position.set(x, 3.53, z); }
+    const tr = new THREE.Group();
+    [['#2f6f9f', 0], ['#c0392b', 2.5]].forEach(([c, dx]) => { const car = new THREE.Mesh(new RoundedBoxGeometry(2.2, 1.0, .9, 3, .1), mat(c, {flatShading:false, roughness:.5})); car.position.set(dx, .85, 0); tr.add(car);
+      const sn = new THREE.Mesh(new THREE.BoxGeometry(2.2, .16, .95), mat('#f5f7fb', {flatShading:false})); sn.position.set(dx, 1.42, 0); tr.add(sn);
+      [-.7, .7].forEach(wx => { const w = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .08, 12), mat('#2b2b38')); w.rotation.x = Math.PI/2; w.position.set(dx + wx, .25, .45); tr.add(w); }); });
+    tr.position.set(-17.5, 3.5, z); add(shadowAll(tr));
+    const st = new THREE.Group(), plat = new THREE.Mesh(new THREE.BoxGeometry(6, .3, 1.2), mat('#8791b3')); plat.position.y = .15; st.add(plat);
+    const rf = new THREE.Mesh(new THREE.BoxGeometry(5, .16, 1.5), mat('#8a2f3c')); rf.position.y = 2.0; st.add(rf);
+    [-2.2, 2.2].forEach(x => { const p = new THREE.Mesh(new THREE.BoxGeometry(.14, 1.8, .14), mat('#5a3a2a')); p.position.set(x, 1.05, .4); st.add(p); });
+    st.position.set(-12.5, 3.5, 2.7); add(shadowAll(st)); text('🚉 こがね駅', -12.5, 6.4, 2.7, 3.2); }
+  // 上の町：温泉宿と温泉
+  [[18.6,'#b07ad6'],[12.4,'#c95a4a'],[2.6,'#d08a3f'],[-3.0,'#3f7fbf'],[-9.4,'#5aa36e'],[-17.6,'#c95a4a']].forEach(([x, c], i) => house(x, 7, -13.4, c, 0, i === 1 || i === 4));
+  onsen(19.4, 7, -8.0); onsen(-4.6, 7, -8.0); text('♨️ 温泉通り', 0, 9.7, -13.6, 3.6, '#ffd6e0');
+  // 山の上：神社の鳥居・展望台・大きな山
+  { const tm = mat('#d6453d', {flatShading:false}), t = new THREE.Group();
+    [-.9, .9].forEach(x => { const p = new THREE.Mesh(new THREE.CylinderGeometry(.12, .14, 2.2, 10), tm); p.position.set(x, 1.1, 0); t.add(p); });
+    const k1 = new THREE.Mesh(new THREE.BoxGeometry(2.9, .22, .3), tm); k1.position.y = 2.25; t.add(k1); const k2 = new THREE.Mesh(new THREE.BoxGeometry(2.3, .14, .22), tm); k2.position.y = 1.8; t.add(k2);
+    const sn = new THREE.Mesh(new THREE.BoxGeometry(3.0, .1, .36), mat('#f5f7fb')); sn.position.y = 2.42; t.add(sn);
+    t.position.set(12.4, 10.5, -21.7); add(shadowAll(t));
+    const dome = new THREE.Group(), base = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.2, 1.2, 16), mat('#aab4d4', {flatShading:false})); base.position.y = .6; dome.add(base);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(1.1, 16, 10, 0, 6.283, 0, 1.57), mat('#e9eefb', {flatShading:false, metalness:.3, roughness:.4})); cap.position.y = 1.2; dome.add(cap);
+    const tel = new THREE.Mesh(new THREE.CylinderGeometry(.14, .2, 1.4, 10), mat('#2b2b38')); tel.position.set(.3, 2.0, .3); tel.rotation.set(.6, 0, -.5); dome.add(tel);
+    dome.position.set(-1.6, 10.5, -22.4); add(shadowAll(dome)); text('⭐ 星見の丘', 1.5, 14.2, -22.5, 3.6, '#e2e8ff'); }
+  [[-22, -31, 4.2], [-8, -34, 5.4], [8, -33, 4.8], [22, -31, 4.4], [-33, -22, 3.4], [33, -22, 3.4]].forEach(([x, z, s]) => { const g = new THREE.Group();
+    const m = new THREE.Mesh(new THREE.ConeGeometry(2, 2.8, 6), mat('#4a5f96')); m.position.y = 1.4; g.add(m); const c = new THREE.Mesh(new THREE.ConeGeometry(.75, 1.05, 6), mat('#f5f7fb')); c.position.y = 2.33; g.add(c);
+    g.position.set(x, 4, z); g.scale.setScalar(s); add(g); });
+  [[26, 10.5, -19, 1.2], [22, 10.5, -22.5, 1], [-14, 10.5, -21.5, 1.1], [-20, 10.5, -18.5, 1.3], [-26, 10.5, -21, 1], [5, 10.5, -23, .9], [-27, 7, -9, 1.1], [27, 7, -12.5, 1.2], [-25, 7, -13, .9], [8, 7, -8, .8], [-13.6, 7, -13.4, .8],
+   [27, 3.5, -1, 1.1], [-27, 3.5, 1.5, 1.1], [24, 3.5, 0, .8], [-3.5, 3.5, 3.6, .7], [-28, 3.5, -4, .9]].forEach(([x, y, z, s]) => pine(x, y, z, s));
+  // 鉱山：金の結晶・柱・ランタン・地底の湖
+  { const gm = new THREE.MeshStandardMaterial({color:'#ffd84a', emissive:'#f2a91c', emissiveIntensity:1.1, metalness:.6, roughness:.3, flatShading:true});
+    [[-3.2, 7.4], [-7.8, 7.0], [-12.4, 7.6], [-20.6, 8.2], [-22.4, 13.6], [-9, 12], [1.2, 11.4], [6.2, 11.8], [13.2, 11.2], [23.6, 13.4], [15.6, 7.2], [3.2, 7.0]].forEach(([x, z], i) => {
+      const c = add(new THREE.Mesh(new THREE.OctahedronGeometry(.3 + (i % 3) * .12, 0), gm)); c.position.set(x, .35 + (i % 2) * .15, z); c.rotation.set(i, i * 2, 0); c.castShadow = true; });
+    anims.push(T => { gm.emissiveIntensity = .8 + .6 * (.5 + .5 * Math.sin(T * 2.2)); });
+    const wm = mat('#6b4226');
+    [-13, -5.6, 3.4, 12.8].forEach(x => { [12.9, 15.1].forEach(z => { const p = add(new THREE.Mesh(new THREE.BoxGeometry(.22, 2.3, .22), wm)); p.position.set(x, 1.15, z); p.castShadow = true; });
+      const b = add(new THREE.Mesh(new THREE.BoxGeometry(.26, .22, 2.7), wm)); b.position.set(x, 2.35, 14);
+      const ln = add(new THREE.Mesh(new THREE.SphereGeometry(.14, 8, 6), new THREE.MeshStandardMaterial({color:'#ffd36b', emissive:'#ffb347', emissiveIntensity:2.2}))); ln.position.set(x, 2.05, 14); });
+    if (!Q.mobile) [[-9, 11.8], [8, 11.8]].forEach(([x, z]) => { const l = new THREE.PointLight('#ffb347', 14, 12, 2); l.position.set(x, 2.4, z); add(l); });
+    const lake = add(new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshStandardMaterial({color:'#4fb3d9', emissive:'#1c6f96', emissiveIntensity:.4, roughness:.08, transparent:true, opacity:.9}))); lake.rotation.x = -Math.PI/2; lake.scale.set(3.4, 1.7, 1); lake.position.set(15.4, .03, 8.6);
+    text('⛏ こがね鉱山', 0, 3.0, 16.2, 3.8, '#ffd84a'); text('地底の湖', 15.4, 1.4, 8.6, 2.2, '#bfeaff'); }
+  text('🏮 商店街', 12, 6.3, -5.2, 3.0, '#ffe9a8');
+
+  /* --- 町のツリー（ツリー広場） --- */
+  let starMesh, treeLight;
+  { const t = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.22, .28, .6, 8), mat('#5a3a2a')); trunk.position.y = .3; t.add(trunk);
+    [[1.5, 1.6, 1.2], [1.15, 1.4, 2.2], [.8, 1.2, 3.05]].forEach(([r, h, y]) => { const c = new THREE.Mesh(new THREE.ConeGeometry(r, h, 9), mat('#17643e')); c.position.y = y; t.add(c); });
+    const ornCols = ['#ff5a5f','#ffd23f','#4cc9f0','#f15bb5','#ffffff'];
+    for (let i = 0; i < 26; i++){ const y = .8 + Math.random() * 2.6, r = (1.5 - (y - .6) * .36) * .92, a = Math.random() * 6.28, c = pick(ornCols);
+      const o = new THREE.Mesh(new THREE.SphereGeometry(.09, 8, 6), new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:1.8})); o.position.set(Math.cos(a) * r, y, Math.sin(a) * r); t.add(o); }
+    const ss = new THREE.Shape();
+    for (let i = 0; i < 10; i++){ const rr = i % 2 ? .16 : .38, a = i / 10 * Math.PI * 2 - Math.PI / 2; i ? ss.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ss.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+    starMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(ss, {depth:.1, bevelEnabled:true, bevelSize:.03, bevelThickness:.03}), new THREE.MeshStandardMaterial({color:'#ffd84a', emissive:'#ffb800', emissiveIntensity:2.2, metalness:.3, roughness:.3}));
+    starMesh.position.y = 3.95; t.add(starMesh);
+    treeLight = new THREE.PointLight('#ffcc66', 20, 9, 2); treeLight.position.y = 2.5; t.add(treeLight);
+    t.scale.setScalar(1.25); t.position.set(0, 3.5, -3.6); add(shadowAll(t)); }
+  { const sign = add(new THREE.Sprite(new THREE.SpriteMaterial({map:canvasTex((g, w, h) => {
+      g.fillStyle = 'rgba(10,20,48,.82)'; g.beginPath(); g.roundRect(6, 6, w - 12, h - 12, 26); g.fill(); g.lineWidth = 6; g.strokeStyle = '#ffd23f'; g.stroke();
+      g.font = `900 64px ${JP_FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ffd23f'; g.fillText('こがね町', w/2, h/2 + 4); }, 384, 128), depthWrite:false})));
+    sign.scale.set(5.4, 1.8, 1); sign.position.set(0, 16.4, -24.5); }
+
+  /* --- こがね町の明かり：電球をツリーから近い順に10のまとまりに分けて、幸せ度に合わせて灯す --- */
+  { const tp = NODE.T.p, G = 10, groups = Array.from({length:G}, () => []), mats = {};
+    townBulbs.sort((a, b) => a.bl.position.distanceToSquared(tp) - b.bl.position.distanceToSquared(tp));
+    townBulbs.forEach(({bl, ci}, r) => { const g = Math.min(G - 1, Math.floor(r / townBulbs.length * G)), key = g * 10 + ci;
+      if (!mats[key]){ const m = bulbMats[ci].clone(); m.userData = {col:bulbMats[ci].color.clone(), on:0}; m.color.set('#30364d'); m.emissiveIntensity = 0; mats[key] = m; groups[g].push(m); }
+      bl.material = mats[key]; });
+    windows.forEach(m => { m.userData.on = 0; m.emissiveIntensity = .03; m.color.set('#3a3a48'); m.userData.wcol = new THREE.Color('#ffd36b'); });
+    houseLights.forEach(l => { l.userData.full = l.intensity; l.intensity = 0; });
+    TOWN = {groups, lit:0, wins:windows, hl:houseLights, star:false, tree:treeLight, starM:starMesh.material,
+      prep(on){ groups.flat().concat(windows).forEach(m => { m.userData.on = on ? 1 : 0; if (on && m.userData.col) m.color.copy(m.userData.col); if (!on){ m.emissiveIntensity = m.userData.col ? 0 : .03; if (m.userData.col) m.color.set('#30364d'); else m.color.set('#3a3a48'); } }); }};
+    treeLight.intensity = 3; starMesh.material.emissiveIntensity = .12; }
+
+  /* --- 雪と星 --- */
+  const SNOW_N = 2200, snowGeo = new THREE.BufferGeometry();
+  { const a = new Float32Array(SNOW_N * 3); for (let i = 0; i < SNOW_N; i++){ a[i*3] = (Math.random() - .5) * 84; a[i*3+1] = Math.random() * 34; a[i*3+2] = (Math.random() - .5) * 64 - 3; }
+    snowGeo.setAttribute('position', new THREE.BufferAttribute(a, 3)); }
+  root.add(new THREE.Points(snowGeo, new THREE.PointsMaterial({color:'#ffffff', size:.14, transparent:true, opacity:.85, depthWrite:false})));
+  { const N = 600, a = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++){ const th = Math.random() * Math.PI * 2, ph = Math.random() * Math.PI * .42; a[i*3] = Math.cos(th) * Math.sin(ph) * 170; a[i*3+1] = Math.cos(ph) * 170 - 10; a[i*3+2] = Math.sin(th) * Math.sin(ph) * 170; }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(a, 3)); root.add(new THREE.Points(g, new THREE.PointsMaterial({color:'#fff', size:.7, fog:false}))); }
+
+  return (T, dt) => {
+    if (reduceMotion) return;
+    const pa = snowGeo.attributes.position.array;
+    for (let i = 0; i < SNOW_N; i++){ pa[i*3+1] -= dt * (.8 + (i % 5) * .15); pa[i*3] += Math.sin(T + i) * dt * .15; if (pa[i*3+1] < -1) pa[i*3+1] = 33; }
+    snowGeo.attributes.position.needsUpdate = true;
+    TOWN.groups.forEach((gs, gi) => gs.forEach((m, i) => { const o = m.userData.on; if (o > 0) m.emissiveIntensity = o * (1.2 + 1.4 * (.5 + .5 * Math.sin(T * 3 + i * 1.3 + gi))); }));
+    windows.forEach((m, i) => { const o = m.userData.on; m.emissiveIntensity = o > 0 ? o * (1.3 + .3 * Math.sin(T * 2 + i)) : .03; });
+    starMesh.rotation.y = T * .8;
+    smokes.forEach(s => { const u = (s.userData.t + T * .25) % 1; s.position.set(s.userData.ox + u * .5, s.userData.oy + 2.5 + u * 2, s.userData.oz); s.scale.setScalar(.6 + u * 1.6); s.material.opacity = .55 * (1 - u); });
+    steams.forEach(s => { const u = (s.userData.t + T * .3) % 1; s.position.set(s.userData.x + Math.sin(T + s.userData.t * 9) * .15, s.userData.y + u * s.userData.h, s.userData.z); s.scale.setScalar(.7 + u * 1.8); s.material.opacity = .5 * (1 - u); });
+    anims.forEach(f => f(T, dt));
+  };
+}
+
 const MAPS = {
   dungeon:{name:'🏰 クリスマスダンジョン', desc:'地下3階。階段・すべり台・トロッコ・ゴンドラで上下に移動', start:'S', routes:DUNGEON_ROUTES, edges:DUNGEON_EDGES, floors:DF, lapText:'👑 大広間に到着！',
     nodes:() => DUNGEON_RAW.map(([id, x, y, z, type, next, extra]) => Object.assign({id, type, next, p:new THREE.Vector3(x, y, z), floor: y > 5 ? 1 : y > 2 ? 2 : 3}, extra || {})),
@@ -5247,8 +5556,12 @@ const MAPS = {
     build:buildVillage, look:{bg:'#0a1430', fog:[48,100], hemi:['#8fb0f5','#1f2b52',.75], moon:['#dbe6ff',1.7,[-14,30,12]], bloom:[.45,.93], exposure:.95},
     overview:{pos:[0,27,21], look:[0,0,1], npos:[0,46,22], nlook:[0,0,2]}},
 };
-// 協力モードの「こがね町」：雪の村と同じ盤。明かりは町の幸せ度に合わせて灯る
-MAPS.town = Object.assign({}, MAPS.village, {name:'🏘️ こがね町', desc:'協力モードの町', coop:true, lapText:'🎄 町のツリーを通過！'});
+// 協力モードの「こがね町」：4つの階がある大きな町。明かりは町の幸せ度に合わせて灯る。全体は見えない大きさなので、ふだんは動いた人のまわりを映す
+MAPS.town = {name:'🏘️ こがね町', desc:'協力モードの町', coop:true, big:true, dg:true, start:'T', routes:TOWN_ROUTES, edges:TOWN_EDGES, floors:TF, lapText:'🎄 町のツリーを通過！',
+  nodes:() => TOWN_RAW.map(([id, x, y, z, type, next, extra]) => Object.assign({id, type, next, p:new THREE.Vector3(x, y, z), floor: y > 9 ? 1 : y > 5 ? 2 : y > 2 ? 3 : 4}, extra || {})),
+  build:buildBigTown, look:{bg:'#0a1430', fog:[80,190], hemi:['#8fb0f5','#1f2b52',.78], moon:['#dbe6ff',1.7,[-20,44,26]], bloom:[.45,.93], exposure:.95},
+  shadow:{left:-42, right:42, top:42, bottom:-30, near:1, far:130},
+  overview:{pos:[0,41,49], look:[0,3.5,-4], npos:[0,70,66], nlook:[0,3.5,-3]}};
 
 const hlRings = [];
 function hl(ids){
@@ -6244,10 +6557,16 @@ const easeOut = t => 1 - Math.pow(1 - t, 3);
 const cam = {pos:new THREE.Vector3(0, 27, 21), look:new THREE.Vector3(0, 0, 1), tpos:new THREE.Vector3(0, 27, 21), tlook:new THREE.Vector3(0, 0, 1), overview:true};
 function camOverview(){
   cam.overview = true;
+  if (MAP && (H.phase === 'setup' || H.phase === 'lobby')) cam.last = null;      // 新しいゲームでは、前のゲームの場所を忘れる（MAP がまだないときは、H もまだない）
   const o = MAP ? MAP.overview : {pos:[0,27,21], look:[0,0,1], npos:[0,46,22], nlook:[0,0,2]};
+  if (MAP && MAP.big && !H.view && H.phase !== 'setup' && H.phase !== 'lobby'){     // 大きな町：全体ではなく、さいごに動いた人のまわりを少し引いて映す
+    const c = cam.last || NODE[MAP.start].p, k = narrow ? 1.35 : 1, P = [c.x, c.y + 14.5 * k, c.z + 15 * k];
+    cam.tpos.set(P[0], P[1], P[2]); cam.tlook.set(c.x, c.y + .5, c.z); cam.base = P; return;
+  }
   const P = narrow ? o.npos : o.pos, Lk = narrow ? o.nlook : o.look; cam.tpos.set(P[0], P[1], P[2]); cam.tlook.set(Lk[0], Lk[1], Lk[2]); cam.base = P;
 }
 function camFollow(p, dist = 1){
+  cam.last = p.clone();
   if (H.view){ camOverview(); return; }
   const k = narrow ? dist * 1.25 : dist;
   cam.overview = false; cam.tlook.copy(p).add(new THREE.Vector3(0, .6, 0)); cam.tpos.copy(p).add(new THREE.Vector3(0, 8.5*k, 8.8*k));
@@ -6750,11 +7069,11 @@ async function travelEdge(pl, toId, e){
     const cp = e.curve.points, pts = [from, ...cp.slice(1, -1)];
     pl.pos = toId; const to = slotPos(pl); pts.push(to);
     const curve = new THREE.CatmullRomCurve3(pts);
-    sfx.whoosh(); banner('🍭 キャンディすべり台！', 900);
-    await tween(1700, t => { const u = Math.pow(t, 1.5), p = curve.getPointAt(u); pl.obj.position.copy(p); pl.obj.rotation.y = t * Math.PI * 6; camFollow(p, 1.1); b.scale.set(1.05, .9, 1.05); });
+    sfx.whoosh(); banner(e.label || '🍭 キャンディすべり台！', 900);
+    await tween(Math.min(4200, Math.max(1700, curve.getLength() * 150)), t => { const u = Math.pow(t, 1.5), p = curve.getPointAt(u); pl.obj.position.copy(p); pl.obj.rotation.y = t * Math.PI * 6; camFollow(p, 1.1); b.scale.set(1.05, .9, 1.05); });
     b.scale.set(1, 1, 1);
   } else if (e.kind === 'tunnel'){
-    sfx.whoosh(); banner('🧊 氷のトンネルへ！', 1000);
+    sfx.whoosh(); banner(e.label || '🧊 氷のトンネルへ！', 1000);
     const hole = DG.holeIn.clone(); hole.y += .1;
     await tween(450, t => { pl.obj.position.lerpVectors(from, hole, t); pl.obj.position.y += Math.sin(Math.PI * t) * .8; camFollow(hole, .9); });
     await tween(420, t => { pl.obj.position.copy(hole); pl.obj.position.y -= t * 1.4; pl.obj.scale.setScalar(1 - t * .8); pl.obj.rotation.y += .3; });
@@ -6765,7 +7084,7 @@ async function travelEdge(pl, toId, e){
     pl.obj.scale.setScalar(1);
   } else if (e.kind === 'gondola'){
     const G = DG.gondola, plat = G.low.clone().add(V3(0, .3, 0));
-    banner('🚡 魔法のゴンドラで<br>B1へ！', 1200); sfx.chime();
+    banner(e.label || '🚡 魔法のゴンドラで<br>B1へ！', 1200); sfx.chime();
     await tween(500, t => { pl.obj.position.lerpVectors(from, plat, t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; camFollow(plat, 1.2); });
     const start = G.cable.getPointAt(0), seat = () => G.cab.position.clone().add(V3(0, -2.05, 0));
     G.cab.position.copy(start); G.cab.visible = true; G.cab.scale.setScalar(.01); G.line.visible = true;
@@ -6777,6 +7096,20 @@ async function travelEdge(pl, toId, e){
     await tween(650, t => { pl.obj.position.lerpVectors(s0, to, t); pl.obj.position.y += Math.sin(Math.PI * t) * 1.0; camFollow(to, 1); });
     tween(700, t => { G.lineM.opacity = (1 - t) * .9; G.cab.scale.setScalar(Math.max(.01, 1 - t)); }).then(() => { G.line.visible = false; G.cab.visible = false; });
   }
+  else if (e.kind === 'geyser'){
+    // 間欠泉：お湯の柱にのって、上の階まで吹き上げられる
+    const G = DG.geyser, vent = G.pos.clone().add(V3(0, .35, 0));
+    banner(e.label || '♨️ 間欠泉で<br>上の階へ！', 1300);
+    await tween(500, t => { pl.obj.position.lerpVectors(from, vent, t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; camFollow(vent, 1.2); });
+    pl.pos = toId; const to = slotPos(pl), H1 = to.y - G.pos.y + 3.2;
+    G.col.visible = true; sfx.whoosh(); try { sfx.rumble(); } catch(err){}
+    await tween(1500, t => { const u = easeOut(t), h = Math.max(.05, H1 * u); G.col.scale.set(1, h, 1); G.col.position.set(G.pos.x, G.pos.y + h / 2, G.pos.z);
+      pl.obj.position.set(G.pos.x, G.pos.y + h + .2, G.pos.z); pl.obj.rotation.y = t * Math.PI * 6; b.scale.set(1 + .08 * Math.sin(t * 40), 1 - .08 * Math.sin(t * 40), 1 + .08 * Math.sin(t * 40)); camFollow(pl.obj.position, 1.25); });
+    b.scale.set(1, 1, 1); const p0 = pl.obj.position.clone();
+    await tween(900, t => { pl.obj.position.lerpVectors(p0, to, t); pl.obj.position.y += Math.sin(Math.PI * t) * 1.6; pl.obj.rotation.y += .2; camFollow(pl.obj.position, 1.1); });
+    pl.obj.rotation.y = 0; sfx.land();
+    tween(700, t => { const h = Math.max(.05, H1 * (1 - t)); G.col.scale.set(1, h, 1); G.col.position.set(G.pos.x, G.pos.y + h / 2, G.pos.z); }).then(() => { G.col.visible = false; });
+  }
   pl.obj.position.copy(slotPos(pl)); others(pl);
   const tl = tileMeshes[pl.pos]; if (tl) tween(220, t => { tl.position.y = tl.userData.baseY - Math.sin(Math.PI*t) * .12; });
 }
@@ -6786,7 +7119,7 @@ async function rideCart(pl, nd){
   const from = pl.obj.position.clone(), inCart = () => C.position.clone().add(V3(0, .62, 0));
   await tween(400, t => { pl.obj.position.lerpVectors(from, inCart(), t); pl.obj.position.y += Math.sin(Math.PI * t) * .9; });
   const s0 = DG.cartHome.clone(), s1 = DG.cartEnd.clone(); sfx.rumble();
-  await tween(2000, t => { const u = easeIO(t); C.position.lerpVectors(s0, s1, u); C.rotation.x = Math.sin(t * 50) * .015; pl.obj.position.copy(inCart()); pl.obj.rotation.y = -Math.PI/2; camFollow(C.position, 1.05); });
+  await tween(Math.min(4200, Math.max(2000, s0.distanceTo(s1) * 170)), t => { const u = easeIO(t); C.position.lerpVectors(s0, s1, u); C.rotation.x = Math.sin(t * 50) * .015; pl.obj.position.copy(inCart()); pl.obj.rotation.y = s1.x > s0.x ? Math.PI/2 : -Math.PI/2; camFollow(C.position, 1.05); });
   C.rotation.x = 0;
   pl.pos = nd.ride; const to = slotPos(pl), p0 = pl.obj.position.clone();
   await tween(450, t => { pl.obj.position.lerpVectors(p0, to, t); pl.obj.position.y += Math.sin(Math.PI * t) * 1.0; });
@@ -6795,7 +7128,7 @@ async function rideCart(pl, nd){
   await land(pl);
 }
 async function fallHole(pl){
-  const nd = NODE[pl.pos], fl = Math.min(3, (nd.floor || 1) + 1);
+  const nd = NODE[pl.pos], fl = Math.min(MAP.floors ? Object.keys(MAP.floors).length : 3, (nd.floor || 1) + 1);
   const cands = Object.values(NODE).filter(n => n.type === 'q' && !n.noWarp && n.floor === fl && n.id !== pl.pos);
   const to = pick(cands);
   await banner(`🕳️ 落とし穴！<br>${esc(pl.name)}さんが下の階へ！`, 1300);
@@ -6833,6 +7166,14 @@ async function land(pl){
   else if (nd.type === 'gift' && isCoop()){ pl.space = '🎁 問題なし'; townYen(COOP_CFG.giftYen); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 10); sfx.star(); await banner(`🎁 町に寄付が届いた！<br>町の予算 +${fmtYen(COOP_CFG.giftYen)}`); }
   else if (nd.type === 'snow' && isCoop()){ pl.space = '⛄ 問題なし'; townHappy(COOP_CFG.snowHappy); sfx.chime(); await banner(`⛄ 雪だるまを作って<br>町の人がにっこり　😊 幸せ度 +${COOP_CFG.snowHappy}`); }
   else if (nd.type === 'shop' && isCoop()){ pl.space = '💼 問題なし'; renderHUD(); await jobCenter(pl); }
+  else if (nd.type === 'onsen'){ pl.space = '♨️ 問題なし'; if (isCoop()) townHappy(COOP_CFG.snowHappy); else gain(pl, 1); sfx.chime(); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 8); await banner(isCoop() ? `♨️ 温泉でぽかぽか<br>町の人もにっこり　😊 幸せ度 +${COOP_CFG.snowHappy}` : `♨️ 温泉でぽかぽか<br>${nm}さん ⭐+1`); }
+  else if (nd.type === 'gold'){ pl.space = '⛏️ 問題なし'; if (isCoop()) townYen(COOP_CFG.giftYen); else gain(pl, 2); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 12); sfx.star(); await banner(isCoop() ? `⛏️ 金のかけらを見つけた！<br>町の予算 +${fmtYen(COOP_CFG.giftYen)}` : `⛏️ 金のかけらを見つけた！<br>${nm}さん ⭐+2`); }
+  else if (nd.type === 'shrine'){ pl.space = '⛩️ 問題なし'; const k = ri(1, 3); sfx.chime(); await banner('⛩️ 神社でおみくじ！<br>なにが出るかな…', 1200);
+    if (!isCoop()){ gain(pl, k); await banner(`${['', '小吉', '中吉', '大吉'][k]}！<br>${nm}さん ⭐+${k}`); }
+    else if (k === 3){ townHappy(COOP_CFG.snowHappy); townYen(COOP_CFG.giftYen); sfx.star(); await banner(`🎉 大吉！<br>😊 幸せ度 +${COOP_CFG.snowHappy}　町の予算 +${fmtYen(COOP_CFG.giftYen)}`); }
+    else if (k === 2){ townYen(COOP_CFG.giftYen); await banner(`中吉！<br>町の予算 +${fmtYen(COOP_CFG.giftYen)}`); }
+    else { townHappy(COOP_CFG.snowHappy); await banner(`小吉！<br>😊 幸せ度 +${COOP_CFG.snowHappy}`); } }
+  else if (nd.type === 'hole'){ await fallHole(pl); }
   else if (nd.type === 'event' && isCoop()){ pl.space = '❓ 問題なし'; renderHUD(); await banner('❓ 町のできごと！', 850); const S = H.coop, c = COOP.drawCard(S); await showCard(COOP.resolve(S, H.players, c), 0, 1); }
   else if (nd.type === 'gift'){ pl.space = '🎁 問題なし'; gain(pl, 2); await banner(`🎁 プレゼント！<br>${nm}さん ⭐+2`); }
   else if (nd.type === 'snow'){ pl.space = '⛄ 問題なし'; H.players.forEach(o => { if (o !== pl) gain(o, 1); }); await banner(`⛄ ${nm}さんから<br>ほかのみんなに ⭐+1`); }
@@ -7747,7 +8088,7 @@ async function lightningStrike(at, clip, onLand){
 
 /* ================= オープニングセレモニー ================= */
 const TOURS = {
-  town:[[[0,24,34],[0,0,0]], [[-15,8,13],[-10,0,5]], [[-15,8,-11],[-5,0,-5]], [[15,8,-11],[5,0,-5]], [[15,8,13],[9,0,6]], [[3,6,17],[2.5,1.5,7]], [[0,27,21],[0,0,1]]],
+  town:[[[0,30,46],[0,3.5,0]], [[-21,11,11],[-14,3.5,-1]], [[-23,15,-1],[-12,7,-10.5]], [[0,19,-7],[4,10.5,-20]], [[23,14,-2],[15,7,-10.5]], [[21,7,23],[9,0,12]], [[4,10,13],[0,4.5,0]], [[0,18,15],[0,4,0]]],
   dungeon:[[[0,24,34],[0,3,0]], [[-9,12,-1],[-8,7,-9]], [[8,12,-1],[8,7,-9]], [[11,8,7],[6,3.5,-1]], [[-8,8,7],[-8,3.5,-1]], [[-6,4,16],[0,0,8]], [[9,5,15],[14,2,6]], [[0,31,25],[0,3.3,-.6]]],
   village:[[[0,24,34],[0,0,0]], [[-15,8,13],[-10,0,5]], [[-15,8,-11],[-5,0,-5]], [[15,8,-11],[5,0,-5]], [[15,8,13],[9,0,6]], [[3,6,17],[2.5,1.5,7]], [[0,27,21],[0,0,1]]],
 };
@@ -7827,9 +8168,9 @@ async function openingShow(){
   BGM.stop();
   if (isCoop()) await storyShow(strike, pc, lc); else await strike();
   void O.offsetWidth; O.querySelector('.op-logo').classList.add('go'); BGM.play('opening'); sfx.jingle();
-  const fwAt = MAPKEY === 'dungeon' ? new THREE.Vector3(14, 9, 5) : new THREE.Vector3(2.5, 9, 7);
+  const fwAt = MAPKEY === 'dungeon' ? new THREE.Vector3(14, 9, 5) : MAP.big ? new THREE.Vector3(2, 13, 2) : new THREE.Vector3(2.5, 9, 7);
   setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt, 5, 12, 320); }, 900);
-  setTimeout(() => { if (!showSkip) fireworkShow(scene, MAPKEY === 'dungeon' ? new THREE.Vector3(-8, 13, -6) : new THREE.Vector3(-6, 9, -4), 4, 10, 300); }, 3800);
+  setTimeout(() => { if (!showSkip) fireworkShow(scene, MAPKEY === 'dungeon' ? new THREE.Vector3(-8, 13, -6) : MAP.big ? new THREE.Vector3(-7, 14, -6) : new THREE.Vector3(-6, 9, -4), 4, 10, 300); }, 3800);
   setTimeout(() => O.querySelector('.op-logo').classList.add('out'), 3200);
   const T0 = performance.now(), DUR = 8200;
   await new Promise(res => {
