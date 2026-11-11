@@ -752,6 +752,34 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 #endRoll .er-last{margin-bottom:0}
 #endRoll .er-last .er-line{font-size:clamp(22px,min(6.2vw,4.6vh),40px)}
 @media (prefers-reduced-motion:reduce){.sg-open,.sg-open::after{animation:none}}
+/* ---- 最後の大工事：ツリーに明かりを灯そう（先生の画面） ---- */
+.treeov{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(3,7,22,.88)}
+.treeov.on{display:flex}
+.tr-box{width:min(1240px,97vw);height:min(700px,94vh);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);grid-template-rows:auto minmax(0,1fr);gap:6px 16px;background:linear-gradient(180deg,rgba(20,36,84,.98),rgba(8,15,38,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 18px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.tr-head{grid-column:1 / 3;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tr-head h3{margin:0;font-size:28px}
+.tr-msg{color:#dfe7ff;font-weight:700;flex:1;min-width:0}
+.tr-time{font-size:40px;min-width:118px;text-align:center;padding:0 14px;border-radius:14px;background:#0b1530;border:2px solid var(--line)}
+.tr-time.low{color:#ff8a8f;border-color:#ff8a8f}
+.tr-cv{width:100%;height:100%;min-height:0;display:block}
+.tr-side{display:flex;flex-direction:column;gap:10px;min-height:0}
+.tr-count{text-align:center;background:#0b1530;border:2px solid var(--line);border-radius:18px;padding:8px 10px}
+.tr-count b{font-size:64px;line-height:1;color:var(--gold)}
+.tr-count span{font-size:30px}
+.tr-count small{display:block;font-size:17px;color:#dfe7ff;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;letter-spacing:0}
+.tr-ppl{display:flex;flex-direction:column;gap:6px;overflow:auto;min-height:0;flex:1}
+.trp{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:12px;background:rgba(255,255,255,.06);border-left:6px solid var(--pc)}
+.trp .pimg{width:34px;height:34px;border-radius:50%}
+.trp b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trp .tl{font-weight:900;color:var(--gold);min-width:52px;text-align:right}
+.trp .tg{display:flex;gap:3px}
+.trp .tg .btn{padding:1px 7px;font-size:12px;border-radius:8px;box-shadow:none}
+.tr-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tr-btns .btn{flex:1}
+/* ツリーの画面のあいだは、声の字幕を、ツリーの下（左がわ）に小さめに出す（明かりと参加者の列にかぶらないように） */
+body.treeon .splash{z-index:10}
+body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !important;max-width:min(640px,50vw) !important;font-size:clamp(15px,1.7vw,21px) !important;padding:8px 18px !important}
+@media (max-width:760px){.tr-box{grid-template-columns:1fr;grid-template-rows:auto minmax(200px,1fr) auto;height:96vh}.tr-head{grid-column:1}.tr-head h3{font-size:20px}.tr-time{font-size:28px}}
 </style>
 <script type="importmap">
 {"imports":{
@@ -800,7 +828,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <button class="btn" id="inviteBtn" title="参加者をよぶ（部屋番号・URL・QR）">📲<span class="lbl s"> 参加者をよぶ</span></button>
     <span class="spacer"></span>
     <button class="btn" title="ルール" onclick="openModal('m-rules')">📖<span class="lbl s"> ルール</span></button>
-    <button class="btn" onclick="openBoss()" title="ボス問題">👑<span class="lbl s2"> ボス問題</span></button>
+    <button class="btn" onclick="openBoss()" id="bossBtn" title="ボス問題">👑<span class="lbl s2" id="bossLbl"> ボス問題</span></button>
     <button class="btn" id="resBtn" title="けっか">🏆<span class="lbl s"> けっか</span></button>
     <button class="btn" id="undoBtn" title="1つ戻す">↩<span class="lbl s"> 戻す</span></button>
     <button class="btn" id="setupBtn">⚙<span class="lbl"> 参加者</span></button>
@@ -813,6 +841,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
   <div class="floortag dela" id="floorTag"></div>
   <div class="town" id="town"></div>
   <div class="meet" id="meet"></div>
+  <div class="treeov" id="tree"></div>
   <div class="evcard" id="evcard"></div>
   <div class="story" id="story"><div class="st-line dela" id="stLine"></div></div>
   <div class="panel right" id="scorePanel"></div>
@@ -860,7 +889,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
     <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。♨️ 温泉（＋幸せ度）、⛏️ 金のかけら（＋予算）、⛩️ 神社のおみくじ、🕳️ 落とし穴（下の階へ）。</li>
     <li><b>こがね町は4つの階</b>（⭐山の上・♨️上の町・🎄下の町・⛏地下の鉱山）。階段・🚡ロープウェイ・🛷そりの大すべり台・🚃トロッコ・🕳マンホール・♨️間欠泉で上下に移動します。<b>分かれ道</b>では、どこへ行くかを選べます。</li>
-    <li><b>幸せ度100</b>でみんなの勝ち！ 最後のラウンドまでにとどかなかったら、<b>最後の大工事（ボス問題）</b>に挑戦。成功すると幸せ度+15。幸せ度が0になったり、100にとどかなかったら負け…</li>
+    <li><b>幸せ度100</b>でみんなの勝ち！ 最後のラウンドまでにとどかなかったら、<b>最後の大工事「ツリーに明かりを灯そう」</b>に挑戦。全員のスマホに問題が出て、正解すると ★の数だけ ツリーに明かりが灯ります。3分のあいだにぜんぶ灯せたら、町は救われます。幸せ度が0になったり、100にとどかなかったら負け…</li>
   </ol></div>
   <div id="rulesVs">
   <ol class="rules">
@@ -3199,6 +3228,7 @@ const COOP_CFG = {
   giftYen:150, snowHappy:1, lapYen:150, deficitYen:100,
   badRate:.7,                     // 引いたカードが悪いカードになる確率
   bossHappy:15,
+  treeSecs:180, treeRate:.2,       // 最後の大工事（ツリーに明かりを灯そう）：時間（秒）と、足りない幸せ度1あたり・1人あたりの明かりの数
   maxBuys:2,                      // 1回の会議で直せる工事の数
   lawyerRate:.2, lawyerCool:1,    // 弁護士：何割引きか／何ラウンドに1回使えるか
   seMul:2, seAll:1.3, seTrain:.3,   // SE：関数のお金の倍率／ほかの分野の倍率／電車の割引
@@ -3500,6 +3530,14 @@ const COOP = {
     if (o.id === 'debt' && lv === 0) v += COOP_CFG.deficitYen / 120 * left;
     return v / (cost / 100);
   },
+  /* 最後の大工事（ツリーに明かりを灯そう）：足りない幸せ度と人数から、灯す明かりの数を決める。少なくとも、人数と同じ数 */
+  treePlan(S){ const pts = Math.max(1, Math.ceil(COOP_CFG.goal - S.happy)); return {pts, bulbs:Math.max(S.n, Math.ceil(pts * S.n * COOP_CFG.treeRate))}; },
+  /* 灯った明かりの数を、幸せ度に入れる。ぜんぶ灯ったら、ちょうど目標にとどく。とちゅうまでなら、灯った分だけ上がる */
+  treeApply(S, T, lit){
+    const full = lit >= T.bulbs, gain = full ? Math.max(T.pts, Math.ceil(COOP_CFG.goal - S.happy)) : Math.floor(Math.max(0, lit) * T.pts / T.bulbs);
+    S.happy += gain; S.tree = {pts:T.pts, bulbs:T.bulbs, lit:Math.min(Math.max(0, lit), T.bulbs), gain, full};
+    COOP.check(S); return gain;
+  },
   aiPick(S, players, opts){
     const can = (opts || COOP.options(S, players)).filter(o => o.can);
     if (!can.length) return null;
@@ -3610,6 +3648,14 @@ function netUpdate(){
   if (P.stage === 'vote'){ P.stage = 'wait'; }
   if (!P.course && me.course && COURSES[me.course]){ P.course = me.course; P.level = me.level | 0; }
   if (P.course && (me.course !== P.course || (me.level | 0) !== P.level) && !(Date.now() - (P.prefAt || 0) < 4000)) sendPref();
+  // 最後の大工事（ツリーに明かりを灯そう）：時間のあいだ、問題を何問でも解ける
+  if (I.mode === 'coop' && I.phase === 'tree' && I.tree && I.tree.on){
+    if (P.treeId !== I.tree.id){ P.treeId = I.tree.id; P.tlit = 0; P.tree = false; }
+    if (!P.tree){ initAudio(); try { sfx.jingle(); } catch(e){} pTreeNext(); return; }
+    if (P.stage === 'wait') pTreeNext(); else if (P.stage === 'tstar') renderPlay();      // 明かりの数が変わったら、★を選ぶ画面の数字を新しくする（解いているとちゅうの画面は、さわらない）
+    return;
+  }
+  if (P.tree){ P.tree = false; clearInterval(P.timer); if (['tstar', 'tres', 'quiz'].includes(P.stage)) P.stage = 'wait'; }
   const qOpen = I.phase === 'quiz' && me.topic > 0 && I.quizId && !P.done[I.quizId];
   if (P.stage === 'quiz'){ if (I.phase !== 'quiz' || I.quizId !== P.qid) finishQ('time'); return; }
   if (P.stage === 'course' && qOpen && I.quizId === P.qid) return;
@@ -3653,8 +3699,9 @@ function waitHTML(){
     meeting:['🏛', '町の会議！'],
     career:['🔄', '転職タイム！<br>先生の画面を見てね'],
     build:['🏗', '工事中！<br>先生の画面を見てね'],
+    tree:I.tree && I.tree.done ? (I.tree.done === 'ok' ? ['🎄', 'ツリーの明かりが、ぜんぶ灯った！<br>先生の画面を見てね'] : ['⏰', '時間切れ…<br>先生の画面を見てね']) : ['🎄', '最後の大工事！<br>先生の「スタート」で、ここに問題が出ます'],
     cards:['📜', 'こがね町のできごと！<br>先生の画面を見てね'],
-    end:pCoop() ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🏗', '最後の大工事！<br>みんなで協力しよう']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
+    end:pCoop() ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🎄', '最後の大工事！<br>もうすぐ、この画面に問題が出ます']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
   })[I.phase] || ['⏳', '先生の画面を待っています'];
   const last = P.hist[P.hist.length - 1], co = pCoop();
   return `<div class="wait">
@@ -3766,6 +3813,33 @@ function renderPlay(){
       <div class="msg" id="qmsg"></div>
       <button class="btn green big" type="submit">答える</button></form>`;
     if (pr.fields) kpSel(pr.fields[0].k);
+  } else if (P.stage === 'tstar'){
+    const T = (P.info && P.info.tree) || {need:0, lit:0};
+    B.innerHTML = `<div style="text-align:center"><div style="font-size:44px;line-height:1.1">🎄</div>
+      <div style="font-size:21px;font-weight:900;margin:2px 0 4px">ツリーに明かりを灯そう</div>
+      <div class="hap"><i style="width:${T.need ? Math.min(100, Math.round(T.lit / T.need * 100)) : 0}%"></i><b>💡 ${T.lit} / ${T.need}</b></div>
+      <div style="margin:8px 0 2px"><span class="dot" style="display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:3px solid #fff;background:${TCOL[P.topic]};font-weight:900;vertical-align:middle">${TSHORT[P.topic]}</span> <b style="font-size:18px">${COURSES[P.course || 'chu'].f[P.topic]}</b></div>
+      <div class="wcourse">${myCourse()}</div>
+      <p style="margin:0;color:var(--muted)">正解すると、★の数だけ明かりが灯るよ。<br>まちがえても、明かりはへらないよ</p></div>
+      <div class="starsel">
+        <button class="btn" onclick="pStar(1)">★<small>やさしい　→ 明かり 1こ</small></button>
+        <button class="btn" onclick="pStar(2)">★★<small>ふつう　→ 明かり 2こ</small></button>
+        <button class="btn red" onclick="pStar(3)">★★★<small style="color:#ffe1e2">むずかしい　→ 明かり 3こ</small></button>
+      </div>
+      <div style="text-align:center;color:var(--muted)">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.tlit ? `　あなたの明かり 💡 ${P.tlit}` : ''}</div>`;
+    clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); }, 500);
+  } else if (P.stage === 'tres'){
+    const r = P.res, pr = P.prob;
+    const ansTxt = pr.ansText || (pr.choices ? pr.choices[pr.ans.c] : pr.fields.map(fl => (fl.pre ? fl.pre + ' ' : '') + fmtAns(pr.ans[fl.k]) + (fl.post ? ' ' + fl.post : '')).join('　'));
+    B.innerHTML = `<div class="result">
+      <div class="mark">${r === 'ok' ? '⭕' : '❌'}</div>
+      <div class="rt">${r === 'ok' ? `${'★'.repeat(P.star)} 正解！` : 'ざんねん！'}</div>
+      ${r === 'ok' ? `<div class="tell">🎄 ツリーに明かり +${P.star}</div>` : `<p style="margin:4px 0">明かりは、へらないよ。次の問題で灯そう！</p>`}
+      </div>
+      <button class="btn green big" onclick="pTreeNext()">つぎの問題へ</button>
+      <div style="text-align:center;color:var(--muted);margin:6px 0">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>　あなたの明かり 💡 ${P.tlit || 0}</div>
+      <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>`;
+    clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); }, 500);
   } else if (P.stage === 'result'){
     const r = P.res, pr = P.prob;
     const ansTxt = pr.ansText || (pr.choices ? pr.choices[pr.ans.c] : pr.fields.map(fl => (fl.pre ? fl.pre + ' ' : '') + fmtAns(pr.ans[fl.k]) + (fl.post ? ' ' + fl.post : '')).join('　'));
@@ -3785,11 +3859,16 @@ function pCareerNote(){
   if (P.star >= COOP_CFG.qualStar && j !== me.job && !q.includes(j)) return `<div class="kwant" style="text-align:center">📜 ${JOBS[j].ic} ${JOBS[j].name}の資格ゲット！<small>会議の前の「転職タイム」で転職できるよ</small></div>`;
   return '';
 }
+/* 最後の大工事：次の問題へ。分野は、自分の仕事の分野（新人の人は、いろいろな分野） */
+function pTreeNext(){
+  const me = pMe() || {}; P.tree = true; P.double = false; P.sel = null;
+  P.topic = JOBS[me.job] ? JOBS[me.job].topic : ri(1, 5); P.stage = 'tstar'; renderPlay();
+}
 function pStart(){ if (!P.course){ const el = $('#csel'); if (el) el.classList.remove('shake'), void el.offsetWidth, el.classList.add('shake'); return; } P.name = ($('#pname').value || '').trim(); P.stage = 'pick'; renderPlay(); }
 function pTopic(t){ P.topic = t; P.stage = 'star'; renderPlay(); }
 function pStar(s){
   P.star = s; P.sel = null; P.prob = makeProblem(P.topic, s, P.course || 'chu', P.level); P.t = P.room ? netRemain() : 120; P.stage = 'quiz'; renderPlay();
-  if (P.room) sendAns({st:'solving', star:s});
+  if (P.room && !P.tree) sendAns({st:'solving', star:s});
   clearInterval(P.timer);
   P.timer = setInterval(() => {
     P.t = P.room ? netRemain() : P.t - 1; const el = $('#qt');
@@ -3848,6 +3927,13 @@ function pAnswer(){
 }
 function finishQ(r){
   clearInterval(P.timer); initAudio();
+  if (P.tree){      // 最後の大工事：答えを先生の画面に送って、すぐ次の問題へ進める。時間切れのときは、何も送らない
+    if (r === 'time'){ P.stage = 'wait'; renderPlay(); return; }
+    const ok = r === 'ok'; if (ok){ P.tlit = (P.tlit || 0) + P.star; setTimeout(() => { confetti(); sfx.star(); }, 150); }
+    P.res = r; P.hist.push({ok, st: ok ? P.star : 0});
+    if (P.room && P.pid != null && P.treeId) NET.set(`rooms/${P.room}/tree/${P.treeId}/${P.pid}/a${Date.now().toString(36)}${ri(10, 99)}`, {s:P.star, ok, at:NET.now()});
+    P.stage = 'tres'; renderPlay(); return;
+  }
   if (r === 'ok'){ setTimeout(() => { confetti(); sfx.star(); }, 150); }
   P.res = r; P.hist.push({ok: r === 'ok', st: r === 'ok' ? P.star * (P.room && P.double ? 2 : 1) : 0});
   if (P.room && P.qid){ sendAns({st:'done', star:P.star, ok:r === 'ok'}); P.done[P.qid] = 1; try { localStorage.setItem('sg_done_' + P.room, JSON.stringify(P.done)); } catch(e){} }
@@ -7212,7 +7298,7 @@ function netPublish(now){
   NETH.pubT = setTimeout(() => {
     const cur = H.players[H.turn];
     const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0, mode:H.mode};
-    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; }
+    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; if (H.tree) info.tree = H.tree; }
     const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', vet:COOP.isVet(pl) ? 1 : 0, ten:pl.tenure || 0, quals:(pl.quals || []).join(','), exp:(pl.exp || []).join(','), yen:pl.lastYen == null ? null : pl.lastYen}; });
     const ji = JSON.stringify(info), jr = JSON.stringify(roster);
     if (ji !== NETH.last.i){ NETH.last.i = ji; NET.set(`rooms/${NETH.room}/info`, info); }
@@ -7355,7 +7441,8 @@ function loadClip(src, ok, ng, tries = 4){
 }
 /* ================= ナレーション（妖精のノエル・雪だるまのゆきまる・町長・村の人たち） =================
    narration/vo/ に音声（名前.mp3）があるときだけ、先生の画面で声と字幕が出る（2026-11-10 現在：司会たちのひとこと237個＋物語12個）。音声がなければ何も起きない。オート中と消音中は流さない
-   名前のきまり：「〜_exp数字」は、その場面がはじめて出たときに1回だけ順番に流す説明。「〜_数字」は、2回め以降にどれか1つ
+   名前のきまり：「〜_exp数字」は、その場面がはじめて出たときに1回だけ順番に流す説明。「〜_数字」は、2回め以降にどれか1つ。
+   名前のおわりに r をつけた行は、その行への返事（ゆきまる → プラス のかけ合い）。もとの行のすぐあとに、つづけて流す
 
    ■ 声と画面をずらさないための決まり
    1) 声は1つずつ。場面をまたいで声をためない（順番待ちの列を作らない）
@@ -7365,14 +7452,14 @@ function loadClip(src, ok, ng, tries = 4){
    5) どの「待つ」にも時間切れがある。音が出せないとき・消音・オートのときは、待たない
    声のファイルは、先生の画面を開いたときにメモリへ先読みする（通信がおそくても、文字と同時に声が出るように）。読めなかった行は、だまってとばす（あとから流さない） */
 const VO = (() => {
-  const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ わたしは妖精のノエル。きょうの司会だよ。あっ、マイクがさかさまだった。えへへ。"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "それでは、はじまり、はじまり〜！ これは、みんなで力を合わせて、こがね町を救うすごろくだよ！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいるみんなが、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち！ えっと、まずは、そう、サイコロ！ サイコロで町を進もう！"], roll_1: ['mc', "次のラウンド、いくよ〜！ いい目が、出ますように！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], roll_5: ['mc', "サイコロ、えいっ！ あ、わたしが投げるんじゃなかった。"], half_1: ['mc', "ここで折り返し！ 幸せ度は、いくつになったかな？ 後半も、いっしょにがんばろう！"], lastround_1: ['mc', "いよいよ、最後のラウンドだよ！ みんな、がんばって！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイムだよ！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増えるの！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書くと、解きやすいよ！ わたしも書こうっと。あれ、えんぴつ、どこ？"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ いそいで、いそいで〜！ あ、でも、落ち着いてね！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだよ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、出てこ〜い！ わたしの魔法じゃ、出せないんだけどね。"], jobnews_exp1: ['mc', "しごとのニュースだよ！ 問題に正解すると、その分野の仕事につけるの。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュース！ 新しい仕事についた人がいるよ。すごーい！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでも大丈夫！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金で、どの困りごとを直すか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。直すと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どこを直しましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変えるよ！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金だね！ 次の会議で、大きく直そう！"], build_1: ['vil', "工事スタート！ トンテン、カンテン！"], build_2: ['vil', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_4: ['mc', "ぴかーん！ 明かりがついたよ！ まぶしくて、前が見えない〜！"], build_5: ['vil2', "ありがとう！ これで安心して暮らせるよ。"], build_6: ['vil3', "わあ、直ってる！ うれしいなあ！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['vil', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、直した工事でふせげるの。どきどきするね！"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！ こわいのは、いやだなあ。"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['vil', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['vil', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['vil', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['vil', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['vil', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['vil', "ふせいだー！ ナイス！"], tr_guard_2: ['vil', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_guard_5: ['mc', "やったあ！ 町が守られたよ！ うれしくて、くるくる回っちゃう！"], tr_guard_6: ['vil2', "たすかったよ。ほんとうに、ありがとう。"], tr_guard_7: ['vil3', "すごい、すごい！ さすがだね！"], tr_hit_1: ['vil', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['vil', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], tr_hit_5: ['mc', "あわわ、たいへん！ でも、だいじょうぶ。次はきっと、ふせげるよ！"], tr_hit_6: ['vil2', "こまったなあ。どうしよう。"], tr_hit_7: ['vil3', "うう、たいへんだ。だれか、たすけて〜。"], good_1: ['vil', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], good_4: ['mc', "わあ、いいニュース！ うれしいな！"], good_5: ['vil2', "よかった、よかった。いい日になったね。"], good_6: ['vil3', "やったあ！ うれしい！"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['vil', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。みんなで、ひとつの問題に挑戦しよう！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻ったよ！ みんな、ほんとうにありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], win_exp4: ['vil2', "明かりが戻った！ ありがとう、みなさん。"], win_exp5: ['vil3', "メリークリスマス！ また来てね！"], lose_exp1: ['mc', "あと少しだったね。でも、みんなが直した場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"], lobby_exp3: ['mc', "このゲームを作ったのは、須田先生。もと小学校の先生で、大学院では数の世界を研究していたんだよ。"], lobby_exp4: ['snow', "すごい先生なのに、ぼくにも、やさしく教えてくれるんだ。雪だるまなのに。"], lobby_exp5: ['mc', "はじめましての人も、きょうは同じチームのなかま。よかったら、「よろしく」って声をかけてみてね！"], start_exp5: ['mc', "わからないことがあったら、いつでも須田先生に聞いてね。急かさないし、だれかと比べたりもしないよ。"], roll_6: ['mc', "みんなのコマ、いってらっしゃ〜い！"], roll_7: ['snow', "いい目が出たら、ぼくにも分けてね。ぼくの目、ボタンだけど。"], roll_8: ['vil', "さあ、サイコロだ！ 町のみんなも、応援してるぞ！"], roll_9: ['mc', "サイコロの神さま、おねがいします！ あれ、妖精がお祈りしても、いいのかな。"], roll_10: ['vil3', "がんばれ〜！ こっちのマスに来てね！"], roll_11: ['mayor', "次のラウンドですな。みなさん、よろしくお願いしますぞ。"], half_2: ['snow', "もう半分？ はやいなあ。ぼく、まだ半分も、とけてないよ。"], half_3: ['mc', "折り返しだよ！ ここまで、町を助けてくれたみんなに、拍手〜！"], lastround_3: ['mayor', "最後のラウンドです。みなさんの力を、もう一度、かしてくだされ。"], lastround_4: ['mc', "ラストだよ！ みんなで、「がんばろう」って声をかけ合おう！"], quiz_5: ['mc', "数学は、時間がかかっても、ひとつひとつ分かっていけばいい。須田先生が、いつもそう言ってるよ。"], quiz_6: ['snow', "ヒントがほしいときは、須田先生に聞いてみて。ぼくに聞いても、雪の話しかできないから。"], quiz_7: ['mc', "星1つでも、正解は正解！ 自分に合ったむずかしさで、いこう！"], quiz_8: ['vil', "がんばれ！ 町のみんなが、ついてるぞ！"], quiz_9: ['mc', "問題タイム！ えっと、時間は2分。タイマー、スタート！ あ、もう動いてた。"], quiz_10: ['mayor', "あわてず、ていねいに。答えは、にげませんぞ。"], quiz_11: ['vil3', "すごいなあ、みんな。数学、やってみたくなってきた！"], quiz_12: ['snow', "できた人は、心の中でガッツポーズ。まだの人は、深呼吸。"], hurry_3: ['mc', "あと20秒！ 最後まで、あきらめないで！"], hurry_4: ['vil', "のこり20秒だ！ 見直しも、わすれずにな！"], gacha_4: ['snow', "なにが出ても、当たりだよ。ぼくは、はずれたことないもん。回したことも、ないけど。"], gacha_5: ['mc', "ガチャ、ガチャ〜！ いいのが出たら、みんなに見せてあげてね！"], gacha_6: ['vil2', "いいものが、出るといいですな。"], gacha_7: ['vil3', "わくわく！ なにが出るかな！"], jobnews_3: ['mc', "新しい仕事、おめでとう！ みんなで拍手〜！"], jobnews_4: ['vil', "新しいなかまが増えたぞ！ たのもしいな！"], jobnews_5: ['mayor', "町のために働いてくれて、ありがたいことです。"], career_3: ['mc', "転職タイム！ まよったら、みんなに「どの仕事がいいかな？」って聞いてみよう！"], career_4: ['mayor', "町に足りない仕事を、見てくだされ。求人が出ているかもしれませんぞ。"], vet_2: ['mc', "ベテランさんの誕生だよ！ かっこいい〜！"], meeting_4: ['mc', "町の会議だよ！ 「ここを直したい」って、声に出して相談してもいいよ！"], meeting_5: ['vil', "たのむ、うちの近くも直してくれ〜！"], meeting_6: ['vil2', "みなさんで決めたことなら、まちがいないでしょう。"], meeting_7: ['snow', "みんなで決めるって、いいね。ぼくは、いつも一人で立ってるから。"], meet_save_2: ['snow', "ためるのも、作戦だよ。ぼくも、雪をためて大きくなったんだ。"], build_7: ['mc', "工事かんりょう！ みんなのおかげだよ。ありがとう！"], build_8: ['mayor', "りっぱに直りましたな。みなさんに感謝です。"], build_9: ['vil', "おお、きれいになった！ さすがだな！"], build_done_3: ['mc', "ついに完成！ みんな、すごいよ！ 拍手、拍手〜！"], cards_4: ['mc', "カード、めくるよ。せーのっ！ あ、まだ心の準備が。"], cards_5: ['vil', "なにが起きても、みんなでなら乗りこえられるさ！"], cards_6: ['mayor', "町のできごとです。心して、聞いてくだされ。"], tr_snowfall_2: ['vil2', "これは大雪だ。道が、うまってしまう。"], tr_pipe_2: ['mc', "きゃあ、水が！ 水道管が、こわれちゃった！"], tr_fire_2: ['mc', "たいへん、火事だよ！ だれか、消防士さん！"], tr_scam_2: ['mc', "あやしい電話がかかってきたよ。おばあちゃん、出ちゃだめ〜！"], tr_thief_2: ['snow', "どろぼうだ！ ぼく、動けないから、だれか、つかまえて！"], tr_sick_2: ['vil2', "急病人だ。病院まで、遠いんだよなあ。"], tr_leave_2: ['mc', "えっ、引っこしちゃうの？ さびしいよ〜。"], tr_closed_2: ['vil3', "あのお店、しまっちゃうの？ よく行ってたのに。"], tr_bus_2: ['vil', "バスの本数が、またへるのか。こまったなあ。"], tr_interest_2: ['mc', "お金に羽がはえて、飛んでいっちゃう！ まって〜！"], tr_guard_8: ['mc', "守ってくれた人に、みんなで拍手〜！ パチパチパチ！"], tr_guard_9: ['vil', "たのもしいなあ！ これからも、たのむぞ！"], tr_guard_10: ['snow', "ナイス！ みんなも、「ナイス」って言ってあげて！"], tr_guard_11: ['mayor', "おみごと。町の人も、よろこんでおりますぞ。"], tr_hit_8: ['mc', "どんまい、どんまい！ みんなで力を合わせれば、大丈夫！"], tr_hit_9: ['vil', "しかたない。次は、みんなで守ろう！"], tr_hit_10: ['snow', "だれのせいでもないよ。雪のせいに、しておこう。"], tr_hit_11: ['mayor', "こういう日もあります。次の会議で、相談しましょう。"], good_7: ['mc', "やったね！ みんなで、ばんざ〜い！"], good_8: ['vil', "いいことがあると、町が明るくなるなあ！"], good_9: ['snow', "うれしいことは、みんなで分けよう。雪も、分けようか？"], ev_challenge_2: ['snow', "チャレンジマスだ！ 2倍だよ、2倍。ぼくが2人いたら、たいへんだね。"], ev_bonus_2: ['vil3', "ボーナス問題だって！ がんばって！"], ev_gift_2: ['mc', "わあ、寄付が届いたよ！ ありがとう！"], ev_snowman_2: ['mc', "雪だるま、できた！ ゆきまるに、なかまができたよ！"], ev_event_2: ['mc', "あれ？ 町で、なにか起きたみたい！"], summary_4: ['mc', "このラウンドも、おつかれさま！ がんばった自分と、なかまに、拍手〜！"], summary_5: ['mayor', "ここまでの町のようすを、ごらんくだされ。"], summary_6: ['vil', "みんなのおかげで、町が少しずつ、元気になってきたぞ！"], summary_7: ['snow', "まとめの時間だよ。ぼくは、いつも、まとまってるよ。雪だから。"], summary_8: ['mc', "いいチームになってきたね！ この調子で、いこう！"], boss_exp3: ['mc', "この式はね、「楕円曲線」っていうの。須田先生が大学院で研究していた、数学の世界の入り口だよ。"], boss_exp4: ['snow', "むずかしそう。でも、みんなで考えれば、こわくないよ。"], lose_exp3: ['mayor', "みなさんの力は、町にしっかり残りました。ありがとう。"], outro_exp1: ['mc', "きょうは、いっしょに遊んでくれて、ありがとう！"], outro_exp2: ['snow', "ありがとう〜！ ぼく、とけるまで、わすれないよ。"], outro_exp3: ['vil', "ありがとう！ また、いつでも来てくれよな！"], outro_exp4: ['vil2', "ありがとうございました。"], outro_exp5: ['vil3', "ありがとう！ たのしかった〜！"], outro_exp6: ['mc', "さいしょは、はじめましてだった人も、もう町のなかまだね。さいごに、みんなで「ありがとう」って言い合おう！"], outro_exp7: ['mayor', "このゲームを作ったのは、須田先生です。ストアカで、算数や数学を教えておられますぞ。"], outro_exp8: ['mc', "小学校の算数から、大学の数学まで。「なぜ？」を、いっしょに、ゆっくり考えてくれる先生だよ。"], outro_exp9: ['snow', "ぼくも習いたいな。雪だるまでも、いいかな？"], outro_exp10: ['mc', "よかったら、須田先生の講座も、のぞいてみてね。それじゃあ、またね〜！"], fork_exp1: ['mc', "分かれ道だよ！ こがね町には、山の上、上の町、下の町、地下の鉱山、4つの階があるの。"], fork_exp2: ['snow', "どこへ行くかは、自分で決めていいんだよ。ぼくは、どこにも行けないけど。"], fork_1: ['mc', "分かれ道！ どっちに行く？ まよったら、みんなに聞いてみよう！"], fork_2: ['vil', "どっちの道も、おもしろいぞ！ 好きなほうを選びな！"], fork_3: ['snow', "右かな、左かな。ぼくなら、ころがりやすいほう。"], fork_4: ['mayor', "分かれ道ですな。行きたいほうを、お選びくだされ。"], ev_ropeway_1: ['mc', "ロープウェイで、山の上へ出発！ わあ、町がどんどん小さくなる〜！"], ev_ropeway_2: ['snow', "高いところは、にがてだなあ。でも、山の上は雪がいっぱいで、うれしい。"], ev_ropeway_3: ['vil3', "いってらっしゃ〜い！ 山の上は、星がきれいだよ！"], ev_slide_1: ['mc', "そりの大すべり台！ しっかりつかまって〜！ きゃ〜！"], ev_slide_2: ['snow', "びゅーん！ いいなあ。ぼくがすべると、雪玉になっちゃう。"], ev_slide_3: ['vil', "山の上から下の町まで、ひとっとびだ！ 気をつけてな！"], ev_manhole_1: ['mc', "マンホールの近道だよ！ まっくらだけど、こわくない、こわくない。…ちょっとこわい。"], ev_manhole_2: ['vil2', "古い水道管を通って、地下の鉱山へ。足もとに、気をつけてくださいね。"], ev_geyser_1: ['mc', "間欠泉だ！ お湯の力で、地上までひとっとび！ あったかそう〜！"], ev_geyser_2: ['snow', "お湯！？ ぼくは、えんりょしておくよ。とけちゃうから。"], ev_geyser_3: ['vil', "どっかーん！ こがね鉱山の名物、間欠泉だ！"], ev_cart_1: ['mc', "トロッコに乗って、出発しんこう〜！ ガタンゴトン、ガタンゴトン！"], ev_cart_2: ['vil', "鉱山のトロッコだ！ しっかりつかまってな！"], ev_cart_3: ['snow', "はやい、はやい！ ぼくも乗りたい。重くて、動かないかな。"], ev_onsen_1: ['mc', "温泉だ〜！ ぽかぽか、いい気持ち。町の人も、にっこりだね！"], ev_onsen_2: ['vil2', "いいお湯ですよ。ゆっくり、あたたまっていってくださいね。"], ev_onsen_3: ['snow', "温泉かあ。ぼくは、見てるだけにするね。足湯も、だめ。"], ev_gold_1: ['mc', "わあ、金のかけらを見つけたよ！ きらきら！ 町の予算が増えるね！"], ev_gold_2: ['vil', "おお、金だ！ こがね町の名前は、この金から来てるんだぞ！"], ev_gold_3: ['mayor', "金のかけらですな。町のために、大切に使わせていただきます。"], ev_shrine_1: ['mc', "神社でおみくじ！ いいのが出ますように。どきどき！"], ev_shrine_2: ['mayor', "山の上の神社です。町を、むかしから見守ってくれております。"], ev_daikichi_1: ['mc', "大吉〜！ すごい、すごい！ 町にいいことが、2つも起きたよ！"], ev_daikichi_2: ['vil3', "大吉だ！ やったあ！ おめでとう！"], ev_kichi_1: ['mc', "いいおみくじだね！ 町に、いいことがあったよ！"], ev_kichi_2: ['snow', "吉だ。ぼくは、毎日が雪で、毎日が大吉。"], ev_hole_1: ['mc', "あっ、落とし穴！ きゃ〜！ …だいじょうぶ？ 下の階に落ちただけだよ！"], ev_hole_2: ['snow', "落ちちゃった。でも、だいじょうぶ。下にも、道はあるよ。"], ev_hole_3: ['vil', "おっと、落とし穴だ！ けがは、ないか？"], fl_2_1: ['mc', "上の町、温泉通りに到着！ ゆげが、もくもく。いいにおい〜。"], fl_2_2: ['vil2', "ようこそ、温泉通りへ。むかしは、お客さんでいっぱいだったんですよ。"], fl_3_1: ['mc', "下の町に、もどってきたよ！ ツリー広場は、もうすぐ！"], fl_3_2: ['vil', "おかえり！ 下の町は、商店街と駅がある、町のまん中だ！"], fl_4_1: ['mc', "地下のこがね鉱山に到着！ 金の結晶が、きらきら光ってるよ！"], fl_4_2: ['snow', "地下は、すずしくていいね。ぼく、ここに住もうかな。"], fl_4_3: ['mayor', "ここが、こがね鉱山です。むかし、町はこの金でさかえたのですぞ。"], lap_1: ['mc', "町のツリーを通過！ 町の予算が増えたよ。ぐるっと回ってきたね！"], lap_2: ['vil3', "おかえりなさい！ ツリーが、まってたよ！"], call_sosu1: ['vil2', "たいへん、たいへん！ こがね町のうわさ、聞きました！"], call_sosu2: ['vil2', "うちの そすう村は、お金が 2円、3円、5円、7円…。はんぱな数しか のこってないんです！"], call_ensyu1: ['vil', "まって！ えんしゅう町は、電車が ぐるぐる回って、止まりません！"], call_mugen1: ['vil3', "むげん島は、こまりごとが むげんに あるんです〜！"], call_sosu3: ['vil2', "つぎは、うちに来てください！"], call_ensyu2: ['vil', "うちが先です！"], call_mugen2: ['vil3', "うちも〜！"], call_noel: ['mc', "わわっ、どの町も たいへん！ みんな、また 力をかしてくれる？"], call_next: ['mc', "つづく…？"], call_again: ['mc', "また いっしょに 挑戦しよう！"], call_end: ['mc', "おしまい！ また いっしょに 遊ぼうね！"]};
-  const WHO = {mc: ["🧚", "ノエル", "#ffb3de"], snow: ["⛄", "ゆきまる", "#9fd8ff"], mayor: ["🎩", "町長", "#c9b3ff"], vil: ["👨", "村の人", "#b3f0d0"], vil2: ["🙂", "村の人", "#ffe9a6"], vil3: ["😊", "村の人", "#ffcfa6"]}, DIR = 'narration/vo/', ids = Object.keys(L);
+  const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ わたしは妖精のノエル。きょうの司会だよ。あっ、マイクがさかさまだった。えへへ。"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "それでは、はじまり、はじまり〜！ これは、みんなで力を合わせて、こがね町を救うすごろくだよ！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいるみんなが、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち！ えっと、まずは、そう、サイコロ！ サイコロで町を進もう！"], roll_1: ['mc', "次のラウンド、いくよ〜！ いい目が、出ますように！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], roll_5: ['mc', "サイコロ、えいっ！ あ、わたしが投げるんじゃなかった。"], half_1: ['mc', "ここで折り返し！ 幸せ度は、いくつになったかな？ 後半も、いっしょにがんばろう！"], lastround_1: ['mc', "いよいよ、最後のラウンドだよ！ みんな、がんばって！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイムだよ！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増えるの！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書くと、解きやすいよ！ わたしも書こうっと。あれ、えんぴつ、どこ？"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ いそいで、いそいで〜！ あ、でも、落ち着いてね！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだよ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、出てこ〜い！ わたしの魔法じゃ、出せないんだけどね。"], jobnews_exp1: ['mc', "しごとのニュースだよ！ 問題に正解すると、その分野の仕事につけるの。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュース！ 新しい仕事についた人がいるよ。すごーい！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでも大丈夫！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金を、どの困りごとに使うか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。工事が進むと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どの工事を進めましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変えるよ！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金だね！ 次の会議で、大きな工事をしよう！"], build_1: ['vil', "工事スタート！ トンテン、カンテン！"], build_2: ['vil', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_4: ['mc', "ぴかーん！ 明かりがついたよ！ まぶしくて、前が見えない〜！"], build_5: ['vil2', "ありがとう！ これで安心して暮らせるよ。"], build_6: ['vil3', "わあ、直ってる！ うれしいなあ！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['vil', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、進めておいた工事でふせげるの。どきどきするね！"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！ こわいのは、いやだなあ。"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['vil', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['vil', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['vil', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['vil', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['vil', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['vil', "ふせいだー！ ナイス！"], tr_guard_2: ['vil', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_guard_5: ['mc', "やったあ！ 町が守られたよ！ うれしくて、くるくる回っちゃう！"], tr_guard_6: ['vil2', "たすかったよ。ほんとうに、ありがとう。"], tr_guard_7: ['vil3', "すごい、すごい！ さすがだね！"], tr_hit_1: ['vil', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['vil', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], tr_hit_5: ['mc', "あわわ、たいへん！ でも、だいじょうぶ。次はきっと、ふせげるよ！"], tr_hit_6: ['vil2', "こまったなあ。どうしよう。"], tr_hit_7: ['vil3', "うう、たいへんだ。だれか、たすけて〜。"], good_1: ['vil', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], good_4: ['mc', "わあ、いいニュース！ うれしいな！"], good_5: ['vil2', "よかった、よかった。いい日になったね。"], good_6: ['vil3', "やったあ！ うれしい！"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['vil', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。みんなの力で、町のツリーに明かりを灯そう！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻ったよ！ みんな、ほんとうにありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], win_exp4: ['vil2', "明かりが戻った！ ありがとう、みなさん。"], win_exp5: ['vil3', "メリークリスマス！ また来てね！"], lose_exp1: ['mc', "あと少しだったね。でも、みんなが力を合わせた場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"], lobby_exp3: ['mc', "このゲームを作ったのは、須田先生。もと小学校の先生で、大学院では数の世界を研究していたんだよ。"], lobby_exp4: ['snow', "すごい先生なのに、ぼくにも、やさしく教えてくれるんだ。雪だるまなのに。"], lobby_exp5: ['mc', "はじめましての人も、きょうは同じチームのなかま。よかったら、「よろしく」って声をかけてみてね！"], start_exp5: ['mc', "わからないことがあったら、いつでも須田先生に聞いてね。急かさないし、だれかと比べたりもしないよ。"], roll_6: ['mc', "みんなのコマ、いってらっしゃ〜い！"], roll_7: ['snow', "いい目が出たら、ぼくにも分けてね。ぼくの目、ボタンだけど。"], roll_8: ['vil', "さあ、サイコロだ！ 町のみんなも、応援してるぞ！"], roll_9: ['mc', "サイコロの神さま、おねがいします！ あれ、妖精がお祈りしても、いいのかな。"], roll_10: ['vil3', "がんばれ〜！ こっちのマスに来てね！"], roll_11: ['mayor', "次のラウンドですな。みなさん、よろしくお願いしますぞ。"], half_2: ['snow', "もう半分？ はやいなあ。ぼく、まだ半分も、とけてないよ。"], half_3: ['mc', "折り返しだよ！ ここまで、町を助けてくれたみんなに、拍手〜！"], lastround_3: ['mayor', "最後のラウンドです。みなさんの力を、もう一度、かしてくだされ。"], lastround_4: ['mc', "ラストだよ！ みんなで、「がんばろう」って声をかけ合おう！"], quiz_5: ['mc', "数学は、時間がかかっても、ひとつひとつ分かっていけばいい。須田先生が、いつもそう言ってるよ。"], quiz_6: ['snow', "ヒントがほしいときは、須田先生に聞いてみて。ぼくに聞いても、雪の話しかできないから。"], quiz_7: ['mc', "星1つでも、正解は正解！ 自分に合ったむずかしさで、いこう！"], quiz_8: ['vil', "がんばれ！ 町のみんなが、ついてるぞ！"], quiz_9: ['mc', "問題タイム！ えっと、時間は2分。タイマー、スタート！ あ、もう動いてた。"], quiz_10: ['mayor', "あわてず、ていねいに。答えは、にげませんぞ。"], quiz_11: ['vil3', "すごいなあ、みんな。数学、やってみたくなってきた！"], quiz_12: ['snow', "できた人は、心の中でガッツポーズ。まだの人は、深呼吸。"], hurry_3: ['mc', "あと20秒！ 最後まで、あきらめないで！"], hurry_4: ['vil', "のこり20秒だ！ 見直しも、わすれずにな！"], gacha_4: ['snow', "なにが出ても、当たりだよ。ぼくは、はずれたことないもん。回したことも、ないけど。"], gacha_5: ['mc', "ガチャ、ガチャ〜！ いいのが出たら、みんなに見せてあげてね！"], gacha_6: ['vil2', "いいものが、出るといいですな。"], gacha_7: ['vil3', "わくわく！ なにが出るかな！"], jobnews_3: ['mc', "新しい仕事、おめでとう！ みんなで拍手〜！"], jobnews_4: ['vil', "新しいなかまが増えたぞ！ たのもしいな！"], jobnews_5: ['mayor', "町のために働いてくれて、ありがたいことです。"], career_3: ['mc', "転職タイム！ まよったら、みんなに「どの仕事がいいかな？」って聞いてみよう！"], career_4: ['mayor', "町に足りない仕事を、見てくだされ。求人が出ているかもしれませんぞ。"], vet_2: ['mc', "ベテランさんの誕生だよ！ かっこいい〜！"], meeting_4: ['mc', "町の会議だよ！ 「これをやりたい」って、声に出して相談してもいいよ！"], meeting_5: ['vil', "たのむ、うちの近くのことも、わすれないでくれ〜！"], meeting_6: ['vil2', "みなさんで決めたことなら、まちがいないでしょう。"], meeting_7: ['snow', "みんなで決めるって、いいね。ぼくは、いつも一人で立ってるから。"], meet_save_2: ['snow', "ためるのも、作戦だよ。ぼくも、雪をためて大きくなったんだ。"], build_7: ['mc', "工事かんりょう！ みんなのおかげだよ。ありがとう！"], build_8: ['mayor', "りっぱに直りましたな。みなさんに感謝です。"], build_9: ['vil', "おお、きれいになった！ さすがだな！"], build_done_3: ['mc', "ついに完成！ みんな、すごいよ！ 拍手、拍手〜！"], cards_4: ['mc', "カード、めくるよ。せーのっ！ あ、まだ心の準備が。"], cards_5: ['vil', "なにが起きても、みんなでなら乗りこえられるさ！"], cards_6: ['mayor', "町のできごとです。心して、聞いてくだされ。"], tr_snowfall_2: ['vil2', "これは大雪だ。道が、うまってしまう。"], tr_pipe_2: ['mc', "きゃあ、水が！ 水道管が、こわれちゃった！"], tr_fire_2: ['mc', "たいへん、火事だよ！ だれか、消防士さん！"], tr_scam_2: ['mc', "あやしい電話がかかってきたよ。おばあちゃん、出ちゃだめ〜！"], tr_thief_2: ['snow', "どろぼうだ！ ぼく、動けないから、だれか、つかまえて！"], tr_sick_2: ['vil2', "急病人だ。病院まで、遠いんだよなあ。"], tr_leave_2: ['mc', "えっ、引っこしちゃうの？ さびしいよ〜。"], tr_closed_2: ['vil3', "あのお店、しまっちゃうの？ よく行ってたのに。"], tr_bus_2: ['vil', "バスの本数が、またへるのか。こまったなあ。"], tr_interest_2: ['mc', "お金に羽がはえて、飛んでいっちゃう！ まって〜！"], tr_guard_8: ['mc', "守ってくれた人に、みんなで拍手〜！ パチパチパチ！"], tr_guard_9: ['vil', "たのもしいなあ！ これからも、たのむぞ！"], tr_guard_10: ['snow', "ナイス！ みんなも、「ナイス」って言ってあげて！"], tr_guard_11: ['mayor', "おみごと。町の人も、よろこんでおりますぞ。"], tr_hit_8: ['mc', "どんまい、どんまい！ みんなで力を合わせれば、大丈夫！"], tr_hit_9: ['vil', "しかたない。次は、みんなで守ろう！"], tr_hit_10: ['snow', "だれのせいでもないよ。雪のせいに、しておこう。"], tr_hit_11: ['mayor', "こういう日もあります。次の会議で、相談しましょう。"], good_7: ['mc', "やったね！ みんなで、ばんざ〜い！"], good_8: ['vil', "いいことがあると、町が明るくなるなあ！"], good_9: ['snow', "うれしいことは、みんなで分けよう。雪も、分けようか？"], ev_challenge_2: ['snow', "チャレンジマスだ！ 2倍だよ、2倍。ぼくが2人いたら、たいへんだね。"], ev_bonus_2: ['vil3', "ボーナス問題だって！ がんばって！"], ev_gift_2: ['mc', "わあ、寄付が届いたよ！ ありがとう！"], ev_snowman_2: ['mc', "雪だるま、できた！ ゆきまるに、なかまができたよ！"], ev_event_2: ['mc', "あれ？ 町で、なにか起きたみたい！"], summary_4: ['mc', "このラウンドも、おつかれさま！ がんばった自分と、なかまに、拍手〜！"], summary_5: ['mayor', "ここまでの町のようすを、ごらんくだされ。"], summary_6: ['vil', "みんなのおかげで、町が少しずつ、元気になってきたぞ！"], summary_7: ['snow', "まとめの時間だよ。ぼくは、いつも、まとまってるよ。雪だから。"], summary_8: ['mc', "いいチームになってきたね！ この調子で、いこう！"], boss_exp3: ['mc', "この式はね、「楕円曲線」っていうの。須田先生が大学院で研究していた、数学の世界の入り口だよ。"], boss_exp4: ['snow', "むずかしそう。でも、みんなで考えれば、こわくないよ。"], lose_exp3: ['mayor', "みなさんの力は、町にしっかり残りました。ありがとう。"], outro_exp1: ['mc', "きょうは、いっしょに遊んでくれて、ありがとう！"], outro_exp2: ['snow', "ありがとう〜！ ぼく、とけるまで、わすれないよ。"], outro_exp3: ['vil', "ありがとう！ また、いつでも来てくれよな！"], outro_exp4: ['vil2', "ありがとうございました。"], outro_exp5: ['vil3', "ありがとう！ たのしかった〜！"], outro_exp6: ['mc', "さいしょは、はじめましてだった人も、もう町のなかまだね。さいごに、みんなで「ありがとう」って言い合おう！"], outro_exp7: ['mayor', "このゲームを作ったのは、須田先生です。ストアカで、算数や数学を教えておられますぞ。"], outro_exp8: ['mc', "小学校の算数から、大学の数学まで。「なぜ？」を、いっしょに、ゆっくり考えてくれる先生だよ。"], outro_exp9: ['snow', "ぼくも習いたいな。雪だるまでも、いいかな？"], outro_exp10: ['mc', "よかったら、須田先生の講座も、のぞいてみてね。それじゃあ、またね〜！"], fork_exp1: ['mc', "分かれ道だよ！ こがね町には、山の上、上の町、下の町、地下の鉱山、4つの階があるの。"], fork_exp2: ['snow', "どこへ行くかは、自分で決めていいんだよ。ぼくは、どこにも行けないけど。"], fork_1: ['mc', "分かれ道！ どっちに行く？ まよったら、みんなに聞いてみよう！"], fork_2: ['vil', "どっちの道も、おもしろいぞ！ 好きなほうを選びな！"], fork_3: ['snow', "右かな、左かな。ぼくなら、ころがりやすいほう。"], fork_4: ['mayor', "分かれ道ですな。行きたいほうを、お選びくだされ。"], ev_ropeway_1: ['mc', "ロープウェイで、山の上へ出発！ わあ、町がどんどん小さくなる〜！"], ev_ropeway_2: ['snow', "高いところは、にがてだなあ。でも、山の上は雪がいっぱいで、うれしい。"], ev_ropeway_3: ['vil3', "いってらっしゃ〜い！ 山の上は、星がきれいだよ！"], ev_slide_1: ['mc', "そりの大すべり台！ しっかりつかまって〜！ きゃ〜！"], ev_slide_2: ['snow', "びゅーん！ いいなあ。ぼくがすべると、雪玉になっちゃう。"], ev_slide_3: ['vil', "山の上から下の町まで、ひとっとびだ！ 気をつけてな！"], ev_manhole_1: ['mc', "マンホールの近道だよ！ まっくらだけど、こわくない、こわくない。…ちょっとこわい。"], ev_manhole_2: ['vil2', "古い水道管を通って、地下の鉱山へ。足もとに、気をつけてくださいね。"], ev_geyser_1: ['mc', "間欠泉だ！ お湯の力で、地上までひとっとび！ あったかそう〜！"], ev_geyser_2: ['snow', "お湯！？ ぼくは、えんりょしておくよ。とけちゃうから。"], ev_geyser_3: ['vil', "どっかーん！ こがね鉱山の名物、間欠泉だ！"], ev_cart_1: ['mc', "トロッコに乗って、出発しんこう〜！ ガタンゴトン、ガタンゴトン！"], ev_cart_2: ['vil', "鉱山のトロッコだ！ しっかりつかまってな！"], ev_cart_3: ['snow', "はやい、はやい！ ぼくも乗りたい。重くて、動かないかな。"], ev_onsen_1: ['mc', "温泉だ〜！ ぽかぽか、いい気持ち。町の人も、にっこりだね！"], ev_onsen_2: ['vil2', "いいお湯ですよ。ゆっくり、あたたまっていってくださいね。"], ev_onsen_3: ['snow', "温泉かあ。ぼくは、見てるだけにするね。足湯も、だめ。"], ev_gold_1: ['mc', "わあ、金のかけらを見つけたよ！ きらきら！ 町の予算が増えるね！"], ev_gold_2: ['vil', "おお、金だ！ こがね町の名前は、この金から来てるんだぞ！"], ev_gold_3: ['mayor', "金のかけらですな。町のために、大切に使わせていただきます。"], ev_shrine_1: ['mc', "神社でおみくじ！ いいのが出ますように。どきどき！"], ev_shrine_2: ['mayor', "山の上の神社です。町を、むかしから見守ってくれております。"], ev_daikichi_1: ['mc', "大吉〜！ すごい、すごい！ 町にいいことが、2つも起きたよ！"], ev_daikichi_2: ['vil3', "大吉だ！ やったあ！ おめでとう！"], ev_kichi_1: ['mc', "いいおみくじだね！ 町に、いいことがあったよ！"], ev_kichi_2: ['snow', "吉だ。ぼくは、毎日が雪で、毎日が大吉。"], ev_hole_1: ['mc', "あっ、落とし穴！ きゃ〜！ …だいじょうぶ？ 下の階に落ちただけだよ！"], ev_hole_2: ['snow', "落ちちゃった。でも、だいじょうぶ。下にも、道はあるよ。"], ev_hole_3: ['vil', "おっと、落とし穴だ！ けがは、ないか？"], fl_2_1: ['mc', "上の町、温泉通りに到着！ ゆげが、もくもく。いいにおい〜。"], fl_2_2: ['vil2', "ようこそ、温泉通りへ。むかしは、お客さんでいっぱいだったんですよ。"], fl_3_1: ['mc', "下の町に、もどってきたよ！ ツリー広場は、もうすぐ！"], fl_3_2: ['vil', "おかえり！ 下の町は、商店街と駅がある、町のまん中だ！"], fl_4_1: ['mc', "地下のこがね鉱山に到着！ 金の結晶が、きらきら光ってるよ！"], fl_4_2: ['snow', "地下は、すずしくていいね。ぼく、ここに住もうかな。"], fl_4_3: ['mayor', "ここが、こがね鉱山です。むかし、町はこの金でさかえたのですぞ。"], lap_1: ['mc', "町のツリーを通過！ 町の予算が増えたよ。ぐるっと回ってきたね！"], lap_2: ['vil3', "おかえりなさい！ ツリーが、まってたよ！"], call_sosu1: ['vil2', "たいへん、たいへん！ こがね町のうわさ、聞きました！"], call_sosu2: ['vil2', "うちの そすう村は、お金が 2円、3円、5円、7円…。はんぱな数しか のこってないんです！"], call_ensyu1: ['vil', "まって！ えんしゅう町は、電車が ぐるぐる回って、止まりません！"], call_mugen1: ['vil3', "むげん島は、こまりごとが むげんに あるんです〜！"], call_sosu3: ['vil2', "つぎは、うちに来てください！"], call_ensyu2: ['vil', "うちが先です！"], call_mugen2: ['vil3', "うちも〜！"], call_noel: ['mc', "わわっ、どの町も たいへん！ みんな、また 力をかしてくれる？"], call_next: ['mc', "つづく…？"], call_again: ['mc', "また いっしょに 挑戦しよう！"], call_end: ['mc', "おしまい！ また いっしょに 遊ぼうね！"], build_water_1: ['vil', "古い管を、ぜんぶ点検したぞ。あぶないところが、よくわかった！"], build_water_2: ['vil2', "管が半分、新しくなったよ。水の出が、ぜんぜんちがう！"], build_water_3: ['mc', "新しい水道のできあがり！ お水がおいしい〜！ ごくごく。"], build_train_1: ['vil', "線路の修理がはじまったぞ！ トンテン、カンテン！"], build_train_2: ['vil3', "駅がきれいに直ったよ！ ベンチも、ぴかぴか。早く電車、来ないかな。"], build_train_3: ['mayor', "ついに、電車がまた走りますぞ。出発、進行〜！"], build_debt_1: ['mayor', "町のムダづかいを見直しました。わたしのおやつ代も、へらしましたぞ。"], build_debt_2: ['vil2', "借金を半分、返せたよ。のこり半分。もうひとがんばり！"], build_debt_3: ['mc', "赤字がゼロになったよ！ ゼロって、こんなにうれしい数だったんだね！"], build_akiya_1: ['vil', "空き家を、1けんずつ調べたぞ。まだ使える家が、たくさんあった！"], build_akiya_2: ['vil3', "空き家がリフォームされて、ぴかぴか！ わたしが住みたいくらい！"], build_akiya_3: ['vil2', "新しい家族が、引っこしてきたよ。ようこそ、こがね町へ！"], build_aging_1: ['vil2', "子育ての相談窓口ができたよ。こまったときは、いつでも聞けるね。"], build_aging_2: ['vil3', "保育園ができたよ！ 朝から、にぎやかな声がする！"], build_aging_3: ['mayor', "町に、子どもの声が戻ってきました。これが、町のいちばんの宝ですな。"], build_hosp_1: ['vil', "救急車がふえたぞ。これで、いざというときも、すぐに走れる！"], build_hosp_2: ['vil2', "町に診療所ができたよ。近くにお医者さんがいると、安心だなあ。"], build_hosp_3: ['mc', "町の病院のできあがり！ もう、遠くまで行かなくていいんだね！"], build_shop_1: ['vil', "空いていたお店に、新しいお店が入るぞ。なに屋さんかな？"], build_shop_2: ['mc', "クリスマス市のはじまり〜！ いいにおい。あっ、おなかが鳴っちゃった。"], build_shop_3: ['vil3', "商店街に、人がいっぱい！ シャッターが、ぜんぶ開いたよ！"], build_snow_1: ['vil', "雪かき当番を決めたぞ。みんなでやれば、あっというまだ！"], build_snow_2: ['snow', "除雪車が来たよ。かっこいい！ …ぼくは、どけないでね。"], build_snow_3: ['snow', "雪まつりの準備ができたよ。ぼくのなかまが、いっぱいだ！"], tr_sickb_1: ['vil', "急病人です！ いそいで、お医者さんのところへ！"], tr_sickb_2: ['vil2', "急病人だ。でも、町にお医者さんがいるから、すぐだよ。"], lobby_exp2r: ['deer', "トナカイのプラスだよ！ ゆきまるの、いちばんの友だち。よろしくね！"], lobby_exp4r: ['deer', "プラスにも、教えてくれるよ！ トナカイなのに！"], start_exp3r: ['deer', "プラスも、チームだよ！ 足は4本あるから、ゆきまるの分まで走るね！"], quiz_exp3r: ['deer', "まちがえた数だけ、かしこくなるんだよ。じゃあ、ゆきまるは天才だね！"], fork_exp2r: ['deer', "行きたいところがあったら、そりに乗せてあげる！ いつでも言ってね！"], hurry_2r: ['deer', "ねちゃだめ〜！ あと少し、いっしょに応援しよう！"], gacha_2r: ['deer', "じゃあ、プラスが回してあげる！ …あ、プラスの手も、ひづめだった。"], jobnews_2r: ['deer', "ゆきまるは、町でいちばんの雪だるまだよ。それって、すごい仕事だよ！"], meeting_7r: ['deer', "ひとりじゃないよ。プラスが、毎日となりに来てるでしょ！"], cards_2r: ['deer', "じゃあ、プラスは、いい予感！ これで、半分ずつだね！"], tr_hit_2r: ['deer', "いなくならないよ！ 冬になったら、プラスがまた作るもん。町だって、また元気になるよ！"], lastround_2r: ['deer', "えらい、えらい！ さいごまで、いっしょに立ってよう！"], win_exp2r: ['deer', "やったー！ ゆきまる、いっしょにバンザイ！"], lose_exp2r: ['deer', "春になっても、だいじょうぶ。冬になったら、また会えるよ。だから、みんなも、また来てね！"], outro_exp2r: ['deer', "プラスは、ずーっとわすれないよ！ ありがとう〜！"], outro_exp9r: ['deer', "いいに決まってるよ！ プラスも、いっしょに習う！"], roll_12: ['deer', "サイコロ、えいっ！ どんな目でも、プラスにいこう！"], quiz_13: ['deer', "わかるところまでで、いいんだよ。プラスが、うしろで応援してる！"], tr_guard_12: ['deer', "やった〜！ 守ってくれた人、かっこいい！ プラスも、あんなふうになりたい！"], tr_hit_12: ['deer', "だいじょうぶ、プラスにいこう！ 次は、きっと守れるよ！"], good_10: ['deer', "わーい、いいこと！ いいことは、みんなで山分けだ〜！"], summary_9: ['deer', "おつかれさま！ みんなの力が、また1つ、プラスされたね！"], tree_exp1: ['mc', "みんなのスマホに、問題が出るよ。正解すると、ツリーに明かりが灯るの。星の数だけ、灯るよ！"], tree_exp2: ['snow', "じっくり1問でも、かんたんな問題をたくさんでも、いいんだって。ぼくは、じっくり派。"], tree_exp2r: ['deer', "プラスは、たくさん派！ どっちも、同じ明かりだよ！"], tree_exp3: ['mayor', "時間は3分です。まちがえても、明かりはへりません。安心して、挑戦してくだされ。"], tree_first_1: ['vil', "おっ、1つ灯ったぞ！ その調子だ！"], tree_half_1: ['mc', "半分、灯ったよ！ きれい〜！ あと半分、いけるいける！"], tree_hurry_1: ['mc', "あと30秒！ さいごの1問、おねがい！"], tree_ok_exp1: ['mc', "ぜんぶ灯った〜！ みんなの明かりで、ツリーがぴっかぴか！"], tree_ok_exp2: ['deer', "てっぺんの星も、光ったよ！ みんな、すごい、すごい！"], tree_ng_exp1: ['mayor', "時間です。あと少しでしたな。でも、灯った明かりは、消えませんぞ。"]};
+  const WHO = {mc: ["🧚", "ノエル", "#ffb3de"], snow: ["⛄", "ゆきまる", "#9fd8ff"], mayor: ["🎩", "町長", "#c9b3ff"], vil: ["👨", "村の人", "#b3f0d0"], vil2: ["🙂", "村の人", "#ffe9a6"], vil3: ["😊", "村の人", "#ffcfa6"], deer: ["🦌", "プラス", "#ff9d7a"]}, DIR = 'narration/vo/', ids = Object.keys(L);
   // 画面に出る文字から、どの場面かを見分ける（上から順に調べる）
   const MAP = [[/ゲームスタート/, 'start'], [/ロープウェイで/, 'ev_ropeway'], [/そりの大すべり台/, 'ev_slide'], [/マンホールから/, 'ev_manhole'], [/間欠泉で/, 'ev_geyser'], [/トロッコに乗って/, 'ev_cart'],
     [/温泉でぽかぽか/, 'ev_onsen'], [/金のかけら/, 'ev_gold'], [/神社でおみくじ/, 'ev_shrine'], [/大吉/, 'ev_daikichi'], [/中吉|小吉/, 'ev_kichi'], [/落とし穴/, 'ev_hole'], [/ツリーを通過/, 'lap'], [/ラストラウンド/, 'lastround'], [/のまとめ/, 'summary'], [/^ラウンド \d/, 'roll'], [/問題タイム/, 'quiz'], [/のこり20秒/, 'hurry'], [/ガチャタイム/, 'gacha'],
     [/チャレンジマス/, 'ev_challenge'], [/ボーナス問題/, 'ev_bonus'], [/寄付が届いた/, 'ev_gift'], [/雪だるまを作って/, 'ev_snowman'], [/こがね町のできごと/, 'cards'], [/町のできごと！/, 'ev_event'],
     [/しごとのニュース/, 'jobnews'], [/ベテラン誕生/, 'vet'], [/が完成！/, 'build_done'], [/貯金/, 'meet_save'], [/レベル\d「/, 'build'],
-    [/さいごのラウンドが終わった/, 'boss'], [/最後の大工事（ボス問題）に/, 'boss2'], [/明かりが戻った/, 'win'], [/あと少し…|出ていってしまった/, 'lose']];
+    [/さいごのラウンドが終わった/, 'boss'], [/最後の大工事！/, 'boss2'], [/明かりが戻った/, 'win'], [/あと少し…|出ていってしまった/, 'lose']];
   // 決まった行を、1ゲームに1回だけ流す場面（ボス問題の説明は、画面に出ているものに合わせて3つに分ける）
   const SEQ = {boss:['boss_exp1'], boss2:['boss_exp2'], bossq:['boss_exp3', 'boss_exp4']};
   let ready = false, probed = false, probeN = 0, done = {}, last = {}, el = null, txt = null, ph = '', act = null;   // act：いま流れている場面の声
@@ -7428,7 +7515,7 @@ const VO = (() => {
   function cue(key){
     if (!can()) return Promise.resolve(false);
     if (key === 'start') done = {lobby: 1};          // 新しいゲーム：説明をもう一度はじめから
-    const list = Array.isArray(key) ? key.filter(i => L[i]) : pick(key);
+    const list = (Array.isArray(key) ? key.filter(i => L[i]) : pick(key)).reduce((o, i) => { o.push(i); if (L[i + 'r']) o.push(i + 'r'); return o; }, []);      // 返事の行（名前のおわりに r）があれば、すぐあとにつづけて流す
     if (!list.length) return Promise.resolve(false);
     cut();
     const tok = {a:null, end:null, dead:false, key:String(key)};
@@ -7532,6 +7619,7 @@ function updatePawns(){
 }
 function renderHUD(){
   const cur = H.players[H.turn];
+  { const bl = $('#bossLbl'), tx = isCoop() ? ' おまけ' : ' ボス問題'; if (bl && bl.textContent !== tx){ bl.textContent = tx; $('#bossBtn').title = isCoop() ? 'おまけ：先生が研究していた世界（楕円曲線）' : 'ボス問題'; } }
   $('#hround').textContent = H.phase === 'setup' || H.phase === 'lobby' ? '' : `ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}`;
   const ph = $('#phase');
   const txt = ({
@@ -7545,7 +7633,8 @@ function renderHUD(){
     meeting:'🏛 町の会議！ スマホで投票しよう',
     build:'🏗 工事中！',
     cards:'📜 こがね町のできごと',
-    end: isCoop() ? (H.coopEnd === 'win' ? '🎄 こがね町に明かりが戻った！' : H.coopEnd ? '🌙 ゲーム終了' : '🏗 さいごのラウンド終了！ 最後の大工事へ') : `🏆 ${H.maxRound}ラウンド終了！`,
+    tree:'🎄 最後の大工事！ スマホの問題を解いて、ツリーに明かりを灯そう',
+    end: isCoop() ? (H.coopEnd === 'win' ? '🎄 こがね町に明かりが戻った！' : H.coopEnd ? '🌙 ゲーム終了' : '🎄 さいごのラウンド終了！ 最後の大工事へ') : `🏆 ${H.maxRound}ラウンド終了！`,
   })[H.phase] || '';
   if (ph.dataset.t !== txt){ ph.dataset.t = txt; ph.textContent = txt; ph.classList.remove('pop'); void ph.offsetWidth; ph.classList.add('pop'); }
   const ft = $('#floorTag');
@@ -7564,7 +7653,8 @@ function renderHUD(){
     meeting:'🏛 会議中…',
     build:'🏗 工事中…',
     cards:'📜 できごと…',
-    end: isCoop() ? (H.coopEnd ? '🏆 けっかを見る' : '🏗 最後の大工事へ') : '👑 ボス問題へ',
+    tree:'🎄 最後の大工事…',
+    end: isCoop() ? (H.coopEnd ? '🏆 けっかを見る' : '🎄 最後の大工事へ') : '👑 ボス問題へ',
   })[H.phase];
   if (H.phase === 'roll' && cur && isBot(cur)) label = `🤖 ${cur.name}の番…`;
   if (H.voWait) label = '🔈 声が終わったら進みます…';
@@ -7660,7 +7750,7 @@ async function mainAction(){
   else if (H.phase === 'quizReady') startQuiz();
   else if (H.phase === 'quiz') endQuiz();
   else if (H.phase === 'score') nextRound();
-  else if (H.phase === 'end'){ if (isCoop() && H.coopEnd) showResults(); else openBoss(); }
+  else if (H.phase === 'end'){ if (isCoop() && H.coopEnd) showResults(); else if (isCoop() && H.coop) treeOpen(); else openBoss(); }
 }
 async function takeTurn(pl){
   if (H.busy) return;
@@ -8015,7 +8105,7 @@ function finishGame(){
   if (isCoop() && H.coop){
     const S = H.coop; if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return; }
     H.phase = 'end'; H.auto = false; H.busy = true; camOverview(); renderHUD(); BGM.play('boss');
-    banner(`🏗 さいごのラウンドが終わった！<br><small>幸せ度 ${Math.round(S.happy)} / 100　…あと ${Math.max(0, COOP_CFG.goal - Math.round(S.happy))}</small>`, 2400).then(() => $('#m-boss').classList.contains('on') ? null : banner(`👑 最後の大工事（ボス問題）に<br>みんなで挑戦しよう！<br><small>成功すると 😊 幸せ度 +${COOP_CFG.bossHappy}</small>`, 2600)).then(() => { H.busy = false; renderHUD(); });
+    banner(`🏗 さいごのラウンドが終わった！<br><small>幸せ度 ${Math.round(S.happy)} / 100　…あと ${Math.max(0, COOP_CFG.goal - Math.round(S.happy))}</small>`, 2400).then(() => H.phase !== 'end' ? null : banner(`🎄 最後の大工事！<br>みんなの明かりで ツリーを灯そう<br><small>ぜんぶ灯せたら、町は救われる</small>`, 2600)).then(() => { H.busy = false; renderHUD(); });
     return;
   }
   H.phase = 'end'; H.auto = false; camOverview(); renderHUD();
@@ -8137,7 +8227,7 @@ function resetGame(){
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
-  H.coop = null; H.coopEnd = null; H.vote = null; H.career = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
+  treeClose(); H.coop = null; H.coopEnd = null; H.vote = null; H.career = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
   saveSetup();
 }
 
@@ -8595,14 +8685,174 @@ async function coopFinish(kind){
   H.busy = false; renderHUD();
   setTimeout(showResults, 400);
 }
-/* 最後のラウンドが終わって、まだ100にとどいていないとき：最後の大工事（ボス問題） */
-window.coopBoss = ok => {
-  const S = H.coop; if (!S || H.coopEnd || S.bossDone) return;
-  S.bossDone = true;   // 2回押しても1回分だけ
-  closeModal('m-boss');
-  if (ok){ S.happy += COOP_CFG.bossHappy; COOP.check(S); syncTown(); banner(`🏗 最後の大工事、成功！<br>😊 幸せ度 +${COOP_CFG.bossHappy}`, 2200).then(() => coopFinish(S.happy >= COOP_CFG.goal ? 'win' : 'lose')); }
-  else coopFinish('lose');
-};
+/* ================= 最後の大工事：ツリーに明かりを灯そう =================
+   最後のラウンドが終わって、まだ100にとどいていないとき。全員のスマホに自分のコースの問題が出て、正解すると ★の数だけ ツリーに明かりが灯る。
+   時間内にぜんぶ灯ったら、町は救われる。時間切れなら、灯った分だけ幸せ度が上がる。まちがえたことは、先生の画面には出ない。
+   スマホは rooms/部屋/tree/回のid/p番号/（答えごとの名前） に {s:★, ok:正解か} を書く。先生の画面は、それを足し合わせる。
+   明かりの数と幸せ度の計算は COOP.treePlan・COOP.treeApply（計算の部分）にある */
+const TREE = {id:0, on:false, plan:null, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, timer:null, off:null, said:{}, raf:0, bulbs:[], closing:false, going:false, fin:0};
+window.__dbgTree = TREE;
+/* ツリーの形：3段の三角。[下のはしの高さ, てっぺんの高さ, 下のはしの半分の幅]（高さは 0＝根もと〜1＝てっぺん） */
+const TREE_TIERS = [[0, .5, 1], [.3, .78, .76], [.6, 1, .5]];
+const treeHalf = y => Math.max(0, ...TREE_TIERS.map(([y0, y1, k]) => y >= y0 && y <= y1 ? k * (y1 - y) / (y1 - y0) : 0));
+/* 明かりの場所を決める（下から上へ n こ。下の段ほど多い）。u＝よこ（−1〜1）、y＝高さ（0〜1） */
+function treeBulbs(n){
+  const R = Math.max(2, Math.round(Math.sqrt(n * 1.5))), ys = Array.from({length:R}, (_, i) => .07 + (i / Math.max(1, R - 1)) * .78), ws = ys.map(treeHalf), tot = ws.reduce((a, b) => a + b, 0), out = [];
+  let used = 0, acc = 0;
+  for (let i = 0; i < R; i++){
+    acc += ws[i] / tot * n;
+    const rest = n - used, cnt = i === R - 1 ? rest : Math.max(0, Math.min(rest - Math.min(rest, R - 1 - i), Math.max(1, Math.round(acc) - used)));
+    used += cnt;
+    for (let j = 0; j < cnt; j++){ const u = cnt === 1 ? (i % 2 ? .22 : -.22) : (j / (cnt - 1)) * 2 - 1;
+      out.push({u:u * .8 + Math.sin((i * 7 + j * 13) * 12.9898) * .05, y:ys[i] + Math.cos((i * 5 + j * 3) * 78.233) * .018, by:'', col:'', at:0}); }
+  }
+  return out;
+}
+function treeOpen(){
+  const S = H.coop; if (!S || H.coopEnd || S.tree || H.phase !== 'end' || H.busy) return;
+  VO.cut(); closeModal('m-boss'); closeCard(); initAudio();
+  const plan = COOP.treePlan(S);
+  Object.assign(TREE, {id:(Date.now() % 1e9) + 1, on:false, plan, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, said:{}, closing:false, going:false, fin:0, bulbs:treeBulbs(plan.bulbs)});
+  H.phase = 'tree'; H.busy = true; H.tree = {id:TREE.id, on:0, need:plan.bulbs, lit:0}; H.endsAt = 0; H.t = COOP_CFG.treeSecs; drawTimer();
+  BGM.play('boss'); renderHUD(); netPublish(true);
+  renderTree(); $('#tree').classList.add('on'); document.body.classList.add('treeon'); treeLoop();
+  VO.cue('tree');                     // 説明の声は、ツリーの画面が出た瞬間に（1ゲームに1回）。「スタート」は、声が終わってから始まる
+}
+async function treeGo(){
+  if (H.phase !== 'tree' || TREE.on || TREE.going || TREE.closing) return;
+  TREE.going = true; initAudio(); renderTree();
+  try { await VO.idle(); } finally { TREE.going = false; }
+  if (H.phase !== 'tree' || TREE.on || TREE.closing) return;
+  const secs = H.auto ? 25 : COOP_CFG.treeSecs;
+  TREE.on = true; TREE.endsAt = NET.now() + secs * 1000; H.endsAt = TREE.endsAt; H.tree.on = 1;
+  if (TREE.off) TREE.off(); TREE.off = NET.on(`rooms/${NETH.room}/tree/${TREE.id}`, onTree);
+  H.players.forEach(pl => { if (isBot(pl)) TREE.bot[pkey(pl)] = {n:0, next:NET.now() + (H.auto ? ri(2, 5) : ri(18, 40)) * 1000}; });
+  splash('スタート！', 'スマホの問題を解いて、明かりを灯そう'); sfx.jingle(); BGM.setIntensity(0); BGM.play('quiz');
+  renderTree(); netPublish(true);
+  clearInterval(TREE.timer); TREE.timer = setInterval(treeTick, 250);
+}
+/* スマホから届いた答えを足し合わせる（正解だけ。★は1〜3） */
+function onTree(v){
+  if (H.phase !== 'tree' || TREE.closing) return;
+  const net = {};
+  Object.entries(v || {}).forEach(([pk, o]) => { let n = 0; Object.values(o || {}).forEach(a => { if (a && a.ok) n += Math.max(1, Math.min(3, a.s | 0)); }); net[pk] = n; });
+  TREE.net = net; treeCount();
+}
+function treeCount(){
+  const by = {}, need = TREE.plan.bulbs, before = TREE.lit; let lit = 0;
+  H.players.forEach(pl => { const k = pkey(pl), n = (TREE.net[k] || 0) + (TREE.hand[k] || 0) + ((TREE.bot[k] && TREE.bot[k].n) || 0); by[k] = n; lit += n; });
+  // 明かりを、灯した人の色にする（下から順に）。先生が入れまちがいを消したときは、その人の明かりを上から消す
+  H.players.forEach(pl => { const k = pkey(pl); let mine = TREE.bulbs.filter(b => b.by === k);
+    while (mine.length > by[k]){ const b = mine.pop(); b.by = ''; b.col = ''; b.at = 0; }
+    while (mine.length < by[k]){ const b = TREE.bulbs.find(x => !x.by); if (!b) break; b.by = k; b.col = pl.color; b.at = performance.now(); mine.push(b); } });
+  TREE.by = by; TREE.lit = Math.min(lit, need); if (H.tree) H.tree.lit = TREE.lit;
+  if (TREE.lit > before){
+    try { sfx.chime(); } catch(e){}
+    if (!TREE.said.first){ TREE.said.first = 1; VO.cue('tree_first'); }
+    else if (!TREE.said.half && TREE.lit * 2 >= need && TREE.lit < need){ TREE.said.half = 1; VO.cue('tree_half'); }
+  }
+  renderTree(); netPublish();
+  if (TREE.on && TREE.lit >= need) treeEnd(true);
+}
+function treeTick(){
+  if (H.phase !== 'tree' || !TREE.on) return;
+  const now = NET.now(), left = Math.max(0, Math.ceil((TREE.endsAt - now) / 1000));
+  H.t = left; drawTimer();
+  const el = $('#trT'); if (el){ el.textContent = fmtT(left); el.classList.toggle('low', left <= 30); }
+  if (left <= 30 && left > 0 && !TREE.said.hurry){ TREE.said.hurry = 1; BGM.setIntensity(1); VO.cue('tree_hurry'); }
+  // コンピューターの参加者：ときどき正解して、明かりを灯す
+  let ch = false;
+  Object.values(TREE.bot).forEach(b => { if (now >= b.next){ const star = ri(1, 3); if (Math.random() < CPU_RATE[star]){ b.n += star; ch = true; } b.next = now + (H.auto ? ri(2, 5) : ri(20, 45)) * 1000; } });
+  if (ch) treeCount();
+  if (left <= 0 && TREE.on){ sfx.end(); treeEnd(false); }
+}
+/* 先生のボタン：時間を1分のばす／ここで終わる／スマホのない人の正解を入れる（−1 は、入れまちがいを消す） */
+function treeMore(){ if (!TREE.on) return; TREE.endsAt += 60000; H.endsAt = TREE.endsAt; if (TREE.endsAt - NET.now() > 30000){ TREE.said.hurry = 0; BGM.setIntensity(0); } sfx.star(); netPublish(true); treeTick(); }
+function treeStop(){ if (!TREE.on) return; treeEnd(TREE.lit >= TREE.plan.bulbs); }
+function treeGive(k, d){ if (!TREE.on) return; TREE.hand[k] = Math.max(0, (TREE.hand[k] || 0) + d); if (d > 0) sfx.star(); treeCount(); }
+async function treeEnd(ok){
+  if (TREE.closing || H.phase !== 'tree') return;
+  TREE.closing = true; TREE.on = false; clearInterval(TREE.timer); if (TREE.off){ TREE.off(); TREE.off = null; }
+  const S = H.coop, lit = TREE.lit, plan = TREE.plan;
+  H.endsAt = 0; H.tree.on = 0; H.tree.done = ok ? 'ok' : 'ng'; BGM.setIntensity(0); netPublish(true);
+  TREE.fin = ok ? performance.now() : 0; renderTree();
+  if (ok){ sfx.legend(); confetti(); BGM.play('win'); }
+  await VO.cue(ok ? 'tree_ok' : 'tree_ng');
+  await sleep(H.auto ? 600 : ok ? 2200 : 1600);
+  const gain = COOP.treeApply(S, plan, lit);
+  treeClose(); H.phase = 'end'; syncTown();
+  await banner(ok ? `🎄 ツリーに明かりが灯った！<br><small>😊 幸せ度 +${gain}</small>` : `🎄 ツリーの明かりは ${lit} / ${plan.bulbs}<br><small>😊 幸せ度 +${gain}</small>`, 2200);
+  coopFinish(S.won ? 'win' : 'lose');
+}
+/* ツリーの画面を片づける（終わったとき・「さいしょから」のとき） */
+function treeClose(){
+  clearInterval(TREE.timer); if (TREE.off){ TREE.off(); TREE.off = null; }
+  cancelAnimationFrame(TREE.raf); TREE.raf = 0; TREE.on = false; TREE.id = 0; H.tree = null;
+  const M = $('#tree'); if (M){ M.classList.remove('on'); M.innerHTML = ''; delete M.dataset.built; }
+  document.body.classList.remove('treeon');
+}
+function renderTree(){
+  const M = $('#tree'), P = TREE.plan; if (!M || !P || !TREE.id) return;
+  const left = Math.max(0, P.bulbs - TREE.lit), done = H.tree && H.tree.done;
+  if (M.dataset.built !== String(TREE.id)){
+    M.dataset.built = String(TREE.id);
+    M.innerHTML = `<div class="tr-box"><div class="tr-head"><h3 class="dela">🎄 最後の大工事　ツリーに明かりを灯そう</h3><span class="tr-msg" id="trMsg"></span><span class="tr-time dela" id="trT">${fmtT(COOP_CFG.treeSecs)}</span></div>
+      <canvas class="tr-cv" id="trCv"></canvas>
+      <div class="tr-side"><div class="tr-count dela"><b id="trLit">0</b><span> / ${P.bulbs}</span><small id="trLeft"></small></div><div class="tr-ppl" id="trPpl"></div><div class="tr-btns" id="trBtns"></div></div></div>`;
+  }
+  $('#trLit').textContent = TREE.lit;
+  $('#trLeft').textContent = done === 'ok' ? 'ぜんぶ灯った！ 町は救われた！' : done ? `明かりは ${TREE.lit} こ灯った` : `あと ${left} こ灯せば、町は救える！`;
+  $('#trMsg').textContent = done ? '' : TREE.on ? 'スマホの問題に正解すると、★の数だけ明かりが灯るよ' : `幸せ度は、あと ${P.pts}。みんなの明かりで、町を救おう！`;
+  $('#trPpl').innerHTML = H.players.map(pl => { const k = pkey(pl), n = TREE.by[k] || 0;
+    return `<div class="trp" style="--pc:${pl.color}">${ico(pl, 'pimg')}<b>${pl.cpu ? '🤖' : ''}${esc(pl.name)}</b>${TREE.on && !pl.cpu ? `<span class="tg" title="スマホのない人の正解は、先生がここで入れる（数字は★の数）">${[1, 2, 3].map(s => `<button class="btn" onclick="treeGive('${k}',${s})">＋${s}</button>`).join('')}${TREE.hand[k] ? `<button class="btn" onclick="treeGive('${k}',-1)" title="入れまちがいを1つ消す">−1</button>` : ''}</span>` : ''}<span class="tl">${n ? '💡 ' + n : ''}</span></div>`; }).join('');
+  $('#trBtns').innerHTML = done ? '' : TREE.on ? `<button class="btn" onclick="treeMore()">⏱ 1分のばす</button><button class="btn" onclick="treeStop()">⏹ ここで終わる</button>`
+    : `<button class="btn big gold" onclick="treeGo()" ${TREE.going ? 'disabled' : ''}>${TREE.going ? '🔈 声が終わったら始まります…' : `▶ スタート（${Math.round(COOP_CFG.treeSecs / 60)}分）`}</button>`;
+}
+/* ツリーの絵（画面が出ているあいだ、描きつづける） */
+function treeLoop(){
+  cancelAnimationFrame(TREE.raf);
+  const step = now => { const M = $('#tree'); if (!M || !M.classList.contains('on')){ TREE.raf = 0; return; } try { drawTree(now); } catch(e){ console.error('tree', e); } TREE.raf = requestAnimationFrame(step); };
+  TREE.raf = requestAnimationFrame(step);
+}
+function drawTree(now){
+  const cv = $('#trCv'); if (!cv || !TREE.plan) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, Hh = cv.clientHeight; if (!W || !Hh) return;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(Hh * dpr)){ cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr); }
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, Hh);
+  const t = now / 1000, cx = W / 2, top = Hh * .14, base = Hh * .78, th = base - top, hw = Math.min(W * .44, th * .55), all = TREE.lit >= TREE.plan.bulbs;
+  const fin = TREE.fin ? Math.min(1, (now - TREE.fin) / 1400) : 0, glow = TREE.lit / TREE.plan.bulbs;
+  // 夜空と雪
+  for (let i = 0; i < 46; i++){ const hx = Math.sin(i * 127.1) * 43758.5453, hy = Math.sin(i * 311.7) * 43758.5453, x = (hx - Math.floor(hx)) * W, y0 = (hy - Math.floor(hy)) * Hh, y = (y0 + t * (14 + (i % 5) * 5)) % Hh;
+    g.globalAlpha = .25 + (i % 4) * .13; g.fillStyle = '#fff'; g.beginPath(); g.arc(x + Math.sin(t * .7 + i) * 6, y, 1.4 + (i % 3) * .7, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+  // 雪の地面と、木のみき
+  g.fillStyle = '#dfe7fb'; g.beginPath(); g.ellipse(cx, base + Hh * .05, hw * 1.25, Hh * .05, 0, 0, 7); g.fill();
+  g.fillStyle = '#5a3a22'; g.fillRect(cx - hw * .09, base - th * .01, hw * .18, Hh * .065);
+  // ツリーのまわりの光（明かりがふえるほど明るい）
+  if (glow > 0){ const gr = g.createRadialGradient(cx, base - th * .45, 0, cx, base - th * .45, hw * 1.5); gr.addColorStop(0, `rgba(255,214,110,${.05 + glow * .2})`); gr.addColorStop(1, 'rgba(255,214,110,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, Hh); }
+  // 葉（3段）
+  TREE_TIERS.forEach(([y0, y1, k]) => { const yb = base - th * y0, yt = base - th * y1, w = hw * k;
+    g.beginPath(); g.moveTo(cx - w, yb); g.lineTo(cx, yt); g.lineTo(cx + w, yb); g.closePath();
+    const gr = g.createLinearGradient(0, yt, 0, yb); gr.addColorStop(0, '#238a57'); gr.addColorStop(1, '#0d4a2e'); g.fillStyle = gr; g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 2; g.lineJoin = 'round'; g.stroke();
+    g.fillStyle = 'rgba(240,246,255,.5)'; g.beginPath(); g.moveTo(cx - w * .18, yt + (yb - yt) * .18); g.lineTo(cx, yt); g.lineTo(cx + w * .18, yt + (yb - yt) * .18); g.quadraticCurveTo(cx, yt + (yb - yt) * .26, cx - w * .18, yt + (yb - yt) * .18); g.fill(); });
+  // 明かり
+  const R = Math.max(7, Math.min(15, hw * .07));
+  TREE.bulbs.forEach((b, i) => { const x = cx + b.u * treeHalf(b.y) * hw, y = base - th * b.y;
+    if (!b.by){ g.fillStyle = '#1b2547'; g.beginPath(); g.arc(x, y, R * .72, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = 1.5; g.stroke(); return; }
+    const age = (now - b.at) / 1000, pop = age < .5 ? 1 + (1 - age / .5) * 1.1 : 1, tw = (fin ? .75 + .25 * Math.sin(t * 9 + i * 1.7) : .86 + .14 * Math.sin(t * 2.6 + i * 2.1));
+    const gr = g.createRadialGradient(x, y, 0, x, y, R * 3.2 * pop); gr.addColorStop(0, b.col); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    g.globalAlpha = .55 * tw; g.fillStyle = gr; g.beginPath(); g.arc(x, y, R * 3.2 * pop, 0, 7); g.fill();
+    g.globalAlpha = 1; g.fillStyle = b.col; g.beginPath(); g.arc(x, y, R * pop, 0, 7); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.85)'; g.beginPath(); g.arc(x - R * .28, y - R * .3, R * .34, 0, 7); g.fill(); });
+  // てっぺんの星（ぜんぶ灯ると光る）
+  const sx = cx, sy = top - Hh * .015, sr = Math.max(16, hw * .13) * (all ? 1 + .08 * Math.sin(t * 5) + fin * .25 : 1);
+  if (all){ const gr = g.createRadialGradient(sx, sy, 0, sx, sy, sr * 4.2); gr.addColorStop(0, 'rgba(255,230,140,.9)'); gr.addColorStop(1, 'rgba(255,230,140,0)'); g.fillStyle = gr; g.beginPath(); g.arc(sx, sy, sr * 4.2, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(255,240,180,.55)'; g.lineWidth = 3; for (let i = 0; i < 12; i++){ const a = t * .5 + i * Math.PI / 6; g.beginPath(); g.moveTo(sx + Math.cos(a) * sr * 1.5, sy + Math.sin(a) * sr * 1.5); g.lineTo(sx + Math.cos(a) * sr * (2.3 + fin), sy + Math.sin(a) * sr * (2.3 + fin)); g.stroke(); } }
+  g.beginPath(); for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? sr * .45 : sr; g[i ? 'lineTo' : 'moveTo'](sx + Math.cos(a) * r, sy + Math.sin(a) * r); } g.closePath();
+  g.fillStyle = all ? '#ffe27a' : '#2a3458'; g.fill(); g.strokeStyle = all ? '#fff6c8' : 'rgba(255,255,255,.35)'; g.lineWidth = 2.5; g.lineJoin = 'round'; g.stroke();
+}
+window.treeGo = treeGo; window.treeMore = treeMore; window.treeStop = treeStop; window.treeGive = treeGive;
 /* ---- ガチャのアイテムが町でどう役に立つか ---- */
 function coopItemText(it){
   const r = it.r, S = H.coop || {n:H.players.length || 4};
@@ -9660,9 +9910,9 @@ function endRollHTML(){
   const face = (k, n) => `<img alt="" src="${CharArt.has(k) || CharArt.villagers.includes(k) ? CharArt.thumb(k, n) : THUMB[k] || ''}">`;
   return `<section><p class="er-k">数学すごろく クリスマス会</p><h2 class="dela">こがね町を救え！</h2></section>
 <section><h3>出演</h3>${H.players.map(pl => `<div class="er-who">${face(pl.char, 192)}<div><b>${pl.cpu ? '🤖 ' : ''}${esc(pl.name)}${pl.cpu ? '' : ' さん'}</b><span>${jobIc(pl)} ${jobName(pl)}</span><i>${hero[pl.id].t}</i></div></div>`).join('')}</section>
-<section><h3>こがね町のみなさん</h3><p class="er-line"><small>司会</small>妖精の ノエル</p><p class="er-line">雪だるまの ゆきまる</p><p class="er-line">町長さん</p><div class="er-faces">${CharArt.villagers.map(k => face(k, 144)).join('')}</div><p class="er-line">村のみなさん</p></section>
+<section><h3>こがね町のみなさん</h3><p class="er-line"><small>司会</small>妖精の ノエル</p><p class="er-line">雪だるまの ゆきまる</p><p class="er-line">トナカイの プラス</p><p class="er-line">町長さん</p><div class="er-faces">${CharArt.villagers.map(k => face(k, 144)).join('')}</div><p class="er-line">村のみなさん</p></section>
 <section><h3>みんなでやったこと</h3><p class="er-happy">😊 幸せ度 ${COOP_CFG.startHappy} → ${h}</p>${did.length ? `<div class="er-chips">${did.map(p => `<span>${p.ic} ${p.lv[S.lv[p.id] - 1]}</span>`).join('')}</div>` : ''}</section>
-<section><h3>きょう使った数学</h3><div class="er-chips">${Object.values(CAT).map(c => `<span>${c.ic} ${c.name}</span>`).join('')}</div>${S.bossDone ? `<p class="er-line" style="margin-top:22px"><small>最後の大工事</small><span class="er-eq dela">y² = x³ + 1</span></p>` : ''}</section>
+<section><h3>きょう使った数学</h3><div class="er-chips">${Object.values(CAT).map(c => `<span>${c.ic} ${c.name}</span>`).join('')}</div>${S.tree ? `<p class="er-line" style="margin-top:22px"><small>最後の大工事</small>🎄 ツリーの明かり ${S.tree.lit} / ${S.tree.bulbs}</p>` : ''}</section>
 <section><h3>数学のひみつ</h3><p class="er-fact">「こがね町」の名前は、<b>黄金比</b>から</p><p class="er-fact">雷の 金色のもようは、<b>リヒテンベルク図形</b>。 フラクタルの なかま</p><p class="er-fact">y² = x³ + 1 のグラフは、<b>楕円曲線</b>。 須田先生が 大学院で 研究していた世界</p></section>
 <section><h3>演奏</h3><p class="er-line">こがね町 クリスマス楽団</p></section>
 <section><h3>つくった人</h3><p class="er-line">須田先生<small>ストアカで、算数・数学を教えています</small></p></section>
@@ -9793,20 +10043,20 @@ makeThumbs();
 BGM.play('title'); hostRoom(); NET.onConn(() => { renderInvite(); renderWatch(); });
 $('#inviteBtn').onclick = openInvite;
 { const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss');
-  const co = isCoop() && H.coop && !H.coopEnd && H.phase === 'end';
-  if (co) VO.cue('bossq');            // 「この式はね…」の説明は、式が画面に出た瞬間に（1ゲームに1回）
-  $('#bossTitle').textContent = co ? '🏗 最後の大工事（ボス問題）― みんなで協力！' : '👑 さいごのボス問題（みんなで協力！）';
-  $('#bossCoop').innerHTML = co ? `<p>みんなで5組ぜんぶ見つけられたら、大工事は成功！（😊 幸せ度 +${COOP_CFG.bossHappy}）</p><div class="bcbtns"><button class="btn big gold" onclick="coopBoss(true)">🎉 みんなで解けた！ 大工事成功</button><button class="btn big" onclick="coopBoss(false)">😢 時間切れ… 大工事は失敗</button></div>` : ''; }; }
+  const co = isCoop();      // 協力モードでは「おまけ」。最後の大工事は、ツリーに明かりを灯す（treeOpen）
+  if (co && H.coop && H.coopEnd) VO.cue('bossq');            // 「この式はね…」の説明は、ゲームが終わったあとに開いたとき、式が画面に出た瞬間に（1ゲームに1回）
+  $('#bossTitle').textContent = co ? '👑 おまけ：先生が研究していた世界' : '👑 さいごのボス問題（みんなで協力！）';
+  $('#bossCoop').innerHTML = ''; }; }
 $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && BGM.has('finale') ? 'finale' : isCoop() && H.coopEnd !== 'win' ? 'lose' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
 setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.resolve = n => n === 'main' && H.phase !== 'setup' && H.phase !== 'lobby' && H.round > Math.floor(H.maxRound / 2) ? 'main2' : n; BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
-window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
+window.__H = H; window.__render = renderHUD; window.__dbg = {VO, onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
   pawns:{makePawn, removePawn, placeAll, camFollow}, charShot:(k, size = 360, ry = -.4) => { const tr = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true}); tr.setSize(size, size); tr.toneMapping = THREE.ACESFilmicToneMapping; tr.toneMappingExposure = 1.05;
     const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight('#cfe0ff', '#40507a', 1.1)); const dl = new THREE.DirectionalLight('#ffffff', 2.2); dl.position.set(2, 4, 5); sc.add(dl);
     const cm = new THREE.PerspectiveCamera(30, 1, .1, 50); const {g} = buildChar(k, '#e0484f'); sc.add(g); g.rotation.y = ry;
     const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()), d = Math.max(s.y, s.x * .95) * 2.15;
     cm.position.set(c.x, c.y + s.y * .12, c.z + d); cm.lookAt(c); tr.render(sc, cm); const u = tr.domElement.toDataURL('image/png'); tr.dispose(); try { tr.forceContextLoss(); } catch(e){} return u; },
-  coop:{guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
+  coop:{treeOpen, treeGo, treeEnd, treeCount, TREE, endRollHTML, guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
 }
 
 </script>
