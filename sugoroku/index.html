@@ -854,8 +854,8 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
   <p class="rlead">🏘 <b>協力モード「こがね町を救え！」</b>　みんなは同じチーム。数学の力で、さびれた町を元気にしよう！</p>
   <ol class="rules">
     <li>サイコロで町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
-    <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どれを直すかスマホで<b>投票</b>します。直すと <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ直すと<b>完成ボーナス</b>！</li>
-    <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、困りごとを直しておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
+    <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どの工事にお金を使うかスマホで<b>投票</b>します。工事をすると <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ終わると<b>完成ボーナス</b>！</li>
+    <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、工事を進めておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
     <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
     <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。♨️ 温泉（＋幸せ度）、⛏️ 金のかけら（＋予算）、⛩️ 神社のおみくじ、🕳️ 落とし穴（下の階へ）。</li>
@@ -1374,7 +1374,7 @@ window.TroubleFx = (() => {
   const cl = (v, a, b) => v < a ? a : v > b ? b : v, sm = (a, b, v) => { const t = cl((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const hash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const wrap = (v, n) => ((v % n) + n) % n;
-  let cv = null, g = null, tt = 0;
+  let cv = null, g = null, tt = 0, sg = '';      // sg＝絵の中の看板の文字（工事が進んだあとの急病人カード）
   const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
   const E = (x, y, rx, ry, c, rot) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, Math.max(0, rx), Math.max(0, ry), rot || 0, 0, TAU); g.fill(); };
   const path = p => { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); };
@@ -1459,7 +1459,7 @@ window.TroubleFx = (() => {
     sick(t, f, b){ sky(); const v = 1 - f; for (let i = 0; i < 4; i++) E(wrap(i * 330 - t * 60 * v, 1320) - 160, GY + 10, 240, 80, '#1c2a63'); ground();
       R(0, GY + 50, 1000, 80, '#3a4270'); for (let i = 0; i < 9; i++) R(wrap(i * 130 - t * 520 * v, 1170) - 90, GY + 86, 70, 8, '#e4ecff');
       for (let i = 0; i < 4; i++){ const x = wrap(i * 290 - t * 300 * v, 1160) - 80; P([x - 30, GY + 30, x, GY - 60, x + 30, GY + 30], '#0f3d2e'); P([x - 22, GY - 10, x, GY - 84, x + 22, GY - 10], '#14503a'); }
-      if (!f){ const sx = wrap(760 - t * 300, 1500) - 220; R(sx - 5, GY - 56, 10, 96, '#59628c'); RR(sx - 112, GY - 130, 224, 76, 10, '#fff', '#2a2145', 4); Tx('病院まで 40km', sx, GY - 92, 27, '#e0484f'); }
+      if (!f){ const sx = wrap(760 - t * 300, 1500) - 220; R(sx - 5, GY - 56, 10, 96, '#59628c'); RR(sx - 112, GY - 130, 224, 76, 10, '#fff', '#2a2145', 4); Tx(sg || '病院まで 40km', sx, GY - 92, 27, sg ? '#1f8f5a' : '#e0484f'); }
       else { const x = 1090 - f * 430; RR(x, GY - 240, 310, 300, 12, '#f4f7ff', '#5f6a96', 5); RR(x + 112, GY - 296, 86, 66, 8, '#f4f7ff', '#5f6a96', 5); R(x + 143, GY - 284, 24, 42, '#e0484f'); R(x + 134, GY - 275, 42, 24, '#e0484f');
         for (let i = 0; i < 6; i++) R(x + 30 + (i % 3) * 92, GY - 206 + Math.floor(i / 3) * 84, 62, 52, '#ffd88a'); RR(x + 118, GY - 44, 74, 104, 6, '#7fb2ff'); }
       g.save(); g.translate(260 + f * 330, GY + 84 + Math.sin(t * 24) * 3 * v);
@@ -1505,7 +1505,7 @@ window.TroubleFx = (() => {
 
   const SAD = {snowfall: '道が通れない…', pipe: '水が止まらない…', fire: '燃えてしまった…', scam: 'お金をとられた…', thief: 'にげられた…', sick: 'まだ つかない…', leave: 'いってしまった…', closed: 'お店がなくなった…', bus: 'しばらく来ない…', interest: 'お金がへった…'};
 
-  /* ---- ふせいだとき：守った人（コマと仕事のマーク）か、直しておいた工事のたてが出てくる ---- */
+  /* ---- ふせいだとき：守った人（コマと仕事のマーク）か、進めておいた工事のたてが出てくる ---- */
   function hero(o, out, t){ if (!o.guard || out <= 0) return; const e = sm(0, .32, out), x = -150 + e * 245, y = GY + 116;
     if (o.hero && window.CharArt && window.CharArt.has(o.hero.char)){ who(o.hero.char, x, y - Math.abs(Math.sin(t * 10)) * 16 * (1 - sm(.3, .5, out)), 190, {cheer: sm(.35, .7, out), sw: 0});
       RR(x - 46, y - 316, 92, 80, 22, '#fff', '#3ddc97', 6); Tx(o.hero.ic || '🛡', x, y - 274, 48, '#000'); }
@@ -1530,7 +1530,7 @@ window.TroubleFx = (() => {
   const st = {id:'', ph:''};      // いま出している場面と、その進み具合（intro＝こまったこと／out＝結果）
   /* ---- 1コマ：暗くした画面のまん中に、わくつきの舞台を出す ---- */
   function paint(id, t, o, W, H, dpr, d1, d2){
-    tt = t; const out = cl((t - d1) / d2, 0, 1), G = !!o.guard, sw = Math.min(W * .94, H * .76 * 1000 / 660), k = sw / 1000, sh = 560 * k;
+    tt = t; sg = o.sign || ''; const out = cl((t - d1) / d2, 0, 1), G = !!o.guard, sw = Math.min(W * .94, H * .76 * 1000 / 660), k = sw / 1000, sh = 560 * k;
     const shake = !G && out > 0 && out < .5 ? Math.sin(t * 60) * 7 * (1 - out * 2) : 0, pop = .88 + .12 * sm(0, .3, t);
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H); g.globalAlpha = .82; g.fillStyle = '#04081c'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
     g.save(); g.translate(W / 2 + shake, Math.max(H * .06, (H - sh) / 2 - 50 * k) + sh / 2); g.scale(pop * k, pop * k); g.translate(-500, -280);
@@ -3214,23 +3214,25 @@ const COOP_CFG = {
   kpTable:{1:.24, 2:.33, 3:.61, 4:1, 5:1.55, 6:2.04},  // 人数ごとの値段の倍率（自動対戦で決めた値）
   cardMul:1,                      // 悪いカードの強さ
 };
+/* name＝困りごとの名前、lv＝3つの段階でやること、goal＝完成するとできるもの、done＝完成したときに出す文、
+   k＝3つの段階の工事の種類（f＝こわれたものを直す、m＝新しくつくる・たてる、a＝そのほか）。工事のあとの声をえらぶのに使う */
 const PROJECTS = [
-  {id:'water', ic:'🚰', name:'古い水道管', topic:3, math:'1次関数', hint:'工事費 ＝ 基本料金 ＋ 長さ × 単価',
-    lv:['古い管の点検', '半分の管を交換', '新しい水道が完成'], bonus:'毎ラウンド 幸せ度＋1'},
-  {id:'train', ic:'🚃', name:'止まった電車', topic:1, math:'速さ・時刻表', hint:'道のり ＝ 速さ × 時間',
-    lv:['線路の修理', '駅を直す', '電車が再び走る'], bonus:'観光客が来て 毎ラウンド＋200万円'},
-  {id:'debt', ic:'💸', name:'町の赤字', topic:2, math:'正負の数・方程式', hint:'収入 − 支出 ＝ 0 にする x は？',
-    lv:['ムダづかいを見直す', '借金を半分返す', '赤字がゼロに'], bonus:'残りの工事が全部1割引き'},
-  {id:'akiya', ic:'🏚', name:'空き家が多い', topic:4, math:'面積・図形', hint:'部屋の面積 ＝ たて × よこ',
-    lv:['空き家を調べる', 'リフォームする', '新しい家族が住む'], bonus:'家賃が入って 毎ラウンド＋100万円'},
-  {id:'aging', ic:'👴', name:'少子高齢化', topic:5, math:'資料の活用', hint:'人口ピラミッドから 割合を読む',
-    lv:['子育ての相談窓口', '保育園をつくる', '子どもの声が戻る'], bonus:'子どもが増えて 毎ラウンド 幸せ度＋2'},
-  {id:'hosp', ic:'🏥', name:'病院が遠い', topic:1, math:'速さ・地図の縮尺', hint:'地図の長さ × 縮尺 ＝ 本当の道のり',
-    lv:['救急車を増やす', '診療所をつくる', '町の病院が完成'], bonus:'幸せ度が0になりそうなとき 1回だけ10でふみとどまる'},
-  {id:'shop', ic:'🏪', name:'シャッター商店街', topic:2, math:'割合・売上', hint:'売上 ＝ 値段 × 個数、利益率は？',
-    lv:['空き店舗を貸す', 'クリスマス市をひらく', '商店街がにぎわう'], bonus:'毎ラウンド＋150万円'},
-  {id:'snow', ic:'❄️', name:'雪かきが追いつかない', topic:4, math:'体積・比例', hint:'雪の体積 ＝ 面積 × 深さ',
-    lv:['雪かき当番をつくる', '除雪車を買う', '雪まつりの準備完了'], bonus:'最終ラウンドに 雪まつりで幸せ度＋5'},
+  {id:'water', ic:'🚰', name:'古い水道管', k:'aff', topic:3, math:'1次関数', hint:'工事費 ＝ 基本料金 ＋ 長さ × 単価',
+    lv:['古い管の点検', '半分の管を交換', '新しい水道が完成'], bonus:'毎ラウンド 幸せ度＋1', goal:'新しい水道', done:'新しい水道が完成！'},
+  {id:'train', ic:'🚃', name:'止まった電車', k:'fff', topic:1, math:'速さ・時刻表', hint:'道のり ＝ 速さ × 時間',
+    lv:['線路の修理', '駅を直す', '電車が再び走る'], bonus:'観光客が来て 毎ラウンド＋200万円', goal:'電車の再開', done:'電車がまた走りだした！'},
+  {id:'debt', ic:'💸', name:'町の赤字', k:'aaa', topic:2, math:'正負の数・方程式', hint:'収入 − 支出 ＝ 0 にする x は？',
+    lv:['ムダづかいを見直す', '借金を半分返す', '赤字がゼロに'], bonus:'残りの工事が全部1割引き', goal:'赤字ゼロ', done:'町の赤字がゼロになった！'},
+  {id:'akiya', ic:'🏚', name:'空き家が多い', k:'afa', topic:4, math:'面積・図形', hint:'部屋の面積 ＝ たて × よこ',
+    lv:['空き家を調べる', 'リフォームする', '新しい家族が住む'], bonus:'家賃が入って 毎ラウンド＋100万円', goal:'新しい家族', done:'空き家に新しい家族がやってきた！'},
+  {id:'aging', ic:'👴', name:'少子高齢化', k:'ama', topic:5, math:'資料の活用', hint:'人口ピラミッドから 割合を読む',
+    lv:['子育ての相談窓口', '保育園をつくる', '子どもの声が戻る'], bonus:'子どもが増えて 毎ラウンド 幸せ度＋2', goal:'子どもの声', done:'町に子どもの声が戻った！'},
+  {id:'hosp', ic:'🏥', name:'病院が遠い', k:'amm', topic:1, math:'速さ・地図の縮尺', hint:'地図の長さ × 縮尺 ＝ 本当の道のり',
+    lv:['救急車を増やす', '診療所をつくる', '町の病院が完成'], bonus:'幸せ度が0になりそうなとき 1回だけ10でふみとどまる', goal:'町の病院', done:'町の病院が完成！'},
+  {id:'shop', ic:'🏪', name:'シャッター商店街', k:'aaa', topic:2, math:'割合・売上', hint:'売上 ＝ 値段 × 個数、利益率は？',
+    lv:['空き店舗を貸す', 'クリスマス市をひらく', '商店街がにぎわう'], bonus:'毎ラウンド＋150万円', goal:'元気な商店街', done:'商店街ににぎわいが戻った！'},
+  {id:'snow', ic:'❄️', name:'雪かきが追いつかない', k:'aaa', topic:4, math:'体積・比例', hint:'雪の体積 ＝ 面積 × 深さ',
+    lv:['雪かき当番をつくる', '除雪車を買う', '雪まつりの準備完了'], bonus:'最終ラウンドに 雪まつりで幸せ度＋5', goal:'雪まつり', done:'雪まつりの準備ができた！'},
 ];
 const PROJ = {}; PROJECTS.forEach(p => { PROJ[p.id] = p; });
 const JOBS = {
@@ -3248,17 +3250,29 @@ const JOBS = {
 const NEWBIE = {ic:'🌱', name:'町の新人', short:'新人', d:'まだ職業なし。問題に正解すると、その分野の仕事に就ける'};
 const TOPIC_JOB = {1:'fire', 2:'lawyer', 3:'se', 4:'clean', 5:'police'};
 const JOB_ORDER = ['se', 'fire', 'lawyer', 'clean', 'police'];
+/* ok＝工事でふせいだときに出す文（工事の段階ごと。そのとき町にあるものに合わせる）。name2＝工事が n2 段階まで進んだあとの名前（前の名前が合わなくなるカードだけ）。
+   vo2＝そのときに流す声の場面（声のファイルができるまでは、何も流れない）。sign＝絵の中の看板の文字（工事の段階ごと） */
 const CARDS = [
-  {id:'snowfall', ic:'❄️', name:'大雪で道が通れない', happy:-9, yen:0, proj:'snow', plv:1, jobs:['fire']},
-  {id:'pipe', ic:'🚰', name:'水道管が破裂した', happy:-10, yen:-200, proj:'water', plv:1, jobs:['clean']},
-  {id:'fire', ic:'🔥', name:'空き家で火事', happy:-10, yen:0, proj:'akiya', plv:1, jobs:['fire']},
+  {id:'snowfall', ic:'❄️', name:'大雪で道が通れない', happy:-9, yen:0, proj:'snow', plv:1, jobs:['fire'],
+    ok:['雪かき当番がいるので<br>すぐに道があいた！', '除雪車が走って<br>すぐに道があいた！', '除雪車が走って<br>すぐに道があいた！']},
+  {id:'pipe', ic:'🚰', name:'水道管が破裂した', happy:-10, yen:-200, proj:'water', plv:1, jobs:['clean'],
+    ok:['管を点検しておいたので<br>すぐに水を止められた！', '管を交換しておいたので<br>すぐに水を止められた！', '新しい水道なので<br>すぐに水を止められた！']},
+  {id:'fire', ic:'🔥', name:'空き家で火事', happy:-10, yen:0, proj:'akiya', plv:1, jobs:['fire'],
+    ok:['空き家を調べておいたので<br>すぐに火を消せた！', '空き家をリフォームしたので<br>すぐに火を消せた！', '新しい家族が住んでいるので<br>すぐに火を消せた！']},
   {id:'scam', ic:'📞', name:'お年寄りに詐欺電話', happy:-8, yen:-200, jobs:['police']},
-  {id:'thief', ic:'🕵️', name:'空き巣が入った', happy:-7, yen:0, proj:'akiya', plv:2, jobs:['police']},
-  {id:'sick', ic:'🚑', name:'急病人！ 病院が遠い', happy:-10, yen:0, proj:'hosp', plv:1},
-  {id:'leave', ic:'🎒', name:'若い家族が町を出ていく', happy:-9, yen:0, proj:'aging', plv:1},
-  {id:'closed', ic:'🏪', name:'また1軒、お店が閉まった', happy:-7, yen:-100, proj:'shop', plv:1},
-  {id:'bus', ic:'🚌', name:'バスも減便に', happy:-7, yen:0, proj:'train', plv:1},
-  {id:'interest', ic:'💸', name:'借金の利子をはらう', happy:0, yen:-300, proj:'debt', plv:1},
+  {id:'thief', ic:'🕵️', name:'空き巣が入った', happy:-7, yen:0, proj:'akiya', plv:2, jobs:['police'],
+    ok:[null, '空き家をリフォームしたので<br>どろぼうをすぐ見つけた！', '新しい家族が住んでいるので<br>どろぼうをすぐ見つけた！']},
+  {id:'sick', ic:'🚑', name:'急病人！ 病院が遠い', happy:-10, yen:0, proj:'hosp', plv:1,
+    name2:'急病人！', n2:2, vo2:'tr_sickb', sign:[null, '診療所まで 2km', '病院まで 2km'],
+    ok:['救急車を増やしておいたので<br>すぐに病院へ運べた！', '町の診療所で<br>すぐにみてもらえた！', '町の病院で<br>すぐにみてもらえた！']},
+  {id:'leave', ic:'🎒', name:'若い家族が町を出ていく', happy:-9, yen:0, proj:'aging', plv:1,
+    ok:['子育ての相談窓口があるので<br>町に残ってくれた！', '保育園ができたので<br>町に残ってくれた！', '子育てしやすい町なので<br>町に残ってくれた！']},
+  {id:'closed', ic:'🏪', name:'また1軒、お店が閉まった', happy:-7, yen:-100, proj:'shop', plv:1,
+    ok:['空き店舗を貸したので<br>お店がまた開いた！', 'クリスマス市のおかげで<br>お店をつづけられた！', '商店街がにぎわっているので<br>お店をつづけられた！']},
+  {id:'bus', ic:'🚌', name:'バスも減便に', happy:-7, yen:0, proj:'train', plv:1,
+    name2:'バスが減便に', n2:3, ok:['線路を修理しているので<br>バスはへらなかった！', '駅を直したので<br>バスはへらなかった！', '電車が走っているので<br>バスはへらなかった！']},
+  {id:'interest', ic:'💸', name:'借金の利子をはらう', happy:0, yen:-300, proj:'debt', plv:1,
+    ok:['ムダづかいを見直したので<br>利子をはらわずにすんだ！', '借金を半分返したので<br>利子をはらわずにすんだ！', '赤字がゼロなので<br>利子をはらわずにすんだ！']},
   {id:'furusato', ic:'💌', name:'ふるさと納税が届いた', good:true, happy:0, yen:500},
   {id:'tv', ic:'📺', name:'テレビ取材が来た', good:true, happy:5, yen:0},
   {id:'santa', ic:'🎅', name:'サンタのボランティア', good:true, happy:0, yen:0, tickets:1},
@@ -3400,7 +3414,7 @@ const COOP = {
     const mul = c.good ? 1 : COOP_CFG.cardMul;
     const out = {card:c, dh:Math.round(c.happy * mul), dy:c.yen ? COOP.yen(S, c.yen * mul) : 0, tickets:c.tickets || 0, by:null};
     if (!c.good){
-      if (c.proj && S.lv[c.proj] >= c.plv){ out.by = {kind:'proj', t:`${PROJ[c.proj].ic} ${PROJ[c.proj].name}（レベル${c.plv}）`}; }
+      if (c.proj && S.lv[c.proj] >= c.plv){ out.by = {kind:'proj', pid:c.proj, lv:S.lv[c.proj], t:`${PROJ[c.proj].ic} ${PROJ[c.proj].name}（レベル${c.plv}）`}; }
       else {
         const cap = j => COOP.hasJob(players, j).reduce((a, p) => a + (COOP.isVet(p) ? (j === 'fire' ? COOP_CFG.vet.fireLim : COOP_CFG.vet.policeLim) : (j === 'fire' ? 1 : COOP_CFG.policeLimit)), 0);
         const lim = {fire:cap('fire'), police:cap('police')};
@@ -7456,13 +7470,13 @@ const VO = (() => {
 window.__voCut = () => VO.cut();
 /* 画面のまん中に文字を出す。前の場面の声が終わってから出し、この文字の声は文字と同時に始め、声が終わるまで文字を出しておく。
    opt.free：声と関係のないお知らせ（参加のお知らせ）。待たずにすぐ出す */
-function banner(html, ms = 1400, opt){
+function banner(html, ms = 1400, opt){      // opt.key：この文字といっしょに流す声を、文字からではなく名前で決める（場面の名前か、行の名前のならび）
   if (H.auto) ms = Math.round(ms * .8);
   const free = !!(opt && opt.free);
   bannerQ = bannerQ.then(async () => { try {
     if (!free) await VO.idle();
     const b = $('#banner'); b.innerHTML = html; b.classList.add('on');
-    const key = free ? null : VO.keyOf(html), t0 = performance.now();
+    const key = free ? null : (opt && opt.key) || VO.keyOf(html), t0 = performance.now();
     const r = key ? await VO.cue(key) : false;                      // 声が終わるまで、文字を出しておく
     if (r !== 'cut') await sleep(ms - (performance.now() - t0));     // 声が短いとき・ないときは、決まった長さまで出す。声がとちゅうで止められたら、文字もすぐ消す
     b.classList.remove('on'); await sleep(220);
@@ -8048,7 +8062,7 @@ let SETUP_MAP = '';
 const canSetMode = () => H.phase === 'setup' || H.phase === 'lobby';
 function renderModeSel(){
   const lock = !canSetMode();
-  $('#modesel').innerHTML = `<div class="modes">${[['coop', '🏘 協力モード', 'こがね町を救え！ みんなで町の困りごとを直して、幸せ度100をめざす'], ['versus', '⭐ 対戦モード', '⭐ をいちばん多く集めた人が勝ち']].map(([k, t, d]) =>
+  $('#modesel').innerHTML = `<div class="modes">${[['coop', '🏘 協力モード', 'こがね町を救え！ みんなで町の困りごとを解決して、幸せ度100をめざす'], ['versus', '⭐ 対戦モード', '⭐ をいちばん多く集めた人が勝ち']].map(([k, t, d]) =>
     `<button class="modecard ${H.mode === k ? 'sel' : ''}" data-mode="${k}" ${lock ? 'disabled' : ''}><b>${t}</b><span>${d}</span></button>`).join('')}</div>
     <div class="rsel"><span>ラウンド数</span>${[6, 8, 10].map(r => `<button class="btn ${H.maxRound === r ? 'gold' : ''}" data-r="${r}" ${lock ? 'disabled' : ''}>${r}ラウンド<small>${{6:'約50分', 8:'約65分', 10:'約80分'}[r]}</small></button>`).join('')}</div>
     ${lock ? '<div class="mapnote">※ ゲームの途中は、モードとラウンド数を変えられません（「さいしょから」で変えられます）</div>' : ''}`;
@@ -8184,7 +8198,7 @@ function renderTown(db, dh){
   $('#tYen').textContent = fmtYen(TV.budget);
   $('#tHapI').style.width = h + '%'; $('#tHapB').textContent = `😊 幸せ度 ${h} / 100`;
   $('#tHap').classList.toggle('low', h < 30); $('#tHap').classList.toggle('full', h >= 100);
-  PROJECTS.forEach(p => { const el = $('#tp-' + p.id), lv = TV.lv[p.id] || 0; el.classList.toggle('done', lv >= 3); el.querySelectorAll('.pips i').forEach((i, k) => i.classList.toggle('on', k < lv)); });
+  PROJECTS.forEach(p => { const el = $('#tp-' + p.id), lv = TV.lv[p.id] || 0; el.classList.toggle('done', lv >= 3); el.querySelector('.tnm').textContent = lv >= 3 && p.goal ? p.goal : p.name; el.querySelectorAll('.pips i').forEach((i, k) => i.classList.toggle('on', k < lv)); });
   const jobs = {}; H.players.forEach(pl => { if (pl.job) (jobs[pl.job] = jobs[pl.job] || []).push(pl); });
   const nb = H.players.filter(pl => !pl.job).length, w = H.coop && H.coop.wanted;
   $('#tJobs').innerHTML = JOB_ORDER.filter(j => jobs[j]).map(j => `<span title="${JOBS[j].name}：${COOP.anyVet(jobs[j], j) ? JOBS[j].vd : JOBS[j].d}">${JOBS[j].ic}×${jobs[j].length}${COOP.anyVet(jobs[j], j) ? '⭐' : ''}</span>`).join('')
@@ -8324,12 +8338,18 @@ async function showCard(r, i, n){
 }
 // 見張り役：カードを出していないのに画面に残っていたら片づける
 setInterval(() => { const C = $('#evcard'); if (!cardActive && C && (C.classList.contains('on') || C.innerHTML)) hideCard(); }, 700);
+/* カードの名前。工事が進んで前の名前が合わなくなったら、短い名前にする（例：診療所ができたあとの「急病人！ 病院が遠い」→「急病人！」） */
+function cardAfter(c){ const S = H.coop; return !!(c.name2 && c.proj && S && S.lv[c.proj] >= (c.n2 || 1)); }
+function cardName(c){ return cardAfter(c) ? c.name2 : c.name; }
+/* 工事でふせいだときの文。そのとき町にあるもの（工事の段階）に合わせる */
+function guardText(c, by){ const p = PROJ[by.pid || c.proj], lv = Math.max(1, Math.min(3, by.lv || c.plv || 1)), t = c.ok && c.ok[lv - 1];
+  return t ? `${p.ic} ${t}` : `${p.ic} 「${p.lv[lv - 1]}」の<br>おかげで大丈夫！`; }
 async function showCardInner(r, i, n, C){
-  const c = r.card, fast = H.auto;
+  const c = r.card, fast = H.auto, cnm = cardName(c);
   const eff = c.good ? [c.happy ? `幸せ度 +${c.happy}` : '', c.yen ? `+${fmtYen(COOP.yen(H.coop, c.yen))}` : '', c.tickets ? '全員に 🎟️ ガチャ券 1枚' : ''].filter(Boolean).join('　')
     : [c.happy ? `幸せ度 ${Math.round(c.happy * COOP_CFG.cardMul)}` : '', c.yen ? fmtYen(COOP.yen(H.coop, c.yen * COOP_CFG.cardMul)) : ''].filter(Boolean).join('　');
   C.innerHTML = `<div class="cc-in" id="ccIn"><div class="cc-face cc-back"><div class="cc-q dela">？</div><div class="cc-bt dela">こがね町の<br>できごと</div>${n > 1 ? `<div class="cc-no">${i + 1} / ${n}</div>` : ''}</div>
-    <div class="cc-face cc-front ${c.good ? 'good' : 'bad'}"><div class="cc-kind dela">${c.good ? 'いいこと' : 'こまったこと'}</div><div class="cc-ic">${c.ic}</div><div class="cc-nm dela">${c.name}</div><div class="cc-ef">${eff}</div><div class="cc-res" id="ccRes"></div></div></div>`;
+    <div class="cc-face cc-front ${c.good ? 'good' : 'bad'}"><div class="cc-kind dela">${c.good ? 'いいこと' : 'こまったこと'}</div><div class="cc-ic">${c.ic}</div><div class="cc-nm dela">${cnm}</div><div class="cc-ef">${eff}</div><div class="cc-res" id="ccRes"></div></div></div>`;
   C.classList.add('on'); sfx.whoosh();
   await sleep(fast ? 350 : 900);
   $('#ccIn').classList.add('flip'); await sleep(fast ? 450 : 900);
@@ -8340,8 +8360,8 @@ async function showCardInner(r, i, n, C){
     const hp = r.by && r.by.pl, okG = !!r.by || !(r.dh || r.dy);
     // こまったことの声は絵が出た瞬間に始める。絵は、その声が終わってから結果に進む。結果の声は、結果の絵が出た瞬間に始める
     let ran = false;
-    try { ran = await window.TroubleFx.play(c.id, {fast, guard: okG, ic: c.ic, name: c.name, hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null,
-      wait1: VO.cue('tr_' + c.id), onOut: () => { voice = VO.cue(okG ? 'tr_guard' : 'tr_hit'); }}); } catch(e){ console.error('TroubleFx', e); }
+    try { ran = await window.TroubleFx.play(c.id, {fast, guard: okG, ic: c.ic, name: cnm, sign: c.sign && c.proj ? c.sign[Math.min(3, H.coop.lv[c.proj]) - 1] || '' : '', hero: hp ? {char: hp.char, ic: r.by.kind === 'job' ? JOBS[hp.job].ic : '🛡'} : null,
+      wait1: VO.cue(cardAfter(c) && c.vo2 ? c.vo2 : 'tr_' + c.id), onOut: () => { voice = VO.cue(okG ? 'tr_guard' : 'tr_hit'); }}); } catch(e){ console.error('TroubleFx', e); }
     if (!ran){ await VO.idle(); voice = VO.cue(okG ? 'tr_guard' : 'tr_hit'); }      // 絵を出さなかったときも、声は順番に
     C.classList.remove('away');
   }
@@ -8352,7 +8372,7 @@ async function showCardInner(r, i, n, C){
     res.innerHTML = r.tickets ? '🎟️ 次のガチャタイムで使えるよ！' : '町のみんながよろこんでいる！'; res.classList.add('show', 'good');
     confetti3D(80, CONF_COLS.SR || ['#ffd23f'], 'rain');
   } else if (r.by){
-    const who = r.by.kind === 'proj' ? `${r.by.t}を<br>直しておいたので大丈夫！` : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${COOP.isVet(r.by.pl) ? 'ベテラン' : ''}${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
+    const who = r.by.kind === 'proj' ? guardText(c, r.by) : r.by.kind === 'job' ? `${JOBS[r.by.pl.job].ic} ${COOP.isVet(r.by.pl) ? 'ベテラン' : ''}${JOBS[r.by.pl.job].name}の<br>${esc(r.by.pl.name)}さんが出動！` : `${esc(r.by.pl.name)}さんの<br>${esc(r.by.t)}が町を守った！`;
     res.innerHTML = who; res.classList.add('show', 'guard');
     const st = document.createElement('div'); st.className = 'cc-stamp dela'; st.textContent = 'ふせいだ！'; C.querySelector('.cc-front').appendChild(st);
     sfx.star(); setTimeout(() => sfx.chime(), 150); shockwave('#3ddc97', false, cam.look.clone(), 10, .8);
@@ -8408,11 +8428,11 @@ function renderMeet(){
   const vs = voters(), nv = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).filter(k => VOTE.human[k]).length;
   const html = `<div class="mt-box">
     <div class="mt-head"><h3 class="dela">🏛 町の会議${VOTE.k ? '（2つめ）' : ''}</h3><span class="mt-yen dela">💰 ${fmtYen(S.budget)}</span>
-      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が直す工事をクリックしてください' : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
+      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が進める工事をクリックしてください' : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
       ${VOTE.open ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
     <div class="mt-grid">${VOTE.opts.map(card).join('')}
       <button class="pc save ${VOTE.tie && VOTE.tie.includes('save') ? 'tie' : ''} ${VOTE.teacher ? 'pickable' : ''}" data-id="save"><span class="cnt dela">${(t.save || []).length || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}</div></button></div>
-    ${done.length ? `<div class="mt-done">完成：${done.map(p => `${p.ic} ${p.name}（${p.bonus}）`).join('　')}</div>` : ''}
+    ${done.length ? `<div class="mt-done">完成：${done.map(p => `${p.ic} ${p.goal || p.name}（${p.bonus}）`).join('　')}</div>` : ''}
     <div class="mt-foot"><span>🗳 投票 ${nv} / ${vs.length}人${H.players.some(pl => !isBot(pl) && !connected(pl)) ? '（スマホのない人は、町長がかわりに決めてね）' : ''}</span>
       <span style="display:flex;gap:8px">${VOTE.open ? `<button class="btn" onclick="meetTeacher()">🎓 町長（先生）が決める</button><button class="btn gold" onclick="meetClose()">⏹ 投票をしめきる</button>` : ''}</span></div></div>`;
   M.classList.add('on');
@@ -8485,6 +8505,25 @@ async function coopMeeting(){
     if (S.won) break;
   }
 }
+/* 工事のあとの声。その工事だけのセリフ（build_困りごと_段階）があれば、それを流す。
+   なければ、みんなで使うセリフからえらぶ。ただし、工事の種類に合わないセリフは流さない
+   （病院や保育園は「つくる」ので「直った」は合わない。相談窓口や借金を返すのは「トンテン、カンテン」が合わない） */
+const BUILD_FOR = {build_1:'fm', build_2:'f', build_6:'f', build_8:'f', build_9:'f'};      // セリフごとの、合う工事の種類。書いていないセリフは、どの工事でも合う
+let buildLast = '';
+function buildVoice(p, lv){
+  const L = VO.lines, own = `build_${p.id}_${lv}`; if (L[own]) return [own];
+  const k = (p.k || 'aaa')[lv - 1] || 'a', all = Object.keys(L).filter(i => /^build_\d+$/.test(i) && (!BUILD_FOR[i] || BUILD_FOR[i].includes(k)));
+  const c = all.filter(i => i !== buildLast); if (!c.length) return all.length ? [all[0]] : 'build';
+  buildLast = c[Math.floor(Math.random() * c.length)]; return [buildLast];
+}
+/* 完成したときの声。「これで、毎ラウンドいいことが起きるよ」は、毎ラウンドのボーナスがある工事だけで流す */
+let doneLast = '';
+function doneVoice(p){
+  const L = VO.lines, own = `build_done_${p.id}`; if (L[own]) return [own];
+  const all = Object.keys(L).filter(i => /^build_done_\d+$/.test(i) && (i !== 'build_done_2' || /毎ラウンド/.test(p.bonus)));
+  const c = all.filter(i => i !== doneLast); if (!c.length) return all.length ? [all[0]] : 'build_done';
+  doneLast = c[Math.floor(Math.random() * c.length)]; return [doneLast];
+}
 async function buildShow(pid, law){
   const S = H.coop, p = PROJ[pid], r = COOP.buy(S, H.players, pid, law);
   if (!r) return;
@@ -8493,9 +8532,9 @@ async function buildShow(pid, law){
   const at = NODE.T.p.clone().add(new THREE.Vector3(0, 6, 0));
   if (law) await banner(`⚖️ ${COOP.isVet(law) ? 'ベテラン' : ''}弁護士の${esc(law.name)}さんが交渉して<br>${lawPct(law)}割引きになった！`, 1300);
   sfx.fanfare(); fireworkShow(scene, at, r.done ? 8 : 3, r.done ? 16 : 8, 220);
-  await banner(`${p.ic} ${p.name}<br><span class="bl">レベル${r.lv}「${p.lv[r.lv - 1]}」</span><br><small>${fmtYen(r.cost)} つかって　😊 幸せ度 +${r.dh}</small>`, H.auto ? 1300 : 2300);
+  await banner(`${p.ic} ${p.name}<br><span class="bl">レベル${r.lv}「${p.lv[r.lv - 1]}」</span><br><small>${fmtYen(r.cost)} つかって　😊 幸せ度 +${r.dh}</small>`, H.auto ? 1300 : 2300, {key:buildVoice(p, r.lv)});
   syncTown();
-  if (r.done){ sfx.legend(); confetti(); await banner(`🎉 ${p.name}が完成！<br><small>${p.bonus}</small>`, H.auto ? 1300 : 2400); }
+  if (r.done){ sfx.legend(); confetti(); await banner(`🎉 ${p.done || p.name + 'が完成！'}<br><small>${p.bonus}</small>`, H.auto ? 1300 : 2400, {key:doneVoice(p)}); }
   await sleep(H.auto ? 200 : 600);
 }
 async function coopCards(){
@@ -8551,7 +8590,7 @@ async function coopFinish(kind){
     BGM.play('lose');
     if (S.happy <= 0){ await banner('😢 町の人たちが<br>町を出ていってしまった…', 2800); }
     else { await banner(`🌙 あと少し…<br><small>幸せ度 ${Math.round(S.happy)} / 100</small>`, 2600); }
-    await banner('でも、みんなが直した場所には<br>ちゃんと明かりが灯っている！', 2400);
+    await banner('でも、みんなが力を合わせた場所には<br>ちゃんと明かりが灯っている！', 2400);
   }
   H.busy = false; renderHUD();
   setTimeout(showResults, 400);
@@ -8589,7 +8628,7 @@ function coopHeroes(){
     else if (bl >= 2) t = `🛡 町の守り神（${bl}回ふせいだ）`;
     else if ((pl.changes || 0) >= 2) t = `🔄 いろんな仕事を経験した転職の達人（${(pl.exp || []).length + 1}つの仕事）`;
     else if (COOP.isVet(pl)) t = `⭐ 町をささえたベテラン${JOBS[pl.job].short}`;
-    else if (proj) t = `${proj.ic} ${proj.name.replace(/が.*$/, '')}を直した立役者`;
+    else if (proj) t = `${proj.ic} 「${proj.lv[S.lv[proj.id] - 1]}」の立役者`;
     else if (bl) t = `🛡 ピンチの町を守った`;
     else t = `🤝 こがね町の大切な仲間`;
     out[pl.id] = {t, total:e.total, ok:pl.okCount || 0, bl};
@@ -9767,7 +9806,7 @@ window.__H = H; window.__render = renderHUD; window.__dbg = {onJoin, THUMB, CHAR
     const cm = new THREE.PerspectiveCamera(30, 1, .1, 50); const {g} = buildChar(k, '#e0484f'); sc.add(g); g.rotation.y = ry;
     const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()), d = Math.max(s.y, s.x * .95) * 2.15;
     cm.position.set(c.x, c.y + s.y * .12, c.z + d); cm.lookAt(c); tr.render(sc, cm); const u = tr.domElement.toDataURL('image/png'); tr.dispose(); try { tr.forceContextLoss(); } catch(e){} return u; },
-  coop:{coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
+  coop:{guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
 }
 
 </script>
