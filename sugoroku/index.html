@@ -89,6 +89,7 @@ body.homemode .snow{display:none}
 @keyframes blink{50%{opacity:.25}}
 #mainBtn{font-size:18px;padding:9px 20px;min-width:250px;animation:pulse 1.6s infinite}
 #mainBtn:disabled{animation:none}
+.htop #quizEndBtn{padding:5px 10px;font-size:13px;white-space:nowrap}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(242,201,76,.7)}70%{box-shadow:0 0 0 12px rgba(242,201,76,0)}100%{box-shadow:0 0 0 0 rgba(242,201,76,0)}}
 .spacer{flex:1}
 .phase{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(18,32,74,.92),rgba(8,16,40,.92));border:2px solid var(--gold);border-radius:999px;padding:6px 24px;font-size:20px;white-space:nowrap;z-index:5;box-shadow:0 6px 20px rgba(0,0,0,.4);pointer-events:none}
@@ -108,13 +109,14 @@ body.homemode .snow{display:none}
 .pchip .it{font-size:15px;white-space:nowrap}
 .pchip .st{font-size:20px;color:var(--gold);display:inline-block;white-space:nowrap}
 .pchip .st.bump{animation:bump .6s cubic-bezier(.3,1.8,.5,1)}
+.pchip .qs{font-size:21px;line-height:1;flex:none}
 @keyframes bump{30%{transform:scale(1.6);color:#fff}}
 .banner{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(.8);background:linear-gradient(180deg,#22397d,#142659);border:3px solid var(--gold);border-radius:22px;padding:18px 34px;font-size:30px;text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:8;box-shadow:0 10px 40px rgba(0,0,0,.6);max-width:92vw}
 .banner.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .banner .chip{font-size:26px;padding:2px 16px}
-.ask{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,rgba(26,44,99,.97),rgba(11,21,48,.97));border:3px solid var(--gold);border-radius:22px;padding:16px 22px;min-width:420px;max-width:94vw;display:none;text-align:center;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.ask{position:fixed;left:50%;top:6px;transform:translate(-50%,max(0px,calc((100vh - 130px - 100%) / 2)));background:linear-gradient(180deg,rgba(26,44,99,.97),rgba(11,21,48,.97));border:3px solid var(--gold);border-radius:22px;padding:16px 22px;min-width:420px;max-width:94vw;display:none;text-align:center;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.6)}
 .ask.on{display:block;animation:askin .3s cubic-bezier(.3,1.5,.5,1)}
-@keyframes askin{from{transform:translate(-50%,-50%) scale(.7);opacity:0}}
+@keyframes askin{from{scale:.7;opacity:0}}
 .ask h3{margin:0 0 2px;font-size:24px}
 .ask p{margin:0 0 12px;color:var(--muted)}
 .ask .opts{display:grid;gap:8px}
@@ -144,8 +146,6 @@ body.homemode .snow{display:none}
 .srow .top{display:flex;align-items:center;gap:6px;font-weight:700;flex-wrap:wrap}
 .srow .sc{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:5px}
 .srow .sc .btn{padding:5px 0;font-size:15px}
-.bar{height:8px;border-radius:4px;background:var(--bg);overflow:hidden;margin-top:4px}
-.bar i{display:block;height:100%;background:var(--green);transition:width .9s linear}
 .wnote{font-size:12px;color:var(--muted);margin-top:6px}
 @media (max-width:1550px){.htop h1{display:none}.htop .lbl.s{display:none}}
 @media (max-width:1400px){.htop .lbl.s2{display:none}}
@@ -208,14 +208,16 @@ body.coopmode.showing .town{display:none}
 .pips i.on{background:var(--gold);box-shadow:0 0 6px var(--gold)}
 .tp.done{color:var(--gold);font-weight:900}
 .tjobs{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:13px;color:var(--muted)}
-body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
 .pchip.co .em{position:relative}
 .pchip .jb{position:absolute;right:-8px;bottom:-6px;font-size:17px;filter:drop-shadow(0 1px 2px #000)}
 .pchip .st.yen{font-size:15px;color:#7dffb0}
 /* 町の会議 */
-.meet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(4,8,22,.5)}
+.meet{position:fixed;inset:0;z-index:9;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6px;background:rgba(4,8,22,.5)}
 .meet.on{display:flex}
-.mt-box{width:min(1240px,97vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,rgba(26,44,99,.98),rgba(11,21,48,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 16px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+/* 箱は、下の帯（声の字幕が出る場所。118px）をのけた中の、たてのまん中に置く。画面が低くて入りきらないときは、帯をちぢめて、箱を上につめる */
+.meet::before{content:"";flex:1 1 0}
+.meet::after{content:"";flex:1 1 118px}
+.mt-box{flex-shrink:0;width:min(1240px,97vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,rgba(26,44,99,.98),rgba(11,21,48,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 16px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .mt-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .mt-head h3{margin:0;font-size:28px}
 .mt-yen{font-size:24px;color:#fff;background:rgba(0,0,0,.25);border-radius:12px;padding:2px 12px}
@@ -248,10 +250,20 @@ body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
 .pc.save{background:linear-gradient(180deg,#1d4a3f,#123329)}
 .pc.pickable{cursor:pointer;outline:2px dashed rgba(242,201,76,.6)}
 .pc.pickable:hover{transform:translateY(-3px)}
-.pc.tie{cursor:pointer;outline:4px dashed var(--gold);animation:tie 1s infinite alternate}
+.pc.tie{outline:4px dashed var(--gold);animation:tie 1s infinite alternate}
 @keyframes tie{to{box-shadow:0 0 24px rgba(242,201,76,.7)}}
 .pc.win{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold),0 0 40px rgba(255,210,63,.75);transform:scale(1.04);z-index:2}
 .mt-done{margin-top:8px;font-size:13px;color:var(--gold)}
+.pc .votes .vil{display:inline-flex;align-items:center;gap:2px;padding:1px 9px 1px 3px;border-radius:999px;background:rgba(242,201,76,.18);border:2px solid var(--gold);font-size:13px;font-weight:900;color:var(--gold);animation:vin .35s cubic-bezier(.3,1.7,.5,1)}
+.pc .votes .vil img{width:24px;height:24px;border:0;background:none;animation:none;margin-right:-6px}
+.pc .votes .vil b{margin-left:9px}
+.mt-fl{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap}
+.mt-hand{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--snow);font-weight:700;font-size:14px}
+.mt-hand small{color:var(--muted);font-weight:700;font-size:12px}
+.mt-hand .hv{display:inline-flex;align-items:center;gap:5px;padding:2px 10px 2px 6px;font-size:14px;border-left:5px solid var(--pc)}
+.mt-hand .hv .ci{width:22px;height:22px}
+.mt-msg small{font-size:13px;font-weight:700;margin-left:6px;opacity:.85}
+.mt-hand .hv.sel{outline:3px solid var(--gold)}
 .kt-want{margin:8px 0 2px;padding:8px 14px;border-radius:14px;background:linear-gradient(90deg,#7a3b00,#5a2600);border:2px solid #ffb347;color:#fff;font-weight:900;font-size:18px}
 .kt-want small{display:block;font-size:13px;color:#ffe0b0;font-weight:700}
 .kt-note{font-size:13px;color:#c7d6ff;margin:6px 0 2px}
@@ -281,9 +293,9 @@ body.coopmode #watchPanel{top:300px;max-height:calc(100vh - 390px)}
 .wcar{font-size:13px;color:var(--muted);margin-top:4px}
 .mt-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
 /* できごとカード */
-.evcard{position:fixed;left:50%;top:50%;z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
+.evcard{position:fixed;left:50%;top:calc(50% - min(59px,9vh));z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
 .evcard.on{display:block;animation:ccin .45s cubic-bezier(.3,1.5,.5,1)}
-.evcard.away{visibility:hidden}
+.evcard.away{visibility:hidden;opacity:0}
 @keyframes ccin{from{transform:translate(-50%,-30%) scale(.5);opacity:0}}
 .cc-in{width:min(400px,86vw);height:min(540px,78vh);position:relative;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.3,1.3,.5,1)}
 .cc-in.flip{transform:rotateY(180deg)}
@@ -778,6 +790,11 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .tr-btns .btn{flex:1}
 /* ツリーの画面のあいだは、声の字幕を、ツリーの下（左がわ）に小さめに出す（明かりと参加者の列にかぶらないように） */
 body.treeon .splash{z-index:10}
+/* 声の字幕の場所：ふだんは、下の名前カードのすぐ上。
+   会議・転職・できごとカード・こまったことの絵・えらぶ画面・窓（参加者をよぶ など）が出ているあいだは、画面のいちばん下（名前カードの上）に出す。
+   こうしないと、字幕が、その画面の下のほうの絵や文字にかぶる。最後の大工事（ツリー）は、すぐ下の決まりで別の場所に出す */
+body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.evcard.on) #vo,body:has(.modal.on) #vo,body.trfxon #vo{bottom:8px !important}
+@media (max-height:720px){body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.modal.on) #vo{font-size:clamp(14px,1.6vw,19px) !important;padding:6px 16px !important;max-width:min(1100px,94vw) !important}}
 body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !important;max-width:min(640px,50vw) !important;font-size:clamp(15px,1.7vw,21px) !important;padding:8px 18px !important}
 @media (max-width:760px){.tr-box{grid-template-columns:1fr;grid-template-rows:auto minmax(200px,1fr) auto;height:96vh}.tr-head{grid-column:1}.tr-head h3{font-size:20px}.tr-time{font-size:28px}}
 </style>
@@ -824,7 +841,7 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
     <span class="hround" id="hround"></span>
     <span class="timer" id="htimer">2:00</span>
     <button class="btn gold" id="mainBtn">はじめる</button>
-    <button class="btn" id="watchBtn" title="みんなの様子">👀<span class="lbl s2"> みんなの様子</span></button>
+    <button class="btn" id="quizEndBtn" title="問題タイムを早めに終わる（2回押すと終わります）" style="display:none">⏹ ここで終わる</button>
     <button class="btn" id="inviteBtn" title="参加者をよぶ（部屋番号・URL・QR）">📲<span class="lbl s"> 参加者をよぶ</span></button>
     <span class="spacer"></span>
     <button class="btn" title="ルール" onclick="openModal('m-rules')">📖<span class="lbl s"> ルール</span></button>
@@ -845,7 +862,6 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   <div class="evcard" id="evcard"></div>
   <div class="story" id="story"><div class="st-line dela" id="stLine"></div></div>
   <div class="panel right" id="scorePanel"></div>
-  <div class="panel left" id="watchPanel"></div>
   <div class="strip" id="strip"></div>
   <div class="opening" id="opening"><div class="op-logo"><div class="sparks">✨🎄✨</div><div class="t1 dela">WELCOME TO</div><div class="t2 dela">数学すごろく<br>クリスマス会</div><div class="t3">― 冒険のはじまり ―</div></div>
     <button class="btn op-skip" onclick="window.skipShow&&window.skipShow()">スキップ ⏭</button><div class="introCard" id="introCard"></div></div>
@@ -883,7 +899,7 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   <p class="rlead">🏘 <b>協力モード「こがね町を救え！」</b>　みんなは同じチーム。数学の力で、さびれた町を元気にしよう！</p>
   <ol class="rules">
     <li>サイコロで町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
-    <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どの工事にお金を使うかスマホで<b>投票</b>します。工事をすると <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ終わると<b>完成ボーナス</b>！</li>
+    <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どの工事にお金を使うかスマホで<b>投票</b>します（同じ票数のときは、<b>町の人たちの声</b>で決まります）。工事をすると <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ終わると<b>完成ボーナス</b>！</li>
     <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、工事を進めておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
     <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
@@ -1571,7 +1587,9 @@ window.TroubleFx = (() => {
     if (!G && out > .35 && SAD[id]){ g.globalAlpha = sm(.35, .5, out); g.save(); g.translate(735, 104); g.rotate(-.06); RR(-200, -46, 400, 92, 18, 'rgba(40,6,16,.82)', '#ff5a5f', 7); Tx(SAD[id], 0, 4, 44, '#ffd0d4', DELA); g.restore(); g.globalAlpha = 1; }
     g.restore();
     g.save(); g.translate(34, -4); g.rotate(-.03); RR(0, -26, 250, 54, 12, '#e0484f', '#fff', 4); Tx('こまったこと！', 125, 3, 30, '#fff', DELA); g.restore();
-    g.lineJoin = 'round'; g.font = `900 46px ${DELA}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.strokeStyle = '#04081c'; g.lineWidth = 12; const cap = `${o.ic || ''} ${o.name || ''}`; g.strokeText(cap, 500, 618); g.fillStyle = '#fff'; g.fillText(cap, 500, 618);
+    // こまったことの名前は、絵の上のふち（「こまったこと！」のふだの右）に出す。絵の下は、声の字幕が出る場所なので、文字を置かない
+    { const cap = `${o.ic || ''} ${o.name || ''}`.trim(); g.font = `900 42px ${DELA}`; const cw = Math.min(g.measureText(cap).width, 640) + 48, cx = Math.min(1000 - cw / 2, Math.max(304 + cw / 2, 652));
+      RR(cx - cw / 2, -34, cw, 64, 16, 'rgba(8,13,44,.96)', '#fff', 4); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText(cap, cx, 1, 640); }
     g.restore();
   }
 
@@ -1581,10 +1599,10 @@ window.TroubleFx = (() => {
     if (!SC[id] || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ res(false); return; }
     if (!cv){ cv = document.createElement('canvas'); cv.id = 'trfx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;display:none'; document.body.appendChild(cv); g = cv.getContext('2d'); }
     const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), fast = !!o.fast, d1 = fast ? 1.1 : 2.6, d2 = fast ? .9 : 2.0, d3 = .28, t0 = performance.now(), LIMIT = 30;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0'; document.body.classList.add('trfxon');
     let snd = 0, over = false, v1 = !o.wait1, tOut = Infinity, lastFrame = t0, wd = 0;
     if (o.wait1) Promise.resolve(o.wait1).catch(() => {}).then(() => { v1 = true; });
-    const done = () => { if (over) return; over = true; clearInterval(wd); st.id = ''; st.ph = ''; cv.style.display = 'none'; try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(true); };
+    const done = () => { if (over) return; over = true; clearInterval(wd); st.id = ''; st.ph = ''; cv.style.display = 'none'; document.body.classList.remove('trfxon'); try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(true); };
     st.id = id; st.ph = 'intro';
     // 結果に進むのは、決まった時間がたって、こまったことの声も終わってから（声の合図が来ないときは LIMIT 秒で進む）
     const advance = t => { if (tOut === Infinity && t >= d1 && (v1 || t >= LIMIT)){ tOut = t; st.ph = 'out'; cue(o.guard ? 'guard' : 'hit'); try { if (o.onOut) o.onOut(); } catch(e){} } return t - tOut - d2; };
@@ -3279,7 +3297,8 @@ const JOBS = {
 };
 const NEWBIE = {ic:'🌱', name:'町の新人', short:'新人', d:'まだ職業なし。問題に正解すると、その分野の仕事に就ける'};
 const TOPIC_JOB = {1:'fire', 2:'lawyer', 3:'se', 4:'clean', 5:'police'};
-const JOB_ORDER = ['se', 'fire', 'lawyer', 'clean', 'police'];
+// ならべる順は、問題の分野の順（計算・式・関数・図形・確率）。ルールの説明と同じ。どれかの仕事が「いちばん上＝えらい」に見えないようにする
+const JOB_ORDER = [1, 2, 3, 4, 5].map(t => TOPIC_JOB[t]);
 /* ok＝工事でふせいだときに出す文（工事の段階ごと。そのとき町にあるものに合わせる）。name2＝工事が n2 段階まで進んだあとの名前（前の名前が合わなくなるカードだけ）。
    vo2＝そのときに流す声の場面（声のファイルができるまでは、何も流れない）。sign＝絵の中の看板の文字（工事の段階ごと） */
 const CARDS = [
@@ -7264,7 +7283,7 @@ function camFollow(p, dist = 1){
 resize(); camOverview(); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook);
 
 /* ================= ゲームの状態 ================= */
-const H = {players:[], round:1, maxRound:8, phase:'setup', turn:0, busy:false, asking:false, t:120, timer:null, hist:[], watch:false, auto:false, view:false, cpuPending:false,
+const H = {players:[], round:1, maxRound:8, phase:'setup', turn:0, busy:false, asking:false, t:120, timer:null, hist:[], auto:false, view:false, cpuPending:false,
   mode:'coop', coop:null, coopEnd:null, vote:null};
 try { const m = localStorage.getItem('sg_mode'); if (m === 'coop' || m === 'versus') H.mode = m; const r = +localStorage.getItem('sg_rounds'); if ([6, 8, 10].includes(r)) H.maxRound = r; } catch(e){}
 const isBot = pl => pl.cpu || H.auto;
@@ -7337,7 +7356,7 @@ function onPref(v){
   Object.entries(v).forEach(([k, o]) => { const pl = H.players.find(p => pkey(p) === k); if (!pl || !o || !COURSES[o.course]) return;
     const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; }
  });
-  if (ch){ renderHUD.last = ''; renderHUD(); renderWatch(); netPublish(); }
+  if (ch){ renderHUD.last = ''; renderHUD(); netPublish(); }
 }
 const plCourse = pl => pl.cpu ? '' : `<span class="pcourse">${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}</span>`;
 function ansOf(pl){ return NETH.ans && NETH.ans[pkey(pl)]; }
@@ -7345,7 +7364,7 @@ function humanDone(pl){ const a = ansOf(pl); return !!(a && a.st === 'done'); }
 function onAns(v){
   NETH.ans = v || {};
   if (H.phase !== 'quiz') return;
-  renderWatch(); updatePawns();
+  renderStrip(); updatePawns();
   H.players.forEach(pl => { const a = ansOf(pl); if (a && a.st === 'done' && !pl._ansShown && pl.obj){ pl._ansShown = true; floatText(pl, '✅'); sfx.land(); } });
 }
 function connected(pl){ return !!(NETH.claims && NETH.claims[pkey(pl)]); }
@@ -7477,7 +7496,7 @@ const VO = (() => {
       fetch(DIR + id + '.mp3').then(r => r.ok ? r.blob() : null).then(b => { if (b && b.size > 2000 && !mem[id]) mem[id] = URL.createObjectURL(new Blob([b], {type:'audio/mpeg'})); }).catch(() => {}).then(() => setTimeout(nx, 40)); };
     nx(); nx(); }
   function box(){ if (!el){ el = document.createElement('div'); el.id = 'vo'; el.setAttribute('aria-live', 'polite');
-      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
+      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;width:max-content;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
       txt = document.createElement('span'); el.appendChild(txt);
       const sk = document.createElement('button'); sk.id = 'voSkip'; sk.type = 'button'; sk.textContent = '⏭'; sk.title = 'この声をとばす'; sk.setAttribute('aria-label', 'この声をとばす');
       sk.style.cssText = 'pointer-events:auto;cursor:pointer;margin-left:.7em;padding:0 .45em;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-size:.8em;line-height:1.5;vertical-align:middle';
@@ -7647,7 +7666,7 @@ function renderHUD(){
     lobby:'🎬 ゲームをはじめる',
     roll: cur ? `🎲 ${cur.name}さんのサイコロ` : '',
     quizReady:'📝 問題タイム スタート（2分）',
-    quiz:'⏹ 問題タイムを終わる',
+    quiz:'📝 問題タイム中…',
     score: H.players.some(p => p.tickets > 0) ? `🎰 ガチャタイム（🎟️×${H.players.reduce((a, p) => a + (p.tickets || 0), 0)}）` : isCoop() ? '🏛 町の会議へ' : H.round >= H.maxRound ? '🏆 けっか発表' : '▶ 次のラウンドへ',
     gacha:'🎰 ガチャ中…',
     meeting:'🏛 会議中…',
@@ -7659,25 +7678,20 @@ function renderHUD(){
   if (H.phase === 'roll' && cur && isBot(cur)) label = `🤖 ${cur.name}の番…`;
   if (H.voWait) label = '🔈 声が終わったら進みます…';
   mb.textContent = label;
-  mb.disabled = H.busy || H.asking || !!H.voWait || (H.phase === 'roll' && cur && isBot(cur));
-  $('#watchBtn').classList.toggle('on', H.watch);
+  // 問題タイムのあいだ、黄色いボタンは押せない（全員が答えるか、時間が0になると、ひとりでに答え合わせへ進む）
+  mb.disabled = H.busy || H.asking || !!H.voWait || H.phase === 'quiz' || (H.phase === 'roll' && cur && isBot(cur));
+  // 早く終わらせたいとき用の小さいボタン（スマホのない人がいる回など）。1回めは「もう一度押すと終わります」に変わるだけ
+  { const qe = $('#quizEndBtn'), arm = quizEndArmed(); qe.style.display = H.phase === 'quiz' ? '' : 'none'; qe.disabled = H.busy || !!H.qEnd;
+    qe.textContent = arm ? 'もう一度押すと終わります' : '⏹ ここで終わる'; qe.classList.toggle('gold', arm); }
+  // タイマーは、問題タイム（始まる前の「2:00」も）と、最後の大工事のときだけ出す。会議などのあいだに、前の時間や「終了」を出したままにしない
+  $('#htimer').style.display = ['quizReady', 'quiz', 'tree'].includes(H.phase) ? '' : 'none';
   $('#autoBtn').classList.toggle('on', H.auto);
   $('#viewBtn').classList.toggle('on', H.view);
-  const ranks = [...new Set(H.players.map(p => p.stars))].sort((a,b) => b - a), CO = isCoop();
-  document.body.classList.toggle('coopmode', CO);
-  const stripHTML = H.players.map((pl, i) => { const rk = ranks.indexOf(pl.stars) + 1, top = rk === 1 && pl.stars > 0;
-    if (CO) return `<div class="pchip co ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
-      <span class="em">${ico(pl, 'cimg')}<span class="jb ${COOP.isVet(pl) ? 'vet' : pl.job ? '' : 'nb'}" title="${jobName(pl)}">${jobIc(pl)}</span></span>
-      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${jobName(pl).replace('システムエンジニア', 'SE')}${COOP.isVet(pl) ? '⭐' : ''} ${spaceText(pl)}</small></span>
-      ${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}${pl.lastYen ? `<span class="st yen dela ${pl._bump ? 'bump' : ''}">+${fmtYen(pl.lastYen).replace('円', '')}</span>` : ''}</div>`;
-    return `<div class="pchip ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
-      <span class="em">${ico(pl, 'cimg')}<span class="rk dela ${top ? 'r1' : ''}">${top ? '👑' : rk}</span></span>
-      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${MAP && MAP.floors && NODE[pl.pos] ? `<b style="color:${MAP.floors[NODE[pl.pos].floor].col}">B${NODE[pl.pos].floor}</b> ` : ''}${spaceText(pl)}</small></span>
-      <span class="it">${pl.items.map(k => ITEMS[k].ic).join('')}</span>${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}<span class="st dela ${pl._bump ? 'bump' : ''}">⭐${pl.stars}</span></div>`; }).join('');
-  if (stripHTML !== renderHUD.last){ renderHUD.last = stripHTML; $('#strip').innerHTML = stripHTML; }
+  document.body.classList.toggle('coopmode', isCoop());
+  renderStrip();
   netPublish();
   H.players.forEach(p => delete p._bump);
-  renderScore(); renderWatch(); updatePawns(); renderTown();
+  renderScore(); updatePawns(); renderTown();
   if (H.phase === 'roll' && cur && isBot(cur) && !H.busy && !H.asking && !H.cpuPending){
     H.cpuPending = true;
     setTimeout(() => { H.cpuPending = false; if (H.phase === 'roll' && H.players[H.turn] === cur && !H.busy && isBot(cur)) takeTurn(cur); }, H.auto ? 500 : 900);
@@ -7697,25 +7711,28 @@ function renderScore(){
     return `<div class="srow"><div class="top">${ico(pl)}<span>${esc(pl.name)}</span>${spaceText(pl)}</div>${plCourse(pl)}${body}</div>`;
   }).join('');
 }
-function renderWatch(){
-  const Wp = $('#watchPanel');
-  if (!H.watch){ Wp.classList.remove('on'); return; }
-  Wp.classList.add('on');
-  if (H.phase !== 'quiz'){ Wp.innerHTML = `<h3>👀 みんなの様子</h3><div class="srow">問題タイムが始まると、だれがどこまで解いているかが出ます。</div>`; return; }
-  const el = 120 - H.t;
-  const rows = H.players.filter(needsQ).map(pl => {
-    let st, bar = '';
-    if (isBot(pl) && pl.plan){
-      const pn = pl.plan;
-      if (el < pn.chooseAt) st = '🤔 むずかしさを選んでいる…';
-      else if (el < pn.solveAt){ st = `✏️ ★${pn.star}の問題を解いている`; bar = `<div class="bar"><i style="width:${Math.min(100, (el - pn.chooseAt) / (pn.solveAt - pn.chooseAt) * 100)}%"></i></div>`; }
-      else st = '✅ 答えた！（結果は問題タイムのあとで）';
-    } else { const a = ansOf(pl);
-      st = !a ? (connected(pl) ? '📱 問題が届きました' : '⚪ まだつながっていません（手で⭐をつけます）') : a.st === 'pick' ? '🤔 むずかしさを選んでいる…' : a.st === 'solving' ? `✏️ ★${a.star}の問題を解いている` : '✅ 答えた！（結果は問題タイムのあとで）'; }
-    return `<div class="srow"><div class="top">${ico(pl)}<span>${pl.cpu ? '🤖' : ''}${esc(pl.name)}</span>${spaceText(pl)}</div>${plCourse(pl)}<div>${st}</div>${bar}</div>`;
-  }).join('');
-  Wp.innerHTML = `<h3>👀 みんなの様子</h3>${rows || '<div class="srow">今回はだれも問題がありません</div>'}
-    <div class="wnote">部屋 ${NETH.room}　${NET.mode === 'fb' ? (NET.connected ? '🟢 つながっています' : '🔴 つながっていません') : '🟡 テストモード'}</div>`;
+/* 問題タイムのあいだ、下の名前カードに出す印。コマの上のふきだしと同じ中身。
+   町が広くてコマが画面の外にいても、全員の様子がいつも見える（前の「みんなの様子」のかわり） */
+function quizMark(pl){
+  if (H.phase !== 'quiz' || !needsQ(pl)) return '';
+  const b = bubbleOf(pl);
+  const m = b === '📱' ? (connected(pl) ? ['⏳', '問題が届いた（まだ始めていない）'] : ['📵', 'スマホなし（答え合わせで、先生が★をつける）'])
+    : b === '🤔' ? ['🤔', 'むずかしさを選んでいる'] : b === '✏️' ? ['✏️', '問題を解いている'] : b === '✅' ? ['✅', '答えた（結果は問題タイムのあとで）'] : null;
+  return m ? `<span class="qs" title="${m[1]}">${m[0]}</span>` : '';
+}
+/* 下の名前カード。問題タイムのあいだは、1秒ごとと、答えが届いたときにも描きなおす */
+function renderStrip(){
+  const ranks = [...new Set(H.players.map(p => p.stars))].sort((a,b) => b - a), CO = isCoop();
+  const stripHTML = H.players.map((pl, i) => { const rk = ranks.indexOf(pl.stars) + 1, top = rk === 1 && pl.stars > 0;
+    if (CO) return `<div class="pchip co ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
+      <span class="em">${ico(pl, 'cimg')}<span class="jb ${COOP.isVet(pl) ? 'vet' : pl.job ? '' : 'nb'}" title="${jobName(pl)}">${jobIc(pl)}</span></span>
+      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${jobName(pl).replace('システムエンジニア', 'SE')}${COOP.isVet(pl) ? '⭐' : ''} ${spaceText(pl)}</small></span>
+      ${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}${pl.lastYen ? `<span class="st yen dela ${pl._bump ? 'bump' : ''}">+${fmtYen(pl.lastYen).replace('円', '')}</span>` : ''}${quizMark(pl)}</div>`;
+    return `<div class="pchip ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
+      <span class="em">${ico(pl, 'cimg')}<span class="rk dela ${top ? 'r1' : ''}">${top ? '👑' : rk}</span></span>
+      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}<small>${MAP && MAP.floors && NODE[pl.pos] ? `<b style="color:${MAP.floors[NODE[pl.pos].floor].col}">B${NODE[pl.pos].floor}</b> ` : ''}${spaceText(pl)}</small></span>
+      <span class="it">${pl.items.map(k => ITEMS[k].ic).join('')}</span>${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}<span class="st dela ${pl._bump ? 'bump' : ''}">⭐${pl.stars}</span>${quizMark(pl)}</div>`; }).join('');
+  if (stripHTML !== renderHUD.last){ renderHUD.last = stripHTML; $('#strip').innerHTML = stripHTML; }
 }
 
 /* ================= 進行 ================= */
@@ -7739,7 +7756,7 @@ function removeItem(pl, k){ const i = pl.items.indexOf(k); if (i >= 0) pl.items.
 async function mainAction(){
   initAudio(); if (H.busy || H.asking || H.voWait) return;
   // 声が流れているあいだに押されたら、声が終わってから進む（待合室と、結果を見るだけのときは待たない）
-  if (VO.speaking() && ['roll', 'quizReady', 'quiz', 'score'].concat(H.coopEnd ? [] : ['end']).includes(H.phase)){
+  if (VO.speaking() && ['roll', 'quizReady', 'score'].concat(H.coopEnd ? [] : ['end']).includes(H.phase)){
     H.voWait = true; renderHUD(); try { await VO.idle(); } finally { H.voWait = false; } renderHUD();
     if (H.busy || H.asking) return;
   }
@@ -7748,8 +7765,7 @@ async function mainAction(){
   else if (H.phase === 'lobby'){ if (!H.players.length){ openInvite(); return; } VO.cut(); closeModal('m-invite'); H.phase = 'roll'; H.turn = 0; H.coopEnd = null; if (isCoop()) coopStart(); else H.coop = null; openingShow(); }
   else if (H.phase === 'roll' && cur && !isBot(cur)) takeTurn(cur);
   else if (H.phase === 'quizReady') startQuiz();
-  else if (H.phase === 'quiz') endQuiz();
-  else if (H.phase === 'score') nextRound();
+  else if (H.phase === 'score') nextRound();      // 問題タイムのあいだは、黄色いボタンでは何もしない（終わらせるのは、小さい「ここで終わる」）
   else if (H.phase === 'end'){ if (isCoop() && H.coopEnd) showResults(); else if (isCoop() && H.coop) treeOpen(); else openBoss(); }
 }
 async function takeTurn(pl){
@@ -8008,7 +8024,7 @@ async function startQuiz(){
   if (H.phase !== 'quizReady' || H.qGate) return;
   H.qGate = true; try { await VO.idle(); } finally { H.qGate = false; }      // 前の声が終わってから、問題タイムを始める
   if (H.phase !== 'quizReady') return;
-  snap(); H.phase = 'quiz'; H.t = 120; camOverview(); splash('問題タイム！', '自分の画面に問題が出ます'); sfx.jingle(); if (isCoop()) closeCard();
+  snap(); H.phase = 'quiz'; H.t = 120; H.qArm = 0; camOverview(); splash('問題タイム！', '自分の画面に問題が出ます'); sfx.jingle(); if (isCoop()) closeCard();
   H.quizId = Date.now() % 1000000000; H.endsAt = NET.now() + 120000; NETH.ans = {}; H.players.forEach(pl => { pl._ansShown = false; });
   if (NETH.offAns) NETH.offAns(); NETH.offAns = NET.on(`rooms/${NETH.room}/ans/${H.quizId}`, onAns);
   BGM.setIntensity(0); BGM.play('quiz');
@@ -8018,7 +8034,7 @@ async function startQuiz(){
   drawTimer(); renderHUD();
   clearInterval(H.timer);
   H.timer = setInterval(() => {
-    H.t--; drawTimer(); updatePawns(); renderWatch();
+    H.t--; drawTimer(); updatePawns(); renderStrip();
     if (H.t === 20){ BGM.setIntensity(1); splash('のこり20秒！', ''); }
     const el = 120 - H.t;
     const allDone = H.players.filter(pl => needsQ(pl) && !isBot(pl)).every(humanDone) && H.players.filter(pl => needsQ(pl) && isBot(pl)).every(pl => el >= pl.plan.solveAt + 1);
@@ -8029,6 +8045,19 @@ async function startQuiz(){
 function drawTimer(){
   const e = $('#htimer'); e.classList.remove('end'); e.classList.toggle('low', H.t <= 20); e.textContent = fmtT(Math.max(H.t,0));
   if (H.t <= 0){ e.textContent = '終了'; e.classList.add('end'); }
+}
+/* 小さい「ここで終わる」：押しまちがいで終わらないように、2回押す。
+   1回め＝「もう一度押すと終わります」に変わる（4秒でもとに戻る）。2回め（0.5秒より後）＝終わる。
+   問題タイムが始まって3秒のあいだは、押しても何もしない（「スタート」を2回つづけて押したときに、ここへ当たらないように） */
+function quizEndArmed(){ return !!H.qArm && performance.now() - H.qArm < 4000; }
+function quizEndClick(){
+  if (H.phase !== 'quiz' || H.qEnd || H.busy || H.t > 117) return;
+  initAudio();
+  const dt = H.qArm ? performance.now() - H.qArm : Infinity;
+  if (dt < 500) return;
+  if (dt < 4000){ H.qArm = 0; endQuiz(); return; }
+  H.qArm = performance.now(); try { sfx.step(); } catch(e){} renderHUD();
+  setTimeout(() => { if (!quizEndArmed()){ H.qArm = 0; renderHUD(); } }, 4100);
 }
 async function endQuiz(){
   clearInterval(H.timer); if (H.phase !== 'quiz' || H.qEnd) return;
@@ -8233,7 +8262,7 @@ function resetGame(){
 
 /* ---- ボタン ---- */
 $('#mainBtn').onclick = mainAction;
-$('#watchBtn').onclick = () => { H.watch = !H.watch; renderHUD(); };
+$('#quizEndBtn').onclick = quizEndClick;
 $('#autoBtn').onclick = () => { initAudio(); H.auto = !H.auto; if (H.auto) VO.cut(); renderHUD(); if (H.auto){ if (H.phase === 'lobby') mainAction(); else if (H.phase === 'quizReady') startQuiz(); else if (H.phase === 'score' && !H.busy) nextRound(); } };
 $('#viewBtn').onclick = () => { H.view = !H.view; if (H.view) camOverview(); else if (H.players[H.turn] && H.phase === 'roll') camFollow(H.players[H.turn].obj.position, 1.1); renderHUD(); };
 $('#undoBtn').onclick = undo;
@@ -8323,21 +8352,25 @@ function coopSpaceText(nd){
 /* ---- 職業安定所 ---- */
 async function jobCenter(pl){
   const S = H.coop, cnt = {}, w = S && S.wanted; H.players.forEach(p => { if (p.job) cnt[p.job] = (cnt[p.job] || 0) + 1; });
-  const opts = JOB_ORDER.filter(j => j !== pl.job).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}${w && w.job === j ? '　📢 求人ボーナス！' : ''}`, s:JOBS[j].d}));
+  // えらぶ画面のならび順：いま町に足りない仕事が上（求人 → まだだれもいない仕事 → 人数の少ない仕事）。同じなら、問題の分野の順
+  const need = j => (w && w.job === j ? 0 : 100) + (cnt[j] || 0);
+  const opts = JOB_ORDER.filter(j => j !== pl.job).sort((x, y) => need(x) - need(y)).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}${w && w.job === j ? '　📢 求人ボーナス！' : ''}`, s:JOBS[j].d}));
   opts.push({v:null, ic:pl.job ? '👍' : NEWBIE.ic, t:`${jobName(pl)}のまま`, s:jobDesc(pl)});
   let bp;
   if (isBot(pl)){
-    const missing = opts.filter(o => o.v && !cnt[o.v]), want = w && opts.find(o => o.v === w.job);
-    if (!pl.job) bp = (want || missing[0] || pick(opts.filter(o => o.v))).v;
+    // コンピューターのえらび方は、前と同じ（画面のならび順を変えても、ゲームのむずかしさが変わらないように）
+    const pref = ['se', 'fire', 'lawyer', 'clean', 'police'].map(j => opts.find(o => o.v === j)).filter(Boolean);
+    const missing = pref.filter(o => !cnt[o.v]), want = w && opts.find(o => o.v === w.job);
+    if (!pl.job) bp = (want || missing[0] || pick(pref)).v;
     else if (COOP.isVet(pl)) bp = null;
     else bp = want && !cnt[want.v] ? want.v : missing.length && Math.random() < .5 ? missing[0].v : null;
   }
-  const v = await ask('💼 職業安定所', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
+  const v = await ask('💼 職業安定所<small style="font:700 13px \'Zen Maru Gothic\',sans-serif;color:var(--muted);margin-left:10px;letter-spacing:0">上から、いま町に足りない仕事の順</small>', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
   if (v){ const r = COOP.changeJob(S, pl, v, 'center'); if (!r) return; sfx.shop(); renderHUD(); renderTown(); await banner(careerChangeHTML(r), 1700); syncTown(); }
 }
 /* ---- 転職タイム（会議の前）：資格・求人で転職できる ---- */
 const CAREER = {id:0, open:false, rows:{}, endsAt:0, off:null, done:null};
-// スマホのない人の分は町長（先生）がクリックで決めるので、全員が決まるまで待つ（時間切れなら「このまま」）
+// スマホのない人の分は、本人に聞いて、先生がクリックして入れる。全員が決まるまで待つ（時間切れなら「このまま」）
 function careerDeciders(){ return Object.values(CAREER.rows); }
 function renderCareer(){
   const M = $('#meet'); if (!CAREER.open) return;
@@ -8346,7 +8379,7 @@ function renderCareer(){
     return `<div class="kt-row" style="--pc:${pl.color}"><div class="kt-who">${ico(pl, 'cimg')}<div><b>${pl.cpu ? '🤖' : connected(pl) ? '📱' : ''}${esc(pl.name)}</b><small>いま：${jobIc(pl)} ${jobName(pl)}${pl.job && !v ? `（あと${left}ラウンドでベテラン）` : ''}</small>${careerTags(pl) ? `<small>${careerTags(pl)}</small>` : ''}</div></div>
       <div class="kt-ops">${r.opts.map(o => `<button class="kt-op ${r.pick === o.job ? 'sel' : ''}" data-pk="${pk}" data-v="${o.job}"><span class="kt-i">${JOBS[o.job].ic}</span><b>${JOBS[o.job].short}に転職</b><small>${o.via === 'wanted' ? '📢 求人' : '📜 資格'}</small></button>`).join('')}
         <button class="kt-op stay ${r.pick === 'stay' ? 'sel' : ''}" data-pk="${pk}" data-v="stay"><span class="kt-i">${pl.job ? '👍' : NEWBIE.ic}</span><b>このまま</b><small>${v ? '⭐ベテラン' : pl.job ? 'つづける' : '新人'}</small></button></div>
-      <div class="kt-by ${r.pick ? 'ok' : ''}">${r.pick ? `${r.by === 'bot' ? '🤖' : r.by === 'phone' ? '📱' : '🎓'} 決定！` : isBot(pl) || connected(pl) ? '…考え中' : '📵 町長（先生）がクリックで決めてね（決めないと「このまま」）'}</div></div>`; };
+      <div class="kt-by ${r.pick ? 'ok' : ''}">${r.pick ? `${r.by === 'bot' ? '🤖' : r.by === 'phone' ? '📱' : '🎓'} 決定！` : isBot(pl) || connected(pl) ? '…考え中' : '📵 本人に聞いて、先生がクリックしてね（入れないと「このまま」）'}</div></div>`; };
   const html = `<div class="mt-box">
     <div class="mt-head"><h3 class="dela">🔄 転職タイム</h3><span class="mt-msg">📜資格（★2以上で正解）がある仕事か、📢求人の仕事に転職できます。前の仕事は「経験」として少し残ります</span><span class="mt-t dela" id="ktT"></span></div>
     ${w ? `<div class="kt-want">📢 町の求人：${JOBS[w.job].ic} ${JOBS[w.job].name} 募集中！<small>「${CARD[w.card] ? CARD[w.card].name : ''}」をふせげなかった…。転職した人に ボーナス +${fmtYen(COOP.yen(S, COOP_CFG.wantYen))}・😊+${COOP_CFG.wantHappy}（先着1人）</small></div>` : ''}
@@ -8483,28 +8516,45 @@ async function showCardInner(r, i, n, C){
   await sleep(250);
 }
 /* ---- 町の会議（投票） ---- */
-const VOTE = {id:0, opts:[], human:{}, bot:{}, endsAt:0, off:null, open:false, law:null, k:0, decide:null, tie:null, teacher:false};
+/* 決め方：全員が1票ずつ（コンピューター・スマホ・スマホのない人）。いちばん票の多い工事に決まる。
+   同じ票数のとき（と、だれも投票しなかったとき）は、町の人たちの声で決まる。先生がひとりで決めることはしない。
+   スマホのない人の票は、本人に聞いて、先生がその人の1票としてカードをクリックして入れる（hand） */
+const VOTE = {id:0, opts:[], human:{}, bot:{}, hand:{}, handSel:null, endsAt:0, timed:true, off:null, open:false, closed:false, law:null, k:0, decide:null, check:null, tie:null, vil:null, none:false};
 function meetOptions(law){
   return COOP.options(H.coop, H.players).map(o => { const cost = law ? Math.max(10, Math.round(o.price.cost * (1 - COOP.lawRate(law)) / 10) * 10) : o.price.cost; return Object.assign(o, {cost, can:cost <= H.coop.budget, price:Object.assign({}, o.price, {cost})}); });
 }
-function voters(){ return H.players.filter(pl => isBot(pl) || connected(pl)); }
+function voters(){ return H.players.slice(); }                                     // 全員が投票できる
+function handVoters(){ return H.players.filter(pl => !isBot(pl) && !connected(pl)); }    // スマホのない人（先生が、その人の票を入れる）
+function nextHand(){ const pl = handVoters().find(x => !VOTE.hand[pkey(x)]); return pl ? pkey(pl) : null; }
+function voteOk(v){ return v === 'save' || VOTE.opts.some(x => x.id === v && x.can); }
 function tally(){
   const t = {}; const add = (pid, v) => { if (!v) return; (t[v] = t[v] || []).push(pid); };
   Object.entries(VOTE.bot).forEach(([k, v]) => add(k, v));
-  Object.entries(VOTE.human).forEach(([k, o]) => { if (o && (o.v === 'save' || VOTE.opts.some(x => x.id === o.v && x.can))) add(k, o.v); });
+  Object.entries(VOTE.human).forEach(([k, o]) => { if (o && voteOk(o.v)) add(k, o.v); });
+  // 先生が入れた票。その人が、あとからスマホでつながって自分で投票したら、スマホの票を使う
+  Object.entries(VOTE.hand).forEach(([k, v]) => { if (voteOk(v) && !VOTE.bot[k] && !(VOTE.human[k] && voteOk(VOTE.human[k].v))) add(k, v); });
   return t;
 }
+function votedCount(){ return Object.values(tally()).reduce((a, x) => a + x.length, 0); }
+// 町の人の顔（同じ票数のときに、決まった工事のカードに出す）
+function vilFaces(){ try { return window.CharArt ? CharArt.villagers.slice(0, 3).map(k => `<img src="${CharArt.thumb(k, 96)}" alt="">`).join('') : ''; } catch(e){ return ''; } }
 function renderMeet(){
-  const M = $('#meet'); if (!VOTE.open && !VOTE.tie && !VOTE.teacher){ return; }
+  const M = $('#meet'); if (!VOTE.open && !VOTE.closed){ return; }
+  const hv = VOTE.open ? handVoters() : [];
+  if (VOTE.handSel && !hv.some(x => pkey(x) === VOTE.handSel)) VOTE.handSel = nextHand();      // スマホでつながった人は、先生が入れる人から外す
+  const hsel = VOTE.handSel ? H.players.find(x => pkey(x) === VOTE.handSel) : null, picking = VOTE.open && !!hsel;
+  const vname = id => id === 'save' ? '今回は貯金' : PROJ[id] ? PROJ[id].name : '';
   const t = tally(), S = H.coop, max = Math.max(0, ...Object.values(t).map(a => a.length));
+  const vilTag = VOTE.vil ? `<span class="vil">${vilFaces()}<b>町の人</b></span>` : '';
   const avatars = ids => ids.map(k => { const pl = H.players.find(p => pkey(p) === k); return pl ? `<img src="${THUMB[pl.char] || ''}" alt="" title="${esc(pl.name)}" style="--pc:${pl.color}">` : ''; }).join('');
   const card = o => {
     const p = PROJ[o.id], ids = t[o.id] || [], pr = o.price;
-    const cls = ['pc', o.can ? '' : 'no', VOTE.tie && VOTE.tie.includes(o.id) ? 'tie' : '', VOTE.teacher && o.can ? 'pickable' : ''].join(' ');
+    const cls = ['pc', o.can ? '' : 'no', VOTE.tie && !VOTE.vil && VOTE.tie.includes(o.id) ? 'tie' : '', picking && o.can ? 'pickable' : ''].join(' ');
+    const vil = VOTE.vil === o.id;
     const dh = COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0);
     const disc = pr.disc.map(d => d.t).concat(VOTE.law ? ['⚖️ 弁護士'] : []);
-    return `<button class="${cls}" data-id="${o.id}" ${VOTE.teacher || VOTE.tie ? '' : 'tabindex="-1"'}>
-      <span class="cnt dela">${ids.length || ''}</span>
+    return `<button class="${cls}" data-id="${o.id}" ${picking && o.can ? '' : 'tabindex="-1"'}>
+      <span class="cnt dela">${ids.length + (vil ? 1 : 0) || ''}</span>
       <div class="ph"><span class="ic">${p.ic}</span><span class="nm">${p.name}</span></div>
       <div class="lvp">${[0,1,2].map(i => `<i class="${i < o.lv ? 'on' : i === o.lv ? 'next' : ''}"></i>`).join('')}<span>レベル${o.lv + 1}「${p.lv[o.lv]}」</span></div>
       <div class="mh">${CAT[p.topic].ic} ${p.math}：${p.hint}</div>
@@ -8512,38 +8562,49 @@ function renderMeet(){
       ${disc.length ? `<div class="dsc">${disc.join('・')} で割引</div>` : ''}
       <div class="gain">😊 +${dh}${o.lv === 2 ? `　🎉 完成：${p.bonus}` : ''}</div>
       ${o.can ? '' : '<div class="nomoney">お金が足りない</div>'}
-      <div class="votes">${avatars(ids)}</div></button>`;
+      <div class="votes">${avatars(ids)}${vil ? vilTag : ''}</div></button>`;
   };
   const done = PROJECTS.filter(p => S.lv[p.id] >= 3);
-  const vs = voters(), nv = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).filter(k => VOTE.human[k]).length;
+  const vs = voters(), nv = Object.values(t).reduce((a, x) => a + x.length, 0), vilSave = VOTE.vil === 'save';
+  const msg = VOTE.vil ? `🏘 ${VOTE.none ? 'だれも投票しなかったので、' : '同じ票数！ '}町の人たちの声で「${vname(VOTE.vil)}」に決定！`
+    : VOTE.tie ? (VOTE.none ? 'だれも投票しなかった…。町の人たちの声を聞いてみよう' : '同じ票数！ 町の人たちの声を聞いてみよう…')
+    : VOTE.closed ? '🗳 投票をしめきりました'
+    : picking ? `📵 ${esc(hsel.name)}さんに聞いて、下のカードをクリック<small>（スマホのない人の票）</small>`
+    : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : VOTE.timed ? 'どの工事にお金を使う？ スマホで投票しよう' : 'どの工事にお金を使う？ ひとり1票で決めよう';
+  // スマホのない人の票：だれの票を入れるかは、見出しの文で知らせる（上にあるので、声の字幕にかくれない）。名前のボタンは、下の行に置く（行をふやすと、低い画面で箱が入りきらなくなる）
+  const handBtns = hv.length ? `<span class="mt-hand">📵 スマホのない人の票${hv.map(pl => { const k = pkey(pl), v = VOTE.hand[k]; return `<button class="btn hv ${VOTE.handSel === k ? 'sel' : ''}" data-hv="${k}" style="--pc:${pl.color}" title="${esc(pl.name)}さんの票を入れる（入れなおす）">${ico(pl)}${esc(pl.name)}${v ? ' ✅' : ''}</button>`; }).join('')}${hsel ? '' : '<small>名前を押すと、入れなおせます</small>'}</span>` : '';
   const html = `<div class="mt-box">
     <div class="mt-head"><h3 class="dela">🏛 町の会議${VOTE.k ? '（2つめ）' : ''}</h3><span class="mt-yen dela">💰 ${fmtYen(S.budget)}</span>
-      <span class="mt-msg">${VOTE.tie ? '同じ票数！ 町長（先生）がクリックで決めてください' : VOTE.teacher ? '町長（先生）が進める工事をクリックしてください' : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : 'どの工事にお金を使う？ スマホで投票しよう'}</span>
-      ${VOTE.open ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
+      <span class="mt-msg">${msg}</span>
+      ${VOTE.open && VOTE.timed ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
     <div class="mt-grid">${VOTE.opts.map(card).join('')}
-      <button class="pc save ${VOTE.tie && VOTE.tie.includes('save') ? 'tie' : ''} ${VOTE.teacher ? 'pickable' : ''}" data-id="save"><span class="cnt dela">${(t.save || []).length || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}</div></button></div>
+      <button class="pc save ${VOTE.tie && !VOTE.vil && VOTE.tie.includes('save') ? 'tie' : ''} ${picking ? 'pickable' : ''}" data-id="save" ${picking ? '' : 'tabindex="-1"'}><span class="cnt dela">${(t.save || []).length + (vilSave ? 1 : 0) || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}${vilSave ? vilTag : ''}</div></button></div>
     ${done.length ? `<div class="mt-done">完成：${done.map(p => `${p.ic} ${p.goal || p.name}（${p.bonus}）`).join('　')}</div>` : ''}
-    <div class="mt-foot"><span>🗳 投票 ${nv} / ${vs.length}人${H.players.some(pl => !isBot(pl) && !connected(pl)) ? '（スマホのない人は、町長がかわりに決めてね）' : ''}</span>
-      <span style="display:flex;gap:8px">${VOTE.open ? `<button class="btn" onclick="meetTeacher()">🎓 町長（先生）が決める</button><button class="btn gold" onclick="meetClose()">⏹ 投票をしめきる</button>` : ''}</span></div></div>`;
+    <div class="mt-foot"><span class="mt-fl"><span>🗳 投票 ${nv} / ${vs.length}人</span>${handBtns}</span>
+      <span style="display:flex;gap:8px">${VOTE.open ? `<button class="btn gold" onclick="meetClose()">⏹ 投票をしめきる</button>` : ''}</span></div></div>`;
   M.classList.add('on');
   const tm = () => { const el = $('#mtT'); if (el){ const left = Math.max(0, Math.ceil((VOTE.endsAt - NET.now()) / 1000)); el.textContent = left; el.classList.toggle('low', left <= 5); } };
   if (html === renderMeet.last){ tm(); return; }
   renderMeet.last = html; M.innerHTML = html; tm();
+  // カードをクリック＝いま選ばれている「スマホのない人」の1票を入れる（決めるのは、みんなの票の数）
   M.querySelectorAll('.pc').forEach(b => b.onclick = () => {
-    const id = b.dataset.id; if (!(VOTE.teacher || (VOTE.tie && VOTE.tie.includes(id)))) return;
-    if (id !== 'save' && !VOTE.opts.some(o => o.id === id && o.can)) return;
-    initAudio(); sfx.star(); if (VOTE.decide) VOTE.decide({id, by:'teacher'});
+    const id = b.dataset.id; if (!VOTE.open || !VOTE.handSel || !voteOk(id)) return;
+    initAudio(); sfx.star(); VOTE.hand[VOTE.handSel] = id; VOTE.handSel = nextHand(); renderMeet(); if (VOTE.check) VOTE.check();
   });
+  // 名前をクリック＝その人の票を入れる（入れなおす）
+  M.querySelectorAll('[data-hv]').forEach(b => b.onclick = () => { if (!VOTE.open) return; initAudio(); VOTE.handSel = b.dataset.hv; renderMeet(); if (VOTE.check) VOTE.check(); });
 }
 window.meetClose = () => { if (VOTE.open && VOTE.decide) VOTE.decide({close:true}); };
-window.meetTeacher = () => { VOTE.teacher = true; VOTE.open = false; renderMeet(); };
 async function runVote(opts, k, law){
   const S = H.coop;
-  Object.assign(VOTE, {id:(Date.now() % 1e9), opts, human:{}, bot:{}, open:true, law, k, tie:null, teacher:false});
-  const secs = H.auto ? 4 : k ? 20 : 30;
-  VOTE.endsAt = NET.now() + secs * 1000;
+  Object.assign(VOTE, {id:(Date.now() % 1e9), opts, human:{}, bot:{}, hand:{}, handSel:null, open:true, closed:false, law, k, tie:null, vil:null, none:false});
+  // スマホのない人がいるときは、聞いて入れる時間を足す（1人につき15秒、45秒まで）。
+  // 全員がスマホなしのときは、時間を切らない（先生が全員の票を入れるか、「投票をしめきる」まで）
+  const nh = handVoters().length;
+  const secs = H.auto ? 4 : (k ? 20 : 30) + 15 * Math.min(3, nh);
+  VOTE.timed = H.auto || nh < H.players.length;
+  VOTE.endsAt = NET.now() + secs * 1000; VOTE.handSel = nextHand();
   BGM.play('town'); H.phase = 'meeting'; H.vote = {id:VOTE.id, endsAt:VOTE.endsAt, k, law:law ? law.name : '', lawP:law ? lawPct(law) : 0, opts:opts.map(o => ({id:o.id, lv:o.lv, cost:o.cost, can:o.can, dh:COOP_CFG.lvHappy[o.lv] + (o.id === 'shop' ? shopBonus() : 0)}))};
-  if (!voters().length && !H.auto){ VOTE.open = false; VOTE.teacher = true; }   // スマホで投票できる人がいないときは、町長（先生）がすぐ決める
   renderHUD(); netPublish(true);
   VO.cue('meeting');                  // 町の会議の声は、投票の画面が出た瞬間に
   if (VOTE.off) VOTE.off();
@@ -8551,33 +8612,38 @@ async function runVote(opts, k, law){
   // コンピューターの投票（少しずつ）
   const bots = H.players.filter(isBot), timers = [];
   bots.forEach(pl => { timers.push(setTimeout(() => { if (!VOTE.open) return; const ch = Math.random() < .12 ? 'save' : COOP.aiPick(S, H.players, opts.map(o => Object.assign({}, o))) || 'save'; VOTE.bot[pkey(pl)] = ch; sfx.tick ? sfx.tick() : sfx.step(); renderMeet(); checkAll(); }, H.auto ? 300 + Math.random() * 1500 : 1500 + Math.random() * 7000)); });
-  let tick;
+  let tick, allT;
+  // 全員の票がそろったら、少し待ってからしめきる。先生がだれかの票を入れている（入れなおしている）あいだは、しめきらない
   function checkAll(){
     if (!VOTE.open) return;
-    const vs = voters(); const n = Object.keys(VOTE.bot).length + Object.keys(VOTE.human).length;
-    if (vs.length && n >= vs.length && VOTE.decide) setTimeout(() => { if (VOTE.open && VOTE.decide) VOTE.decide({close:true}); }, H.auto ? 600 : 2200);
+    clearTimeout(allT);
+    const vs = voters();
+    if (vs.length && !VOTE.handSel && votedCount() >= vs.length && VOTE.decide) allT = setTimeout(() => { if (VOTE.open && !VOTE.handSel && VOTE.decide) VOTE.decide({close:true}); }, H.auto ? 600 : 2200);
   }
+  VOTE.check = checkAll;
   renderMeet();
-  const res = await new Promise(resolve => {
+  await new Promise(resolve => {
     VOTE.decide = resolve;
-    tick = setInterval(() => { renderMeet(); if (VOTE.open && NET.now() >= VOTE.endsAt){ resolve({close:true}); } }, 500);
+    tick = setInterval(() => { renderMeet(); if (VOTE.open && VOTE.timed && NET.now() >= VOTE.endsAt){ resolve({close:true}); } }, 500);
   });
-  clearInterval(tick); timers.forEach(clearTimeout);
+  clearInterval(tick); clearTimeout(allT); timers.forEach(clearTimeout);
+  VOTE.open = false; VOTE.closed = true; VOTE.handSel = null; VOTE.check = null; VOTE.decide = null; renderMeet();      // しめきり：ここからは票を入れられない
   await VO.idle();                    // 声が終わってから、投票の結果へ
   let pickId;
-  if (res.id){ pickId = res.id; }
+  const t = tally(), entries = Object.entries(t);
+  const max = entries.length ? Math.max(...entries.map(([, a]) => a.length)) : 0, top = entries.filter(([, a]) => a.length === max).map(([id]) => id);
+  if (top.length === 1) pickId = top[0];
   else {
-    VOTE.open = false;
-    const t = tally(), entries = Object.entries(t);
-    if (!entries.length){ pickId = COOP.aiPick(S, H.players, opts.map(o => Object.assign({}, o))) || 'save'; await banner('だれも投票しなかったので<br>町の人のおすすめで決めました', 1300); }
-    else {
-      const max = Math.max(...entries.map(([, a]) => a.length)), top = entries.filter(([, a]) => a.length === max).map(([id]) => id);
-      if (top.length === 1) pickId = top[0];
-      else if (H.auto || H.players.every(isBot)) pickId = pick(top);
-      else { VOTE.tie = top; renderMeet(); sfx.chime(); pickId = (await new Promise(r => { VOTE.decide = r; })).id; }
-    }
+    // 同じ票数（または、だれも投票しなかった）：町の人たちの声で決める。
+    // 町の人は、同じ票数だった工事の中から、いま町にいちばん役に立つ工事をえらぶ（だれも投票しなかったときは、できる工事ぜんぶの中から）
+    const cand = opts.filter(o => o.can && (!top.length || top.includes(o.id))).map(o => Object.assign({}, o));
+    pickId = COOP.aiPick(S, H.players, cand) || 'save';
+    VOTE.none = !top.length; VOTE.tie = top; VOTE.vil = null; renderMeet.last = ''; renderMeet(); sfx.chime();
+    await sleep(H.auto ? 500 : 1800);
+    VOTE.vil = pickId; renderMeet(); sfx.star();
+    await sleep(H.auto ? 500 : 1500);
   }
-  VOTE.open = false; VOTE.tie = null; VOTE.teacher = false; VOTE.decide = null; renderMeet.last = '';
+  VOTE.closed = false; VOTE.tie = null; VOTE.vil = null; VOTE.none = false; renderMeet.last = '';
   if (VOTE.off){ VOTE.off(); VOTE.off = null; }
   // 決まった工事を光らせる
   const el = $(`#meet .pc[data-id="${pickId}"]`); if (el){ el.classList.add('win'); sfx.fanfare(); await sleep(H.auto ? 500 : 1300); }
@@ -10040,7 +10106,7 @@ function loop(){
 renderHUD(); drawTimer(); loop();
 loadMap(H.mode === 'coop' ? 'town' : 'dungeon');
 makeThumbs();
-BGM.play('title'); hostRoom(); NET.onConn(() => { renderInvite(); renderWatch(); });
+BGM.play('title'); hostRoom(); NET.onConn(() => { renderInvite(); });
 $('#inviteBtn').onclick = openInvite;
 { const ob = window.openBoss; window.openBoss = function(){ ob(); initAudio(); BGM.play('boss');
   const co = isCoop();      // 協力モードでは「おまけ」。最後の大工事は、ツリーに明かりを灯す（treeOpen）
