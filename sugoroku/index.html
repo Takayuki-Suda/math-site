@@ -114,9 +114,9 @@ body.homemode .snow{display:none}
 .banner{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(.8);background:linear-gradient(180deg,#22397d,#142659);border:3px solid var(--gold);border-radius:22px;padding:18px 34px;font-size:30px;text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:8;box-shadow:0 10px 40px rgba(0,0,0,.6);max-width:92vw}
 .banner.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .banner .chip{font-size:26px;padding:2px 16px}
-.ask{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,rgba(26,44,99,.97),rgba(11,21,48,.97));border:3px solid var(--gold);border-radius:22px;padding:16px 22px;min-width:420px;max-width:94vw;display:none;text-align:center;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.ask{position:fixed;left:50%;top:6px;transform:translate(-50%,max(0px,calc((100vh - 130px - 100%) / 2)));background:linear-gradient(180deg,rgba(26,44,99,.97),rgba(11,21,48,.97));border:3px solid var(--gold);border-radius:22px;padding:16px 22px;min-width:420px;max-width:94vw;display:none;text-align:center;z-index:9;box-shadow:0 12px 40px rgba(0,0,0,.6)}
 .ask.on{display:block;animation:askin .3s cubic-bezier(.3,1.5,.5,1)}
-@keyframes askin{from{transform:translate(-50%,-50%) scale(.7);opacity:0}}
+@keyframes askin{from{scale:.7;opacity:0}}
 .ask h3{margin:0 0 2px;font-size:24px}
 .ask p{margin:0 0 12px;color:var(--muted)}
 .ask .opts{display:grid;gap:8px}
@@ -212,9 +212,12 @@ body.coopmode.showing .town{display:none}
 .pchip .jb{position:absolute;right:-8px;bottom:-6px;font-size:17px;filter:drop-shadow(0 1px 2px #000)}
 .pchip .st.yen{font-size:15px;color:#7dffb0}
 /* 町の会議 */
-.meet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(4,8,22,.5)}
+.meet{position:fixed;inset:0;z-index:9;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6px;background:rgba(4,8,22,.5)}
 .meet.on{display:flex}
-.mt-box{width:min(1240px,97vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,rgba(26,44,99,.98),rgba(11,21,48,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 16px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+/* 箱は、下の帯（声の字幕が出る場所。118px）をのけた中の、たてのまん中に置く。画面が低くて入りきらないときは、帯をちぢめて、箱を上につめる */
+.meet::before{content:"";flex:1 1 0}
+.meet::after{content:"";flex:1 1 118px}
+.mt-box{flex-shrink:0;width:min(1240px,97vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,rgba(26,44,99,.98),rgba(11,21,48,.98));border:3px solid var(--gold);border-radius:24px;padding:12px 16px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .mt-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .mt-head h3{margin:0;font-size:28px}
 .mt-yen{font-size:24px;color:#fff;background:rgba(0,0,0,.25);border-radius:12px;padding:2px 12px}
@@ -254,10 +257,12 @@ body.coopmode.showing .town{display:none}
 .pc .votes .vil{display:inline-flex;align-items:center;gap:2px;padding:1px 9px 1px 3px;border-radius:999px;background:rgba(242,201,76,.18);border:2px solid var(--gold);font-size:13px;font-weight:900;color:var(--gold);animation:vin .35s cubic-bezier(.3,1.7,.5,1)}
 .pc .votes .vil img{width:24px;height:24px;border:0;background:none;animation:none;margin-right:-6px}
 .pc .votes .vil b{margin-left:9px}
-.mt-hand{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;padding:5px 12px;border-radius:12px;background:rgba(242,201,76,.1);border:2px dashed rgba(242,201,76,.55);color:var(--snow);font-weight:700;font-size:15px}
-.mt-hand small{color:var(--gold);font-weight:900;font-size:14px}
-.mt-hand .hv{display:inline-flex;align-items:center;gap:5px;padding:3px 12px 3px 6px;font-size:15px;border-left:5px solid var(--pc)}
-.mt-hand .hv .ci{width:24px;height:24px}
+.mt-fl{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap}
+.mt-hand{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--snow);font-weight:700;font-size:14px}
+.mt-hand small{color:var(--muted);font-weight:700;font-size:12px}
+.mt-hand .hv{display:inline-flex;align-items:center;gap:5px;padding:2px 10px 2px 6px;font-size:14px;border-left:5px solid var(--pc)}
+.mt-hand .hv .ci{width:22px;height:22px}
+.mt-msg small{font-size:13px;font-weight:700;margin-left:6px;opacity:.85}
 .mt-hand .hv.sel{outline:3px solid var(--gold)}
 .kt-want{margin:8px 0 2px;padding:8px 14px;border-radius:14px;background:linear-gradient(90deg,#7a3b00,#5a2600);border:2px solid #ffb347;color:#fff;font-weight:900;font-size:18px}
 .kt-want small{display:block;font-size:13px;color:#ffe0b0;font-weight:700}
@@ -288,9 +293,9 @@ body.coopmode.showing .town{display:none}
 .wcar{font-size:13px;color:var(--muted);margin-top:4px}
 .mt-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
 /* できごとカード */
-.evcard{position:fixed;left:50%;top:50%;z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
+.evcard{position:fixed;left:50%;top:calc(50% - min(59px,9vh));z-index:9;transform:translate(-50%,-50%);display:none;perspective:1400px}
 .evcard.on{display:block;animation:ccin .45s cubic-bezier(.3,1.5,.5,1)}
-.evcard.away{visibility:hidden}
+.evcard.away{visibility:hidden;opacity:0}
 @keyframes ccin{from{transform:translate(-50%,-30%) scale(.5);opacity:0}}
 .cc-in{width:min(400px,86vw);height:min(540px,78vh);position:relative;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.3,1.3,.5,1)}
 .cc-in.flip{transform:rotateY(180deg)}
@@ -785,6 +790,11 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .tr-btns .btn{flex:1}
 /* ツリーの画面のあいだは、声の字幕を、ツリーの下（左がわ）に小さめに出す（明かりと参加者の列にかぶらないように） */
 body.treeon .splash{z-index:10}
+/* 声の字幕の場所：ふだんは、下の名前カードのすぐ上。
+   会議・転職・できごとカード・こまったことの絵・えらぶ画面・窓（参加者をよぶ など）が出ているあいだは、画面のいちばん下（名前カードの上）に出す。
+   こうしないと、字幕が、その画面の下のほうの絵や文字にかぶる。最後の大工事（ツリー）は、すぐ下の決まりで別の場所に出す */
+body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.evcard.on) #vo,body:has(.modal.on) #vo,body.trfxon #vo{bottom:8px !important}
+@media (max-height:720px){body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.modal.on) #vo{font-size:clamp(14px,1.6vw,19px) !important;padding:6px 16px !important;max-width:min(1100px,94vw) !important}}
 body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !important;max-width:min(640px,50vw) !important;font-size:clamp(15px,1.7vw,21px) !important;padding:8px 18px !important}
 @media (max-width:760px){.tr-box{grid-template-columns:1fr;grid-template-rows:auto minmax(200px,1fr) auto;height:96vh}.tr-head{grid-column:1}.tr-head h3{font-size:20px}.tr-time{font-size:28px}}
 </style>
@@ -1577,7 +1587,9 @@ window.TroubleFx = (() => {
     if (!G && out > .35 && SAD[id]){ g.globalAlpha = sm(.35, .5, out); g.save(); g.translate(735, 104); g.rotate(-.06); RR(-200, -46, 400, 92, 18, 'rgba(40,6,16,.82)', '#ff5a5f', 7); Tx(SAD[id], 0, 4, 44, '#ffd0d4', DELA); g.restore(); g.globalAlpha = 1; }
     g.restore();
     g.save(); g.translate(34, -4); g.rotate(-.03); RR(0, -26, 250, 54, 12, '#e0484f', '#fff', 4); Tx('こまったこと！', 125, 3, 30, '#fff', DELA); g.restore();
-    g.lineJoin = 'round'; g.font = `900 46px ${DELA}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.strokeStyle = '#04081c'; g.lineWidth = 12; const cap = `${o.ic || ''} ${o.name || ''}`; g.strokeText(cap, 500, 618); g.fillStyle = '#fff'; g.fillText(cap, 500, 618);
+    // こまったことの名前は、絵の上のふち（「こまったこと！」のふだの右）に出す。絵の下は、声の字幕が出る場所なので、文字を置かない
+    { const cap = `${o.ic || ''} ${o.name || ''}`.trim(); g.font = `900 42px ${DELA}`; const cw = Math.min(g.measureText(cap).width, 640) + 48, cx = Math.min(1000 - cw / 2, Math.max(304 + cw / 2, 652));
+      RR(cx - cw / 2, -34, cw, 64, 16, 'rgba(8,13,44,.96)', '#fff', 4); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText(cap, cx, 1, 640); }
     g.restore();
   }
 
@@ -1587,10 +1599,10 @@ window.TroubleFx = (() => {
     if (!SC[id] || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ res(false); return; }
     if (!cv){ cv = document.createElement('canvas'); cv.id = 'trfx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;display:none'; document.body.appendChild(cv); g = cv.getContext('2d'); }
     const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), fast = !!o.fast, d1 = fast ? 1.1 : 2.6, d2 = fast ? .9 : 2.0, d3 = .28, t0 = performance.now(), LIMIT = 30;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0';
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.display = 'block'; cv.style.opacity = '0'; document.body.classList.add('trfxon');
     let snd = 0, over = false, v1 = !o.wait1, tOut = Infinity, lastFrame = t0, wd = 0;
     if (o.wait1) Promise.resolve(o.wait1).catch(() => {}).then(() => { v1 = true; });
-    const done = () => { if (over) return; over = true; clearInterval(wd); st.id = ''; st.ph = ''; cv.style.display = 'none'; try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(true); };
+    const done = () => { if (over) return; over = true; clearInterval(wd); st.id = ''; st.ph = ''; cv.style.display = 'none'; document.body.classList.remove('trfxon'); try { g.clearRect(0, 0, cv.width, cv.height); } catch(e){} res(true); };
     st.id = id; st.ph = 'intro';
     // 結果に進むのは、決まった時間がたって、こまったことの声も終わってから（声の合図が来ないときは LIMIT 秒で進む）
     const advance = t => { if (tOut === Infinity && t >= d1 && (v1 || t >= LIMIT)){ tOut = t; st.ph = 'out'; cue(o.guard ? 'guard' : 'hit'); try { if (o.onOut) o.onOut(); } catch(e){} } return t - tOut - d2; };
@@ -3285,7 +3297,8 @@ const JOBS = {
 };
 const NEWBIE = {ic:'🌱', name:'町の新人', short:'新人', d:'まだ職業なし。問題に正解すると、その分野の仕事に就ける'};
 const TOPIC_JOB = {1:'fire', 2:'lawyer', 3:'se', 4:'clean', 5:'police'};
-const JOB_ORDER = ['se', 'fire', 'lawyer', 'clean', 'police'];
+// ならべる順は、問題の分野の順（計算・式・関数・図形・確率）。ルールの説明と同じ。どれかの仕事が「いちばん上＝えらい」に見えないようにする
+const JOB_ORDER = [1, 2, 3, 4, 5].map(t => TOPIC_JOB[t]);
 /* ok＝工事でふせいだときに出す文（工事の段階ごと。そのとき町にあるものに合わせる）。name2＝工事が n2 段階まで進んだあとの名前（前の名前が合わなくなるカードだけ）。
    vo2＝そのときに流す声の場面（声のファイルができるまでは、何も流れない）。sign＝絵の中の看板の文字（工事の段階ごと） */
 const CARDS = [
@@ -7483,7 +7496,7 @@ const VO = (() => {
       fetch(DIR + id + '.mp3').then(r => r.ok ? r.blob() : null).then(b => { if (b && b.size > 2000 && !mem[id]) mem[id] = URL.createObjectURL(new Blob([b], {type:'audio/mpeg'})); }).catch(() => {}).then(() => setTimeout(nx, 40)); };
     nx(); nx(); }
   function box(){ if (!el){ el = document.createElement('div'); el.id = 'vo'; el.setAttribute('aria-live', 'polite');
-      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
+      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:104px;width:max-content;max-width:min(920px,86vw);padding:10px 24px;border-radius:18px;background:rgba(6,11,36,.92);border:3px solid #ffd23f;color:#fff;font-weight:700;font-size:clamp(16px,2.1vw,26px);line-height:1.5;text-align:center;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none';
       txt = document.createElement('span'); el.appendChild(txt);
       const sk = document.createElement('button'); sk.id = 'voSkip'; sk.type = 'button'; sk.textContent = '⏭'; sk.title = 'この声をとばす'; sk.setAttribute('aria-label', 'この声をとばす');
       sk.style.cssText = 'pointer-events:auto;cursor:pointer;margin-left:.7em;padding:0 .45em;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-size:.8em;line-height:1.5;vertical-align:middle';
@@ -8339,16 +8352,20 @@ function coopSpaceText(nd){
 /* ---- 職業安定所 ---- */
 async function jobCenter(pl){
   const S = H.coop, cnt = {}, w = S && S.wanted; H.players.forEach(p => { if (p.job) cnt[p.job] = (cnt[p.job] || 0) + 1; });
-  const opts = JOB_ORDER.filter(j => j !== pl.job).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}${w && w.job === j ? '　📢 求人ボーナス！' : ''}`, s:JOBS[j].d}));
+  // えらぶ画面のならび順：いま町に足りない仕事が上（求人 → まだだれもいない仕事 → 人数の少ない仕事）。同じなら、問題の分野の順
+  const need = j => (w && w.job === j ? 0 : 100) + (cnt[j] || 0);
+  const opts = JOB_ORDER.filter(j => j !== pl.job).sort((x, y) => need(x) - need(y)).map(j => ({v:j, ic:JOBS[j].ic, t:`${JOBS[j].name}になる${cnt[j] ? `（いま${cnt[j]}人）` : '（まだいない！）'}${w && w.job === j ? '　📢 求人ボーナス！' : ''}`, s:JOBS[j].d}));
   opts.push({v:null, ic:pl.job ? '👍' : NEWBIE.ic, t:`${jobName(pl)}のまま`, s:jobDesc(pl)});
   let bp;
   if (isBot(pl)){
-    const missing = opts.filter(o => o.v && !cnt[o.v]), want = w && opts.find(o => o.v === w.job);
-    if (!pl.job) bp = (want || missing[0] || pick(opts.filter(o => o.v))).v;
+    // コンピューターのえらび方は、前と同じ（画面のならび順を変えても、ゲームのむずかしさが変わらないように）
+    const pref = ['se', 'fire', 'lawyer', 'clean', 'police'].map(j => opts.find(o => o.v === j)).filter(Boolean);
+    const missing = pref.filter(o => !cnt[o.v]), want = w && opts.find(o => o.v === w.job);
+    if (!pl.job) bp = (want || missing[0] || pick(pref)).v;
     else if (COOP.isVet(pl)) bp = null;
     else bp = want && !cnt[want.v] ? want.v : missing.length && Math.random() < .5 ? missing[0].v : null;
   }
-  const v = await ask('💼 職業安定所', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
+  const v = await ask('💼 職業安定所<small style="font:700 13px \'Zen Maru Gothic\',sans-serif;color:var(--muted);margin-left:10px;letter-spacing:0">上から、いま町に足りない仕事の順</small>', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
   if (v){ const r = COOP.changeJob(S, pl, v, 'center'); if (!r) return; sfx.shop(); renderHUD(); renderTown(); await banner(careerChangeHTML(r), 1700); syncTown(); }
 }
 /* ---- 転職タイム（会議の前）：資格・求人で転職できる ---- */
@@ -8552,18 +8569,18 @@ function renderMeet(){
   const msg = VOTE.vil ? `🏘 ${VOTE.none ? 'だれも投票しなかったので、' : '同じ票数！ '}町の人たちの声で「${vname(VOTE.vil)}」に決定！`
     : VOTE.tie ? (VOTE.none ? 'だれも投票しなかった…。町の人たちの声を聞いてみよう' : '同じ票数！ 町の人たちの声を聞いてみよう…')
     : VOTE.closed ? '🗳 投票をしめきりました'
+    : picking ? `📵 ${esc(hsel.name)}さんに聞いて、下のカードをクリック<small>（スマホのない人の票）</small>`
     : VOTE.law ? `⚖️ ${COOP.isVet(VOTE.law) ? 'ベテラン' : ''}弁護士の${esc(VOTE.law.name)}さんが、工事を${lawPct(VOTE.law)}割引きに交渉中！` : VOTE.timed ? 'どの工事にお金を使う？ スマホで投票しよう' : 'どの工事にお金を使う？ ひとり1票で決めよう';
-  // スマホのない人の票を入れる行。見出しのすぐ下に出す（下のほうは、声の字幕にかくれることがある）
-  const handRow = hv.length ? `<div class="mt-hand"><span>📵 スマホのない人の票</span>${hv.map(pl => { const k = pkey(pl), v = VOTE.hand[k]; return `<button class="btn hv ${VOTE.handSel === k ? 'sel' : ''}" data-hv="${k}" style="--pc:${pl.color}" title="${esc(pl.name)}さんの票を入れる（入れなおす）">${ico(pl)}${esc(pl.name)}${v ? ' ✅' : ''}</button>`; }).join('')}<small>${hsel ? `👉 ${esc(hsel.name)}さんに聞いて、下のカードをクリック` : '✅ 入りました（名前を押すと、入れなおせます）'}</small></div>` : '';
+  // スマホのない人の票：だれの票を入れるかは、見出しの文で知らせる（上にあるので、声の字幕にかくれない）。名前のボタンは、下の行に置く（行をふやすと、低い画面で箱が入りきらなくなる）
+  const handBtns = hv.length ? `<span class="mt-hand">📵 スマホのない人の票${hv.map(pl => { const k = pkey(pl), v = VOTE.hand[k]; return `<button class="btn hv ${VOTE.handSel === k ? 'sel' : ''}" data-hv="${k}" style="--pc:${pl.color}" title="${esc(pl.name)}さんの票を入れる（入れなおす）">${ico(pl)}${esc(pl.name)}${v ? ' ✅' : ''}</button>`; }).join('')}${hsel ? '' : '<small>名前を押すと、入れなおせます</small>'}</span>` : '';
   const html = `<div class="mt-box">
     <div class="mt-head"><h3 class="dela">🏛 町の会議${VOTE.k ? '（2つめ）' : ''}</h3><span class="mt-yen dela">💰 ${fmtYen(S.budget)}</span>
       <span class="mt-msg">${msg}</span>
       ${VOTE.open && VOTE.timed ? `<span class="mt-t dela" id="mtT"></span>` : ''}</div>
-    ${handRow}
     <div class="mt-grid">${VOTE.opts.map(card).join('')}
       <button class="pc save ${VOTE.tie && !VOTE.vil && VOTE.tie.includes('save') ? 'tie' : ''} ${picking ? 'pickable' : ''}" data-id="save" ${picking ? '' : 'tabindex="-1"'}><span class="cnt dela">${(t.save || []).length + (vilSave ? 1 : 0) || ''}</span><div class="ph"><span class="ic">💰</span><span class="nm">今回は貯金</span></div><div class="mh">お金をためて、次のラウンドで高い工事をする</div><div class="votes">${avatars(t.save || [])}${vilSave ? vilTag : ''}</div></button></div>
     ${done.length ? `<div class="mt-done">完成：${done.map(p => `${p.ic} ${p.goal || p.name}（${p.bonus}）`).join('　')}</div>` : ''}
-    <div class="mt-foot"><span>🗳 投票 ${nv} / ${vs.length}人</span>
+    <div class="mt-foot"><span class="mt-fl"><span>🗳 投票 ${nv} / ${vs.length}人</span>${handBtns}</span>
       <span style="display:flex;gap:8px">${VOTE.open ? `<button class="btn gold" onclick="meetClose()">⏹ 投票をしめきる</button>` : ''}</span></div></div>`;
   M.classList.add('on');
   const tm = () => { const el = $('#mtT'); if (el){ const left = Math.max(0, Math.ceil((VOTE.endsAt - NET.now()) / 1000)); el.textContent = left; el.classList.toggle('low', left <= 5); } };
