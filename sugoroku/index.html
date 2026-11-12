@@ -134,6 +134,9 @@ body.homemode .snow{display:none}
 @keyframes fl{0%{opacity:0;margin-top:20px;scale:.5}15%{opacity:1;margin-top:0;scale:1.15}30%{scale:1}100%{opacity:0;margin-top:-90px}}
 .splash{position:fixed;left:0;right:0;top:36%;text-align:center;pointer-events:none;opacity:0;z-index:7}
 .splash.on{animation:splash 1.9s cubic-bezier(.2,.8,.2,1) forwards}
+.splash.on.glow{animation:splashGlow 3s cubic-bezier(.2,.8,.2,1) forwards}      /* 余韻：長く出しておいて、ふわっと消える */
+@keyframes splashGlow{0%{opacity:0;transform:translateX(-50%) skewX(-14deg)}10%{opacity:1;transform:none}70%{opacity:1;transform:none;animation-timing-function:ease-in}100%{opacity:0;transform:scale(1.05)}}
+.splash.glow .sp-sub{display:table;margin:10px auto 0;padding:1px 22px;border-radius:999px;background:rgba(8,16,40,.84)}      /* 花火の上でも読めるように、下じきをつける */
 @keyframes splash{0%{opacity:0;transform:translateX(-50%) skewX(-14deg)}16%{opacity:1;transform:none}80%{opacity:1;transform:none}100%{opacity:0;transform:translateX(50%) skewX(14deg)}}
 .sp-main{display:inline-block;font-size:76px;color:#fff;padding:4px 90px;background:linear-gradient(90deg,transparent,rgba(214,52,62,.96) 14%,rgba(214,52,62,.96) 86%,transparent);text-shadow:0 4px 0 #7a1f25,0 10px 24px rgba(0,0,0,.5);letter-spacing:.06em}
 .sp-sub{font-size:24px;font-weight:900;color:var(--gold);margin-top:6px;text-shadow:0 2px 8px #000}
@@ -558,6 +561,7 @@ table.bt{border-collapse:collapse;width:100%;font-size:20px;text-align:center}
 .opening.on{display:block}
 .opening::before,.opening::after{content:'';position:absolute;left:0;right:0;height:9vh;background:#000;transition:transform .8s}
 .opening::before{top:0}.opening::after{bottom:0}
+.opening.away::before{transform:translateY(-101%)}.opening.away::after{transform:translateY(101%)}      /* 余韻のあと：上下の黒い帯が、外へ開く */
 .op-logo{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(.3);opacity:0;text-align:center;white-space:nowrap}
 .op-logo.go{animation:oplogo 1.1s cubic-bezier(.2,1.6,.4,1) forwards}
 .op-logo.out{animation:oplout .7s ease-in forwards}
@@ -568,7 +572,8 @@ table.bt{border-collapse:collapse;width:100%;font-size:20px;text-align:center}
 .op-logo .t3{font-size:24px;color:#ffd84a;margin-top:6px;text-shadow:0 2px 10px #000;font-weight:900}
 .op-logo .sparks{font-size:34px;letter-spacing:.3em;animation:twk 1s infinite alternate}
 @keyframes twk{to{opacity:.4;transform:scale(1.1)}}
-.op-skip{position:absolute;right:18px;bottom:calc(9vh + 14px);pointer-events:auto;font-size:14px;padding:8px 16px;opacity:.85}
+.op-skip{position:absolute;right:18px;bottom:calc(9vh + 14px);pointer-events:auto;font-size:14px;padding:8px 16px;opacity:.85;transition:opacity .35s}
+.opening.glow .op-skip{opacity:0;pointer-events:none}      /* 余韻のあいだは、スキップのボタンを消す（画面は「ゲームスタート！」だけ） */
 /* オープニングの歌：絵（上下の黒い帯のあいだ）と、歌詞の字幕（下の黒い帯の中）。字幕は、歌っていることばから金色に変わっていく */
 #songFx{position:absolute;left:0;top:9vh;width:100%;height:82vh;display:none}
 #songFx.on{display:block;animation:sfIn .35s ease-out}
@@ -586,6 +591,8 @@ table.bt{border-collapse:collapse;width:100%;font-size:20px;text-align:center}
 .introCard .ic-char{font-size:15px;color:#ffe9a8;font-weight:700;white-space:nowrap}
 body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .htop,.strip{transition:opacity .5s}
+body.hudin .htop,body.hudin .strip{transition:opacity .9s}      /* 余韻のあと：上と下のボタンのならびを、ふわっと出す（町の表と「〜さんの番！」は、openingShow の中で） */
+body.hudin #mainBtn:disabled{opacity:1}      /* 出てくるとちゅうで、明るさが変わって見えないように */
 
 .gFlash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none !important}
 .gFlash.rainbow{background:radial-gradient(circle,#fff 0%,#ffe0f6 30%,#b6f0ff 55%,#fff3b0 75%,#ffffff 100%)}
@@ -3095,11 +3102,73 @@ window.SongFx = (() => {
     g.fillStyle = '#fff'; for (let i = 0; i < FW_N * 1.5; i++) ray(i, (x1, y1, x2, y2, k) => { g.globalAlpha = al * (.6 + .4 * Math.sin(a * 26 + k * 2.4)); g.beginPath(); g.arc(x2, y2, w * .42, 0, TAU); g.fill(); });      // 先っぽの光（ちらちら）
     g.globalAlpha = 1;
   }
+  /* ================= 余韻（歌のさいごの音のあと）=================
+     さいごの音（FIN＝54.2秒）で、まん中に大きな金色の花火が開く（そのまん中に「ゲームスタート！」の文字が出る）。光のすじは、しだれて落ちて、
+     金色の粉になって、ゆっくり降る。そのあいだ（AFT 秒）、盤を少し暗くして、金色がよく見えるようにする。さいごに、もとの明るさへもどって、粉も消える。
+     a＝さいごの音からの秒。すじや粉の場所・大きさ・またたき方は、番号から決める（いつ見ても同じ） */
+  const FIN = T0 + 135.5 * BEAT, AFT = 3.2, FIN_Y = 345, FIN_R = 560, FIN_N = 34, FIN_M = FIN_N * 1.5, FK = 6, DUST_N = 170;
+  const finE = v => v <= 0 ? 0 : 1 - Math.exp(-2.9 * v), finFall = v => v <= 0 ? 0 : 95 * Math.pow(v, 1.9);      // 広がり方／落ち方
+  const RC = new Float32Array(FIN_M), RS = new Float32Array(FIN_M), RL = new Float32Array(FIN_M);              // すじ1本ずつの、向き（よこ・たて。長さもこみ）と、しっぽの長さのちがい
+  for (let i = 0; i < FIN_M; i++){ const inner = i >= FIN_N, ang = (inner ? (i - FIN_N + .5) / (FIN_N / 2) : i / FIN_N) * TAU + (hs(91 + i * 1.7) - .5) * .16, f = FIN_R * (inner ? .55 : 1) * (.8 + .3 * hs(57 + i * 3.1));
+    RC[i] = Math.cos(ang) * f; RS[i] = Math.sin(ang) * f; RL[i] = .8 + .4 * hs(13 + i); }
+  const PX = new Float32Array(FK + 1), PY = new Float32Array(FK + 1), NX = new Float32Array(FK + 1), NY = new Float32Array(FK + 1);
+  /* 光のすじを1本、いまの形（path）に足す。通ってきた道にそった、先っぽが太くて丸く、しっぽが細い形。lag＝しっぽの長さ（秒）／w＝太さ／grow＝ふちどりのぶん */
+  function streak(i, a, lag, w, grow){
+    const L = lag * RL[i];
+    for (let k = 0; k <= FK; k++){ const at = a - L * (1 - k / FK), e = finE(at); PX[k] = RC[i] * e; PY[k] = FIN_Y + RS[i] * e + finFall(at); }
+    for (let k = 0; k <= FK; k++){ let tx = PX[Math.min(FK, k + 1)] - PX[Math.max(0, k - 1)], ty = PY[Math.min(FK, k + 1)] - PY[Math.max(0, k - 1)]; const d = Math.hypot(tx, ty); if (d < .01){ tx = RC[i]; ty = RS[i]; }
+      const n = Math.hypot(tx, ty) || 1; NX[k] = -ty / n; NY[k] = tx / n; }
+    const hw = k => w * (.1 + .4 * k / FK) + grow;
+    g.moveTo(PX[0] + NX[0] * hw(0), PY[0] + NY[0] * hw(0));
+    for (let k = 1; k <= FK; k++) g.lineTo(PX[k] + NX[k] * hw(k), PY[k] + NY[k] * hw(k));
+    const th = Math.atan2(NY[FK], NX[FK]); g.arc(PX[FK], PY[FK], hw(FK), th, th - PI, true);
+    for (let k = FK - 1; k >= 0; k--) g.lineTo(PX[k] - NX[k] * hw(k), PY[k] - NY[k] * hw(k));
+    g.closePath();
+  }
+  function finale(a){
+    const x = 0, y = FIN_Y, R = FIN_R;
+    if (a < 0){      // 上がっていく玉（開く 0.4秒前から）
+      const k = oC(lin(-.4, 0, a)), hy = y + 430 * (1 - k), ty = hy + 130 * (1 - k * .75);
+      g.lineCap = 'round'; g.globalAlpha = lin(-.4, -.32, a); g.strokeStyle = FW_DK + '.8)'; g.lineWidth = 19; g.beginPath(); g.moveTo(x, ty); g.lineTo(x, hy); g.stroke();
+      g.strokeStyle = '#fff0a8'; g.lineWidth = 11; g.beginPath(); g.moveTo(x, ty); g.lineTo(x, hy); g.stroke(); g.globalAlpha = 1; return; }
+    const al = lin(0, .05, a) * (1 - sm(1.45, 2.35, a)); if (a >= 2.35) return;      // 開いた しゅんかん（すじが、まだ点のあいだ）は、光だけを見せる
+    const fl = 1 - lin(0, .32, a), w = 17 - 7 * lin(0, 2.2, a), lag = (.16 + .34 * sm(.3, 1.5, a)) * (1 - .65 * sm(1.5, 2.3, a));
+    add(() => { G('gold', x, y + finFall(a) * .5, R * (1 + .7 * finE(a)), .5 * (1 - sm(1.45, 2.35, a))); G('white', x, y, R * 1.05 * fl, .85 * fl); });
+    const pass = (style, grow, sel) => { g.fillStyle = style; g.beginPath(); for (let i = 0; i < FIN_M; i++) if (sel(i)) streak(i, a, lag, w, grow); g.fill(); };
+    g.globalAlpha = al * al * .9; pass(FW_DK + '1)', 3.5, () => true);                                              // ふちどり
+    g.globalAlpha = al; pass('#ffcf33', 0, i => i >= FIN_N || i % 2 === 0); pass('#fff0a8', 0, i => i < FIN_N && i % 2 === 1);      // 金色と、うすい金色
+    const e = finE(a), dy = y + finFall(a); g.fillStyle = '#fff'; for (let i = 0; i < FIN_M; i++){ g.globalAlpha = al * (.6 + .4 * Math.sin(a * 24 + i * 2.4)); g.beginPath(); g.arc(RC[i] * e, dy + RS[i] * e, w * .3, 0, TAU); g.fill(); }      // 先っぽの光（ちらちら）
+    g.globalAlpha = 1;
+  }
+  const DP = new Float32Array(DUST_N * 4);      // 粉の よこ・たて・大きさ・明るさ（1コマごとに計算しなおす）
+  function dust(a){
+    const out = 1 - sm(AFT - .95, AFT - .1, a); if (a <= 0 || out <= 0) return; let n = 0;
+    for (let i = 0; i < DUST_N; i++){
+      const born = i % 5 < 3 ? .45 + 1.45 * hs(i * 3.3 + 1) : .25 + 1.4 * hs(i * 3.3 + 1), age = a - born; if (age <= 0) continue; let x0, y0;
+      if (i % 5 < 3){ const r = (i * 7) % FIN_M, e = finE(born); x0 = RC[r] * e + (hs(i * 4.7) - .5) * 28; y0 = FIN_Y + RS[r] * e + finFall(born) + (hs(i * 5.9) - .5) * 28; }      // 花火のすじから、こぼれる粉
+      else { x0 = (hs(i * 4.1 + 2) * 2 - 1) * (Wu / 2 + 30); y0 = -60 + 580 * hs(i * 5.3 + 4); }                                                                           // 画面ぜんたいに降る粉
+      const tw = .5 + .5 * Math.sin(age * (6 + 8 * hs(i * 2.3)) + i * 1.7), big = hs(i * 1.3 + 7);
+      DP[n++] = x0 + (8 + 16 * hs(i * 7.7)) * Math.sin(age * (1.6 + 2.2 * hs(i * 8.3)) + i) + (hs(i * 9.1) - .5) * 26 * age;
+      DP[n++] = y0 + (34 + 62 * hs(i * 6.1 + 3)) * age + 13 * age * age;
+      DP[n++] = big > .78 ? -(9 + 9 * big) * (.5 + .5 * tw) * lin(0, .3, age) : (3.2 + 8.3 * big * big) * (.78 + .22 * tw);      // マイナス＝星の形（大きさ）
+      DP[n++] = lin(0, .22, age) * out * (.42 + .58 * tw);
+    }
+    add(() => { for (let k = 0; k < n; k += 4){ const r = DP[k + 2]; G('gold', DP[k], DP[k + 1], r < 0 ? -r * 2.1 : r * 4.4, DP[k + 3] * .6); } });
+    const dots = (style, grow, mul, am) => { g.fillStyle = style; for (let k = 0; k < n; k += 4){ const r = DP[k + 2]; if (r < 0) continue; g.globalAlpha = Math.min(1, DP[k + 3] * am); g.beginPath(); g.arc(DP[k], DP[k + 1], r * mul + grow, 0, TAU); g.fill(); } };
+    dots(FW_DK + '1)', 2.4, 1, .62); dots('#ffd23f', 0, 1, 1.5); dots('#fffbe0', 0, .48, 1);
+    /* 星の形（4つのとがり）：大きい粉だけ。またたきは、大きさで */
+    const stars = (sc, grow) => { g.beginPath(); for (let k = 0; k < n; k += 4){ const r = -DP[k + 2] * sc; if (r <= 0) continue; const x = DP[k], y = DP[k + 1], ro = r + grow, ri = r * .22 + grow;
+      for (let j = 0; j < 8; j++){ const an = j * PI / 4 - PI / 2, rr = j % 2 ? ri : ro, px = x + Math.cos(an) * rr, py = y + Math.sin(an) * rr; j ? g.lineTo(px, py) : g.moveTo(px, py); } g.closePath(); } g.fill(); };
+    g.globalAlpha = out * .7; g.fillStyle = FW_DK + '1)'; stars(1, 3); g.globalAlpha = out; g.fillStyle = '#ffd84a'; stars(1, 0); g.fillStyle = '#fffdf0'; stars(.5, 0);
+    g.globalAlpha = 1;
+  }
   function scBoard(t){
     const v = 1 - lin(CUT.end, CUT.end + .45, t); if (v > 0){ g.globalAlpha = Math.pow(v, 1.8); g.fillStyle = '#fffdf2'; fill(); g.globalAlpha = 1; }
     if (REDUCE) return;
-    const hw = Wu / 2 - 150;
+    const hw = Wu / 2 - 150, af = t - FIN;      // af＝さいごの音からの秒
+    if (af > 0){ const d = .3 * sm(0, .7, af) * (1 - sm(AFT - .8, AFT - .05, af)); if (d > 0){ g.globalAlpha = d; g.fillStyle = '#060a28'; fill(); g.globalAlpha = 1; } }      // 余韻：盤を少し暗くする
     for (let i = 0; i < FWS.length; i++){ const f = FWS[i], a = t - (T0 + f[0] * BEAT); if (a > -.4 && a < 1.15) burst(f[1] * hw, f[2], a, f[3], f[4], i * 7.3 + 1); }
+    if (af > -.4){ finale(af); dust(af); }
   }
 
   /* ================= 1コマを描く ================= */
@@ -3145,7 +3214,7 @@ window.SongFx = (() => {
   }
   function finish(ok){ alive = false; if (raf) cancelAnimationFrame(raf); raf = 0; lyI = -2; if (ly){ ly.classList.remove('on'); ly.innerHTML = ''; } const f = done; done = null; if (f) f(ok); }
   return {
-    CUT, LINES, T0, BEAT,
+    CUT, LINES, T0, BEAT, FIN, AFT,      // FIN さいごの音（秒）／AFT 余韻の長さ（秒）
     init(canvas, lyricEl){ cv = canvas; g = cv.getContext('2d'); ly = lyricEl || null; },
     /* 出演する人を決める。list = [{k コマの名前, name, color, cpu, label コマの呼び名}] */
     cast(list){ cast = (list || []).filter(c => c && c.k).slice(0, 8); const vs = VILS(), all = cast.concat(vs.filter(v => v.k === 'girl'), vs.filter(v => v.k !== 'girl'));
@@ -8106,6 +8175,17 @@ function camFollow(p, dist = 1){
   const k = narrow ? dist * 1.25 : dist;
   cam.overview = false; cam.tlook.copy(p).add(new THREE.Vector3(0, .6, 0)); cam.tpos.copy(p).add(new THREE.Vector3(0, 8.5*k, 8.8*k));
 }
+/* カメラを、いまの場所から、決まっている行き先（cam.tpos・cam.tlook）まで、ms ミリ秒かけて、なめらかに動かす（動きだしと止まるところを、ゆっくり）。
+   オープニングの歌の余韻のあとで使う。とちゅうで、ほかのところが行き先を変えたら、そこでやめる（あとは、いつもの動きにまかせる） */
+function camGlide(ms){
+  if (reduceMotion || cam.overview) return;
+  const p0 = cam.pos.clone(), l0 = cam.look.clone(), p1 = cam.tpos.clone(), l1 = cam.tlook.clone(), t0 = performance.now(), mine = new THREE.Vector3();
+  const set = u => { cam.pos.lerpVectors(p0, p1, u); cam.look.lerpVectors(l0, l1, u); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look); mine.copy(cam.tpos); };
+  const step = () => { if (!cam.tpos.equals(mine)) return;
+    const u = Math.min(1, (performance.now() - t0) / ms); if (u >= 1){ cam.tpos.copy(p1); cam.tlook.copy(l1); return; }
+    set(u * u * (3 - 2 * u)); requestAnimationFrame(step); };
+  set(0); requestAnimationFrame(step);
+}
 resize(); camOverview(); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook);
 
 /* ================= ゲームの状態 ================= */
@@ -8445,10 +8525,11 @@ function banner(html, ms = 1400, opt){      // opt.key：この文字といっ�
   } catch(e){ console.error('banner', e); } });
   return bannerQ;
 }
-/* 大きな文字を出す。この文字の声は、文字と同時に始める（声が終わると解決する Promise を返す） */
-function splash(main, sub){
+/* 大きな文字を出す。この文字の声は、文字と同時に始める（声が終わると解決する Promise を返す）。
+   glow = true：オープニングの歌の余韻で使う。文字だけを長めに出して、ふわっと消す。声は流さない（呼んだ側が、あとで流す） */
+function splash(main, sub, glow){
   const s = $('#splash'); s.innerHTML = `<div class="sp-main dela">${main}</div>${sub ? `<div class="sp-sub">${sub}</div>` : ''}`;
-  s.classList.remove('on'); void s.offsetWidth; s.classList.add('on');
+  s.classList.remove('on', 'glow'); void s.offsetWidth; s.classList.add('on'); if (glow){ s.classList.add('glow'); return Promise.resolve(false); }
   const key = VO.keyOf(main); return key ? VO.cue(key) : Promise.resolve(false);
 }
 function roundSplash(){ splash(H.round >= H.maxRound ? 'ラストラウンド！' : `ラウンド ${H.round}`, `${H.round} / ${H.maxRound}`); sfx.jingle(); }
@@ -10198,7 +10279,7 @@ function setLogo(co){
 }
 async function openingShow(){
   showSkip = false; H.busy = true; renderHUD();
-  const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go', 'out');      // 'out' も外す（前のゲームのぶんが残っていると、2回めのゲームでロゴが出ない）
+  const O = $('#opening'); O.classList.remove('away', 'glow'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go', 'out');      // 'out' も外す（前のゲームのぶんが残っていると、2回めのゲームでロゴが出ない）
   const path = TOURS[MAPKEY] || TOURS.dungeon;
   const pc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[0]))), lc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[1])));
   cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
@@ -10242,9 +10323,22 @@ async function openingShow(){
     const b = pl.obj.userData.body; tween(500, t => { b.position.y = Math.sin(Math.PI * t) * .8; pl.obj.rotation.y = t * Math.PI * 2; }).then(() => { pl.obj.rotation.y = 0; });
     await sleep(H.auto ? 700 : 1350);
   }
-  card.classList.remove('on'); O.classList.remove('on'); $('#phase').style.visibility = ''; $('#floorTag').style.visibility = ''; document.body.classList.remove('showing');
+  card.classList.remove('on'); $('#phase').style.visibility = ''; $('#floorTag').style.visibility = '';
+  if (sung === 'end'){
+    /* 歌をさいごまで流したとき：「ゲームスタート！」は、さいごの音でもう出してある（songShow）。余韻が終わったここで、上下の黒い帯が開いて、ボタンや町の表がふわっと出る。
+       ゲームの曲も、ここから（歌のひびきが消えてから）。カメラは、1人めのところへ、なめらかに寄る。ノエルの説明は、ひと呼吸おいてから。ジングルは鳴らさない（歌のさいごの音が、その合図） */
+    O.classList.add('away'); document.body.classList.add('hudin'); document.body.classList.remove('showing');
+    [$('#town'), $('#phase'), $('#floorTag')].forEach(el => { try { el.animate([{opacity:0}, {opacity:1}], {duration:900, easing:'ease'}); } catch(e){} });      // 町の表・「〜さんの番！」も、ふわっと
+    setTimeout(() => O.classList.remove('on', 'away', 'glow'), 900); setTimeout(() => document.body.classList.remove('hudin'), 1500);
+    BGM.play('main'); if (H.players[0] && H.phase === 'roll') camFollow(H.players[0].obj.position, 1.1); else camOverview(); camGlide(2400);
+    renderHUD();
+    await sleep(550);
+    H.busy = false; VO.cue('start'); renderHUD();
+    return;
+  }
+  O.classList.remove('on'); document.body.classList.remove('showing');
   H.busy = false; camOverview();
-  splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`); BGM.play('main'); if (!sung || showSkip) sfx.jingle();      // 歌をさいごまで流したときは、歌のさいごの音がその合図になるので、ジングルは鳴らさない
+  splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`); BGM.play('main'); if (!sung || showSkip) sfx.jingle();      // 歌のとちゅうでスキップしたとき・歌を流さなかったときは、ジングルが合図
   setTimeout(() => { if (H.players[0] && H.phase === 'roll') camFollow(H.players[0].obj.position, 1.1); }, 1300);
   renderHUD();
 }
@@ -10255,8 +10349,10 @@ async function openingShow(){
      ・45.2秒〜：さいごの行「こがね町を 救え 数学の 力で」で、すごろく盤が出る。ロゴ（48.4秒まで）・カメラの旅・花火。
        花火は、絵（SongFx）が、盤の上にかさねて描く。拍に合わせて開く。音は出さない（歌をじゃましないため）。
        3Dの花火にしないのは、カメラが町の中をとびまわるので、画面の外で開いてしまうため
-     ・54.2秒（曲のさいごの音）で終わり →「ゲームスタート！」
-     ・右下の「スキップ」で、いつでもとばせる。オートのときは、歌を流さない（前からの、ロゴと曲だけのオープニング）
+     ・54.2秒（曲のさいごの音）：「ゲームスタート！」の文字と、まん中に大きな金色の花火。ここから余韻（SongFx.AFT＝3.2秒）。
+       余韻のあいだは、文字だけを出して、歌のひびきが消えるのを待つ。花火がしだれて、金色の粉がゆっくり降る（絵は SongFx）。カメラは、町ぜんたいが見えるところまで、ゆっくり引く。
+       ノエルの声・ゲームの曲・ボタンは、余韻のあと：上下の黒い帯が開いて、ボタンがふわっと出て、ゲームの曲が流れだす。声は、その 0.55秒あと（openingShow のさいご）
+     ・右下の「スキップ」で、いつでもとばせる（余韻のあいだは、ボタンを消してある）。オートのときは、歌を流さない（前からの、ロゴと曲だけのオープニング）
      ・曲が4秒たっても鳴りださないときも、歌をやめて、前からのオープニングにする
    ■ 記念写真（SONG.photo）・思い出カード（SONG.cards）：ゲームが終わったあとだけ。くわしくは photoSession・makeCards */
 const SONG = {op:'song_b', photo:'song_c', cards:'song_a'};
@@ -10280,7 +10376,7 @@ function songPrep(){
     SongFx.fonts(); } catch(e){ console.error('songPrep', e); }
 }
 async function songShow(O, pc, lc){
-  const name = SONG.op, logo = O.querySelector('.op-logo'), cv = $('#songFx'), C = SongFx.CUT;
+  const name = SONG.op, logo = O.querySelector('.op-logo'), cv = $('#songFx'), C = SongFx.CUT, AFT = SongFx.AFT;
   const playing = () => { try { const a = FM.current() === name ? FM._cur() : null; return !!(a && !a.paused && a.currentTime > 0); } catch(e){ return false; } };
   const logoGo = () => { logo.classList.remove('go', 'out'); void logo.offsetWidth; logo.classList.add('go'); };
   const off = () => { SongFx.stop(); cv.classList.remove('on'); };
@@ -10290,19 +10386,26 @@ async function songShow(O, pc, lc){
   if (showSkip){ off(); return true; }
   if (!playing()){ off(); return false; }
   cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
-  let fin = null;
-  SongFx.play({clock:songClock(name), until:SONG_END, marks:[
+  /* 余韻（さいごの音のあと AFT 秒）：「ゲームスタート！」の文字だけを出して、歌のひびきが消えるのを待つ。カメラは、町ぜんたいが見えるところまで、ゆっくり引く
+     （動きだしは静かに、止まるところは、もっと静かに）。花火と金色の粉は、絵（SongFx）が描く。声・ゲームの曲・ボタンは、余韻のあと（openingShow） */
+  const ov = MAP.overview, e0 = pc.getPoint(1), l0 = lc.getPoint(1), e1 = new THREE.Vector3(...(narrow ? ov.npos : ov.pos)), l1 = new THREE.Vector3(...(narrow ? ov.nlook : ov.look));
+  const pull = s => { const w = 1 - Math.pow(1 - Math.min(1, Math.max(0, s)), 1.4); return w * w * (3 - 2 * w); };
+  let fin = null, glow = false;
+  const glowGo = () => { glow = true; O.classList.add('glow'); splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`, true); };
+  SongFx.play({clock:songClock(name), until:SONG_END + AFT, marks:[
     [C.logo, logoGo], [4.1, () => logo.classList.add('out')],                                   // タイトル
     [C.end, logoGo],                                                                            // 「こがね町を 救え」：絵がすきとおって、すごろく盤が見える。まん中にロゴ
     [SongFx.T0 + 121 * SongFx.BEAT, () => logo.classList.add('out')],                           // ロゴは「数学の」のとちゅう（48.4秒）まで。あとは、町の中をとぶカメラと、地名を見せる（ロゴと地名が重ならないように）
+    [SONG_END, glowGo],                                                                         // さいごの音：「ゲームスタート！」。ここから余韻
   ]}).then(v => { fin = v; });
   while (fin === null){
     if (showSkip){ SongFx.stop(); break; }
     const t = SongFx.now();
-    if (t >= C.end){ const u = easeIO(Math.min(1, (t - C.end) / (SONG_END - C.end))); cam.tpos.copy(pc.getPoint(u)); cam.tlook.copy(lc.getPoint(u)); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook); }
+    if (t >= SONG_END){ if (!reduceMotion){ const u = pull((t - SONG_END) / AFT); cam.tpos.lerpVectors(e0, e1, u); cam.tlook.lerpVectors(l0, l1, u); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook); } }
+    else if (t >= C.end){ const u = easeIO(Math.min(1, (t - C.end) / (SONG_END - C.end))); cam.tpos.copy(pc.getPoint(u)); cam.tlook.copy(lc.getPoint(u)); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook); }
     await new Promise(r => requestAnimationFrame(r));
   }
-  off(); return true;
+  off(); return glow ? 'end' : true;      // 'end'＝さいごの音まで流れた（「ゲームスタート！」は、もう出した）／true＝そのまえに、スキップした
 }
 
 /* ================= ガチャのステージ ================= */
