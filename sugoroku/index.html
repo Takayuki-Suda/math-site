@@ -731,7 +731,8 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .sg-open:active{transform:translateY(6px);box-shadow:0 2px 0 #b07a10,0 6px 14px rgba(0,0,0,.4);animation:none}
 .sg-bill .b2{margin:clamp(12px,2.4vh,22px) 0 0;color:#ffe9c9;font-weight:700;font-size:clamp(12px,min(3.4vw,2vh),16px);text-shadow:0 1px 4px rgba(0,0,0,.7)}
 @media (orientation:landscape) and (max-height:500px){.sg-bill{top:20vh}.sg-bill .b1{font-size:clamp(28px,13vh,56px)}.sg-open{margin-top:10px;padding:8px 46px;font-size:22px}.sg-bill .b2{display:none}}
-/* スタート画面の「よびかけの動画」ボタン（看板のいちばん下）と、動画の画面。動画の画面は dialog なので、いちばん手前に出て、うしろのボタンは押せなくなる */
+/* スタート画面の「よびかけの動画」ボタン（看板のいちばん下）と、動画の画面。動画の画面は dialog なので、いちばん手前に出て、うしろのボタンは押せなくなる。
+   絵の出し方は2つ（そのまま＝video／描き写す＝canvas と自前の操作バー。class cv）。わけは、下の Yobi のところ */
 .sg-yobi{pointer-events:auto;display:block;margin:clamp(6px,1.3vh,14px) auto 0;padding:.42em 1.15em .46em;border-radius:999px;background:rgba(40,4,12,.72);border:1px solid rgba(255,226,140,.6);color:#ffe9a6;font-weight:700;font-size:clamp(13px,min(3.6vw,2.1vh),17px);line-height:1.3;letter-spacing:.04em;white-space:nowrap;transition:background .2s,border-color .2s}
 .sg-yobi::before{content:"";display:inline-block;margin-right:.55em;border-style:solid;border-width:.36em 0 .36em .62em;border-color:transparent transparent transparent currentColor}
 .sg-yobi span{font-size:.86em;letter-spacing:0;opacity:.85}
@@ -739,7 +740,7 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .sg-yobi:active{transform:translateY(2px)}
 .sg-yobi:focus-visible,.yobi-x:focus-visible{outline:2px solid #fff3c4;outline-offset:3px}
 @media (orientation:landscape) and (max-height:500px){.sg-yobi{position:absolute;left:calc(50% + 96px);bottom:12px;margin:0;font-size:12px}.sg-yobi span{display:none}}
-dialog.yobi{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#000;color:#fff;overflow:hidden;animation:yobiIn .3s ease both}
+dialog.yobi{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#000;color:#fff;overflow:hidden;animation:yobiIn .3s ease}
 dialog.yobi:not([open]){display:none}      /* dialog を知らない古いブラウザでも、閉じているあいだは画面に出さない */
 dialog.yobi.out{animation:yobiOut .3s ease both}
 dialog.yobi::backdrop{background:transparent}
@@ -755,6 +756,26 @@ dialog.yobi.idle .yobi-x:not(:focus-visible){opacity:0;pointer-events:none}
 .yobi-tip{display:none;position:absolute;left:0;right:0;top:calc(50% + 28.125vw + 12px);margin:0;text-align:center;font-weight:700;font-size:13px;color:#b9c4e8;pointer-events:none;transition:opacity .3s}
 @media (orientation:portrait) and (max-width:600px){.yobi-tip{display:block}}
 dialog.yobi.idle .yobi-tip{opacity:0}
+.yobi-in{position:absolute;inset:0;overflow:hidden;background:#000}      /* dialog は全画面にできないので、中身をこの箱に入れて、箱を全画面にする */
+.yobi canvas{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;outline:none}
+.yobi.cv canvas{display:block}
+.yobi.cv video{inset:auto;left:0;bottom:0;width:2px;height:2px;opacity:0;pointer-events:none}      /* 描き写すとき：動画そのものは、見えない大きさで流す */
+.yobi-big{display:none;position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(6,11,36,.6);pointer-events:none}
+.yobi-big::after{content:"";position:absolute;left:35px;top:24px;border-style:solid;border-width:20px 0 20px 30px;border-color:transparent transparent transparent #fff}
+.yobi.cv.paused .yobi-big{display:block}
+.yobi-bar{display:none;position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(92vw,880px);align-items:center;gap:12px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(6,11,36,.78);color:#eef2ff;font-weight:700;font-size:14px;transition:opacity .3s}
+.yobi.cv .yobi-bar{display:flex}
+.yobi.cv.bad .yobi-bar{display:none}
+.yobi-bar button{flex:none;display:grid;place-items:center;min-width:36px;height:30px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,.14);color:inherit;font-weight:700;font-size:13px;white-space:nowrap}
+.yobi-bar button:hover{background:rgba(255,255,255,.28)}
+.yobi-bar button:focus-visible,.yobi-bar input:focus-visible{outline:2px solid #fff3c4;outline-offset:2px}
+.yobi-bar span{flex:none;min-width:6.4em;text-align:center;font-variant-numeric:tabular-nums}
+.yobi-bar input{flex:1;min-width:0;height:18px;margin:0;accent-color:#ffd23f;cursor:pointer}
+#yobiPP i{display:block;box-sizing:border-box;width:12px;height:14px;border-left:4px solid currentColor;border-right:4px solid currentColor}
+.yobi.paused #yobiPP i{width:0;height:0;border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent currentColor}
+dialog.yobi.idle .yobi-bar:not(:focus-within){opacity:0;pointer-events:none}
+.yobi-dbg{position:absolute;left:10px;bottom:4px;margin:0;font:12px/1.2 ui-monospace,Consolas,monospace;color:#9aa4c4;pointer-events:none}
+.yobi-dbg:empty{display:none}
 @media (prefers-reduced-motion:reduce){dialog.yobi,dialog.yobi.out{animation:none}}
 /* ほかの町の人のふきだし・ノエルの字幕・大きな文字・さいごのボタン */
 .sg-bub{position:absolute;left:0;top:0;max-width:min(60vw,430px);padding:10px 16px;border-radius:18px;background:#fffdf5;border:3px solid #2a2145;color:#2a2145;font-weight:700;font-size:clamp(14px,min(3.9vw,2.6vh),22px);line-height:1.45;box-shadow:0 6px 0 rgba(0,0,0,.25);opacity:0;scale:.6;transform-origin:var(--tx,50%) 100%;transition:opacity .16s,scale .22s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
@@ -935,12 +956,21 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
 </div>
 
 <!-- ================= よびかけの動画（スタート画面のボタンから。動画は、押されるまで読みこまない） ================= -->
-<dialog class="yobi" id="yobi" aria-label="こがね町からのよびかけ（動画）">
+<dialog class="yobi" id="yobi" aria-label="こがね町からのよびかけ（動画）"><div class="yobi-in" id="yobiIn">
   <video id="yobiV" tabindex="0" playsinline preload="none" controls controlslist="nodownload noplaybackrate" disablepictureinpicture></video>
+  <canvas id="yobiC" tabindex="0" aria-label="動画の絵（押すと、止まる／流れる）"></canvas>
+  <div class="yobi-big" aria-hidden="true"></div>
   <p class="yobi-msg" id="yobiMsg" aria-live="polite"></p>
   <p class="yobi-tip" aria-hidden="true">画面を よこむきにすると、大きく見られます</p>
+  <div class="yobi-bar">
+    <button type="button" id="yobiPP" aria-label="止める／流す"><i></i></button>
+    <span id="yobiT">0:00 / 0:00</span>
+    <input type="range" id="yobiS" min="0" max="1000" value="0" aria-label="動画の場所">
+    <button type="button" id="yobiFS">全画面</button>
+  </div>
+  <p class="yobi-dbg" id="yobiD" aria-hidden="true"></p>
   <button type="button" class="yobi-x" id="yobiX" onclick="Yobi.close()">✕ とじる</button>
-</dialog>
+</div></dialog>
 
 <!-- ================= MODALS ================= -->
 <div class="modal" id="m-rules"><div class="mbox">
@@ -2477,6 +2507,7 @@ window.StageFx = (() => {
 
   /* ---------------- 1コマ ---------------- */
   function busy(){ return S.open < 1 || S.val < 1 || S.lift < 1 || visitors.length > 0 || Object.keys(tw).length > 0; }
+  function held(){ const y = document.getElementById('yobi'); return !!(y && y.open && y.classList.contains('on')); }      // よびかけの動画が流れているあいだ（Yobi が印をつける）。閉じるときに、Yobi が set({}) で起こす
   function frame(now){
     raf = 0; const raw = (now - tPrev) / 1000 || 0, dt = clamp(raw, 0, .05), rdt = clamp(raw, 0, .25); tPrev = now; T += dt;
     if (!layout()){ raf = requestAnimationFrame(frame); return; }
@@ -2485,7 +2516,7 @@ window.StageFx = (() => {
     if (S.lift < 1) drawPit(); else if (liftShown !== 1) gP.clearRect(0, 0, cvP.width, cvP.height);
     if (S.lift !== liftShown){ liftShown = S.lift; cvP.style.transform = `translateY(${(S.lift * (pitH + 4)).toFixed(1)}px)`; }
     const b = busy(); if (!b) show(false);                          // 使っていないあいだは、絵を消しておく（すごろく盤を重くしない）
-    if (b && !document.hidden) raf = requestAnimationFrame(frame);
+    if (b && !document.hidden && !held()) raf = requestAnimationFrame(frame);
   }
   function show(v){ if (shown === v) return; shown = v; cvC.style.display = cvP.style.display = v ? 'block' : 'none'; }
   function kick(){ if (!raf && cvC){ show(true); tPrev = performance.now(); raf = requestAnimationFrame(frame); } }
@@ -5773,21 +5804,75 @@ const Show = (() => {
 
 /* ================= よびかけの動画（スタート画面のボタン） =================
    幕が閉じているあいだだけ押せる。押すと、画面いっぱいに動画（video/yobikake.mp4）が流れる。動画は、押されるまで読みこまない。
-   終わったら、ひとりでにスタート画面へもどる。「✕ とじる」か Esc で、とちゅうでも閉じられる。ゲームの流れは変えない */
+   終わったら、ひとりでにスタート画面へもどる。「✕ とじる」か Esc で、とちゅうでも閉じられる。ゲームの流れは変えない。
+   絵の出し方は2つ：
+   ・そのまま（v）　：ブラウザの動画（video）を、ブラウザの操作バーごと見せる
+   ・描き写す（cv）：動画は見えない大きさで流し、その絵を canvas に描き写して見せる。操作バーは自前（止める・時間・つまみ・全画面）
+     Windows の Chrome・Edge は、こちら。動画の絵だけが途中で止まり、時計だけが進むことがあったため（2026-11-12）
+   ためすとき：URL に ?yobi=cv ／ ?yobi=v をつけると、出し方をえらべる。動画の画面で D キーを押すと、左下に調べる数字が出る */
 const Yobi = (() => {
-  const q = s => document.querySelector(s), SRC = 'video/yobikake.mp4';
+  const q = s => document.querySelector(s), SRC = 'video/yobikake.mp4', UA = navigator.userAgent;
   const FADE = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 300;
-  let st = 0, live = false, bad = false, inited = false, shutT = 0, idleT = 0, endT = 0;      // st：0＝閉じている　1＝開いている　2＝閉じるとちゅう
+  const PICK = (/[?&]yobi=(cv|v)\b/.exec(location.search) || [])[1];
+  const CV0 = PICK ? PICK === 'cv' : (/Windows NT/.test(UA) && /Chrome\/\d/.test(UA));
+  let st = 0, cv = false, live = false, bad = false, inited = false, drag = false, dbg = false;      // st：0＝閉じている　1＝開いている　2＝閉じるとちゅう
+  let shutT = 0, idleT = 0, endT = 0, holdT = 0, waitT = 0, wdT = 0, raf = 0, lastT = -1, draws = 0, kicks = 0, wdAt = -1, wdN = 0, tText = '';
   const msg = s => { q('#yobiMsg').textContent = s || ''; };
-  // 動画が流れていて、マウスもキーもさわっていないあいだは、「とじる」とカーソルをかくす（止めているとき・読みこみ中・読みこめなかったときは、出したまま）
-  function wake(){ const o = q('#yobi'); o.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (st === 1 && live && !bad) o.classList.add('idle'); }, 2600); }
+  const mmss = t => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+  // 動画が流れていて、マウスもキーもさわっていないあいだは、「とじる」・操作バー・カーソルをかくす（止めているとき・読みこみ中・読みこめなかったとき・つまみを動かしているときは、出したまま）
+  function wake(){ const o = q('#yobi'); o.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (st === 1 && live && !bad && !drag) o.classList.add('idle'); }, 2600); }
+  function toggle(){ const v = q('#yobiV'); if (st !== 1) return; if (v.ended) seek(0); if (v.paused || v.ended){ const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); }
+  function seek(t){ const v = q('#yobiV'), d = v.duration || 0; if (!d) return; clearTimeout(endT); try { v.currentTime = Math.min(Math.max(0, t), Math.max(0, d - .05)); } catch(e){} lastT = -1; }
+  function full(){ const o = q('#yobiIn'); try { if (document.fullscreenElement) document.exitFullscreen(); else if (o.requestFullscreen){ const p = o.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } } catch(e){} }
+  /* 描き写す（1コマごと）：動画のいまの絵を canvas に写し、操作バーの時間とつまみを合わせる */
+  function paint(){
+    raf = 0; if (!st || !cv) return; raf = requestAnimationFrame(paint);
+    const v = q('#yobiV'), c = q('#yobiC'), d = v.duration || 0, t = v.currentTime || 0;
+    if (v.readyState >= 2 && v.videoWidth){
+      if (c.width !== v.videoWidth || c.height !== v.videoHeight){ c.width = v.videoWidth; c.height = v.videoHeight; lastT = -1; }
+      if (t !== lastT){ lastT = t; try { c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); draws++; } catch(e){} }
+    }
+    const s = mmss(t) + ' / ' + mmss(d); if (s !== tText){ tText = s; q('#yobiT').textContent = s; }
+    if (!drag) q('#yobiS').value = d ? Math.round(t / d * 1000) : 0;
+    q('#yobi').classList.toggle('paused', v.paused && !v.ended && !bad);
+  }
+  /* 見はり（0.5秒ごと）：先まで読みこめているのに、時計が2秒進まなかったら、いまの場所から つなぎなおす（3回まで。そのとき、調べる数字も出す） */
+  function watch(){
+    if (st !== 1) return; const v = q('#yobiV'); if (dbg) note();
+    if (v.paused || v.ended || v.seeking || bad || document.visibilityState !== 'visible'){ wdN = 0; wdAt = -1; return; }
+    const t = v.currentTime; if (t !== wdAt){ wdAt = t; wdN = 0; return; }
+    let ahead = 0; for (let i = 0; i < v.buffered.length; i++) if (v.buffered.start(i) <= t + .05 && v.buffered.end(i) > t) ahead = v.buffered.end(i) - t;
+    if (ahead > 1 && ++wdN >= 4 && kicks < 3){ wdN = 0; kicks++; dbg = true; try { v.currentTime = t; } catch(e){} lastT = -1; note(); }
+  }
+  function note(){
+    const v = q('#yobiV'); let f = ''; try { const p = v.getVideoPlaybackQuality(); f = p.totalVideoFrames + '-' + p.droppedVideoFrames; } catch(e){}
+    q('#yobiD').textContent = dbg ? `${cv ? 'cv' : 'v'} t${v.currentTime.toFixed(2)} rs${v.readyState} ns${v.networkState} f${f} d${draws} k${kicks} ${v.paused ? 'pause' : 'play'} ${document.visibilityState}` : '';
+  }
+  function key(e){
+    wake(); const k = e.key, tag = e.target && e.target.tagName; if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (k === 'd' || k === 'D'){ dbg = !dbg; note(); return; }
+    if (!cv || st !== 1 || tag === 'BUTTON' || tag === 'INPUT') return;      // ボタンとつまみの上では、ブラウザにまかせる。「そのまま」のときは、ブラウザの動画にまかせる
+    if (k === ' ' || k === 'k' || k === 'K'){ e.preventDefault(); if (!e.repeat) toggle(); }
+    else if (k === 'ArrowLeft' || k === 'ArrowRight'){ e.preventDefault(); seek(q('#yobiV').currentTime + (k === 'ArrowLeft' ? -5 : 5)); }
+    else if (k === 'Home'){ e.preventDefault(); seek(0); }
+    else if (k === 'f' || k === 'F'){ e.preventDefault(); if (!e.repeat) full(); }
+  }
+  function setMode(c){ const o = q('#yobi'), v = q('#yobiV'); cv = !!c; o.classList.toggle('cv', cv); v.controls = !cv; v.tabIndex = cv ? -1 : 0; lastT = -1; tText = ''; if (cv && !raf) raf = requestAnimationFrame(paint); }
   function init(){
-    if (inited) return; inited = true; const o = q('#yobi'), v = q('#yobiV');
-    ['pointermove', 'pointerdown', 'keydown'].forEach(n => o.addEventListener(n, wake));
-    v.addEventListener('playing', () => { live = true; clearTimeout(endT); msg(''); wake(); });
-    ['pause', 'waiting', 'seeking'].forEach(n => v.addEventListener(n, () => { live = false; if (n === 'seeking') clearTimeout(endT); wake(); }));
+    if (inited) return; inited = true; const o = q('#yobi'), v = q('#yobiV'), s = q('#yobiS');
+    ['pointermove', 'pointerdown'].forEach(n => o.addEventListener(n, wake)); o.addEventListener('keydown', key);
+    v.addEventListener('playing', () => { live = true; clearTimeout(endT); clearTimeout(waitT); msg(''); wake(); });
+    ['pause', 'waiting', 'seeking'].forEach(n => v.addEventListener(n, () => { live = false; if (n === 'seeking') clearTimeout(endT);
+      if (n === 'waiting'){ clearTimeout(waitT); waitT = setTimeout(() => { if (st === 1 && !bad && !v.paused && v.readyState < 3) msg('動画を読みこんでいます…'); }, 700); }
+      wake(); }));
+    v.addEventListener('seeked', () => { lastT = -1; });
     v.addEventListener('ended', () => { live = false; wake(); clearTimeout(endT); endT = setTimeout(close, 900); });      // 終わったら、ひと呼吸おいて、ひとりでに閉じる
-    v.addEventListener('error', () => { if (st !== 1) return; live = false; bad = true; msg('動画を読みこめませんでした。通信を確かめて、もう一度ためしてください。'); wake(); });
+    v.addEventListener('error', () => { if (st !== 1) return; live = false; bad = true; o.classList.add('bad'); clearTimeout(waitT); msg('動画を読みこめませんでした。通信を確かめて、もう一度ためしてください。'); wake(); });
+    q('#yobiC').addEventListener('click', () => { if (cv) toggle(); }); q('#yobiPP').addEventListener('click', toggle); q('#yobiFS').addEventListener('click', full);
+    q('.yobi-bar').addEventListener('pointerup', () => setTimeout(() => { if (st === 1 && cv) try { q('#yobiC').focus({preventScroll: true}); } catch(e){} }, 0));      // マウスで操作バーを押したあとも、スペース・矢印キーが動画にきくように
+    s.addEventListener('pointerdown', () => { drag = true; }); ['pointerup', 'pointercancel', 'change', 'blur'].forEach(n => s.addEventListener(n, () => { drag = false; wake(); }));
+    s.addEventListener('input', () => { seek(s.value / 1000 * (v.duration || 0)); });
+    document.addEventListener('fullscreenchange', () => { q('#yobiFS').textContent = document.fullscreenElement ? 'もどす' : '全画面'; });
     o.addEventListener('cancel', e => { e.preventDefault(); close(); });      // Esc
     o.addEventListener('close', () => { if (st) tidy(); });
     addEventListener('hashchange', () => { if (st) tidy(); });      // すごろく盤や参加者の画面へ移ったら、すぐ閉じる
@@ -5795,24 +5880,31 @@ const Yobi = (() => {
   function open(){
     if (st || !Show.isPre()) return; const o = q('#yobi'), v = q('#yobiV');
     if (typeof o.showModal !== 'function'){ window.open(SRC, '_blank'); return; }      // とても古いブラウザ：動画だけを別のタブで開く
-    init(); st = 1; live = bad = false;
-    msg('動画を読みこんでいます…'); try { o.showModal(); } catch(e){ st = 0; msg(''); return; } wake();
-    v.src = SRC; try { v.focus({preventScroll: true}); } catch(e){}
-    const p = v.play(); if (p && p.catch) p.catch(() => { if (st === 1 && !v.error) msg(''); });      // ひとりでに始まらないブラウザでは、動画の ▶ を押してもらう
+    init(); st = 1; live = bad = drag = false; draws = kicks = wdN = 0; wdAt = -1;
+    msg('動画を読みこんでいます…'); try { o.showModal(); } catch(e){ st = 0; msg(''); return; }
+    setMode(CV0 && !!q('#yobiC').getContext); wake();
+    v.src = SRC; try { (cv ? q('#yobiC') : v).focus({preventScroll: true}); } catch(e){}
+    const p = v.play(); if (p && p.catch) p.catch(() => { if (st === 1 && !v.error) msg(''); });      // ひとりでに始まらないブラウザでは、▶ を押してもらう
+    clearInterval(wdT); wdT = setInterval(watch, 500);
+    clearTimeout(holdT); holdT = setTimeout(() => { if (st === 1) o.classList.add('on'); }, FADE + 80);      // 動画が出たら、うしろの幕とオーケストラの絵は休ませる（StageFx が、この印を見る）
   }
   /* 閉じる：ふわっと消してから片づける */
   function close(){
-    if (st !== 1) return; const o = q('#yobi'); clearTimeout(endT);
+    if (st !== 1) return; const o = q('#yobi'); clearTimeout(endT); clearTimeout(holdT);
+    o.classList.remove('on'); try { StageFx.set({}); } catch(e){}      // 幕とオーケストラを、また動かす
     if (!FADE || !o.open){ tidy(); return; }
     st = 2; try { q('#yobiV').pause(); } catch(e){} o.classList.remove('idle'); o.classList.add('out'); shutT = setTimeout(tidy, FADE);
   }
   /* 片づける：動画を止めて手ばなす（ゲームのあいだ、メモリを使わないように）。スタート画面は、もとのまま */
   function tidy(){
-    const o = q('#yobi'), v = q('#yobiV'); st = 0; live = false; clearTimeout(shutT); clearTimeout(idleT); clearTimeout(endT);
+    const o = q('#yobi'), v = q('#yobiV'), c = q('#yobiC'); st = 0; live = drag = dbg = false;
+    [shutT, idleT, endT, holdT, waitT].forEach(t => clearTimeout(t)); clearInterval(wdT); if (raf){ cancelAnimationFrame(raf); raf = 0; }
     try { const f = document.fullscreenElement; if (f && o.contains(f)) document.exitFullscreen().catch(() => {}); else if (v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); } catch(e){}      // 全画面で見ていたら、全画面もやめる
     try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){}
     try { if (o.open) o.close(); } catch(e){}
-    o.classList.remove('out', 'idle'); msg('');
+    o.classList.remove('out', 'idle', 'on', 'cv', 'paused', 'bad'); cv = false; v.controls = true; v.tabIndex = 0; msg(''); q('#yobiD').textContent = '';
+    try { c.width = 16; c.height = 9; } catch(e){}
+    try { StageFx.set({}); } catch(e){}
   }
   return {open, close, busy: () => st > 0};
 })();
