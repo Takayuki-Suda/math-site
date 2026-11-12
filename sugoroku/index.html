@@ -4804,7 +4804,7 @@ function courseSelHTML(){
   const btn = k => `<button type="button" class="copt ${c === k ? 'sel' : ''}" onclick="pPickCourse('${k}')"><span class="cic">${COURSES[k].ic}</span>${COURSES[k].name.replace(/（.*）/, '')}<small>${COURSES[k].name.match(/（(.*)）/) ? COURSES[k].name.match(/（(.*)）/)[1] : ''}</small></button>`;
   // 学校のコース（5つ）と、しごとの資格コース（3つ）を、2つの段に分けて出す
   return `<div class="csel">${COURSE_ORDER.filter(k => !COURSES[k].job).map(btn).join('')}</div>
-    <div class="cjobh">しごとの資格コース<small>資格試験に出る計算。協力モードでは、物語に見せ場があるよ</small></div>
+    <div class="cjobh">しごとの資格コース<small><span class="nobr">資格試験に出る計算。</span><span class="nobr">協力モードでは、</span><span class="nobr">物語に見せ場があるよ</span></small></div>
     <div class="csel job">${COURSE_ORDER.filter(k => COURSES[k].job).map(btn).join('')}</div>
     ${c ? `<div class="lsel">${LEVELS.map((L, i) => `<button type="button" class="lopt ${P.level === i ? 'sel' : ''}" onclick="pPickLevel(${i})">${L}<small>${LEVEL_NOTE[c][i].replace(/^(第[一二]種)/, '$1<wbr>').replace(/・/g, '・<wbr>')}</small></button>`).join('')}</div>
     <div class="cfield">${[1,2,3,4,5].map(t => `<span><i style="background:${TCOL[t]}"></i>${TOPICS[t]}：${COURSES[c].f[t]}</span>`).join('')}</div>` : '<div class="wsub" style="text-align:center;margin:4px 0 8px">まずコースをえらんでね</div>'}`;
@@ -5161,7 +5161,7 @@ function waitHTML(){
     <div class="pcd">
       <div class="pcd-row"><span class="pcd-v">${co ? pJobLine(me) : `⭐ ${me.stars || 0}`}</span><span class="pchips">${me.tickets ? `<span class="pchip2 gold">🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="pchip2">📍 ${esc(me.space)}</span>` : ''}</span></div>
       ${co ? `<div class="pcd-note">${JOBS[me.job] ? (me.vet ? JOBS[me.job].vd : JOBS[me.job].d) : `${NEWBIE.d}（${[1, 2, 3, 4, 5].map(t => `${CAT[t].ic}${TOPICS[t]}→${JOBS[TOPIC_JOB[t]].ic}`).join(' ')}）`}${pCareerTags(me) ? `<div class="wcar">${pCareerTags(me)}</div>` : ''}</div>` : ''}
-      ${co && PRO[me.course] ? `<div class="pcd-note ppro">${PRO[me.course].ic} あなたは <b>${PRO[me.course].nm}</b>。${PRO[me.course].role}役！</div>` : ''}
+      ${co && PRO[me.course] ? `<div class="pcd-note ppro"><span class="nobr">${PRO[me.course].ic} あなたは <b>${PRO[me.course].nm}</b>。</span>${phr(PRO[me.course].role + '役！')}</div>` : ''}
       <div class="pcd-row"><span class="pcd-k">${myCourse()}</span><button class="pmini" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
       ${lobby ? `<div class="pcd-row"><span class="pcd-k">コマ：${esc((CHAR_LIST[ck] || [''])[0])}</span><button class="pmini" onclick="pCharOpen()">コマを変える</button></div>` : ''}
     </div>
@@ -6808,7 +6808,7 @@ PGEN.joh = {
       const run = q => { const s = []; let last = null; ops.forEach(o => { if (o) s.push(o); else last = q ? s.shift() : s.pop(); }); return last; };
       const a = run(isQ); if (a === run(!isQ)) return null;
       const nm = o => o ? `${isQ ? 'enq' : 'push'} ${o}` : (isQ ? 'deq' : 'pop');
-      return one(`${isQ ? 'キュー（先に入れたものから、先に出す）' : 'スタック（あとに入れたものから、先に出す）'}に、次の順で操作をした。さいごの ${isQ ? 'deq' : 'pop'} で取り出されるデータは？${seqBox(ops.map(nm).join(' → '))}<small>${isQ ? 'enq 数：その数を入れる　　deq：データを 1 つ取り出す' : 'push 数：その数をつむ　　pop：データを 1 つ取り出す'}</small>`, a, `${isQ ? 'キューは、入れた順に出てくる（先入れ先出し）' : 'スタックは、いちばん上（さいごに入れて、まだ残っているもの）から出てくる（後入れ先出し）'}<br>順に追っていくと、さいごに取り出されるのは <span class="ans">${a}</span>`); },
+      return one(`${isQ ? 'キュー（先に入れたものから、先に出す）' : 'スタック（あとに入れたものから、先に出す）'}に、次の順で操作をした。さいごの ${isQ ? 'deq' : 'pop'} で取り出されるデータは？${seqBox(ops.map(nm).join(' → '))}<small>${isQ ? 'enq 数：その数を入れる<br>deq：データを 1 つ取り出す' : 'push 数：その数をつむ<br>pop：データを 1 つ取り出す'}</small>`, a, `${isQ ? 'キューは、入れた順に出てくる（先入れ先出し）' : 'スタックは、いちばん上（さいごに入れて、まだ残っているもの）から出てくる（後入れ先出し）'}<br>順に追っていくと、さいごに取り出されるのは <span class="ans">${a}</span>`); },
     function(){ const N = {A:[30, 92], B:[112, 32], C:[112, 152], D:[196, 32], E:[262, 92]}, es = [['A', 'B'], ['A', 'C'], ['B', 'C'], ['B', 'D'], ['C', 'D'], ['C', 'E'], ['D', 'E']].map(([u, v]) => [u, v, ri(1, 9)]);
       const w = (u, v) => { const e = es.find(x => (x[0] === u && x[1] === v) || (x[1] === u && x[0] === v)); return e ? e[2] : null; };
       // A から E までの道すじを、ぜんぶ数え上げる（同じ点は2回通らない）
@@ -6871,7 +6871,7 @@ PGEN.kan = {
       return one(`ある患者の、1 日の水分をしらべた。<small>入った量：飲み水 ${drink} mL、食事 ${food} mL${iv ? `、点滴 ${iv} mL` : ''}<br>出た量：尿 ${urine} mL、便 ${stool} mL、不感蒸泄（皮ふや息から出る水分）${ins} mL</small>水分出納（入った量 − 出た量）は何 mL？<small>出た量のほうが多いときは、マイナスで答えよう</small>`, bal, `入った量は ${[drink, food].concat(iv ? [iv] : []).join(' + ')} = ${inn} mL<br>出た量は ${urine} + ${stool} + ${ins} = ${out} mL<br>${inn} ${M} ${out} = <span class="ans">${f(bal)}</span> mL`, {post:'mL'}); },
     function(){ const m = ri(1, 12), d = ri(1, 21), em = m > 3 ? m - 3 : m + 9, ed = d + 7;
       return {q:`最終月経の初日が ${m} 月 ${d} 日だった。ネーゲレの計算法で、分娩予定日を求めよう。<small>ネーゲレの計算法：月は、3 を引く（引けないときは、9 を足す）。日は、7 を足す</small>`, fields:[{k:'m', post:'月'}, {k:'d', post:'日'}], ans:{m:em, d:ed}, ansText:`${em} 月 ${ed} 日`,
-        ex:`月：${m > 3 ? `${m} ${M} 3 = ${em}` : `${m} + 9 = ${em}`}　　日：${d} + 7 = ${ed}<br><span class="ans">${em} 月 ${ed} 日</span>`}; },
+        ex:`月：${m > 3 ? `${m} ${M} 3 = ${em}` : `${m} + 9 = ${em}`}<br>日：${d} + 7 = ${ed}<br><span class="ans">${em} 月 ${ed} 日</span>`}; },
     function(){ const p = pick([40, 50, 60, 70, 80]), fat = pick([30, 40, 50, 60]), c = pick([200, 250, 300, 350]), E = p * 4 + fat * 9 + c * 4;
       return one(`ある食事にふくまれる栄養素は、たんぱく質 ${p} g、脂質 ${fat} g、炭水化物 ${c} g だった。エネルギーは何 kcal？<small>1 g あたり、たんぱく質 4 kcal、脂質 9 kcal、炭水化物 4 kcal</small>`, E, `${p} × 4 + ${fat} × 9 + ${c} × 4 = ${p * 4} + ${fat * 9} + ${c * 4} = <span class="ans">${E}</span> kcal`, {post:'kcal'}); },
     function(){ const w = pick([6, 12, 18, 24, 30]), per = pick([80, 100, 120]), day = w * per, hr = day / 24;
@@ -6943,7 +6943,7 @@ PGEN.kan = {
       const s = rd(whole[1] + halves[0][1] + halves[1][1]);
       return one(`大人の熱傷（やけど）の広さを、「9 の法則」で求める。${whole[0]}の全体と、${halves.map(x => x[0]).join('と、')}だけをやけどした。熱傷面積は何 %？<small>${BURN9_NOTE}。頭・うで・あしの「前がわだけ」「うしろがわだけ」は、その半分</small>`, s, `${whole[0]} ${whole[1]} + ${halves.map(x => `${x[0]} ${x[1]}`).join(' + ')} = <span class="ans">${s}</span> %`, {post:'%'}); },
     function(){ const d2 = pick([10, 20, 30, 40]), d3 = pick([10, 20, 30]), age = ri(20, 80), bi = d3 + d2 / 2;
-      return one(`${age} 歳の患者の熱傷（やけど）は、Ⅱ度が ${d2} %、Ⅲ度が ${d3} % だった。熱傷予後指数は？<small>熱傷指数 ＝ Ⅲ度の面積(%) ＋ Ⅱ度の面積(%) × 1/2　　熱傷予後指数 ＝ 熱傷指数 ＋ 年齢</small>`, bi + age, `熱傷指数は ${d3} + ${d2} × 1/2 = ${bi}<br>${bi} + ${age} = <span class="ans">${bi + age}</span>`); },
+      return one(`${age} 歳の患者の熱傷（やけど）は、Ⅱ度が ${d2} %、Ⅲ度が ${d3} % だった。熱傷予後指数は？<small>熱傷指数 ＝ Ⅲ度の面積(%) ＋ Ⅱ度の面積(%) × 1/2<br>熱傷予後指数 ＝ 熱傷指数 ＋ 年齢</small>`, bi + age, `熱傷指数は ${d3} + ${d2} × 1/2 = ${bi}<br>${bi} + ${age} = <span class="ans">${bi + age}</span>`); },
     function(){ const [h, w, s] = pick([[180, 80, 2], [150, 54, 1.5], [160, 57.6, 1.6], [170, 61.2, 1.7], [180, 64.8, 1.8], [120, 30, 1], [125, 28.8, 1], [90, 10, 0.5], [160, 90, 2]]), per = pick([50, 100, 200]);
       return one(`身長 ${h} cm、体重 ${w} kg の患者に、「体表面積 1 m² あたり ${per} mg」の薬を使う。薬の量は何 mg？<small>体表面積(m²) ＝ √(身長(cm) × 体重(kg) ÷ 3600)</small>`, rd(s * per), `身長 × 体重 ÷ 3600 = ${rd(h * w)} ÷ 3600 = ${rd(h * w / 3600)}<br>体表面積は √${rd(h * w / 3600)} = ${s} m²<br>${s} × ${per} = <span class="ans">${rd(s * per)}</span> mg`, {post:'mg'}); },
   ],
@@ -6960,14 +6960,14 @@ PGEN.kan = {
     function(){ const n = pick([200, 400, 500, 800, 1000]), r = pick([2, 4, 5, 8, 10, 15]), c = n * r / 100; if (!Number.isInteger(c)) return null;
       return one(`ある学校の ${n} 人のうち、この 1 週間で、新しくインフルエンザにかかった人が ${c} 人いた。この 1 週間の罹患率（りかんりつ）は何 %？<small>罹患率 ＝ ある期間に、新しく病気にかかった人の数 ÷ 人口</small>`, r, `${c} ÷ ${n} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
     function(){ const D = pick([20, 40, 50, 100]), N = pick([100, 200, 400, 500]), se = pick([70, 80, 90, 95]), sp = pick([80, 90, 95]), a = D * se / 100, d = N * sp / 100; if (!Number.isInteger(a) || !Number.isInteger(d) || se === sp) return null; const b = D - a, c = N - d;
-      return {q:`ある検査の結果は、次の表のとおりだった。この検査の感度と特異度は、それぞれ何 %？${tbl([['', '陽性', '陰性'], ['病気あり', a, b], ['病気なし', c, d]])}<small>感度：病気のある人を、正しく陽性とする割合　　特異度：病気のない人を、正しく陰性とする割合</small>`, fields:[{k:'se', pre:'感度', post:'%'}, {k:'sp', pre:'特異度', post:'%'}], ans:{se, sp}, ansText:`感度 ${se} %、特異度 ${sp} %`,
+      return {q:`ある検査の結果は、次の表のとおりだった。この検査の感度と特異度は、それぞれ何 %？${tbl([['', '陽性', '陰性'], ['病気あり', a, b], ['病気なし', c, d]])}<small>感度：病気のある人を、正しく陽性とする割合<br>特異度：病気のない人を、正しく陰性とする割合</small>`, fields:[{k:'se', pre:'感度', post:'%'}, {k:'sp', pre:'特異度', post:'%'}], ans:{se, sp}, ansText:`感度 ${se} %、特異度 ${sp} %`,
         ex:`病気のある人は ${a} + ${b} = ${D} 人。感度は ${a} ÷ ${D} × 100 = <span class="ans">${se}</span> %<br>病気のない人は ${c} + ${d} = ${N} 人。特異度は ${d} ÷ ${N} × 100 = <span class="ans">${sp}</span> %`}; },
     function(){ const a = pick([40, 45, 60, 80, 90]), c = pick([10, 20, 30, 60, 90, 120]), b = pick([5, 10, 20]), d = pick([400, 500, 800, 900]), ppv = rd(a / (a + c) * 100); if (!Number.isInteger(ppv)) return null;
       return one(`ある検査の結果は、次の表のとおりだった。陽性の人のうち、ほんとうに病気のある人の割合（陽性的中率）は何 %？${tbl([['', '陽性', '陰性'], ['病気あり', a, b], ['病気なし', c, d]])}`, ppv, `陽性の人は ${a} + ${c} = ${a + c} 人。そのうち、病気のある人は ${a} 人<br>${a} ÷ ${a + c} × 100 = <span class="ans">${ppv}</span> %`, {post:'%'}); },
     function(){ const n1 = pick([100, 200, 500, 1000]), n0 = pick([100, 200, 500, 1000]), r0 = pick([1, 2, 4, 5]), rr = pick([1.5, 2, 3, 4, 5]), r1 = r0 * rr, c1 = n1 * r1 / 100, c0 = n0 * r0 / 100; if (!Number.isInteger(c1) || !Number.isInteger(c0) || r1 > 40) return null;
-      return one(`タバコを吸う ${n1} 人と、吸わない ${n0} 人を、10 年間しらべた。ある病気にかかったのは、吸う人のうち ${c1} 人、吸わない人のうち ${c0} 人だった。タバコを吸う人は、吸わない人の何倍、この病気にかかりやすい？（相対危険）`, rr, `吸う人：${c1} ÷ ${n1} = ${rd(c1 / n1)}　　吸わない人：${c0} ÷ ${n0} = ${rd(c0 / n0)}<br>相対危険 ＝ ${rd(c1 / n1)} ÷ ${rd(c0 / n0)} = <span class="ans">${rr}</span> 倍`, {post:'倍'}); },
+      return one(`タバコを吸う ${n1} 人と、吸わない ${n0} 人を、10 年間しらべた。ある病気にかかったのは、吸う人のうち ${c1} 人、吸わない人のうち ${c0} 人だった。タバコを吸う人は、吸わない人の何倍、この病気にかかりやすい？（相対危険）`, rr, `吸う人：${c1} ÷ ${n1} = ${rd(c1 / n1)}<br>吸わない人：${c0} ÷ ${n0} = ${rd(c0 / n0)}<br>相対危険 ＝ ${rd(c1 / n1)} ÷ ${rd(c0 / n0)} = <span class="ans">${rr}</span> 倍`, {post:'倍'}); },
     function(){ const prev = pick([1, 2, 5, 10]), se = pick([80, 90]), sp = pick([80, 90, 95]), N = 10000, D = N * prev / 100, tp = D * se / 100, fp = (N - D) * (100 - sp) / 100, v = Q(tp, tp + fp);
-      return one(`ある病気の人は、人口の ${prev} % である。この病気の検査は、感度が ${se} %、特異度が ${sp} % である。この検査で陽性になった人が、ほんとうに病気である確率は？<small>分数で答えよう。感度：病気のある人が、陽性になる割合　　特異度：病気のない人が、陰性になる割合</small>`, v, `${N} 人で考える。病気のある人は ${D} 人で、そのうち陽性は ${D} × ${se / 100} = ${tp} 人<br>病気のない人は ${N - D} 人で、そのうち陽性は ${N - D} × ${rd((100 - sp) / 100)} = ${fp} 人<br>${tp} ÷ (${tp} + ${fp}) = <span class="ans">${frq(v)}</span>${fp > tp ? '<br>陽性でも、病気でない人のほうが多い。まれな病気の検査では、よく起きる' : ''}`, {frac:true}); },
+      return one(`ある病気の人は、人口の ${prev} % である。この病気の検査は、感度が ${se} %、特異度が ${sp} % である。この検査で陽性になった人が、ほんとうに病気である確率は？<small>分数で答えよう<br>感度：病気のある人が、陽性になる割合<br>特異度：病気のない人が、陰性になる割合</small>`, v, `${N} 人で考える。病気のある人は ${D} 人で、そのうち陽性は ${D} × ${se / 100} = ${tp} 人<br>病気のない人は ${N - D} 人で、そのうち陽性は ${N - D} × ${rd((100 - sp) / 100)} = ${fp} 人<br>${tp} ÷ (${tp} + ${fp}) = <span class="ans">${frq(v)}</span>${fp > tp ? '<br>陽性でも、病気でない人のほうが多い。まれな病気の検査では、よく起きる' : ''}`, {frac:true}); },
   ],
 };
 
@@ -11343,7 +11343,7 @@ function coopResultsHTML(){
     <div class="hap hbig"><i style="width:${h}%"></i><b>😊 幸せ度 ${h} / 100</b></div>
     <div class="cr-sub">💰 のこった予算 ${fmtYen(S.budget)}　／　ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}</div>
     <div class="cr-projs">${PROJECTS.map(p => `<div class="crp ${S.lv[p.id] >= 3 ? 'done' : S.lv[p.id] ? 'some' : ''}"><span>${p.ic}</span><b>${p.name}</b><span class="pips">${[0,1,2].map(i => `<i class="${i < S.lv[p.id] ? 'on' : ''}"></i>`).join('')}</span><small>${S.lv[p.id] ? p.lv[S.lv[p.id] - 1] : 'まだ'}</small></div>`).join('')}</div>
-    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}${(pl.exp || []).length ? `　🎓 ${pl.exp.map(j => '元' + JOBS[j].short).join('・')}` : ''}</span></div><div class="hero">${x.t}</div>${x.pro ? `<div class="hero pro">${x.pro}</div>` : ''}<div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
+    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}${(pl.exp || []).length ? `　🎓 ${pl.exp.map(j => '元' + JOBS[j].short).join('・')}` : ''}</span></div><div class="hero">${x.t}</div>${x.pro ? `<div class="hero pro"><span class="nobr">${x.pro.split('：')[0]}：</span>${phr(x.deed)}</div>` : ''}<div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
     <div class="cr-math">💡 こがね町の名前は「黄金比（おうごんひ）」から。1 : 1.618… という、自然や建物にかくれている美しい比です</div></div>`;
 }
 
