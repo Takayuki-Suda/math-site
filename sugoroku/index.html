@@ -731,6 +731,31 @@ body.showing .htop,body.showing .strip{opacity:0;pointer-events:none}
 .sg-open:active{transform:translateY(6px);box-shadow:0 2px 0 #b07a10,0 6px 14px rgba(0,0,0,.4);animation:none}
 .sg-bill .b2{margin:clamp(12px,2.4vh,22px) 0 0;color:#ffe9c9;font-weight:700;font-size:clamp(12px,min(3.4vw,2vh),16px);text-shadow:0 1px 4px rgba(0,0,0,.7)}
 @media (orientation:landscape) and (max-height:500px){.sg-bill{top:20vh}.sg-bill .b1{font-size:clamp(28px,13vh,56px)}.sg-open{margin-top:10px;padding:8px 46px;font-size:22px}.sg-bill .b2{display:none}}
+/* スタート画面の「よびかけの動画」ボタン（看板のいちばん下）と、動画の画面。動画の画面は dialog なので、いちばん手前に出て、うしろのボタンは押せなくなる */
+.sg-yobi{pointer-events:auto;display:block;margin:clamp(6px,1.3vh,14px) auto 0;padding:.42em 1.15em .46em;border-radius:999px;background:rgba(40,4,12,.72);border:1px solid rgba(255,226,140,.6);color:#ffe9a6;font-weight:700;font-size:clamp(13px,min(3.6vw,2.1vh),17px);line-height:1.3;letter-spacing:.04em;white-space:nowrap;transition:background .2s,border-color .2s}
+.sg-yobi::before{content:"";display:inline-block;margin-right:.55em;border-style:solid;border-width:.36em 0 .36em .62em;border-color:transparent transparent transparent currentColor}
+.sg-yobi span{font-size:.86em;letter-spacing:0;opacity:.85}
+.sg-yobi:hover{background:rgba(74,10,24,.88);border-color:#ffe28c}
+.sg-yobi:active{transform:translateY(2px)}
+.sg-yobi:focus-visible,.yobi-x:focus-visible{outline:2px solid #fff3c4;outline-offset:3px}
+@media (orientation:landscape) and (max-height:500px){.sg-yobi{position:absolute;left:calc(50% + 96px);bottom:12px;margin:0;font-size:12px}.sg-yobi span{display:none}}
+dialog.yobi{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#000;color:#fff;overflow:hidden;animation:yobiIn .3s ease both}
+dialog.yobi:not([open]){display:none}      /* dialog を知らない古いブラウザでも、閉じているあいだは画面に出さない */
+dialog.yobi.out{animation:yobiOut .3s ease both}
+dialog.yobi::backdrop{background:transparent}
+@keyframes yobiIn{from{opacity:0}to{opacity:1}}
+@keyframes yobiOut{from{opacity:1}to{opacity:0}}
+.yobi video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;outline:none}
+.yobi-msg{position:absolute;left:50%;top:calc(50% + 52px);transform:translateX(-50%);width:min(92vw,640px);margin:0;text-align:center;font-weight:700;font-size:clamp(15px,2.4vh,20px);line-height:1.5;color:#ffe9c9;pointer-events:none}
+.yobi-msg:empty{display:none}
+.yobi-x{position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));padding:.5em 1.15em;border-radius:999px;border:1px solid rgba(255,255,255,.45);background:rgba(6,11,36,.72);color:#eef2ff;font-weight:700;font-size:clamp(14px,1.7vh,18px);line-height:1.3;transition:opacity .3s,background .2s}
+.yobi-x:hover{background:rgba(34,46,104,.92)}
+dialog.yobi.idle,dialog.yobi.idle video{cursor:none}
+dialog.yobi.idle .yobi-x:not(:focus-visible){opacity:0;pointer-events:none}
+.yobi-tip{display:none;position:absolute;left:0;right:0;top:calc(50% + 28.125vw + 12px);margin:0;text-align:center;font-weight:700;font-size:13px;color:#b9c4e8;pointer-events:none;transition:opacity .3s}
+@media (orientation:portrait) and (max-width:600px){.yobi-tip{display:block}}
+dialog.yobi.idle .yobi-tip{opacity:0}
+@media (prefers-reduced-motion:reduce){dialog.yobi,dialog.yobi.out{animation:none}}
 /* ほかの町の人のふきだし・ノエルの字幕・大きな文字・さいごのボタン */
 .sg-bub{position:absolute;left:0;top:0;max-width:min(60vw,430px);padding:10px 16px;border-radius:18px;background:#fffdf5;border:3px solid #2a2145;color:#2a2145;font-weight:700;font-size:clamp(14px,min(3.9vw,2.6vh),22px);line-height:1.45;box-shadow:0 6px 0 rgba(0,0,0,.25);opacity:0;scale:.6;transform-origin:var(--tx,50%) 100%;transition:opacity .16s,scale .22s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
 .sg-bub.on{opacity:1;scale:1}
@@ -900,6 +925,7 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
     <div class="b1 dela">こがね町を救え！</div>
     <button class="sg-open dela" id="sgOpen" onclick="Show.open()">開演</button>
     <p class="b2">ボタンを押すと、幕が開きます（音が出ます）</p>
+    <button type="button" class="sg-yobi" id="sgYobi" onclick="Yobi.open()" title="こがね町のみんなからの、よびかけの動画が流れます（音が出ます）">よびかけの動画<span>（約1分）</span></button>
   </div>
   <div class="sg-vo" id="sgVo"></div>
   <div class="sg-big dela" id="sgBig"></div>
@@ -907,6 +933,14 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   <div class="sg-chip" id="sgChip"></div>
   <button class="sg-quit" id="sgQuit" onclick="Show.quit()" title="エンディングをやめて、結果にもどる">✕ とじる</button>
 </div>
+
+<!-- ================= よびかけの動画（スタート画面のボタンから。動画は、押されるまで読みこまない） ================= -->
+<dialog class="yobi" id="yobi" aria-label="こがね町からのよびかけ（動画）">
+  <video id="yobiV" tabindex="0" playsinline preload="none" controls controlslist="nodownload noplaybackrate" disablepictureinpicture></video>
+  <p class="yobi-msg" id="yobiMsg" aria-live="polite"></p>
+  <p class="yobi-tip" aria-hidden="true">画面を よこむきにすると、大きく見られます</p>
+  <button type="button" class="yobi-x" id="yobiX" onclick="Yobi.close()">✕ とじる</button>
+</dialog>
 
 <!-- ================= MODALS ================= -->
 <div class="modal" id="m-rules"><div class="mbox">
@@ -5735,6 +5769,52 @@ const Show = (() => {
     StageFx.music(null); StageFx.clearVisitors(); StageFx.set({open: 1, val: 1, lift: 1}); if (f) f(); }
   return {start, open, leave, begin, quit, again, alive, wait, clock, eio, big, vo, chip, bubble, unbubble, say, roll, rollAt, ROLL,
     endButtons(v){ q('#sgEnd').classList.toggle('on', !!v); }, hideRoll(){ q('#endRoll').classList.remove('on'); }, busy: () => on, isPre: () => pre};
+})();
+
+/* ================= よびかけの動画（スタート画面のボタン） =================
+   幕が閉じているあいだだけ押せる。押すと、画面いっぱいに動画（video/yobikake.mp4）が流れる。動画は、押されるまで読みこまない。
+   終わったら、ひとりでにスタート画面へもどる。「✕ とじる」か Esc で、とちゅうでも閉じられる。ゲームの流れは変えない */
+const Yobi = (() => {
+  const q = s => document.querySelector(s), SRC = 'video/yobikake.mp4';
+  const FADE = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 300;
+  let st = 0, live = false, bad = false, inited = false, shutT = 0, idleT = 0, endT = 0;      // st：0＝閉じている　1＝開いている　2＝閉じるとちゅう
+  const msg = s => { q('#yobiMsg').textContent = s || ''; };
+  // 動画が流れていて、マウスもキーもさわっていないあいだは、「とじる」とカーソルをかくす（止めているとき・読みこみ中・読みこめなかったときは、出したまま）
+  function wake(){ const o = q('#yobi'); o.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (st === 1 && live && !bad) o.classList.add('idle'); }, 2600); }
+  function init(){
+    if (inited) return; inited = true; const o = q('#yobi'), v = q('#yobiV');
+    ['pointermove', 'pointerdown', 'keydown'].forEach(n => o.addEventListener(n, wake));
+    v.addEventListener('playing', () => { live = true; clearTimeout(endT); msg(''); wake(); });
+    ['pause', 'waiting', 'seeking'].forEach(n => v.addEventListener(n, () => { live = false; if (n === 'seeking') clearTimeout(endT); wake(); }));
+    v.addEventListener('ended', () => { live = false; wake(); clearTimeout(endT); endT = setTimeout(close, 900); });      // 終わったら、ひと呼吸おいて、ひとりでに閉じる
+    v.addEventListener('error', () => { if (st !== 1) return; live = false; bad = true; msg('動画を読みこめませんでした。通信を確かめて、もう一度ためしてください。'); wake(); });
+    o.addEventListener('cancel', e => { e.preventDefault(); close(); });      // Esc
+    o.addEventListener('close', () => { if (st) tidy(); });
+    addEventListener('hashchange', () => { if (st) tidy(); });      // すごろく盤や参加者の画面へ移ったら、すぐ閉じる
+  }
+  function open(){
+    if (st || !Show.isPre()) return; const o = q('#yobi'), v = q('#yobiV');
+    if (typeof o.showModal !== 'function'){ window.open(SRC, '_blank'); return; }      // とても古いブラウザ：動画だけを別のタブで開く
+    init(); st = 1; live = bad = false;
+    msg('動画を読みこんでいます…'); try { o.showModal(); } catch(e){ st = 0; msg(''); return; } wake();
+    v.src = SRC; try { v.focus({preventScroll: true}); } catch(e){}
+    const p = v.play(); if (p && p.catch) p.catch(() => { if (st === 1 && !v.error) msg(''); });      // ひとりでに始まらないブラウザでは、動画の ▶ を押してもらう
+  }
+  /* 閉じる：ふわっと消してから片づける */
+  function close(){
+    if (st !== 1) return; const o = q('#yobi'); clearTimeout(endT);
+    if (!FADE || !o.open){ tidy(); return; }
+    st = 2; try { q('#yobiV').pause(); } catch(e){} o.classList.remove('idle'); o.classList.add('out'); shutT = setTimeout(tidy, FADE);
+  }
+  /* 片づける：動画を止めて手ばなす（ゲームのあいだ、メモリを使わないように）。スタート画面は、もとのまま */
+  function tidy(){
+    const o = q('#yobi'), v = q('#yobiV'); st = 0; live = false; clearTimeout(shutT); clearTimeout(idleT); clearTimeout(endT);
+    try { const f = document.fullscreenElement; if (f && o.contains(f)) document.exitFullscreen().catch(() => {}); else if (v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); } catch(e){}      // 全画面で見ていたら、全画面もやめる
+    try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){}
+    try { if (o.open) o.close(); } catch(e){}
+    o.classList.remove('out', 'idle'); msg('');
+  }
+  return {open, close, busy: () => st > 0};
 })();
 
 route();
