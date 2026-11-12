@@ -385,11 +385,6 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 }
 /* ---------- play ---------- */
 .play{max-width:520px;margin:0 auto;padding:14px 14px 40px}
-.phead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.phead .who{font-weight:900;font-size:18px}
-.phead .score{font-size:14px;color:var(--gold);font-weight:700;text-align:right}
-.pcard{background:linear-gradient(180deg,#1b3170,#15275a);border:2px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.pcard h2{margin:0 0 8px;font-size:20px}
 .pin{width:100%;font-family:inherit;font-size:18px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--snow);margin:4px 0 14px}
 .course{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .course .opt{flex:1;min-width:120px;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--bg);text-align:center;font-weight:700}
@@ -480,11 +475,6 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 .jobpick small{display:block;font-size:12px;color:var(--muted);line-height:1.4}
 .jobpick em{font-style:normal;font-size:11px;color:var(--gold);white-space:nowrap}
 .jobpick.sel{border-color:var(--gold);background:#2a2a14}
-.wtown{margin:8px 0;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05)}
-.wt1{font-size:15px;color:var(--gold);margin-bottom:2px}
-.wt1 b{color:#fff}
-.wtp{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;margin-top:6px;font-size:16px}
-.wtp>span{display:inline-flex;align-items:center;gap:3px}
 .vgrid{display:grid;gap:6px}
 .vopt{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 12px;border-radius:14px;border:2px solid var(--line);background:linear-gradient(180deg,#22397d,#142659);color:var(--snow);font-family:inherit;min-height:56px}
 .vopt .vi{font-size:30px}
@@ -628,14 +618,6 @@ body.hudin #mainBtn:disabled{opacity:1}      /* 出てくるとちゅうで、�
 @media (max-width:760px){.gb-hint{font-size:64px}.gb-count{font-size:96px}}
 
 /* ===== 参加者の待ち画面・部屋 ===== */
-.wait{text-align:center}
-.wme{display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;font-weight:900}
-.wdot{display:inline-block;width:20px;height:20px;border-radius:50%;border:3px solid #fff;flex:none}
-.wst{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
-.wst span{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:900;color:var(--gold)}
-.wst .wsp{color:#fff;font-weight:700}
-.wbig{font-size:72px;margin:14px 0 4px;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
-.wmsg{font-size:20px;font-weight:900;line-height:1.5}
 .wsub{color:var(--muted);margin-top:8px}
 .wfoot{margin-top:18px;color:var(--muted);font-size:13px}
 .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
@@ -666,8 +648,6 @@ body.hudin #mainBtn:disabled{opacity:1}      /* 出てくるとちゅうで、�
 .cpick img{width:56px;height:56px;object-fit:contain}
 .cpick.sel{border-color:var(--gold);background:rgba(242,201,76,.18)}
 .cpick:disabled{opacity:.3}
-.jimg{width:34px;height:34px;object-fit:contain}
-.wimg{width:64px;height:64px;object-fit:contain;border:3px solid;border-radius:50%;background:rgba(255,255,255,.08)}
 /* ===== 暗転 ===== */
 .cover{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:0;transition:opacity .42s;background:radial-gradient(circle at 50% 50%,#3a0f4f,#05020c 70%)}
 .cover.on{opacity:1}
@@ -866,6 +846,405 @@ body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.evcard.on) #vo,body:has(.
 @media (max-height:720px){body:has(.meet.on) #vo,body:has(.ask.on) #vo,body:has(.modal.on) #vo{font-size:clamp(14px,1.6vw,19px) !important;padding:6px 16px !important;max-width:min(1100px,94vw) !important}}
 body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !important;max-width:min(640px,50vw) !important;font-size:clamp(15px,1.7vw,21px) !important;padding:8px 18px !important}
 @media (max-width:760px){.tr-box{grid-template-columns:1fr;grid-template-rows:auto minmax(200px,1fr) auto;height:96vh}.tr-head{grid-column:1}.tr-head h3{font-size:20px}.tr-time{font-size:28px}}
+
+/* ================= スマホの画面（2026-11 作りなおし）=================
+   夜空の紺に、こがね色の明かり。光っているところが「いま押せるところ」。自分の色（--me）が、上の帯と、コマの台に出る。
+   決まり：面＝--surf（線でかこまない）／押せるもの＝--gold／説明の文字＝--mist／大きな角＝18〜22px・ボタンの角＝14〜16px。
+   画面を足すときは、この決まりと .pbtn（いちばん大事なボタン）・.pcd（情報の面）・.p-h／.p-lab／.p-lead／.p-note（文字）を使う */
+body.playmode{background:#070b1d;overflow-x:hidden}
+body.playmode .snow{display:none}
+.play{--night:#070b1d;--surf:#11193b;--surf2:#1a2552;--hair:rgba(255,255,255,.1);--gold:#ffcf4a;--gold2:#d6960e;--snow:#f4f6ff;--mist:#9ba8d0;--ok:#35d08a;--ng:#ff6b78;--me:#ffcf4a;
+  position:relative;max-width:520px;min-height:100vh;min-height:100dvh;margin:0 auto;padding:0 16px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;color:var(--snow);line-height:1.55;-webkit-tap-highlight-color:transparent}
+.play::before{content:"";position:fixed;left:0;right:0;top:0;height:54vh;z-index:-1;pointer-events:none;background:radial-gradient(80% 100% at 50% 0%,rgba(255,207,74,.13),transparent 72%);background:radial-gradient(80% 100% at 50% 0%,color-mix(in srgb,var(--me) 22%,transparent),transparent 72%)}
+.play button{font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.play button:focus-visible,.play input:focus-visible,.play summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#pbody{flex:1;display:flex;flex-direction:column;min-width:0}
+#pbody > *{min-width:0}
+.pfoot{padding-top:18px;text-align:center}
+.play .small-link{padding:8px;background:none;color:var(--mist);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+/* 上の帯 */
+.pbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:62px;margin:0 -16px 4px;padding:calc(9px + env(safe-area-inset-top)) 16px 9px;background:linear-gradient(180deg,#070b1d 62%,rgba(7,11,29,0))}
+.pb-me{display:flex;align-items:center;gap:10px;min-width:0}
+.pb-n{min-width:0;line-height:1.25}
+.pb-n b{display:block;font-size:17px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-n b.dela{font-size:19px;font-weight:400;color:var(--gold)}
+.pb-n small{display:block;font-size:12px;color:var(--mist);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-r{display:flex;gap:6px;flex:none}
+.pb-chip{padding:4px 10px;border-radius:999px;background:var(--surf);color:var(--mist);font-size:12px;font-weight:700;white-space:nowrap}
+.pb-chip.gold{color:var(--gold)}
+.pav{position:relative;flex:none;display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.18),rgba(255,255,255,.04));box-shadow:0 0 0 2px var(--pc),0 0 14px -2px var(--pc)}
+.pav img{width:84%;height:84%;object-fit:contain}
+.pav.sm{width:30px;height:30px;box-shadow:0 0 0 1.5px var(--pc)}
+/* 文字 */
+.p-h{margin:6px 0 12px;font-size:24px;font-weight:900;line-height:1.3}
+.p-lab{display:block;margin:20px 0 8px;font-size:13px;font-weight:700;color:var(--mist)}
+.p-lead{margin:0 0 12px;font-size:15px;color:var(--mist);line-height:1.6;text-wrap:balance;word-break:auto-phrase}
+.pfire{display:block;margin-top:4px;font-weight:700;color:#ffb65c}
+.p-lead b{color:var(--snow)}
+.p-note{margin:10px 0 0;font-size:13px;line-height:1.65;color:var(--mist)}
+.play .msg{min-height:20px;margin-bottom:4px;color:var(--gold);font-size:14px;font-weight:700;text-align:center}
+.play .wcourse{margin:0;font-size:13px;color:var(--mist);text-align:center}
+/* いちばん大事なボタン（こがね色）と、ひかえめなボタン */
+.pbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:10px 18px;border:none;border-radius:16px;background:linear-gradient(180deg,#ffdc72,#ffc42e);color:#2a1c00;font-size:18px;font-weight:900;line-height:1.25;box-shadow:0 4px 0 var(--gold2),0 14px 26px -10px rgba(255,207,74,.6);transition:transform .08s,box-shadow .08s}
+.pbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--gold2),0 6px 14px -8px rgba(255,207,74,.5)}
+.pbtn:disabled{opacity:.5;transform:none}
+.pbtn.ghost{background:var(--surf2);color:var(--snow);box-shadow:0 4px 0 rgba(0,0,0,.4)}
+.pmini{flex:none;min-height:36px;padding:0 14px;border:none;border-radius:999px;background:var(--surf2);color:var(--snow);font-size:13px;font-weight:700}
+.pmini:active{transform:scale(.96)}
+.play .pin{width:100%;height:54px;margin:0;padding:0 16px;border:1.5px solid var(--hair);border-radius:14px;background:var(--surf);color:var(--snow);font-family:inherit;font-size:19px;font-weight:700;outline:none}
+.play .pin:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,207,74,.16)}
+.play .pin::placeholder{color:var(--mist);opacity:.55;font-weight:500}
+/* 情報の面 */
+.pcd{padding:14px 16px;border-radius:18px;background:var(--surf)}
+.pcd-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px}
+.pcd-row + .pcd-row,.pcd-note + .pcd-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--hair)}
+.pcd-k{min-width:0;font-size:14px;color:var(--mist)}
+.pcd-v{min-width:0;font-size:17px;font-weight:900}
+.pcd-note{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--mist)}
+.pchips{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.pchip2{padding:3px 10px;border-radius:999px;background:var(--surf2);font-size:13px;font-weight:700;white-space:nowrap}
+.pchip2.gold{color:var(--gold)}
+.play .wcar{margin-top:4px;font-size:12.5px;color:var(--mist)}
+/* コマの舞台（生きているコマ＋自分の色の台） */
+.phero{position:relative;width:min(50vw,206px);height:min(50vw,206px);margin:0 auto}
+.phero.sm{width:min(42vw,168px);height:min(42vw,168px)}
+.phero::before{content:"";position:absolute;left:-12%;right:-12%;top:-8%;bottom:6%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.1),transparent);pointer-events:none}
+.phero .ped{position:absolute;left:21%;right:21%;bottom:4.5%;height:13.5%;border-radius:50%;background:var(--pc);box-shadow:inset 0 0 0 2px rgba(255,255,255,.8),0 5px 0 rgba(0,0,0,.4),0 0 30px 2px var(--pc)}
+.phero .plive{position:absolute;inset:0;width:100%;height:100%}
+/* 参加・コマえらび */
+.pj{display:flex;flex-direction:column;flex:1}
+.pj-stage{margin:0 0 2px;text-align:center}
+.pj-cn{margin-top:4px;font-size:17px;font-weight:900}
+.cp-tabs{display:flex;gap:6px;margin:0 -16px 10px;padding:2px 16px;overflow-x:auto;scrollbar-width:none}
+.cp-tabs::-webkit-scrollbar{display:none}
+.cp-tab{flex:none;height:38px;padding:0 15px;border:none;border-radius:999px;background:var(--surf);color:var(--mist);font-size:14px;font-weight:700}
+.cp-tab.sel{background:var(--snow);color:#0b1030}
+.play .cpgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:none;margin:0;padding:0;overflow:visible}
+.play .cpgrid[data-cat="cute"] .cpick:not([data-cat="cute"]),.play .cpgrid[data-cat="toki"] .cpick:not([data-cat="toki"]),.play .cpgrid[data-cat="cool"] .cpick:not([data-cat="cool"]),.play .cpgrid[data-cat="adult"] .cpick:not([data-cat="adult"]),.play .cpgrid[data-cat="xmas"] .cpick:not([data-cat="xmas"]){display:none}
+.play .cpick{position:relative;justify-content:flex-start;gap:0;min-height:96px;padding:7px 2px 5px;border:2px solid transparent;border-radius:16px;background:var(--surf);color:var(--snow);font-size:10.5px;font-weight:700;line-height:1.2;transition:transform .1s}
+.play .cpick img{width:72%;height:auto;aspect-ratio:1/1}
+.play .cpick span{display:flex;align-items:center;justify-content:center;min-height:2.4em;padding:0 2px;text-align:center}
+.play .cpick.sel{border-color:var(--gold);background:rgba(255,207,74,.13);box-shadow:0 0 20px -6px var(--gold)}
+.play .cpick.sel::after{content:"";position:absolute;right:5px;top:5px;width:18px;height:18px;border-radius:50%;background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M4.5 9.3l3 3 6-6.3' fill='none' stroke='%232a1c00' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+.play .cpick:disabled{opacity:.26}
+.play .cpick:active{transform:scale(.95)}
+.play .csel{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 8px}
+.play .copt{gap:2px;padding:10px 2px 8px;border:2px solid transparent;border-radius:14px;background:var(--surf);color:var(--snow);font-size:13px;font-weight:900}
+.play .copt .cic{font-size:22px}
+.play .copt small{font-size:9.5px;color:var(--mist)}
+.play .lsel{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.play .lopt{padding:10px 4px;border:2px solid transparent;border-radius:14px;background:var(--surf);color:var(--snow);font-size:15px;font-weight:900}
+.play .lopt small{font-size:10.5px;color:var(--mist)}
+.play .copt.sel,.play .lopt.sel{border-color:var(--gold);background:rgba(255,207,74,.13)}
+.play .cfield{gap:3px;margin:0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12px;color:var(--mist)}
+.play #csel .wsub{margin:6px 0 0;font-size:13px;color:var(--mist);text-align:center}
+@media (max-width:400px){.play .csel{grid-template-columns:repeat(3,1fr)}}
+.play .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.play .jbtn{display:flex;align-items:center;gap:10px;min-height:62px;padding:8px 12px;border:none;border-radius:16px;background:var(--surf);box-shadow:inset 0 0 0 1.5px var(--pc);color:var(--snow);font-size:17px;font-weight:900;text-align:left}
+.play .jbtn > span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.play .jbtn:active{transform:scale(.97)}
+.pj-pre{margin-bottom:4px}
+.pj-pre .p-lab{margin-top:6px}
+.pj-back{margin:8px 0 14px;font-size:21px;font-weight:900;line-height:1.5}
+.pj-back small{display:block;margin-top:4px;font-size:14px;font-weight:500;color:var(--mist)}
+.pj-more{margin-top:18px}
+.pj-more summary{padding:10px 0;color:var(--mist);font-size:14px;cursor:pointer}
+.pj-foot{margin-top:14px;text-align:center}
+.pj-cta{position:sticky;bottom:0;z-index:5;display:flex;align-items:flex-end;gap:12px;margin:auto -16px 0;padding:18px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#070b1d 74%,rgba(7,11,29,0))}
+.pj-cta #jme{flex:none;padding-bottom:7px}
+.pj-cta.two{align-items:stretch}
+.pj-cta.two .pbtn{flex:1}
+.pj-cta.two .pbtn.ghost{flex:0 0 32%}
+.pj-go{flex:1;min-width:0}
+.proomrow{display:flex;gap:8px}
+.proomrow .pin{flex:1;min-width:0}
+.proomrow .pbtn{flex:none;width:auto;min-width:92px}
+/* 待ち画面 */
+.pw{display:flex;flex-direction:column;gap:12px}
+.pw-msg{margin:-2px 0 4px;text-align:center}
+.pw-t{font-size:22px;font-weight:900;line-height:1.45;text-wrap:balance}
+.pw-t i{display:block;margin-bottom:2px;font-style:normal;font-size:26px;line-height:1.2}
+.pw-s{margin-top:4px;font-size:13px;color:var(--mist)}
+.pw-turn{display:inline-flex;align-items:center;gap:10px}
+.pw-crew{text-align:center}
+.pw-crew small{display:block;margin-bottom:8px;font-size:12px;color:var(--mist)}
+.pw-crew > div{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.pw-crew span:not(.pav){display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--surf);font-size:14px;font-weight:700}
+.pw-crew span.me{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.pw-dice{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:2px 18px 2px 12px;border-radius:999px;background:var(--surf);animation:pwPop .45s cubic-bezier(.3,1.7,.5,1)}
+.pw-dice i{font-style:normal;font-size:20px}
+.pw-dice b{font-size:26px;font-weight:400;color:var(--gold)}
+@keyframes pwPop{from{transform:scale(.4);opacity:0}}
+.pw-last{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:0 4px;font-size:14px;color:var(--mist)}
+.play .wfoot{margin-top:4px;font-size:13px;color:var(--mist);text-align:center}
+.pcon{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px 0;text-align:center}
+.pspin{width:44px;height:44px;border-radius:50%;border:4px solid var(--surf2);border-top-color:var(--gold);animation:pspin 1s linear infinite}
+@keyframes pspin{to{transform:rotate(360deg)}}
+/* こがね町（幸せ度は、10この明かり） */
+.pt-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.pt-n{font-size:13px;font-weight:700;color:var(--mist)}
+.pt-yen b{font-size:19px;font-weight:400;color:var(--gold)}
+.pt-hap{display:flex;align-items:baseline;gap:6px;margin-top:8px;font-size:13px;color:var(--mist)}
+.pt-hap b{font-size:26px;font-weight:400;line-height:1;color:var(--snow)}
+.pt-lights{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:8px 0 14px}
+.pt-lights i{position:relative;height:10px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden}
+.pt-lights i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:calc(100% * var(--f));background:linear-gradient(90deg,#ffb23d,var(--gold))}
+.pt-lights i.on{overflow:visible;box-shadow:0 0 10px rgba(255,207,74,.75)}
+.ptown.low .pt-lights i::after{background:var(--ng)}
+.ptown.low .pt-lights i.on{box-shadow:0 0 10px rgba(255,107,120,.7)}
+.pt-proj{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;font-size:17px}
+.pt-proj > span{display:inline-flex;align-items:center;gap:5px}
+.play .pips{display:inline-flex;gap:3px}
+.play .pips i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.14)}
+.play .pips i.on{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.play .hap{height:26px;margin:4px 0;border:none;border-radius:13px;background:var(--surf)}
+.play .hap i{border-radius:13px;background:linear-gradient(90deg,#ffb23d,var(--gold));box-shadow:0 0 14px rgba(255,207,74,.5)}
+/* サイコロ */
+.proll{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 5vh;text-align:center}
+.pr-top{font-size:30px;line-height:1.25;color:var(--gold);text-shadow:0 0 26px rgba(255,207,74,.45)}
+.pr-tap{position:relative;display:grid;place-items:center;width:min(76vw,290px,46vh);height:min(76vw,290px,46vh);margin:2px 0 0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:height .35s ease}
+.pr-tap[aria-disabled="true"]{cursor:default}
+.pr-tap:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.pr-tap::after{content:"";position:absolute;left:50%;bottom:15%;width:44%;height:7%;transform:translateX(-50%);border-radius:50%;background:rgba(0,0,0,.5);filter:blur(7px)}
+.pr-ring{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,207,74,.2),rgba(255,207,74,.05) 62%,transparent 72%);box-shadow:inset 0 0 0 2px rgba(255,207,74,.55);transition:opacity .3s}
+.proll[data-st="open"] .pr-ring{animation:prPulse 1.5s ease-in-out infinite}
+@keyframes prPulse{0%,100%{transform:scale(.93);opacity:.7}50%{transform:scale(1.04);opacity:1}}
+.proll[data-st="go"] .pr-ring,.proll[data-st="done"] .pr-ring{opacity:.28}
+.proll[data-st="hold"] .pr-ring{opacity:.55}
+.proll[data-st="hold"] .dice3{animation:dFloat 1.1s ease-in-out infinite}
+.proll[data-st="hold"] .cube{animation:dIdle 2.6s ease-in-out infinite}
+.pr-dice{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:28px}
+.dice3{--sz:124px;position:relative;display:block;width:var(--sz);height:var(--sz);perspective:calc(var(--sz) * 5)}
+.dice3.two{--sz:88px}
+.dice3 .cube{position:absolute;inset:0;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(-28deg) rotateX(var(--fx,0deg)) rotateY(var(--fy,0deg))}
+.dice3 .fc{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:15%;border-radius:19%;background:linear-gradient(145deg,#ffffff,#e4e8f6);box-shadow:inset 0 0 0 1.5px rgba(20,28,70,.09);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.dice3 .fc i{place-self:center;width:calc(var(--sz) * .163);height:calc(var(--sz) * .163);border-radius:50%}
+.dice3 .fc i.p{background:radial-gradient(circle at 35% 30%,#3d4c86,#0f1633)}
+.dice3 .f1 i.p{width:calc(var(--sz) * .29);height:calc(var(--sz) * .29);background:radial-gradient(circle at 35% 30%,#ff7a80,#b3242b)}
+.dice3 .f1{transform:translateZ(calc(var(--sz) / 2))}
+.dice3 .f6{transform:rotateY(180deg) translateZ(calc(var(--sz) / 2))}
+.dice3 .f3{transform:rotateY(90deg) translateZ(calc(var(--sz) / 2))}
+.dice3 .f4{transform:rotateY(-90deg) translateZ(calc(var(--sz) / 2))}
+.dice3 .f2{transform:rotateX(90deg) translateZ(calc(var(--sz) / 2))}
+.dice3 .f5{transform:rotateX(-90deg) translateZ(calc(var(--sz) / 2))}
+.dice3 .cube b{position:absolute;inset:4%;border-radius:15%;background:#e9ecf8}
+.dice3 .cube b.c2{transform:rotateY(90deg)}
+.dice3 .cube b.c3{transform:rotateX(90deg)}
+.proll[data-st="open"] .dice3{animation:dFloat 2.4s ease-in-out infinite}
+@keyframes dFloat{0%,100%{transform:translateY(2px)}50%{transform:translateY(-10px)}}
+.proll[data-st="open"] .cube{animation:dIdle 6s ease-in-out infinite}
+@keyframes dIdle{0%,100%{transform:rotateX(-22deg) rotateY(-34deg)}50%{transform:rotateX(-30deg) rotateY(30deg)}}
+.proll[data-st="go"] .dice3{animation:dHop .44s ease-in-out infinite alternate}
+@keyframes dHop{from{transform:translateY(10px) scale(.96)}to{transform:translateY(-36px) scale(1.04)}}
+.proll[data-st="go"] .cube{animation:dSpin .6s linear infinite}
+@keyframes dSpin{from{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg)}to{transform:rotateX(720deg) rotateY(360deg) rotateZ(360deg)}}
+.dice3.land{animation:dDrop .95s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes dDrop{0%{transform:translateY(-44px) scale(1.06)}55%{transform:translateY(6px) scale(.97)}76%{transform:translateY(-7px)}100%{transform:none}}
+.dice3.land .cube{animation:dLand .95s cubic-bezier(.2,.8,.3,1) both}
+@keyframes dLand{from{transform:rotateX(-24deg) rotateY(-28deg) rotateX(calc(var(--fx) + 720deg)) rotateY(calc(var(--fy) + 540deg))}to{transform:rotateX(-24deg) rotateY(-28deg) rotateX(var(--fx)) rotateY(var(--fy))}}
+.pr-num{height:0;font-size:0;line-height:1;opacity:0}
+.proll.got .pr-tap{height:min(50vw,196px,34vh)}
+.proll.got .pr-num{height:auto;font-size:92px;opacity:1;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35),0 0 36px rgba(255,207,74,.6);animation:prNum .5s cubic-bezier(.3,1.7,.5,1)}
+@keyframes prNum{from{transform:scale(.3);opacity:0}}
+.pr-msg{margin-top:6px;font-size:22px;font-weight:900}
+.pr-sub{min-height:22px;margin-top:4px;font-size:14px;color:var(--mist)}
+/* えらぶ画面 */
+.pa{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:8px 0 7vh}
+.pa-dice{align-self:center;display:inline-flex;align-items:center;gap:8px;padding:2px 16px 2px 12px;border-radius:999px;background:var(--surf);font-size:14px;font-weight:700;color:var(--mist)}
+.pa-dice i{font-style:normal;font-size:20px}
+.pa-dice b{font-size:26px;font-weight:400;color:var(--gold)}
+.pa-h{font-size:24px;line-height:1.4;text-align:center;text-wrap:balance}
+.pa-s{margin-top:-6px;font-size:14px;color:var(--mist);text-align:center}
+.pa-opts{display:grid;gap:10px}
+.pa-opt{display:flex;align-items:center;gap:14px;min-height:70px;padding:12px 16px;border:2px solid transparent;border-radius:18px;background:var(--surf);box-shadow:inset 0 0 0 1px rgba(255,207,74,.34),0 0 26px -12px var(--gold);color:var(--snow);text-align:left;transition:transform .08s}
+.pa-ic{flex:none;width:42px;font-size:30px;line-height:1.1;text-align:center;color:var(--gold)}
+.pa-tx{min-width:0}
+.pa-tx b{display:block;font-size:17px;font-weight:900;line-height:1.35}
+.pa-tx small{display:block;margin-top:2px;font-size:12.5px;line-height:1.5;color:var(--mist)}
+.pa-opt:active{transform:scale(.98)}
+.pa-opt.sel{border-color:var(--gold);background:rgba(255,207,74,.14)}
+.pa-opt:disabled{opacity:.38;box-shadow:inset 0 0 0 1px var(--hair)}
+.pa-opt.sel:disabled{opacity:1}
+.pa-foot{font-size:13px;color:var(--mist);text-align:center}
+/* ガチャ */
+.pg{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:4px 0 7vh;text-align:center}
+.pg-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pg-h .dela{font-size:22px;color:var(--gold)}
+.pg-tk{padding:4px 12px;border-radius:999px;background:var(--surf);font-weight:900}
+.pg-q{font-size:20px;font-weight:900;line-height:1.4}
+.pg-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pg-card{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:150px;padding:16px 8px 12px;border:2px solid transparent;border-radius:20px;background:var(--surf);background:linear-gradient(180deg,color-mix(in srgb,var(--gc) 24%,#11193b),#11193b 72%);box-shadow:inset 0 0 0 1.5px var(--gc),0 0 26px -12px var(--gc);color:var(--snow);transition:transform .08s}
+.pg-ic{font-size:44px;line-height:1.2}
+.pg-card b{font-size:15px;font-weight:900;line-height:1.3}
+.pg-card small{font-size:11.5px;line-height:1.45;color:var(--mist)}
+.pg-card:active{transform:scale(.97)}
+.pg-card.sel{border-color:var(--gold)}
+.pg-card:disabled{opacity:.4}
+.pg-card.sel:disabled{opacity:1}
+.pg-odds{font-size:13px;color:var(--mist)}
+.pg-odds b{color:var(--gold)}
+.pg-wait{font-size:17px;font-weight:900;line-height:1.5}
+.pg-wait small{display:block;font-size:13px;font-weight:500;color:var(--mist)}
+.pg-spin{padding:14px 0 6px}
+.capsule{position:relative;width:118px;height:118px;margin:6px auto 12px;border-radius:50%;background:linear-gradient(180deg,var(--rc,#ffcf4a) 0 47%,#0b1030 47% 53%,#f4f6ff 53%);box-shadow:inset -12px -14px 0 rgba(0,0,0,.14),inset 9px 11px 0 rgba(255,255,255,.28),0 0 46px -6px var(--rc,#ffcf4a);animation:capShake .5s ease-in-out infinite}
+@keyframes capShake{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-5px)}}
+.pg-rv{position:relative}
+.pg-rv.in .capsule{position:absolute;left:50%;top:50%;margin:-59px 0 0 -59px;animation:capOpen 1.5s var(--el,0ms) both}
+@keyframes capOpen{0%{transform:rotate(-8deg);opacity:1}10%{transform:rotate(10deg)}20%{transform:rotate(-13deg)}30%{transform:rotate(15deg)}40%{transform:rotate(-17deg)}52%{transform:rotate(0deg) scale(1.15);opacity:1}62%,100%{transform:scale(2.1);opacity:0}}
+.pg-rv.in .pg-res{animation:gresIn 1.5s var(--el,0ms) both}
+@keyframes gresIn{0%,56%{opacity:0;transform:scale(.5)}70%{opacity:1;transform:scale(1.07)}100%{opacity:1;transform:scale(1)}}
+.pg-res{position:relative;padding:22px 16px 16px;border-radius:22px;background:var(--surf);box-shadow:inset 0 0 0 2px var(--rc),0 0 40px -12px var(--rc)}
+.pg-stars{font-size:26px;line-height:1.2;letter-spacing:.14em;color:var(--rc);text-shadow:0 0 12px var(--rc)}
+.pg-rar{font-size:15px;color:var(--rc)}
+.pg-name{margin:6px 0 4px;font-size:26px;line-height:1.3;text-wrap:balance}
+.pg-desc{font-size:13.5px;color:var(--mist)}
+.pg-co{margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);font-size:12.5px;line-height:1.55;text-align:left}
+.pg-col{margin-top:8px;font-size:12px;color:var(--mist)}
+.pg-new{position:absolute;right:12px;top:-11px;padding:2px 12px;border-radius:999px;background:#ff5d6c;color:#fff;font-size:14px;transform:rotate(6deg)}
+.pg-done{padding:6px 0}
+.pg-gear{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin-top:10px}
+.pg-gear small{width:100%;font-size:12px;color:var(--mist)}
+.pg-gear span{padding:4px 12px;border-radius:999px;background:var(--surf);box-shadow:inset 0 0 0 1.5px var(--rc);font-size:14px;font-weight:700}
+.pg-spec{flex:none;padding:0;gap:0}
+.pg-spec .pg-res{padding:18px 14px 12px}
+.pg-spec .pg-name{font-size:21px}
+.pg-specw{font-size:14px;color:var(--mist);text-align:center}
+/* むずかしさをえらぶ・問題・結果 */
+.pstg{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:6px;text-align:center}
+.pstg > .starsel,.pstg > .hap{align-self:stretch}
+.tdot{display:inline-grid;place-items:center;width:66px;height:66px;border-radius:50%;color:#fff;font-weight:900;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 0 26px -2px rgba(255,255,255,.35)}
+.tdot.sm{width:42px;height:42px;font-size:13px;box-shadow:0 0 0 2px rgba(255,255,255,.92)}
+.ps-f{font-size:22px;font-weight:900;line-height:1.35}
+.ps-tree{font-size:46px;line-height:1.1}
+.ps-tp{display:flex;align-items:center;gap:10px;font-size:17px}
+.pstg .p-lead{margin:0}
+.play .starsel{display:grid;gap:10px;margin:2px 0 0}
+.pstar{display:flex;align-items:center;gap:14px;min-height:68px;padding:10px 18px;border:none;border-radius:18px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--hair);color:var(--snow);text-align:left;transition:transform .08s}
+.pstar .st{flex:none;width:84px;font-size:24px;letter-spacing:.06em;color:var(--gold);text-shadow:0 0 10px rgba(255,207,74,.55)}
+.pstar b{display:block;font-size:18px;font-weight:900;line-height:1.3}
+.pstar small{display:block;font-size:13px;color:var(--mist)}
+.pstar.s3{box-shadow:inset 0 0 0 1.5px rgba(255,207,74,.6),0 0 28px -12px var(--gold)}
+.pstar:active{transform:scale(.98)}
+.pq{display:flex;flex-direction:column}
+.play .qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 12px}
+.play .qtag{font-size:13px;font-weight:700;color:var(--mist)}
+.play .qtag i{font-style:normal;color:var(--gold)}
+.play .qtimer{flex:none;padding:2px 12px;border-radius:12px;background:var(--surf);font-family:'Dela Gothic One','Zen Maru Gothic',sans-serif;font-size:22px;font-weight:400;font-variant-numeric:tabular-nums}
+.play .qtimer.low{color:var(--ng)}
+.play .qtext{font-size:18px;line-height:1.75}
+.play .qtext small,.play .qhint{color:var(--mist)}
+.play .fields{margin:18px 0}
+.play .inwrap input{border:2px solid var(--hair);border-radius:14px;background:var(--surf);color:var(--snow)}
+.play .inwrap input.act{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,207,74,.18)}
+.play .kpad{gap:8px;max-width:360px}
+.play .kp{min-height:56px;border:none;border-radius:16px;background:var(--surf2);box-shadow:0 3px 0 rgba(0,0,0,.4);color:var(--snow);font-size:24px}
+.play .kp:active{transform:translateY(2px);background:#26336e;box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.play .kp.fn{background:var(--surf);color:var(--gold);font-size:20px}
+.play .kp small{color:var(--mist)}
+.play .choices{gap:8px}
+.play .choices .choice{margin:0;border:2px solid transparent;border-radius:16px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--hair);color:var(--snow);min-height:58px}
+.play .choices .choice b{background:var(--surf2)}
+.play .choices .choice.sel{border-color:var(--gold);background:rgba(255,207,74,.13);box-shadow:none}
+.play .choices .choice.sel b{background:var(--gold);color:#2a1c00}
+.play .result{padding-top:6px;text-align:center}
+.pmark{display:block;width:108px;height:108px;margin:0 auto 4px;fill:none;stroke-width:11;stroke-linecap:round;stroke-linejoin:round}
+.pmark.ok{stroke:#ff5d6c;filter:drop-shadow(0 0 14px rgba(255,93,108,.55))}
+.pmark.ok circle{stroke-dasharray:277;stroke-dashoffset:277;transform:rotate(-90deg);transform-origin:50% 50%;animation:pmDraw .55s .1s ease-out forwards}
+@keyframes pmDraw{to{stroke-dashoffset:0}}
+.pmark.ng{stroke:#7f8cc0}
+.pmark.time{stroke:#7f8cc0;stroke-width:8}
+.play .result .rt{font-family:'Dela Gothic One','Zen Maru Gothic',sans-serif;font-size:28px;font-weight:400;line-height:1.3}
+.play .result .tell{display:inline-block;margin:10px 0;padding:9px 20px;border-radius:16px;background:var(--gold);color:#2a1c00;font-size:22px;font-weight:900}
+.play .result .p-lead{margin:6px 0 0}
+.play .explain{margin:14px 0;padding:14px 16px;border:none;border-radius:16px;background:var(--surf);font-size:15.5px;line-height:1.75;text-align:left}
+.play .explain .ans{color:var(--gold)}
+.play .kwant{margin:8px 0;padding:10px 14px;border:1.5px solid rgba(255,179,71,.7);border-radius:14px;background:rgba(255,160,60,.14);font-size:15px}
+.play .kwant small{color:#ffdcae}
+/* 会議・転職 */
+.pv{display:flex;flex-direction:column}
+.play .vgrid{display:grid;gap:8px}
+.play .vopt{min-height:64px;padding:10px 14px;border:2px solid transparent;border-radius:16px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--hair);color:var(--snow)}
+.play .vopt b{font-size:17px;line-height:1.35}
+.play .vopt small{font-size:12.5px;color:var(--mist)}
+.play .vopt.sel{border-color:var(--gold);background:rgba(255,207,74,.13);box-shadow:none}
+.play .vopt.save{background:rgba(53,208,138,.1)}
+.play .vopt.save.sel{background:rgba(255,207,74,.13)}
+.play .vopt:disabled{opacity:.4}
+.play .vfoot{margin-top:12px;font-size:14px;color:var(--mist);text-align:center}
+.pv > .vfoot{position:sticky;bottom:0;z-index:4;margin:6px -16px 0;padding:14px 16px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#070b1d 70%,rgba(7,11,29,0))}
+.play .vfoot b{font-family:'Dela Gothic One','Zen Maru Gothic',sans-serif;font-size:21px;font-weight:400;color:var(--snow)}
+.play .tgrid{gap:10px;margin:12px 0}
+.play .tbtn{border:none;border-radius:16px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--hair);color:var(--snow)}
+.play .tbtn.none{box-shadow:none;background:none;font-size:13px;line-height:1.6}
+body.playmode .modal{padding:16px 10px}
+body.playmode .mbox{padding:18px 16px;border:none;border-radius:22px;background:#11193b}
+body.playmode .mbox h2{font-size:21px}
+body.playmode .rules{font-size:15.5px;line-height:1.7}
+@media (prefers-reduced-motion:reduce){.play *,.play *::before,.play *::after{animation:none !important;transition:none !important}}
+
+/* ================= 先生の画面：スマホで動かすときの知らせ ================= */
+.ph-hint{margin-left:.9em;font-size:.82em;color:var(--gold)}
+/* えらぶ画面の下のふちに、小さな札で出す（箱の高さを変えない。声の字幕の場所をせばめないため） */
+.ask-ph{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);padding:1px 14px;border:2px solid var(--gold);border-radius:999px;background:#0e1a3f;font-size:12.5px;font-weight:700;line-height:1.6;color:#fff;white-space:nowrap}
+.invav{width:24px;height:24px;margin:0 3px 0 1px;object-fit:contain;vertical-align:-6px}
+
+/* ================= 先生の画面：コマをえらぶ（左に大きな舞台）・参加する人の行 ================= */
+#m-char{align-items:center;padding:18px 14px}
+#m-char .mbox{position:relative;max-width:1120px;padding:0;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:26px;background:#0a0f27;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+#m-char .close{position:absolute;right:16px;top:14px;z-index:2;float:none;padding:7px 16px;border:none;border-radius:999px;background:#1a2552;box-shadow:none;font-size:14px}
+.cs-wrap{display:grid;grid-template-columns:minmax(250px,330px) 1fr;height:min(640px,calc(100vh - 36px))}
+.cs-stage{--pc:#ffcf4a;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:56px 18px 26px;overflow:hidden;background:linear-gradient(180deg,#151e49,#0b1130);background:radial-gradient(110% 60% at 50% 104%,color-mix(in srgb,var(--pc) 42%,transparent),transparent 72%),linear-gradient(180deg,#151e49,#0b1130)}
+.cs-stage .cpickfor{position:absolute;left:18px;top:18px;margin:0;font-size:14px;color:#c9d2f0}
+.cs-stage .cpickfor .sw{width:10px;height:22px;border-radius:5px}
+.cs-stage .phero{width:min(100%,270px);height:auto;aspect-ratio:1/1}
+.cs-name{margin-top:6px;font-size:32px;line-height:1.25;text-align:center;text-wrap:balance}
+.cs-cat{padding:3px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-size:13px;font-weight:700;color:#c9d2f0}
+.cs-cat:empty{display:none}
+.cs-side{display:flex;flex-direction:column;min-width:0;min-height:0;padding:20px 22px 14px}
+#m-char .cs-side h2{margin:0 0 12px;font-size:22px}
+#m-char .ctabs{gap:6px;margin-bottom:12px}
+#m-char .ctabs .btn{height:36px;padding:0 16px;border:none;border-radius:999px;background:#161f48;box-shadow:none;color:#9ba8d0;font-size:14px}
+#m-char .ctabs .btn.gold{background:#f4f6ff;color:#0b1030}
+#m-char .cgrid{flex:1;min-height:0;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));align-content:start;gap:8px;padding:4px 4px 4px 2px;overflow:auto;scrollbar-width:thin;scrollbar-color:#2a376f transparent}
+#m-char .ccard{position:relative;justify-content:center;gap:0;padding:8px 4px 6px;border:2px solid transparent;border-radius:16px;background:#131b41;color:#f4f6ff;font-size:12px;line-height:1.25;transition:transform .12s,background .12s,border-color .12s}
+#m-char .ccard img{width:62%;height:auto;aspect-ratio:1/1;filter:drop-shadow(0 5px 6px rgba(0,0,0,.35))}
+#m-char .ccard span{display:flex;align-items:center;min-height:2.5em;text-align:center}
+#m-char .ccard:hover,#m-char .ccard:focus-visible{transform:translateY(-3px);background:#1c2759;border-color:rgba(255,255,255,.4);outline:none}
+#m-char .ccard.sel{border-color:#ffcf4a;background:rgba(255,207,74,.13);box-shadow:0 0 22px -6px #ffcf4a}
+.cs-tip{margin:10px 0 0;font-size:12.5px;color:#7f8cb8}
+@media (max-height:660px){.cs-tip{display:none}}
+@media (min-height:700px) and (min-width:861px){#m-char .ccard{padding:11px 4px 8px}#m-char .ccard img{width:78%}}
+@media (max-width:860px){
+  #m-char{align-items:flex-start}
+  .cs-stage .phero{height:104px;aspect-ratio:auto}
+  .cs-wrap{grid-template-columns:1fr;height:auto}
+  .cs-stage{flex-direction:row;justify-content:flex-start;gap:12px;padding:46px 16px 12px}
+  .cs-stage .phero{width:104px;margin:0;flex:none}
+  .cs-name{font-size:22px;text-align:left}
+  #m-char .cgrid{max-height:52vh;grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+  .cs-tip{display:none}
+}
+/* 参加する人の行：コマは、その人の色の輪つきの丸に */
+#m-setup .setrow{gap:10px;margin-bottom:6px;padding:5px 12px 5px 6px;border-radius:999px;background:rgba(255,255,255,.045)}
+#m-setup .setrow .sw{display:none}
+#m-setup .charbtn{gap:10px;min-width:176px;padding:0 6px 0 0;border:none;border-radius:999px;background:none;box-shadow:none;font-size:13px;color:#c9d2f0;text-align:left}
+#m-setup .charbtn img{flex:none;width:48px;height:48px;padding:3px;border-radius:50%;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.2),rgba(255,255,255,.05));box-shadow:0 0 0 2.5px var(--pc),0 0 14px -2px var(--pc);transition:transform .12s}
+#m-setup .charbtn:hover img,#m-setup .charbtn:focus-visible img{transform:scale(1.08)}
+#m-setup .charbtn:hover{color:#fff}
+#m-setup .charbtn:focus-visible{outline:2px solid #ffcf4a;outline-offset:2px}
+#m-setup .setrow select,#m-setup .setrow input[type=text]{border:1.5px solid rgba(255,255,255,.12);background:#0d1433}
+#m-setup .setrow input[type=text]:focus,#m-setup .setrow select:focus{border-color:#ffcf4a;outline:none}
+@media (max-width:760px){#m-setup .setrow{border-radius:18px}#m-setup .charbtn{min-width:0}}
+/* 参加する人の窓：コマえらびの窓と同じ、暗い面とこがね色に */
+#m-setup .mbox{border:1px solid rgba(255,255,255,.14);border-radius:26px;background:#0a0f27;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+#m-setup .modecard,#m-setup .mapcard{border:2px solid transparent;border-radius:18px;background:#131b41}
+#m-setup .modecard span,#m-setup .mapcard span{color:#9ba8d0}
+#m-setup .modecard.sel,#m-setup .mapcard.sel{border-color:#ffcf4a;background:rgba(255,207,74,.1);box-shadow:0 0 24px -8px #ffcf4a}
+#m-setup .rsel .btn{border:none;border-radius:999px;background:#161f48;box-shadow:none;color:#c9d2f0}
+#m-setup .rsel .btn.gold{background:#f4f6ff;color:#0b1030}
+#m-setup .btn.big.gold{border:none;border-radius:16px;background:linear-gradient(180deg,#ffdc72,#ffc42e);box-shadow:0 4px 0 #d6960e,0 14px 26px -10px rgba(255,207,74,.6);color:#2a1c00}
+#m-setup .mbox > div:last-child .btn{border:none;border-radius:999px;background:#1a2552;box-shadow:none}
+#m-setup .mbox > div:last-child .btn.green{background:#35d08a;color:#04261a;box-shadow:0 3px 0 #1f9c63}
 </style>
 <script type="importmap">
 {"imports":{
@@ -889,15 +1268,10 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
 
 <!-- ================= PLAY ================= -->
 <section class="view" id="v-play">
-  <div class="play">
-    <div class="phead">
-      <span class="who" id="pwho">🎄 数学すごろく</span>
-      <span class="score" id="pscore"></span>
-    </div>
-    <div class="pcard" id="pbody"></div>
-    <div style="text-align:center;margin-top:10px">
-      <button class="small-link" onclick="openModal('m-rules')">ルールを見る</button>
-    </div>
+  <div class="play" id="play">
+    <header class="pbar" id="pbar"></header>
+    <main id="pbody"></main>
+    <footer class="pfoot"><button class="small-link" onclick="openModal('m-rules')">ルールを見る</button></footer>
   </div>
 </section>
 
@@ -986,7 +1360,7 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   <div id="rulesCoop">
   <p class="rlead">🏘 <b>協力モード「こがね町を救え！」</b>　みんなは同じチーム。数学の力で、さびれた町を元気にしよう！</p>
   <ol class="rules">
-    <li>サイコロで町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
+    <li>自分の番がきたら、<b>スマホのサイコロをタップ</b>（スマホがない人は、先生がふります）。町を進み、止まった<b>マスの色</b>の分野の問題を、自分のスマホで解きます。正解すると、そのお金が<b>町の予算</b>に入ります（★1＝100万円、★2＝200万円、★3＝300万円。🔥チャレンジマスは2倍）。</li>
     <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どの工事にお金を使うかスマホで<b>投票</b>します（同じ票数のときは、<b>町の人たちの声</b>で決まります）。工事をすると <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ終わると<b>完成ボーナス</b>！</li>
     <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、工事を進めておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
     <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
@@ -997,7 +1371,7 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   </ol></div>
   <div id="rulesVs">
   <ol class="rules">
-    <li>先生の画面で、ひとりずつ<b>サイコロ</b>をふって、クリスマス村を進みます。<b>分かれ道</b>では、どっちに行くか自分で決めます。</li>
+    <li>自分の番がきたら、スマホの<b>サイコロ</b>をタップして、クリスマス村を進みます（スマホがない人は、先生がふります）。<b>分かれ道</b>では、どっちに行くか自分で決めます。</li>
     <li>止まった<b>マスの色</b>で、問題の分野が決まります。🔥チャレンジマスは、正解すると⭐が<b>2倍</b>！</li>
     <li>全員そろったら<b>問題タイム（2分）</b>。参加者の画面（スマホ・パソコン）に、止まったマスの分野の問題が<b>自動で出ます</b>。むずかしさ（★1〜★3）を選んで解くと、正解した★の数だけ <b>⭐</b> が自動で入ります</li>
     <li>🏪 ショップでは⭐を使ってアイテムが買えます（通りがかりでもOK）。🎲 ダブルサイコロ、👢 スノーブーツ（+3）、🔑 氷のカギ（湖の近道）。</li>
@@ -1027,10 +1401,20 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
 
 <div class="modal" id="m-char"><div class="mbox">
   <button class="btn close" onclick="closeModal('m-char')">とじる</button>
-  <h2>🎨 コマをえらぶ</h2>
-  <div class="cpickfor" id="cpickfor"></div>
-  <div class="ctabs" id="ctabs"></div>
-  <div class="cgrid" id="cgrid"></div>
+  <div class="cs-wrap">
+    <div class="cs-stage" id="csStage">
+      <div class="cpickfor" id="cpickfor"></div>
+      <div class="phero"><i class="ped"></i><canvas class="plive" id="csLive"></canvas></div>
+      <div class="cs-name dela" id="csName"></div>
+      <div class="cs-cat" id="csCat"></div>
+    </div>
+    <div class="cs-side">
+      <h2>コマをえらぶ</h2>
+      <div class="ctabs" id="ctabs"></div>
+      <div class="cgrid" id="cgrid"></div>
+      <p class="cs-tip">コマにカーソルをのせると、左に大きく出ます。クリックで決まります</p>
+    </div>
+  </div>
 </div></div>
 
 <div class="modal" id="m-boss"><div class="mbox">
@@ -1195,6 +1579,7 @@ function route(){
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-' + v));
   document.body.classList.toggle('hostmode', v === 'host');
   document.body.classList.toggle('homemode', v === 'home');
+  document.body.classList.toggle('playmode', v === 'play');
   if (window.TitleFx) window.TitleFx.set(v === 'home' && !Show.isPre());      // 幕が閉じているあいだは、うしろの町を動かさない
   if (v !== 'home') Show.leave();
   if (v === 'host'){ if (window.hostInit3D) window.hostInit3D(); else window.__wantHost = true; }
@@ -1497,7 +1882,7 @@ window.CharArt = (() => {
   }
   /* 手の色（楽器を持つ手を、別に描くときに使う） */
   const col = key => { const d = CH[key] || VIL[key] || {}; return {c: d.ac || d.c || '#ffffff', d: d.ad || d.d || '#d9dcf2', l: d.l || INK}; };
-  return {draw, thumb, col, keys: Object.keys(CH), villagers: Object.keys(VIL), has: k => !!CH[k]};
+  return {draw, thumb, col, keys: Object.keys(CH), villagers: Object.keys(VIL), has: k => !!CH[k], box: k => BOX[k] || .96};      // box＝絵の高さ（からだの高さを1として）
 })();
 /* ================= こまったことの場面（先生の画面）：カードをめくったあと、町で何が起きたかを絵で見せる =================
    1000×560 の舞台に描く。はじめに困りごとが起き、そのあと「ふせいだ」か「ふせげなかった」かで絵が変わる
@@ -4376,12 +4761,6 @@ function pVote(id){
   const V = P.info && P.info.vote; if (!V || !P.room || P.pid == null) return;
   P.myVote = id; NET.set(`rooms/${P.room}/vote/${V.id}/${P.pid}`, {v:id, at:NET.now()}); initAudio(); try { sfx.star(); } catch(e){} renderPlay();
 }
-function townHTML(){
-  const T = P.info && P.info.town; if (!T) return '';
-  return `<div class="wtown"><div class="wt1">🏘 こがね町　<b>💰 ${fmtYen(T.b)}</b></div><div class="hap ${T.h < 30 ? 'low' : ''}"><i style="width:${Math.max(0, Math.min(100, T.h))}%"></i><b>😊 幸せ度 ${T.h} / 100</b></div>
-    <div class="wtp">${PROJECTS.map((p, i) => `<span title="${p.name}">${p.ic}<span class="pips">${[0,1,2].map(k => `<i class="${k < +(T.lv || '')[i] ? 'on' : ''}"></i>`).join('')}</span></span>`).join('')}</div></div>`;
-}
-const myCourse = () => `${COURSES[P.course || 'chu'].ic} ${courseLabel(P.course || 'chu', P.level)}`;
 function playInit(){ if (P.inited) return; P.inited = true; loadCourse(); NET.onConn(() => { if (P.stage === 'wait') renderPlay(); pBeat(); }); if (P.room) netJoin(P.room); else renderPlay();
   setInterval(pBeat, 12000);
   // 画面をつけなおしたとき：すぐに合図を送って、画面を新しくする
@@ -4457,6 +4836,23 @@ function netUpdate(){
   if (P.stage === 'course' && qOpen && I.quizId === P.qid) return;
   if (P.stage === 'star'){ if (!qOpen || I.quizId !== P.qid){ P.stage = 'wait'; renderPlay(); } return; }
   if (qOpen){ P.qid = I.quizId; P.topic = me.topic; P.double = !!me.double; P.stage = 'star'; sendAns({st:'pick'}); initAudio(); try { sfx.jingle(); } catch(e){} renderPlay(); return; }
+  // 自分あての、サイコロ・えらぶ画面・ガチャ（先生の画面と同じものが、このスマホにも出る）。解説を読んでいるとちゅうでも、こちらを先に出す
+  const mine = pMine(I);
+  if (mine){
+    // サイコロの目が出たすぐあとに「えらぶ画面」（分かれ道など）が来たときは、出た目を見せてから切りかえる
+    if (mine === 'ask' && P.stage === 'roll' && I.roll && I.roll.to === P.pid && I.roll.st === 'done'){
+      const held = () => P.rollShown !== I.roll.id || Date.now() < (P.rollHold || 0);
+      if (held()) renderPlay();
+      if (held()){ clearTimeout(P.holdT); P.holdT = setTimeout(netUpdate, Math.max(60, (P.rollHold || 0) - Date.now() + 40)); return; }
+    }
+    const key = mine === 'roll' ? 'r' + I.roll.id : mine === 'ask' ? 'a' + I.ui.id : 'g' + (I.ui && I.ui.to === P.pid && I.ui.k === 'gsel' ? I.ui.id : '');
+    if (P.mineKey !== key){ P.mineKey = key;      // 新しく出たときだけ、音とふるえで知らせる
+      if ((mine === 'roll' && I.roll.st === 'open') || mine === 'ask' || (mine === 'gacha' && key !== 'g')){ initAudio(); keepAwake(); try { sfx.jingle(); } catch(e){} pBuzz([40, 60, 40]); } }
+    P.stage = mine; renderPlay(); return;
+  }
+  P.mineKey = '';
+  if (['roll', 'ask', 'gacha'].includes(P.stage)) P.stage = 'wait';
+  if (P.stage === 'char'){ if (I.phase === 'setup' || I.phase === 'lobby'){ renderPlay(); return; } P.stage = 'wait'; }      // コマを変えられるのは、待合室のあいだだけ
   if (P.stage === 'result' && I.phase === 'quiz') return;
   if (P.stage !== 'result' && P.stage !== 'course') P.stage = 'wait';
   renderPlay();
@@ -4466,12 +4862,15 @@ function pJoin(id){
   P.pid = String(id); try { localStorage.setItem('sg_pid_' + P.room, P.pid); } catch(e){}
   NET.set(`rooms/${P.room}/claim/${P.pid}`, {at:NET.now(), hb:1});
   sendPref(); initAudio(); keepAwake(); P.stage = 'wait'; netUpdate();
+  // 先生が名前を入れてある人：待合室のあいだなら、つづけて、自分のコマをえらぶ画面へ（先生が入れたコマのままでもよい）
+  const me = pMe(), ph = P.info && P.info.phase;
+  if (me && !me.jid && (ph === 'setup' || ph === 'lobby') && P.stage === 'wait'){ P.charFirst = true; pCharOpen(); }
 }
 function pSelfJoin(){
   const nm = ($('#jname').value || '').replace(/[<>&"']/g, '').trim().slice(0, 8);
   if (!nm){ $('#jmsg').textContent = '名前を入れてね'; $('#jname').focus(); return; }
   if (!P.char){ $('#jmsg').textContent = 'コマをえらんでね'; return; }
-  if (!P.course){ $('#jmsg').textContent = 'コースをえらんでね'; return; }
+  if (!P.course){ $('#jmsg').textContent = 'コースをえらんでね'; try { $('#csel').scrollIntoView({block:'center', behavior:'smooth'}); } catch(e){} return; }
   P.jid = P.jid || ('j' + Math.random().toString(36).slice(2, 10)); P.pid = null;
   try { localStorage.setItem('sg_jid_' + P.room, P.jid); localStorage.removeItem('sg_pid_' + P.room); } catch(e){}
   const d = {name:nm, char:P.char, course:P.course, level:P.level}; try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
@@ -4479,177 +4878,425 @@ function pSelfJoin(){
   initAudio(); keepAwake(); try { sfx.star(); } catch(e){}
   P.name = nm; P.stage = 'wait'; renderPlay();
 }
-function pPickChar(k){ P.char = k; document.querySelectorAll('.cpick').forEach(b => b.classList.toggle('sel', b.dataset.k === k)); }
+
 function pRoomGo(){ const c = ($('#proom').value || '').replace(/\D/g, ''); if (c.length < 4){ $('#proom').focus(); return; } netJoin(c); }
 function netRemain(){ return P.info && P.info.endsAt ? Math.max(0, Math.ceil((P.info.endsAt - NET.now()) / 1000)) : P.t; }
+/* ============ スマホの画面：部品 ============
+   夜空の紺に、こがね色の明かり。光っているところが「いま押せるところ」。自分の色（--me）が、上の帯と、コマの台に出る */
+const PCATS = [['all', 'ぜんぶ'], ['cute', 'かわいい'], ['toki', 'ときめき'], ['cool', 'かっこいい'], ['adult', 'おとな'], ['xmas', 'クリスマス']];
+const pReduce = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const pBuzz = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch(e){} };      // 手ごたえ（ふるえる。使えるスマホだけ）
+const pAv = (k, col, cls) => `<span class="pav ${cls || ''}" style="--pc:${col || '#8f9bc4'}">${CHAR_THUMB[k] ? `<img src="${CHAR_THUMB[k]}" alt="">` : ''}</span>`;
+const pHero = (k, col, cls) => `<div class="phero ${cls || ''}" style="--pc:${col || '#ffcf4a'}"><i class="ped"></i><canvas class="plive" data-char="${k || ''}"></canvas></div>`;
+/* コマを、生きているように描く（まばたき・ゆれ・えらんだときに はねる）。画面の中の canvas.plive を、ぜんぶ描く。先生の「コマをえらぶ」の画面でも使う */
+const PLive = (() => {
+  let raf = 0, last = 0;
+  function drawOne(c, T){
+    const k = c.dataset.char; if (!k || !window.CharArt || !CharArt.has(k)) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = c.clientWidth, h = c.clientHeight; if (!w || !h) return;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)){ c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    const still = pReduce(), bx = CharArt.box(k), s = h * .78 / Math.max(bx, .92), t0 = +c.dataset.hop || 0, u = t0 ? (T - t0) / .62 : 2, jump = !still && u >= 0 && u < 1 ? Math.sin(Math.PI * u) : 0;
+    g.translate(w / 2, h * .885 - jump * h * .13 + (still ? 0 : Math.sin(T * 2.1) * h * .006));
+    CharArt.draw(g, k, s, 0, {T:still ? 0 : T, still:true, sw:still ? 0 : Math.sin(T * 1.7) * .55, bp:.3, cheer:jump});
+  }
+  function frame(now){
+    raf = 0; const T = now / 1000, cs = [...document.querySelectorAll('canvas.plive')].filter(c => c.clientWidth > 0);      // 見えている絵だけ
+    if (!document.hidden && now - last > 30){ last = now; cs.forEach(c => { try { drawOne(c, T); } catch(e){} }); }
+    if (cs.length && !pReduce()) raf = requestAnimationFrame(frame);      // 絵が1つもないあいだは、止めておく（出たときに kick で動きだす）
+  }
+  return { kick(){ if (!raf) raf = requestAnimationFrame(frame); }, hop(c){ if (c) c.dataset.hop = performance.now() / 1000; this.kick(); } };
+})();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) PLive.kick(); });
+/* 画面を入れかえる。同じ中身のときは、さわらない（動いている絵を、とちゅうで作りなおさないため） */
+function pSet(html){
+  const B = $('#pbody'); B.dataset.stage = P.stage;
+  if (B._html === html && !B._key) return false;
+  B._html = html; B._key = ''; B.innerHTML = html; PLive.kick(); return true;
+}
+/* スマホから先生の画面へ「押した」を送る（えらぶ画面・ガチャ）。id＝先生の画面がつけた番号。6秒たっても進まないときは、もう一度押せるようにする */
+function pAct(id, v){
+  if (!P.room || P.pid == null || (P.acted && P.acted.id === id)) return;
+  initAudio(); keepAwake(); pBuzz(20); try { sfx.star(); } catch(e){}
+  P.acted = {id, v, at:Date.now()};
+  const r = NET.set(`rooms/${P.room}/act/${P.pid}`, {id, v, at:NET.now()}); if (r && r.catch) r.catch(() => {});
+  renderPlay();
+  clearTimeout(P.actT); P.actT = setTimeout(() => { const U = P.info && P.info.ui; if (P.acted && P.acted.id === id && U && U.id === id){ P.acted = null; renderPlay(); } }, 6000);
+}
+/* 自分あての画面があるか：えらぶ画面／ガチャ（自分が回す番）／サイコロ（自分の番） */
+function pMine(I){
+  if (!I || P.pid == null) return '';
+  const U = I.ui && I.ui.to === P.pid ? I.ui : null;
+  if (U && U.k === 'ask') return 'ask';
+  if (I.phase === 'gacha' && I.gacha && I.gacha.to === P.pid) return 'gacha';
+  if (I.phase === 'roll' && I.roll && I.roll.to === P.pid && I.roll.st !== 'wait') return 'roll';
+  return '';
+}
+
+/* ---- サイコロ（自分の番のときに出る。タップすると、先生の画面でサイコロがころがる。出た目は、先生の画面から届く） ---- */
+const DIE_ROT = {1:[0, 0], 2:[-90, 0], 3:[0, -90], 4:[0, 90], 5:[90, 0], 6:[0, 180]};      // その目を手前に向ける回し方（たて・よこ）
+const DIE_PIP = {1:[4], 2:[0, 8], 3:[0, 4, 8], 4:[0, 2, 6, 8], 5:[0, 2, 4, 6, 8], 6:[0, 2, 3, 5, 6, 8]};
+function cubeHTML(n, cls){
+  const r = DIE_ROT[n] || DIE_ROT[1];
+  return `<span class="dice3 ${cls || ''}"><span class="cube" style="--fx:${r[0]}deg;--fy:${r[1]}deg"><b></b><b class="c2"></b><b class="c3"></b>${[1, 2, 3, 4, 5, 6].map(f => `<span class="fc f${f}">${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => `<i class="${DIE_PIP[f].includes(i) ? 'p' : ''}"></i>`).join('')}</span>`).join('')}</span></span>`;
+}
+function pRoll(){
+  const R = P.info && P.info.roll; if (!R || R.to !== P.pid || R.st !== 'open' || !P.room) return;
+  if (P.rollSent && P.rollSent.id === R.id) return;
+  initAudio(); keepAwake(); pBuzz(30); try { sfx.bounce(.1); } catch(e){}
+  P.rollSent = {id:R.id, at:Date.now()}; P.rollMiss = 0;
+  const r = NET.set(`rooms/${P.room}/act/${P.pid}`, {id:R.id, v:'roll', at:NET.now()}); if (r && r.catch) r.catch(() => {});
+  renderPlay();
+  // 6秒たっても先生の画面が動かないときは、もう一度タップできるようにする
+  clearTimeout(P.rollT); P.rollT = setTimeout(() => { const r2 = P.info && P.info.roll; if (P.rollSent && r2 && r2.id === P.rollSent.id && r2.st === 'open'){ P.rollSent = null; P.rollMiss = r2.id; renderPlay(); } }, 6000);
+}
+function renderRoll(){
+  const B = $('#pbody'), R = P.info.roll, key = 'roll:' + R.id;
+  if (B._key !== key){
+    B._key = key; B._html = null; B.dataset.stage = 'roll'; P.rollSt = '';
+    B.innerHTML = `<div class="proll" id="pr">
+      <div class="pr-top dela">あなたの番！</div>
+      <div class="pr-tap" id="prTap" role="button" tabindex="0" aria-label="サイコロをふる" onclick="pRoll()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pRoll()}"><span class="pr-ring"></span><span class="pr-dice" id="prDice">${cubeHTML(1)}</span></div>
+      <div class="pr-num dela" id="prNum" aria-live="polite"></div>
+      <div class="pr-msg" id="prMsg"></div>
+      <div class="pr-sub" id="prSub"></div></div>`;
+  }
+  // open＝タップを待つ／go＝ころがっている／hold＝タップは届いた。先生の画面の声が終わったら、ころがる／done＝目が出た
+  const sent = !!(P.rollSent && P.rollSent.id === R.id), st = R.st === 'done' ? 'done' : R.st === 'go' ? (R.w ? 'hold' : 'go') : sent ? 'go' : 'open', pr = $('#pr'), me = pMe() || {};
+  if (st !== P.rollSt){
+    const prev = P.rollSt; P.rollSt = st; pr.dataset.st = st;
+    if (st === 'open'){ $('#prMsg').textContent = P.rollMiss === R.id ? 'もう一度、サイコロをタップしてね' : 'サイコロをタップ！'; $('#prSub').textContent = '先生の画面で、サイコロがころがるよ'; $('#prTap').setAttribute('aria-disabled', 'false'); }
+    else if (st === 'go'){ $('#prMsg').textContent = 'ころころ…'; $('#prSub').textContent = '先生の画面を見てね'; $('#prTap').setAttribute('aria-disabled', 'true'); }
+    else if (st === 'hold'){ $('#prMsg').textContent = 'タップOK！'; $('#prSub').textContent = '先生の画面の声が終わったら、ころがるよ'; $('#prTap').setAttribute('aria-disabled', 'true'); }
+    else {
+      $('#prTap').setAttribute('aria-disabled', 'true');
+      const v = Object.values(R.v || {}).map(Number).filter(x => x >= 1 && x <= 6), quick = P.rollShown === R.id || pReduce() || !prev;      // quick＝もう見せた目（えらぶ画面から戻ったとき など）は、ころがさずに出す
+      $('#prDice').innerHTML = (v.length ? v : [1]).map(n => cubeHTML(n, (quick ? 'rest' : 'land') + (v.length > 1 ? ' two' : ''))).join('');
+      P.rollHold = quick ? 0 : Date.now() + 1700;      // 出た目を見せているあいだ（ころがる 0.95秒＋見る 0.75秒）は、えらぶ画面に切りかえない
+      const show = () => {
+        if (P.rollSt !== 'done' || !$('#prNum') || !(P.info && P.info.roll && P.info.roll.id === R.id)) return;
+        $('#prNum').textContent = R.n; $('#pr').classList.add('got'); $('#prMsg').textContent = `${R.n}マス 進むよ！`;
+        $('#prSub').textContent = v.length > 1 || R.plus ? `${v.join(' + ')}${R.plus ? ' + ' + R.plus : ''} = ${R.n}` : 'コマが進むところを、先生の画面で見てね';
+        if (P.rollShown !== R.id){ P.rollShown = R.id; initAudio(); try { sfx.land(); } catch(e){} pBuzz(60); }
+        renderRoll();
+      };
+      if (quick) show(); else setTimeout(show, 950);
+    }
+  }
+  // 止まったマスが決まったら、下に出す
+  if (st === 'done' && P.rollShown === R.id && me.space && !(Object.values(R.v || {}).length > 1 || R.plus)) $('#prSub').textContent = '📍 止まったマス：' + me.space;
+}
+
+/* ---- えらぶ画面（分かれ道・アイテム・ショップ・職業安定所・ガチャの「どれを手ばなす？」）。先生の画面と同じ選択肢が出る ---- */
+function askHTML(U){
+  const sent = P.acted && P.acted.id === U.id ? P.acted.v : null, R = P.info && P.info.phase === 'roll' ? P.info.roll : null;
+  return `<div class="pa">${R && R.to === P.pid && R.st === 'done' && R.n ? `<div class="pa-dice"><i>🎲</i><b class="dela">${R.n | 0}</b><span>マス 進むよ</span></div>` : ''}<div class="pa-h dela">${esc(U.t || 'どれにする？')}</div>${U.s ? `<div class="pa-s">${esc(U.s)}</div>` : ''}
+    <div class="pa-opts">${Object.values(U.o || {}).map((o, i) => `<button type="button" class="pa-opt ${sent === i ? 'sel' : ''}" ${o.d || sent != null ? 'disabled' : ''} onclick="pAct(${+U.id}, ${i})"><span class="pa-ic">${esc(o.ic || '')}</span><span class="pa-tx"><b>${esc(o.t || '')}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}</span></button>`).join('')}</div>
+    <div class="pa-foot">${sent != null ? '先生の画面に送りました' : '先生の画面にも、同じものが出ています'}</div></div>`;
+}
+
+/* ---- ガチャ ---- */
+/* 出たアイテムのカード。anim＝いま出たばかり（カプセルが開いてから出す）。とちゅうで画面を作りなおしても、動きがはじめに戻らないように、たった時間のぶんを先に進める */
+function gresHTML(r, key){
+  if (P.gresKey !== key){ P.gresKey = key; P.gresAt = Date.now(); setTimeout(() => { if (P.gresKey === key){ initAudio(); try { sfx.star(); } catch(e){} pBuzz(50); } }, 900); setTimeout(() => { if (P.gresKey === key) renderPlay(); }, 1700); }
+  const el = Date.now() - P.gresAt, anim = el < 1600 && !pReduce();
+  return `<div class="pg-rv ${anim ? 'in' : ''}" style="--rc:${esc(r.col || '#ffcf4a')};--el:-${Math.max(0, el)}ms">${anim ? '<div class="capsule"></div>' : ''}
+    <div class="pg-res">${r.nw ? '<span class="pg-new dela">NEW!</span>' : ''}<div class="pg-stars">${'★'.repeat(Math.max(1, Math.min(5, r.st | 0)))}</div><div class="pg-rar dela">${esc(r.rn || '')}</div>
+    <div class="pg-name dela">${esc(r.name || '')}</div><div class="pg-desc">${esc(r.slot || '')}　${esc(r.d || '')}</div>${r.co ? `<div class="pg-co">${esc(r.co)}</div>` : ''}<div class="pg-col">コレクション ${r.n | 0} / ${r.tot | 0}</div></div></div>`;
+}
+const gresKey = G => G.to + ':' + (G.res ? G.res.name + ':' + G.res.n : '') + ':' + G.tk;
+function gachaHTML(){
+  const I = P.info, G = I.gacha, U = I.ui && I.ui.to === P.pid ? I.ui : null, sent = !!(U && P.acted && P.acted.id === U.id);
+  const head = `<div class="pg-h"><span class="dela">ガチャタイム</span><span class="pg-tk">🎟️ ×${G.tk | 0}</span></div>`;
+  const btn = U && U.k === 'btn' ? `<button type="button" class="pbtn" ${sent ? 'disabled' : ''} onclick="pAct(${+U.id}, 1)">${esc(U.label || 'つぎへ')}</button>` : '<div class="pg-wait">先生の画面を見てね</div>';
+  let body;
+  if (G.st === 'sel') body = U && U.k === 'gsel'
+    ? `<div class="pg-q">どのガチャをまわす？</div><div class="pg-cards">${Object.values(U.g || {}).map(g => `<button type="button" class="pg-card ${sent && P.acted.v === g.k ? 'sel' : ''}" style="--gc:${esc(g.c)}" data-v="${esc(g.k)}" ${sent ? 'disabled' : ''} onclick="pAct(${+U.id}, this.dataset.v)"><span class="pg-ic">${esc(g.ic)}</span><b>${esc(g.n)}</b><small>${esc(g.d)}</small></button>`).join('')}</div>
+       <div class="pg-odds">${U.sure ? '<b>★ 今回は SR以上 確定！</b>' : `あと${U.left | 0}回で SR以上 確定`}</div>`
+    : '<div class="pg-wait">もうすぐ、あなたのガチャ！<small>先生の画面を見てね</small></div>';
+  else if (G.st === 'spin') body = `<div class="pg-spin" style="--rc:${esc(G.c || '#ffcf4a')}"><div class="capsule"></div><div class="pg-q">${esc(G.ic || '')} ${esc(G.gn || 'ガチャ')}</div><div class="pg-wait">まわしています…<small>先生の画面を見てね</small></div></div>`;
+  else if (G.st === 'res' && G.res) body = gresHTML(G.res, gresKey(G)) + btn;
+  else if (G.st === 'done') body = `<div class="pg-done"><div class="pg-q">${G.kept ? 'そうび完了！' : '今回は、あきらめた'}</div>${Object.values(G.gear || {}).length ? `<div class="pg-gear"><small>持ち物</small>${Object.values(G.gear).map(x => `<span style="--rc:${esc(x.col)}">${esc(x.n)}</span>`).join('')}</div>` : ''}</div>` + btn;
+  else body = '<div class="pg-wait">先生の画面を見てね</div>';
+  return `<div class="pg">${head}${body}</div>`;
+}
+/* ほかの人のガチャ（待ち画面に出す） */
+function gachaSpecHTML(G){
+  if (!G) return '';
+  if (G.st === 'res' && G.res || G.st === 'done' && G.res) return `<div class="pg pg-spec">${gresHTML(G.res, gresKey(G))}</div>`;
+  return `<div class="pcd pg-specw">${G.st === 'spin' ? `${esc(G.ic || '')} ${esc(G.gn || 'ガチャ')}を まわしています…` : 'どのガチャにするか、えらんでいます…'}</div>`;
+}
+
+/* ---- 待ち画面 ---- */
+function townHTML(){
+  const T = P.info && P.info.town; if (!T) return '';
+  const h = Math.max(0, Math.min(100, +T.h || 0));
+  return `<div class="pcd ptown ${h < 30 ? 'low' : ''}"><div class="pt-top"><span class="pt-n">こがね町</span><span class="pt-yen">💰 <b class="dela">${fmtYen(T.b)}</b></span></div>
+    <div class="pt-hap"><span>😊 幸せ度</span><b class="dela">${T.h}</b><small>/ 100</small></div>
+    <div class="pt-lights" role="img" aria-label="幸せ度 ${T.h} / 100">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => { const f = Math.max(0, Math.min(1, (h - i * 10) / 10)); return `<i class="${f >= 1 ? 'on' : ''}" style="--f:${f}"></i>`; }).join('')}</div>
+    <div class="pt-proj">${PROJECTS.map((p, i) => `<span title="${p.name}">${p.ic}<span class="pips">${[0, 1, 2].map(k => `<i class="${k < +(T.lv || '')[i] ? 'on' : ''}"></i>`).join('')}</span></span>`).join('')}</div></div>`;
+}
+const myCourse = () => `${COURSES[P.course || 'chu'].ic} ${courseLabel(P.course || 'chu', P.level)}`;
 function waitHTML(){
-  const I = P.info || {}, me = pMe() || {};
+  const I = P.info || {}, me = pMe() || {}, co = pCoop(), R = I.roll, G = I.phase === 'gacha' ? I.gacha : null;
+  const mine = String(I.turnId) === String(P.pid), lobby = I.phase === 'setup' || I.phase === 'lobby', cur = P.roster && P.roster[I.turnId];
   const msg = ({
-    setup:['⏳', '先生がはじめるのを待っています'],
+    setup:['⏳', '先生がはじめるのを<br>待っています'],
     lobby:['🎄', '準備OK！<br>もうすぐゲームが始まります'],
-    roll:[String(I.turnId) === String(P.pid) ? '🎲' : '⏳', String(I.turnId) === String(P.pid) ? 'あなたの番です！<br>先生の画面を見てね' : 'サイコロの順番を待っています'],
+    roll:mine ? (R && R.to === P.pid ? ['🎲', 'まもなく、あなたの番！'] : ['🎲', 'あなたの番です！<br>先生の画面を見てね']) : cur && cur.name ? ['', `<span class="pw-turn">${pAv(cur.char, cur.color, 'sm')}${esc(cur.name)}さんの番</span>`] : ['⏳', 'サイコロの順番を待っています'],
     quizReady:['📝', 'まもなく問題タイム！<br>この画面に問題が出ます'],
     quiz:me.topic > 0 ? ['✅', '答えを送りました！<br>結果を待ってね'] : ['📣', '今回は問題なし。<br>みんなを応援しよう！'],
-    score:pCoop() ? ['💰', '町の予算を数えています…'] : ['⭐', '⭐ を数えています…'],
-    gacha:['🎰', 'ガチャタイム！<br>先生の画面を見てね'],
+    score:co ? ['💰', '町の予算を数えています…'] : ['⭐', '⭐ を数えています…'],
+    gacha:G && G.nm ? ['🎰', `${esc(G.nm)}さんのガチャ`] : ['🎰', 'ガチャタイム！<br>先生の画面を見てね'],
     meeting:['🏛', '町の会議！'],
     career:['🔄', '転職タイム！<br>先生の画面を見てね'],
     build:['🏗', '工事中！<br>先生の画面を見てね'],
     tree:I.tree && I.tree.done ? (I.tree.done === 'ok' ? ['🎄', 'ツリーの明かりが、ぜんぶ灯った！<br>先生の画面を見てね'] : ['⏰', '時間切れ…<br>先生の画面を見てね']) : ['🎄', '最後の大工事！<br>先生の「スタート」で、ここに問題が出ます'],
     cards:['📜', 'こがね町のできごと！<br>先生の画面を見てね'],
-    end:pCoop() ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🎄', '最後の大工事！<br>もうすぐ、この画面に問題が出ます']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
+    end:co ? (I.town && I.town.end === 'win' ? ['🎄', 'こがね町に明かりが戻った！<br>おつかれさまでした！'] : I.town && I.town.end ? ['🌙', 'おつかれさまでした！<br>先生の画面で結果発表！'] : ['🎄', '最後の大工事！<br>もうすぐ、この画面に問題が出ます']) : ['🏆', 'おつかれさまでした！<br>先生の画面で結果発表！'],
   })[I.phase] || ['⏳', '先生の画面を待っています'];
-  const last = P.hist[P.hist.length - 1], co = pCoop();
-  return `<div class="wait">
-    <div class="wme">${CHAR_THUMB[me.char] ? `<img class="wimg" src="${CHAR_THUMB[me.char]}" alt="" style="border-color:${me.color || '#888'}">` : `<span class="wdot" style="background:${me.color || '#888'}"></span>`}<b>${esc(me.name || '')}</b></div>
-    <div class="wst">${co ? `<span>${pJobLine(me)}</span>` : `<span>⭐ ${me.stars || 0}</span>`}${me.tickets ? `<span>🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="wsp">📍 ${esc(me.space)}</span>` : ''}</div>
+  const last = P.hist[P.hist.length - 1], ck = P.charSent && Date.now() - P.charSent.at < 4000 ? P.charSent.k : me.char;
+  // ほかの人のサイコロの目（先生の画面で止まったあとに出る）
+  const dice = I.phase === 'roll' && R && R.st === 'done' && R.to !== P.pid && R.n ? `<div class="pw-dice"><i>🎲</i><b class="dela">${R.n | 0}</b></div>` : '';
+  return `<div class="pw">
+    ${pHero(ck, me.color, 'sm')}
+    <div class="pw-msg"><div class="pw-t">${msg[0] ? `<i>${msg[0]}</i>` : ''}${msg[1]}</div>${dice}${I.phase === 'roll' && I.round ? `<div class="pw-s">ラウンド ${I.round} / ${I.maxRound}</div>` : ''}</div>
+    ${lobby ? crewHTML() : ''}
+    ${G && G.to !== P.pid ? gachaSpecHTML(G) : ''}
+    <div class="pcd">
+      <div class="pcd-row"><span class="pcd-v">${co ? pJobLine(me) : `⭐ ${me.stars || 0}`}</span><span class="pchips">${me.tickets ? `<span class="pchip2 gold">🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="pchip2">📍 ${esc(me.space)}</span>` : ''}</span></div>
+      ${co ? `<div class="pcd-note">${JOBS[me.job] ? (me.vet ? JOBS[me.job].vd : JOBS[me.job].d) : `${NEWBIE.d}（${[1, 2, 3, 4, 5].map(t => `${CAT[t].ic}${TOPICS[t]}→${JOBS[TOPIC_JOB[t]].ic}`).join(' ')}）`}${pCareerTags(me) ? `<div class="wcar">${pCareerTags(me)}</div>` : ''}</div>` : ''}
+      <div class="pcd-row"><span class="pcd-k">${myCourse()}</span><button class="pmini" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
+      ${lobby ? `<div class="pcd-row"><span class="pcd-k">コマ：${esc((CHAR_LIST[ck] || [''])[0])}</span><button class="pmini" onclick="pCharOpen()">コマを変える</button></div>` : ''}
+    </div>
     ${co ? townHTML() : ''}
-    <div class="wbig">${msg[0]}</div><div class="wmsg">${msg[1]}</div>
-    ${co ? `<div class="wsub">${JOBS[me.job] ? (me.vet ? JOBS[me.job].vd : JOBS[me.job].d) : `${NEWBIE.d}（${[1,2,3,4,5].map(t => `${CAT[t].ic}${TOPICS[t]}→${JOBS[TOPIC_JOB[t]].ic}`).join(' ')}）`}${pCareerTags(me) ? `<div class="wcar">${pCareerTags(me)}</div>` : ''}</div>` : ''}
-    <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
-    ${I.phase === 'roll' && I.round ? `<div class="wsub">ラウンド ${I.round} / ${I.maxRound}</div>` : ''}
-    ${last && I.phase !== 'quiz' ? `<div class="wsub">前回：${last.ok ? (co ? `⭕ 正解${me.yen ? `　町の予算に +${fmtYen(me.yen)}` : ''}` : `⭕ 正解（⭐${last.st}）`) : '❌ ざんねん'}</div>` : ''}
+    ${last && I.phase !== 'quiz' ? `<div class="pw-last"><span>前回：${last.ok ? (co ? `⭕ 正解${me.yen ? `　町の予算に +${fmtYen(me.yen)}` : ''}` : `⭕ 正解（⭐${last.st}）`) : '❌ ざんねん'}</span>${P.prob && P.res && !P.tree ? `<button class="small-link" onclick="P.stage='result';renderPlay()">答えと解説を見る</button>` : ''}</div>` : ''}
     <div class="wfoot">部屋 ${esc(P.room)}${NET.mode === 'fb' && !NET.connected ? '　🔴 つながっていません' : ''}　<button class="small-link" onclick="P.stage='join';renderPlay()">名前を選びなおす</button></div></div>`;
 }
-function pscore(){
-  const st = P.hist.reduce((s,h) => s + h.st, 0), ok = P.hist.filter(h => h.ok).length;
-  $('#pscore').innerHTML = P.hist.length ? (pCoop() ? `✅ 正解 ${ok} / ${P.hist.length}` : `⭐ ${st}<br><span style="color:var(--muted);font-weight:500">正解 ${ok} / ${P.hist.length}</span>`) : '';
-  $('#pwho').textContent = P.name ? (pCoop() ? '🏘 ' : '🎄 ') + P.name + ' さん' : (pCoop() ? '🏘 こがね町を救え！' : '🎄 数学すごろく');
+/* 待合室：いっしょに遊ぶ人たち（参加した順に、コマと名前がならぶ） */
+function crewHTML(){
+  const R = P.roster || {}, ks = Object.keys(R).filter(k => R[k]); if (ks.length < 2) return '';
+  return `<div class="pw-crew"><small>いっしょに遊ぶ人</small><div>${ks.map(k => `<span class="${k === String(P.pid) ? 'me' : ''}">${pAv(R[k].char, R[k].color, 'sm')}${R[k].cpu ? '🤖' : ''}${esc(R[k].name)}</span>`).join('')}</div></div>`;
 }
-function renderPlay(){
-  pscore();
-  const B = $('#pbody');
-  if (P.stage === 'join'){
-    const R = P.roster || {}, ids = Object.keys(R).filter(k => R[k] && !R[k].cpu), taken = new Set(Object.values(R).filter(Boolean).map(r => r.char));
-    const open = !P.info || P.info.phase === 'setup' || P.info.phase === 'lobby';
-    if (!P.char){ const free = Object.keys(CHAR_LIST).filter(k => !taken.has(k)); P.char = free[Math.floor(Math.random() * free.length)] || 'santa'; }
-    // 名前のボタン。先生がもう名前を入れてある人がいるとき（pre）は、入力らんより上に、開いたまま出す（同じ人が、もう一度名前を入れて、2人にならないように）
-    const pre = open && ids.some(k => !R[k].jid);
-    const mine = ids.length ? `<details ${open && !pre ? '' : 'open'} style="margin-top:${pre ? 4 : 14}px"><summary style="cursor:pointer;color:var(--muted)">${!open ? '自分の名前をタップ' : pre ? '先生がもう名前を入れてある人は、自分の名前をタップ' : 'もう登録してある人は、自分の名前をタップ'}</summary>
-      <div class="jgrid">${ids.map(k => `<button class="jbtn" onclick="pJoin('${k}')" style="--pc:${R[k].color}"><img class="jimg" src="${CHAR_THUMB[R[k].char] || ''}" alt="">${esc(R[k].name)}</button>`).join('')}</div></details>${pre ? '<div class="wsub" style="margin:12px 0 2px;text-align:center">名前がない人は、下で名前を入れてね</div>' : ''}` : '';
-    B.innerHTML = `<h2>${open || !ids.length ? '参加しよう！' : 'つづきから遊ぼう！'}</h2>
-      ${pre ? mine : ''}
-      ${open ? `<label>名前（ニックネーム・8文字まで）</label><input class="pin" id="jname" maxlength="8" placeholder="例：ゆうき" value="${esc(P.name || '')}">
-      <label>コマをえらぼう</label>
-      <div class="cpgrid">${Object.entries(CHAR_LIST).map(([k, c]) => `<button class="cpick ${P.char === k ? 'sel' : ''}" data-k="${k}" ${taken.has(k) && P.char !== k ? 'disabled' : ''} onclick="pPickChar('${k}')"><img src="${CHAR_THUMB[k] || ''}" alt=""><span>${c[0]}</span></button>`).join('')}</div>
-      <label>コースとレベル（あとで変えられます）</label>
+/* 上の帯：自分のコマ・名前・しごと（対戦モードは ⭐）。参加する前は、ゲームの名前 */
+function pscore(){
+  const el = $('#pbar'); if (!el) return;
+  const me = pMe(), co = pCoop(), st = P.hist.reduce((s, h) => s + h.st, 0), ok = P.hist.filter(h => h.ok).length;
+  try { $('#play').style.setProperty('--me', me && me.color ? me.color : '#ffcf4a'); } catch(e){}
+  const score = P.hist.length ? `<span class="pb-chip">正解 ${ok} / ${P.hist.length}</span>` : '';
+  const html = me && P.stage !== 'join'
+    ? `<div class="pb-me">${pAv(P.charSent && Date.now() - P.charSent.at < 4000 ? P.charSent.k : me.char, me.color)}<div class="pb-n"><b id="pwho">${esc(me.name || '')}</b><small>${co ? pJobLine(me) : `⭐ ${me.stars || 0}`}</small></div></div><div class="pb-r" id="pscore">${score}${me.tickets && P.stage !== 'gacha' ? `<span class="pb-chip gold">🎟️ ${me.tickets}</span>` : ''}</div>`
+    : !P.room && P.name && P.stage !== 'setup'
+    ? `<div class="pb-me"><div class="pb-n"><b id="pwho">${esc(P.name)} さん</b><small>⭐ ${st}</small></div></div><div class="pb-r" id="pscore">${score}</div>`
+    : `<div class="pb-me"><div class="pb-n"><b id="pwho" class="dela">${co ? 'こがね町を救え！' : '数学すごろく'}</b>${P.room ? `<small>部屋 ${esc(P.room)}</small>` : ''}</div></div><div class="pb-r" id="pscore"></div>`;
+  if (el._h !== html){ el._h = html; el.innerHTML = html; }
+}
+
+/* ---- 参加の画面・コマえらび ---- */
+function joinData(){
+  const R = P.roster || {}, ids = Object.keys(R).filter(k => R[k] && !R[k].cpu), taken = new Set(Object.values(R).filter(Boolean).map(r => r.char));
+  const open = !P.info || P.info.phase === 'setup' || P.info.phase === 'lobby';
+  return {R, ids, taken, open, pre:open && ids.some(k => !R[k].jid)};      // pre＝先生がもう名前を入れてある人がいる
+}
+function charPickHTML(taken){
+  const cat = P.ccat || 'all';
+  return `<div class="cp"><div class="cp-tabs" id="cptabs">${PCATS.map(([k, n]) => `<button type="button" class="cp-tab ${cat === k ? 'sel' : ''}" data-cat="${k}" onclick="pCat('${k}')">${n}</button>`).join('')}</div>
+    <div class="cpgrid" id="cpgrid" data-cat="${cat}">${Object.entries(CHAR_LIST).map(([k, c]) => `<button type="button" class="cpick ${P.char === k ? 'sel' : ''}" data-k="${k}" data-cat="${c[2]}" ${taken.has(k) && P.char !== k ? 'disabled' : ''} onclick="pPickChar('${k}')"><img src="${CHAR_THUMB[k] || ''}" alt=""><span>${c[0]}</span></button>`).join('')}</div></div>`;
+}
+function pCat(k){ P.ccat = k; document.querySelectorAll('#cptabs .cp-tab').forEach(b => b.classList.toggle('sel', b.dataset.cat === k)); const g = $('#cpgrid'); if (g) g.dataset.cat = k; }
+/* えらんでいるコマを、上の舞台と、下の「参加する」のよこに出す */
+function pCharShow(hop){
+  const k = P.char, c = CHAR_LIST[k]; if (!c) return;
+  document.querySelectorAll('#cpgrid .cpick').forEach(b => b.classList.toggle('sel', b.dataset.k === k));
+  const cv = document.querySelector('.pj-stage canvas.plive'); if (cv){ cv.dataset.char = k; if (hop) PLive.hop(cv); else PLive.kick(); }
+  const n = $('#jcn'); if (n) n.textContent = c[0];
+  const me = $('#jme'); if (me) me.innerHTML = pAv(k, '#ffcf4a');
+}
+function pPickChar(k){ if (!CHAR_LIST[k]) return; P.char = k; initAudio(); try { sfx.star(); } catch(e){} pBuzz(12); pCharShow(true); }
+function pRoomBack(){ P.subs.forEach(f => f()); P.subs = []; P.room = ''; P.stage = 'setup'; history.replaceState(null, '', '#play'); renderPlay(); }
+function renderJoin(){
+  const B = $('#pbody'), D = joinData(), key = 'join:' + (D.open ? 1 : 0);
+  if (!P.char){ const free = Object.keys(CHAR_LIST).filter(k => !D.taken.has(k)); P.char = free[Math.floor(Math.random() * free.length)] || 'santa'; }
+  if (B._key !== key){
+    B._key = key; B._html = null; B.dataset.stage = 'join';
+    B.innerHTML = `<div class="pj">
+      <h2 class="p-h" id="jh"></h2>
+      <div id="jtop"></div>
+      ${D.open ? `<div class="pj-stage">${pHero(P.char)}<div class="pj-cn" id="jcn"></div></div>
+      <label class="p-lab" for="jname">名前（ニックネーム・8文字まで）</label>
+      <input class="pin" id="jname" maxlength="8" placeholder="例：ゆうき" autocomplete="off" enterkeyhint="done" value="${esc(P.jname != null ? P.jname : P.name || '')}" oninput="P.jname=this.value">
+      <div class="p-lab">コマをえらぼう</div>
+      ${charPickHTML(D.taken)}
+      <div class="p-lab">コースとレベル（あとで変えられます）</div>
       <div id="csel">${courseSelHTML()}</div>
-      ${pCoop() ? `<div class="wsub" style="margin:10px 0 0">🌱 みんな「町の新人」からスタート！ 問題に正解すると、その分野の仕事に就職できるよ。★2以上で正解すると「資格」がもらえて、ほかの仕事にも転職できる！</div>` : ''}
-      <div class="msg" id="jmsg"></div>
-      <button class="btn green big" onclick="pSelfJoin()">この名前とコマで参加する</button>` : ids.length ? '<div class="wmsg" style="margin:14px 0">おかえりなさい！<br>下から、自分の名前をタップしてね</div><div class="wsub" style="text-align:center">つづきから遊べます。<br>はじめて参加する人は、先生に「参加者に入れてください」と伝えてね</div>' : '<div class="wmsg" style="margin:14px 0">ゲームはもう始まっています。<br>先生に「参加者に入れてください」と伝えてね</div>'}
-      ${pre ? '' : mine}
-      <div style="text-align:center;margin-top:10px"><button class="small-link" onclick="P.subs.forEach(f=>f());P.subs=[];P.room='';P.stage='setup';history.replaceState(null,'','#play');renderPlay()">部屋番号を入れなおす</button></div>`;
-    return;
+      <div class="p-note" id="jcoop"></div>` : '<div id="jclosed"></div>'}
+      <div id="jbot"></div>
+      <div class="pj-foot"><button class="small-link" onclick="pRoomBack()">部屋番号を入れなおす</button></div>
+      ${D.open ? `<div class="pj-cta"><span id="jme"></span><div class="pj-go"><div class="msg" id="jmsg"></div><button type="button" class="pbtn" onclick="pSelfJoin()">この名前とコマで参加する</button></div></div>` : ''}</div>`;
+    pCharShow();
   }
+  // 名前のボタンと「ほかの人が使っているコマ」は、あとから変わる。入力のとちゅうの名前を消さないように、そこだけを入れかえる
+  const setH = (id, h) => { const e = $('#' + id); if (e && e._h !== h){ e._h = h; e.innerHTML = h; } };
+  const list = `<div class="jgrid">${D.ids.map(k => `<button class="jbtn" onclick="pJoin('${k}')" style="--pc:${D.R[k].color}">${pAv(D.R[k].char, D.R[k].color)}<span>${esc(D.R[k].name)}</span></button>`).join('')}</div>`;
+  setH('jh', D.open || !D.ids.length ? '参加しよう！' : 'つづきから遊ぼう！');
+  setH('jtop', !D.ids.length ? '' : D.pre ? `<div class="pj-pre"><div class="p-lab">先生がもう名前を入れてある人は、自分の名前をタップ</div>${list}<div class="p-note">名前がない人は、下で名前を入れてね</div></div>`
+    : !D.open ? `<div class="pj-pre"><div class="pj-back">おかえりなさい！<small>下から、自分の名前をタップしてね。つづきから遊べます</small></div>${list}<div class="p-note">はじめて参加する人は、先生に「参加者に入れてください」と伝えてね</div></div>` : '');
+  setH('jbot', D.open && D.ids.length && !D.pre ? `<details class="pj-more"><summary>もう登録してある人は、自分の名前をタップ</summary>${list}</details>` : '');
+  setH('jclosed', !D.open && !D.ids.length ? '<div class="pj-back">ゲームはもう始まっています<small>先生に「参加者に入れてください」と伝えてね</small></div>' : '');
+  setH('jcoop', pCoop() ? '🌱 みんな「町の新人」からスタート！ 問題に正解すると、その分野の仕事に就職できるよ。★2以上で正解すると「資格」がもらえて、ほかの仕事にも転職できる！' : '');
+  document.querySelectorAll('#cpgrid .cpick').forEach(b => { b.disabled = D.taken.has(b.dataset.k) && P.char !== b.dataset.k; });
+}
+/* 参加したあとで、コマを変える（待合室のあいだだけ） */
+function pCharOpen(){ const me = pMe(); if (!me) return; P.char = me.char; P.ccat = 'all'; P.stage = 'char'; $('#pbody')._key = ''; renderPlay(); window.scrollTo(0, 0); }
+function pSendChar(k){
+  const me = pMe(); if (!P.room || !me || !CHAR_LIST[k]) return;
+  if (P.jid){      // 自分で名前を入れて参加した人：参加の申しこみを、新しいコマで送りなおす
+    let d = null; try { d = JSON.parse(localStorage.getItem('sg_jdata_' + P.room) || 'null'); } catch(e){}
+    d = Object.assign({name:me.name}, d || {}, {char:k, course:P.course || me.course || 'chu', level:P.level});
+    try { localStorage.setItem('sg_jdata_' + P.room, JSON.stringify(d)); } catch(e){}
+    NET.set(`rooms/${P.room}/join/${P.jid}`, Object.assign({}, d, {at:NET.now()}));
+  } else if (P.pid != null) NET.update(`rooms/${P.room}/pref/${P.pid}`, {char:k, cat:NET.now()});      // 先生が名前を入れてある人
+}
+function pCharEnd(ok){
+  const me = pMe();
+  if (ok && me && P.char !== me.char && CHAR_LIST[P.char]){ pSendChar(P.char); P.charSent = {k:P.char, at:Date.now()}; initAudio(); try { sfx.jingle(); } catch(e){} setTimeout(() => { if (P.stage === 'wait') renderPlay(); }, 4100); }
+  else if (me) P.char = me.char;
+  P.charFirst = false; P.stage = 'wait'; netUpdate(); window.scrollTo(0, 0);
+}
+function renderCharPick(){
+  const B = $('#pbody'), me = pMe() || {}, R = P.roster || {};
+  const taken = new Set(Object.keys(R).filter(k => R[k] && k !== String(P.pid)).map(k => R[k].char));
+  if (B._key !== 'char'){
+    B._key = 'char'; B._html = null; B.dataset.stage = 'char';
+    B.innerHTML = `<div class="pj pjc"><h2 class="p-h">${P.charFirst ? 'コマをえらぼう！' : 'コマを変える'}</h2>
+      <div class="pj-stage">${pHero(P.char, me.color)}<div class="pj-cn" id="jcn"></div></div>
+      ${charPickHTML(taken)}
+      <div class="pj-cta two"><button type="button" class="pbtn ghost" onclick="pCharEnd(false)">${P.charFirst ? 'あとで' : 'やめる'}</button><button type="button" class="pbtn" onclick="pCharEnd(true)">このコマにする</button></div></div>`;
+    pCharShow();
+  }
+  document.querySelectorAll('#cpgrid .cpick').forEach(b => { b.disabled = taken.has(b.dataset.k) && P.char !== b.dataset.k; });
+}
+
+const P_MARK = {ok:'<svg class="pmark ok" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="44"/></svg>', ng:'<svg class="pmark ng" viewBox="0 0 120 120" aria-hidden="true"><path d="M28 28 92 92M92 28 28 92"/></svg>', time:'<svg class="pmark time" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="64" r="40"/><path d="M60 40v26l16 10M46 14h28"/></svg>'};
+function renderPlay(){
+  const I = P.info;
+  if ((P.stage === 'roll' && !(I && I.roll)) || (P.stage === 'ask' && !(I && I.ui)) || (P.stage === 'gacha' && !(I && I.gacha)) || (P.stage === 'char' && !pMe())) P.stage = 'wait';
+  pscore();
+  if (P.stage === 'join'){ renderJoin(); return; }
+  if (P.stage === 'char'){ renderCharPick(); return; }
+  if (P.stage === 'roll'){ renderRoll(); return; }
+  if (P.stage === 'ask'){ pSet(askHTML(I.ui)); return; }
+  if (P.stage === 'gacha'){ pSet(gachaHTML()); return; }
   if (P.stage === 'vote' && P.info && P.info.vote){
     const V = P.info.vote, T = P.info.town || {b:0};
-    B.innerHTML = `<h2>🏛 町の会議${V.k ? '（2つめ）' : ''}</h2><p style="margin:0 0 8px;color:var(--muted)">どの工事に町のお金を使う？　💰 <b style="color:#fff">${fmtYen(T.b)}</b>${V.law ? `<br>⚖️ 弁護士の${esc(V.law)}さんが${V.lawP || 2}割引きに交渉中！` : ''}</p>
+    pSet(`<div class="pv"><h2 class="p-h">町の会議${V.k ? '（2つめ）' : ''}</h2><p class="p-lead">どの工事に町のお金を使う？　💰 <b>${fmtYen(T.b)}</b>${V.law ? `<br>⚖️ 弁護士の${esc(V.law)}さんが${V.lawP || 2}割引きに交渉中！` : ''}</p>
       <div class="vgrid">${V.opts.map(o => { const p = PROJ[o.id]; return `<button class="vopt ${P.myVote === o.id ? 'sel' : ''}" ${o.can ? '' : 'disabled'} onclick="pVote('${o.id}')"><span class="vi">${p.ic}</span><span class="vt"><b>${p.name}</b><small>レベル${o.lv + 1}「${p.lv[o.lv]}」</small><small>${fmtYen(o.cost)}　😊 +${o.dh || COOP_CFG.lvHappy[o.lv]}${o.lv === 2 ? '　🎉 完成！' : ''}${o.can ? '' : '　（お金が足りない）'}</small></span></button>`; }).join('')}
       <button class="vopt save ${P.myVote === 'save' ? 'sel' : ''}" onclick="pVote('save')"><span class="vi">💰</span><span class="vt"><b>今回は貯金</b><small>次のラウンドで高い工事をする</small></span></button></div>
-      <div class="vfoot">⏱ のこり <b id="vt">${Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000))}</b> 秒　${P.myVote ? '✅ 投票しました（変えられます）' : '👆 タップして投票'}</div>`;
+      <div class="vfoot">⏱ のこり <b id="vt">${Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000))}</b> 秒　${P.myVote ? '✅ 投票しました（変えられます）' : '👆 タップして投票'}</div></div>`);
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#vt'); if (!el || P.stage !== 'vote'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((V.endsAt - NET.now()) / 1000)); }, 500);
     return;
   }
   if (P.stage === 'career' && P.info && P.info.career){
     const C = P.info.career, me = pMe() || {}, my = (C.opts || {})[P.pid], W = C.wanted;
     const left = me.job && !me.vet ? Math.max(1, COOP_CFG.vetTenure - (me.ten | 0)) : 0;
-    B.innerHTML = `<h2>🔄 転職タイム</h2><p style="margin:0 0 6px;color:var(--muted)">いまの仕事：<b style="color:#fff">${pJobLine(me)}</b>${pCareerTags(me) ? `<br>${pCareerTags(me)}` : ''}</p>
+    pSet(`<div class="pv"><h2 class="p-h">転職タイム</h2><p class="p-lead">いまの仕事：<b>${pJobLine(me)}</b>${pCareerTags(me) ? `<br>${pCareerTags(me)}` : ''}</p>
       ${W ? `<div class="kwant">📢 町の求人：${JOBS[W.job].ic} ${JOBS[W.job].name} 募集中！<small>「${esc(W.card || '')}」をふせげなかった…。転職した人に ボーナス +${fmtYen(W.yen)}・😊+${W.h}（先着1人）</small></div>` : ''}
       ${my ? `<div class="vgrid">${my.map(o => `<button class="vopt ${P.myCareer === o.job ? 'sel' : ''}" onclick="pCareer('${o.job}')"><span class="vi">${JOBS[o.job].ic}</span><span class="vt"><b>${JOBS[o.job].name}に転職</b><small>${o.via === 'wanted' ? '📢 求人に応える（ボーナス！）' : '📜 資格があるので転職できる'}</small><small>${JOBS[o.job].d}</small></span></button>`).join('')}
         <button class="vopt save ${P.myCareer === 'stay' ? 'sel' : ''}" onclick="pCareer('stay')"><span class="vi">${me.job ? '👍' : '🌱'}</span><span class="vt"><b>このまま</b><small>${me.job ? (me.vet ? 'ベテランの強い力をつづけて使う' : `あと${left}ラウンドつづけるとベテラン！`) : '新人のまま、次の問題で就職をめざす'}</small></span></button></div>
-        <p style="margin:8px 0 0;font-size:12.5px;color:var(--muted)">転職すると、いまの仕事は「経験」として少し残ります（ベテランは0からやり直し）</p>` : `<div class="wmsg" style="margin:16px 0">今回は転職できる仕事がないよ</div><div class="wsub" style="text-align:center">★2以上で正解すると「📜資格」がもらえて、転職できるようになる！</div>`}
-      <div class="vfoot">⏱ のこり <b id="ct">${Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000))}</b> 秒　${my ? (P.myCareer ? '✅ 決めました（変えられます）' : '👆 タップして決めよう') : ''}</div>`;
+        <p class="p-note">転職すると、いまの仕事は「経験」として少し残ります（ベテランは0からやり直し）</p>` : `<div class="pw-t" style="margin:18px 0 6px;text-align:center">今回は転職できる仕事がないよ</div><div class="p-note" style="text-align:center">★2以上で正解すると「📜資格」がもらえて、転職できるようになる！</div>`}
+      <div class="vfoot">⏱ のこり <b id="ct">${Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000))}</b> 秒　${my ? (P.myCareer ? '✅ 決めました（変えられます）' : '👆 タップして決めよう') : ''}</div></div>`);
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#ct'); if (!el || P.stage !== 'career'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000)); }, 500);
     return;
   }
   if (P.stage === 'course'){
-    B.innerHTML = `<h2>📚 コースとレベル</h2><p style="margin:0 0 8px;color:var(--muted)">次の問題から、えらんだコースで出ます。</p>
+    pSet(`<div class="pv"><h2 class="p-h">コースとレベル</h2><p class="p-lead">次の問題から、えらんだコースで出ます。</p>
       <div id="csel">${courseSelHTML()}</div>
-      <button class="btn green big" onclick="if(!P.course)return;P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">OK</button>`;
+      <button class="pbtn" style="margin-top:14px" onclick="if(!P.course)return;P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">OK</button></div>`);
     return;
   }
   if (P.stage === 'wait'){
-    B.innerHTML = !(P.info && P.roster) ? `<div class="wmsg" style="margin:30px 0">先生の画面とつないでいます…</div>${P.slow ? `<div class="wsub" style="text-align:center">先生の画面が開いていないか、部屋番号（${esc(P.room)}）がちがうかもしれません。<br>先生に確認してね</div>` : ''}`
-      : pMe() ? waitHTML() : `<div class="wait"><div class="wbig">📝</div><div class="wmsg">${esc(P.name || '')}さん、<br>先生の画面に登録しています…</div><div class="wsub">${P.info.phase === 'setup' || P.info.phase === 'lobby' ? 'すぐに先生の画面にコマが出ます' : 'ゲームが始まっています。先生に伝えてね'}</div><div class="wfoot"><button class="small-link" onclick="P.stage='join';renderPlay()">やりなおす</button></div></div>`;
+    pSet(!(P.info && P.roster) ? `<div class="pcon"><i class="pspin"></i><div class="pw-t">先生の画面と<br>つないでいます…</div>${P.slow ? `<div class="p-note">先生の画面が開いていないか、部屋番号（${esc(P.room)}）がちがうかもしれません。<br>先生に確認してね</div><button class="small-link" onclick="pRoomBack()">部屋番号を入れなおす</button>` : ''}</div>`
+      : pMe() ? waitHTML() : `<div class="pcon"><i class="pspin"></i><div class="pw-t">${esc(P.name || '')}さん、<br>先生の画面に登録しています…</div><div class="p-note">${P.info.phase === 'setup' || P.info.phase === 'lobby' ? 'すぐに先生の画面にコマが出ます' : 'ゲームが始まっています。先生に伝えてね'}</div><button class="small-link" onclick="P.stage='join';renderPlay()">やりなおす</button></div>`);
   } else if (P.stage === 'setup'){
-    B.innerHTML = `<h2>ようこそ！</h2>
-      <label>部屋番号（先生の画面に出ている数字）</label>
-      <div style="display:flex;gap:8px"><input class="pin" id="proom" inputmode="numeric" maxlength="6" placeholder="例：4821" style="flex:1"><button class="btn green" onclick="pRoomGo()">入る</button></div>
-      <p style="margin:6px 0 14px;color:var(--muted);font-size:13px">先生から届いたリンクを開いた人は、番号を入れなくても大丈夫です。</p>
-      <details><summary style="cursor:pointer;color:var(--muted)">部屋番号なしで、色を自分で選んで遊ぶ</summary>
-      <label>名前（ニックネームでOK）</label>
+    pSet(`<div class="pv"><h2 class="p-h">ようこそ！</h2>
+      <label class="p-lab" for="proom">部屋番号（先生の画面に出ている数字）</label>
+      <div class="proomrow"><input class="pin" id="proom" inputmode="numeric" maxlength="6" placeholder="例：4821" enterkeyhint="go" onkeydown="if(event.key==='Enter')pRoomGo()"><button class="pbtn" onclick="pRoomGo()">入る</button></div>
+      <p class="p-note">先生から届いたリンクを開いた人は、番号を入れなくても大丈夫です。</p>
+      <details class="pj-more"><summary>部屋番号なしで、色を自分で選んで遊ぶ</summary>
+      <label class="p-lab" for="pname">名前（ニックネームでOK）</label>
       <input class="pin" id="pname" maxlength="10" value="${esc(P.name)}" placeholder="例：ゆうき">
-      <label>コースとレベル</label>
+      <div class="p-lab">コースとレベル</div>
       <div id="csel">${courseSelHTML()}</div>
-      <button class="btn green big" onclick="pStart()">はじめる</button></details>`;
+      <button class="pbtn" style="margin-top:12px" onclick="pStart()">はじめる</button></details></div>`);
   } else if (P.stage === 'pick'){
-    B.innerHTML = `<h2>📍 止まったマスの色は？</h2>
-      <p style="margin:0;color:var(--muted)">先生の画面で、自分のコマが止まったマスを見て選んでね。</p>
+    pSet(`<div class="pv"><h2 class="p-h">止まったマスの色は？</h2>
+      <p class="p-lead">先生の画面で、自分のコマが止まったマスを見て選んでね。</p>
       <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
       <div class="tgrid">${[1,2,3,4,5].map(t => `<button class="tbtn" onclick="pTopic(${t})"><span class="dot" style="background:${TCOL[t]}">${TSHORT[t]}</span>${COURSES[P.course || 'chu'].f[t]}</button>`).join('')}
       <button class="tbtn" onclick="pTopic(ri(1,5))"><span class="dot" style="background:#334">？</span>おまかせ</button>
-      <div class="tbtn none" style="flex-direction:column;gap:2px">🔥 チャレンジや 📚 ボーナス問題のときも、色を選んでね<br>🎁 ⛄ 🏪 などのマスのときは問題なし。次のラウンドを待ってね</div></div>`;
+      <div class="tbtn none" style="flex-direction:column;gap:2px">🔥 チャレンジや 📚 ボーナス問題のときも、色を選んでね<br>🎁 ⛄ 🏪 などのマスのときは問題なし。次のラウンドを待ってね</div></div></div>`);
   } else if (P.stage === 'star'){
-    B.innerHTML = `<div style="text-align:center"><span class="dot" style="display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;border:3px solid #fff;background:${TCOL[P.topic]};font-weight:900">${TSHORT[P.topic]}</span>
-      <div style="font-size:22px;font-weight:900;margin:4px 0">${COURSES[P.course || 'chu'].f[P.topic]}</div>
+    const co = pCoop(), x = P.double ? 2 : 1;
+    pSet(`<div class="pstg"><span class="tdot" style="background:${TCOL[P.topic]}">${TSHORT[P.topic]}</span>
+      <div class="ps-f">${COURSES[P.course || 'chu'].f[P.topic]}</div>
       <div class="wcourse">${myCourse()}　<button class="small-link" onclick="P.back=P.stage;P.stage='course';renderPlay()">変える</button></div>
-      <p style="margin:0;color:var(--muted)">むずかしさを選ぼう。むずかしいほど ${pCoop() ? '町のお金' : '⭐'} がたくさん！</p></div>
+      <p class="p-lead">むずかしさを選ぼう。むずかしいほど ${co ? '町のお金' : '⭐'} がたくさん！</p>
       <div class="starsel">
-        <button class="btn" onclick="pStar(1)">★<small>やさしい　→ 正解で${pCoop() ? fmtYen(100 * (P.double ? 2 : 1)) : '⭐1'}</small></button>
-        <button class="btn" onclick="pStar(2)">★★<small>ふつう　→ 正解で${pCoop() ? fmtYen(200 * (P.double ? 2 : 1)) : '⭐2'}</small></button>
-        <button class="btn red" onclick="pStar(3)">★★★<small style="color:#ffe1e2">むずかしい　→ 正解で${pCoop() ? fmtYen(300 * (P.double ? 2 : 1)) : '⭐3'}</small></button>
+        <button class="pstar" onclick="pStar(1)"><span class="st">★</span><span><b>やさしい</b><small>正解で ${co ? fmtYen(100 * x) : '⭐1'}</small></span></button>
+        <button class="pstar" onclick="pStar(2)"><span class="st">★★</span><span><b>ふつう</b><small>正解で ${co ? fmtYen(200 * x) : '⭐2'}</small></span></button>
+        <button class="pstar s3" onclick="pStar(3)"><span class="st">★★★</span><span><b>むずかしい</b><small>正解で ${co ? fmtYen(300 * x) : '⭐3'}</small></span></button>
       </div>
-      ${P.room ? `<div style="text-align:center;color:var(--muted)">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.double ? `　🔥 チャレンジマス：${pCoop() ? 'お金' : '⭐'}が2倍！` : ''}</div>` : `<div style="text-align:center"><button class="small-link" onclick="P.stage='pick';renderPlay()">← 色を選びなおす</button></div>`}`;
+      ${P.room ? `<div class="vfoot">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.double ? `<span class="pfire">🔥 チャレンジマス：${co ? 'お金' : '⭐'}が2倍！</span>` : ''}</div>` : `<div class="vfoot"><button class="small-link" onclick="P.stage='pick';renderPlay()">← 色を選びなおす</button></div>`}</div>`);
     if (P.room){ clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); if (netRemain() <= 0){ clearInterval(P.timer); } }, 500); }
   } else if (P.stage === 'quiz'){
     const pr = P.prob;
     const flds = pr.choices ? `<div class="choices">${pr.choices.map((c, i) => `<button type="button" class="choice ${P.sel === i ? 'sel' : ''}" onclick="pChoice(${i})"><b>${'アイウエオカキク'[i]}</b><span>${c}</span></button>`).join('')}</div>`
       : pr.fields.map(fl => `<span class="fg">${fl.pre ? `<span>${fl.pre}</span>` : ''}<span class="inwrap"><input id="in-${fl.k}" data-k="${fl.k}" data-frac="${fl.frac ? 1 : ''}" readonly inputmode="none" autocomplete="off" placeholder="？" onclick="kpSel('${fl.k}')" aria-label="${(fl.pre || '答え').replace(/<[^>]*>/g, '')}" class="${fl.frac ? 'wide' : ''}"></span>${fl.post ? `<span>${fl.post}</span>` : ''}</span>`).join('');
-    B.innerHTML = `<div class="qhead"><span class="qtag">${COURSES[P.course || 'chu'].ic} ${COURSES[P.course || 'chu'].f[P.topic]}・${LEVELS[P.level]}　${'★'.repeat(P.star)}</span><span class="qtimer" id="qt">${fmtT(P.t)}</span></div>
+    pSet(`<div class="pq"><div class="qhead"><span class="qtag">${COURSES[P.course || 'chu'].ic} ${COURSES[P.course || 'chu'].f[P.topic]}・${LEVELS[P.level]}　<i>${'★'.repeat(P.star)}</i></span><span class="qtimer" id="qt">${fmtT(P.t)}</span></div>
       <div class="qtext">${pr.q}</div>
       <form onsubmit="event.preventDefault();pAnswer()"><div class="fields" id="flds">${flds}</div>
       ${pr.fields && pr.fields.some(fl => fl.frac) ? '<div class="qhint">分数は ／ ボタンで 3/4 のように。小数でもOK</div>' : ''}
       ${pr.fields ? `<div class="kpad" id="kpad">${KP_KEYS.map(k => `<button type="button" class="kp${/^\d$/.test(k) ? '' : ' fn'}" data-k="${k}" onclick="kp('${k}')">${KP_LABEL[k] || k}</button>`).join('')}</div>` : ''}
       <div class="msg" id="qmsg"></div>
-      <button class="btn green big" type="submit">答える</button></form>`;
+      <button class="pbtn" type="submit">答える</button></form></div>`);
     if (pr.fields) kpSel(pr.fields[0].k);
   } else if (P.stage === 'tstar'){
     const T = (P.info && P.info.tree) || {need:0, lit:0};
-    B.innerHTML = `<div style="text-align:center"><div style="font-size:44px;line-height:1.1">🎄</div>
-      <div style="font-size:21px;font-weight:900;margin:2px 0 4px">ツリーに明かりを灯そう</div>
+    pSet(`<div class="pstg"><div class="ps-tree">🎄</div>
+      <div class="ps-f">ツリーに明かりを灯そう</div>
       <div class="hap"><i style="width:${T.need ? Math.min(100, Math.round(T.lit / T.need * 100)) : 0}%"></i><b>💡 ${T.lit} / ${T.need}</b></div>
-      <div style="margin:8px 0 2px"><span class="dot" style="display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:3px solid #fff;background:${TCOL[P.topic]};font-weight:900;vertical-align:middle">${TSHORT[P.topic]}</span> <b style="font-size:18px">${COURSES[P.course || 'chu'].f[P.topic]}</b></div>
+      <div class="ps-tp"><span class="tdot sm" style="background:${TCOL[P.topic]}">${TSHORT[P.topic]}</span><b>${COURSES[P.course || 'chu'].f[P.topic]}</b></div>
       <div class="wcourse">${myCourse()}</div>
-      <p style="margin:0;color:var(--muted)">正解すると、★の数だけ明かりが灯るよ。<br>まちがえても、明かりはへらないよ</p></div>
+      <p class="p-lead">正解すると、★の数だけ明かりが灯るよ。<br>まちがえても、明かりはへらないよ</p>
       <div class="starsel">
-        <button class="btn" onclick="pStar(1)">★<small>やさしい　→ 明かり 1こ</small></button>
-        <button class="btn" onclick="pStar(2)">★★<small>ふつう　→ 明かり 2こ</small></button>
-        <button class="btn red" onclick="pStar(3)">★★★<small style="color:#ffe1e2">むずかしい　→ 明かり 3こ</small></button>
+        <button class="pstar" onclick="pStar(1)"><span class="st">★</span><span><b>やさしい</b><small>明かり 1こ</small></span></button>
+        <button class="pstar" onclick="pStar(2)"><span class="st">★★</span><span><b>ふつう</b><small>明かり 2こ</small></span></button>
+        <button class="pstar s3" onclick="pStar(3)"><span class="st">★★★</span><span><b>むずかしい</b><small>明かり 3こ</small></span></button>
       </div>
-      <div style="text-align:center;color:var(--muted)">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.tlit ? `　あなたの明かり 💡 ${P.tlit}` : ''}</div>`;
+      <div class="vfoot">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>${P.tlit ? `　あなたの明かり 💡 ${P.tlit}` : ''}</div></div>`);
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); }, 500);
   } else if (P.stage === 'tres'){
     const r = P.res, pr = P.prob;
     const ansTxt = pr.ansText || (pr.choices ? pr.choices[pr.ans.c] : pr.fields.map(fl => (fl.pre ? fl.pre + ' ' : '') + fmtAns(pr.ans[fl.k]) + (fl.post ? ' ' + fl.post : '')).join('　'));
-    B.innerHTML = `<div class="result">
-      <div class="mark">${r === 'ok' ? '⭕' : '❌'}</div>
+    pSet(`<div class="result">
+      ${P_MARK[r === 'ok' ? 'ok' : 'ng']}
       <div class="rt">${r === 'ok' ? `${'★'.repeat(P.star)} 正解！` : 'ざんねん！'}</div>
-      ${r === 'ok' ? `<div class="tell">🎄 ツリーに明かり +${P.star}</div>` : `<p style="margin:4px 0">明かりは、へらないよ。次の問題で灯そう！</p>`}
+      ${r === 'ok' ? `<div class="tell">🎄 ツリーに明かり +${P.star}</div>` : `<p class="p-lead">明かりは、へらないよ。次の問題で灯そう！</p>`}
       </div>
-      <button class="btn green big" onclick="pTreeNext()">つぎの問題へ</button>
-      <div style="text-align:center;color:var(--muted);margin:6px 0">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>　あなたの明かり 💡 ${P.tlit || 0}</div>
-      <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>`;
+      <button class="pbtn" onclick="pTreeNext()">つぎの問題へ</button>
+      <div class="vfoot">⏱ のこり <b id="qt">${fmtT(netRemain())}</b>　あなたの明かり 💡 ${P.tlit || 0}</div>
+      <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>`);
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#qt'); if (el) el.textContent = fmtT(netRemain()); }, 500);
   } else if (P.stage === 'result'){
-    const r = P.res, pr = P.prob;
+    const r = P.res, pr = P.prob, co = pCoop();
     const ansTxt = pr.ansText || (pr.choices ? pr.choices[pr.ans.c] : pr.fields.map(fl => (fl.pre ? fl.pre + ' ' : '') + fmtAns(pr.ans[fl.k]) + (fl.post ? ' ' + fl.post : '')).join('　'));
-    B.innerHTML = `<div class="result">
-      <div class="mark">${r === 'ok' ? '⭕' : r === 'time' ? '⏰' : '❌'}</div>
+    pSet(`<div class="result">
+      ${P_MARK[r === 'ok' ? 'ok' : r === 'time' ? 'time' : 'ng']}
       <div class="rt">${r === 'ok' ? `${'★'.repeat(P.star)} 正解！` : r === 'time' ? '時間切れ…' : 'ざんねん！'}</div>
-      ${r === 'ok' ? `<div class="tell">${pCoop() ? `町の予算に +${fmtYen(P.star * 100 * (P.double ? 2 : 1))}` : `⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！`}</div>${pCoop() && P.room ? pCareerNote() : ''}<p style="color:var(--muted);margin:0">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p style="margin:4px 0">今回は${pCoop() ? 'お金' : '⭐'}なし。次でとりかえそう！${P.room ? '<br><span style="color:var(--muted)">（先生の画面に届きました）</span>' : ''}</p>`}
+      ${r === 'ok' ? `<div class="tell">${co ? `町の予算に +${fmtYen(P.star * 100 * (P.double ? 2 : 1))}` : `⭐${P.star * (P.room && P.double ? 2 : 1)} ゲット！`}</div>${co && P.room ? pCareerNote() : ''}<p class="p-lead">${P.room ? '先生の画面に自動で届きました！' : `先生に「⭐${P.star}！」と伝えてね`}<br>🎟️ ガチャ券も1枚もらえるよ！</p>` : `<p class="p-lead">今回は${co ? 'お金' : '⭐'}なし。次でとりかえそう！${P.room ? '<br>（先生の画面に届きました）' : ''}</p>`}
       </div>
       <div class="explain"><div>答え：<span class="ans">${String(ansTxt).replace(/^答え\s*[:：]?\s*/, '')}</span></div><div style="margin-top:6px">${pr.ex}</div></div>
-      <button class="btn green big" onclick="P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">${P.room ? 'OK' : '次のラウンドへ'}</button>`;
+      <button class="pbtn" onclick="P.stage=P.room?'wait':'pick';P.room?netUpdate():renderPlay()">${P.room ? 'OK' : '次のラウンドへ'}</button>`);
   }
 }
 function pCareerNote(){
@@ -8196,20 +8843,67 @@ const isBot = pl => pl.cpu || H.auto;
 const needsQ = pl => typeof pl.space === 'number';
 
 /* ---- 参加者の画面とつなぐ（部屋） ---- */
-const NETH = {room:'', last:{}, ans:{}, claims:{}, offAns:null, pubT:0};
+const NETH = {room:'', last:{}, ans:{}, claims:{}, offAns:null, pubT:0, offAct:null, actSeen:{}};
+/* ---- スマホで動かす（サイコロ・えらぶ画面・ガチャ・コマえらび） ----
+   ■ サイコロ：自分の番の人のスマホに、サイコロが出る（info.roll）。スマホでタップすると rooms/部屋/act/人 に届き、先生が黄色いボタンを押したのと同じように、サイコロをふる。
+     出た目は、いままでどおり先生の画面が決めて、スマホに知らせる（スマホのサイコロも、同じ目で止まる）
+   ■ えらぶ画面（分かれ道・アイテム・ショップ・職業安定所・ガチャの「どれを手ばなす？」）と、ガチャのボタン：
+     先生の画面に出ているものを、その人のスマホにも出す（info.ui）。スマホで押すと、先生の画面で押したのと同じように進む
+   ■ 先生の画面のボタンは、いつでもそのまま使える（スマホがない人・画面が消えている人のかわりに、先生が押せる）。早く届いたほうで進む
+   ■ 知らせには、1つずつちがう番号（id）をつける。前の知らせへの返事が、あとから届いても、使わない */
+const PUI = {cur:null, seq:Date.now() % 1000000000};
+const uid = () => ++PUI.seq;
+const plainText = s => String(s == null ? '' : s).replace(/<br\s*\/?>/g, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+const phoneOn = pl => !!pl && !isBot(pl) && connected(pl);      // スマホでつながっている人（コンピューターと、オートのあいだは、スマホに出さない）
+function uiOpen(pl, spec, onPick){
+  if (!phoneOn(pl) || !NETH.room) return () => {};
+  const u = {spec:JSON.parse(JSON.stringify(Object.assign({id:uid(), to:pkey(pl), nm:pl.name}, spec))), onPick};
+  PUI.cur = u; netPublish(true);
+  return () => { if (PUI.cur === u){ PUI.cur = null; netPublish(true); } };
+}
+const ROLL = {key:'', id:0, to:'', st:'', v:null, plus:0, n:0};      // st：open＝スマホでふれる／go＝ふっているところ／done＝目が出た
+function rollSync(){
+  const cur = H.players[H.turn];
+  if (H.phase !== 'roll' || !cur || isBot(cur)){ ROLL.key = ''; ROLL.id = 0; return null; }
+  const key = H.round + ':' + H.turn + ':' + pkey(cur);
+  if (ROLL.key !== key || (ROLL.st === 'done' && !H.busy)) Object.assign(ROLL, {key, id:uid(), to:pkey(cur), st:'open', v:null, plus:0, n:0});      // 新しい番（目が出たあとなのに動いていない＝「1つ戻す」で同じ番に戻った、も同じ）
+  if (ROLL.st === 'go' && !H.busy && !H.voWait) ROLL.st = 'open';      // ふりはじめなかったとき（ほかの場面と重なった）は、もう一度ふれるように戻す
+  const r = {id:ROLL.id, to:ROLL.to, nm:cur.name, st:ROLL.st === 'open' && (H.busy || H.asking) ? 'wait' : ROLL.st};      // wait＝先生の画面が、まだ準備中（オープニングなど）
+  if (ROLL.st === 'done'){ r.v = ROLL.v; r.plus = ROLL.plus; r.n = ROLL.n; }
+  if (ROLL.st === 'go' && H.voWait) r.w = 1;      // タップは受けとった。声が終わるのを待っているところ（声が終わったら、ころがす）
+  return r;
+}
+/* スマホで「サイコロをふる」が押された：先生が黄色いボタンを押したのと同じ（声が流れていたら、終わってからふる） */
+function phoneRoll(){
+  const cur = H.players[H.turn];
+  if (H.phase !== 'roll' || !cur || isBot(cur) || pkey(cur) !== ROLL.to || ROLL.st !== 'open' || H.busy || H.asking) return;
+  ROLL.st = 'go'; netPublish(true);
+  try { floatText(cur, '📱'); sfx.step(); } catch(e){}      // スマホでふったことが、先生の画面でも分かるように
+  mainAction();
+}
+function onAct(v){
+  Object.entries(v || {}).forEach(([pk, a]) => {
+    if (!a || a.id == null) return;
+    const sig = a.id + ':' + (a.at || 0) + ':' + a.v; if (NETH.actSeen[pk] === sig) return; NETH.actSeen[pk] = sig;      // 同じ知らせは、1回だけ使う
+    if (ROLL.id && a.id === ROLL.id && pk === ROLL.to){ phoneRoll(); return; }
+    const u = PUI.cur; if (u && a.id === u.spec.id && pk === u.spec.to){ try { u.onPick(a.v); } catch(e){ console.error('act', e); } }
+  });
+}
 function pkey(pl){ return 'p' + pl.id; }
 function hostRoom(fresh){
   let c = ''; try { c = fresh ? '' : localStorage.getItem('sg_room') || ''; } catch(e){}
   if (!/^\d{4}$/.test(c)){ c = String(1000 + Math.floor(Math.random() * 9000)); try { localStorage.setItem('sg_room', c); } catch(e){} }
   NETH.room = c; NETH.last = {};
   // 前のゲームの申しこみ・接続の記録を消してから始める（ゆうれい参加者を防ぐ）
-  NET.set(`rooms/${c}/join`, null); NET.set(`rooms/${c}/claim`, null); NET.set(`rooms/${c}/pref`, null);
+  NET.set(`rooms/${c}/join`, null); NET.set(`rooms/${c}/claim`, null); NET.set(`rooms/${c}/pref`, null); NET.set(`rooms/${c}/act`, null);
   if (NETH.offClaim) NETH.offClaim();
   NETH.offClaim = NET.on(`rooms/${c}/claim`, v => { NETH.claims = v || {}; const sig = claimSig(); if (sig === sleepSig) return; sleepSig = sig; renderHUD.last = ''; renderHUD(); renderInvite(); });      // スマホの合図（12秒ごと）では描きなおさない。つながった人・💤 が変わったときだけ
   if (NETH.offJoin) NETH.offJoin();
   NETH.offJoin = NET.on(`rooms/${c}/join`, onJoin);
   if (NETH.offPref) NETH.offPref();
   NETH.offPref = NET.on(`rooms/${c}/pref`, onPref);
+  if (NETH.offAct) NETH.offAct();
+  NETH.actSeen = {}; NETH.offAct = NET.on(`rooms/${c}/act`, onAct);
   netPublish(true); return c;
 }
 function spacePlain(pl){
@@ -8223,6 +8917,7 @@ function netPublish(now){
   NETH.pubT = setTimeout(() => {
     const cur = H.players[H.turn];
     const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0, mode:H.mode};
+    { const rl = rollSync(); if (rl) info.roll = rl; if (PUI.cur) info.ui = PUI.cur.spec; if (H.gacha) info.gacha = H.gacha; }      // スマホのサイコロ・えらぶ画面・ガチャ
     if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; if (H.tree) info.tree = H.tree; }
     const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', vet:COOP.isVet(pl) ? 1 : 0, ten:pl.tenure || 0, quals:(pl.quals || []).join(','), exp:(pl.exp || []).join(','), yen:pl.lastYen == null ? null : pl.lastYen}; });
     const ji = JSON.stringify(info), jr = JSON.stringify(roster);
@@ -8240,7 +8935,8 @@ function onJoin(v){
     const ex = H.players.find(pl => pl.jid === jid);
     if (ex){
       if (j.course && (ex.course !== crs || ex.level !== lv)){ ex.course = crs; ex.level = lv; renderHUD.last = ''; renderHUD(); netPublish(); }
-      if ((ex.name !== name || ex.char !== ch) && (H.phase === 'setup' || H.phase === 'lobby')){ ex.name = name; ex.char = ch; ex.emoji = CHARS[ch].emoji; const p0 = ex.obj && ex.obj.position.clone(); removePawn(ex); ex.obj = makePawn(ex); if (p0) ex.obj.position.copy(p0); placeAll(); renderHUD(); renderInvite(); }
+      if ((ex.name !== name || ex.char !== ch) && (H.phase === 'setup' || H.phase === 'lobby')){ const cc = ex.char !== ch; ex.name = name; ex.char = ch; ex.emoji = CHARS[ch].emoji; const p0 = ex.obj && ex.obj.position.clone(); removePawn(ex); ex.obj = makePawn(ex); if (p0) ex.obj.position.copy(p0); placeAll(); renderHUD(); renderInvite();
+        if (cc) try { sfx.star(); ripple(NODE[ex.pos].p, ex.color); burst(ex.obj.position.clone().add(new THREE.Vector3(0, 1.4, 0)), 8); } catch(e){} }      // スマホでコマを変えた：小さく光らせる
       return;
     }
     if (!(H.phase === 'setup' || H.phase === 'lobby') || H.busy) return;
@@ -8259,10 +8955,20 @@ function onJoin(v){
 /* 参加者が画面でコースを変えたとき */
 function onPref(v){
   if (!v) return; let ch = false;
-  Object.entries(v).forEach(([k, o]) => { const pl = H.players.find(p => pkey(p) === k); if (!pl || !o || !COURSES[o.course]) return;
-    const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; }
- });
+  Object.entries(v).forEach(([k, o]) => { const pl = H.players.find(p => pkey(p) === k); if (!pl || !o) return;
+    if (COURSES[o.course]){ const lv = Math.max(0, Math.min(2, o.level | 0)); if (pl.course !== o.course || pl.level !== lv){ pl.course = o.course; pl.level = lv; ch = true; } }
+    // スマホでコマを変えた（先生が名前を入れてある人。待合室のあいだだけ）。同じ知らせは1回だけ使う（先生が「⚙ 参加者」で変えたコマを、古い知らせで戻さないため）
+    if (o.char && CHARS[o.char] && (o.cat || 0) > (pl._charAt || 0)){ pl._charAt = o.cat || 0;
+      if (pl.char !== o.char && (H.phase === 'setup' || H.phase === 'lobby') && !H.busy){ setChar(pl, o.char); ch = true; } }
+  });
   if (ch){ renderHUD.last = ''; renderHUD(); netPublish(); }
+}
+/* コマを変える（待合室）：コマを作りなおして、小さく光らせる */
+function setChar(pl, k){
+  pl.char = k; pl.emoji = CHARS[k].emoji;
+  const p0 = pl.obj && pl.obj.position.clone(); removePawn(pl); pl.obj = makePawn(pl); if (p0) pl.obj.position.copy(p0);
+  placeAll(); renderInvite();
+  try { sfx.star(); ripple(NODE[pl.pos].p, pl.color); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.4, 0)), 8); } catch(e){}
 }
 const plCourse = pl => pl.cpu ? '' : `<span class="pcourse">${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}</span>`;
 function ansOf(pl){ return NETH.ans && NETH.ans[pkey(pl)]; }
@@ -8301,7 +9007,7 @@ function renderInvite(){
   const url = roomURL(NETH.room);
   $('#invCode').textContent = NETH.room; $('#invUrl').value = url;
   $('#invMode').innerHTML = NET.mode === 'fb' ? (NET.connected ? '🟢 インターネットでつながっています' : '🔴 つながっていません（インターネットを確認してください）') : '🟡 テストモード：同じパソコンの別のタブだけでつながります（Firebaseの設定を入れると、みんなのスマホとつながります）';
-  $('#invList').innerHTML = H.players.filter(pl => !pl.cpu).map(pl => `<span class="invp ${connected(pl) ? 'on' : ''}" style="--pc:${pl.color}" title="${connected(pl) ? (asleep(pl) ? 'スマホの画面が消えているかも' : 'スマホでつながっている') : 'まだつながっていない'}">${connected(pl) ? (asleep(pl) ? '💤' : '📱') : '…'} ${esc(pl.name)}</span>`).join('') || '<span class="invp">（⚙ 参加者で名前を入れてください）</span>';
+  $('#invList').innerHTML = H.players.filter(pl => !pl.cpu).map(pl => `<span class="invp ${connected(pl) ? 'on' : ''}" style="--pc:${pl.color}" title="${connected(pl) ? (asleep(pl) ? 'スマホの画面が消えているかも' : 'スマホでつながっている') : 'まだつながっていない'}">${connected(pl) ? (asleep(pl) ? '💤' : '📱') : '…'} ${ico(pl, 'invav')}${esc(pl.name)}</span>`).join('') || '<span class="invp">（⚙ 参加者で名前を入れてください）</span>';
   renderInvHow();
   makeQR(url);
   const sb = $('#invStart'); sb.style.display = H.phase === 'lobby' ? '' : 'none';
@@ -8533,17 +9239,27 @@ function splash(main, sub, glow){
   const key = VO.keyOf(main); return key ? VO.cue(key) : Promise.resolve(false);
 }
 function roundSplash(){ splash(H.round >= H.maxRound ? 'ラストラウンド！' : `ラウンド ${H.round}`, `${H.round} / ${H.maxRound}`); sfx.jingle(); }
-function ask(title, sub, opts, botPick){
+/* えらぶ画面。pl（えらぶ人）を渡すと、その人のスマホにも同じ選択肢が出る（pt・ps＝スマホに出す題と説明。なければ、先生の画面と同じ文）。
+   スマホで押しても、先生の画面で押しても、早いほうで決まる */
+function ask(title, sub, opts, botPick, pl, pt, ps){
   return new Promise(resolve => {
-    const A = $('#ask');
+    const A = $('#ask'), mir = botPick === undefined && phoneOn(pl);
     A.innerHTML = `<h3 class="dela">${title}</h3>${sub ? `<p>${sub}</p>` : ''}<div class="opts">${opts.map((o, i) =>
-      `<button class="btn opt" data-i="${i}" ${o.dis ? 'disabled' : ''}><span class="ic">${o.ic}</span><span>${o.t}${o.s ? `<small>${o.s}</small>` : ''}</span></button>`).join('')}</div>`;
+      `<button class="btn opt" data-i="${i}" ${o.dis ? 'disabled' : ''}><span class="ic">${o.ic}</span><span>${o.t}${o.s ? `<small>${o.s}</small>` : ''}</span></button>`).join('')}</div>${mir ? `<div class="ask-ph">📱 ${esc(pl.name)}さんのスマホでも、えらべます</div>` : ''}`;
     A.classList.add('on'); H.asking = true; renderHUD();
-    const done = i => { A.classList.remove('on'); H.asking = false; hl([]); renderHUD(); resolve(opts[i].v); };
+    let fin = false, picked = false, closeUI = null;
+    const done = i => { if (fin) return; fin = true; if (closeUI) closeUI(); A.classList.remove('on'); H.asking = false; hl([]); renderHUD(); resolve(opts[i].v); };
     if (botPick !== undefined){
       const i = Math.max(0, opts.findIndex(o => o.v === botPick));
       setTimeout(() => { const b = A.querySelector(`[data-i="${i}"]`); if (b) b.classList.add('pick'); setTimeout(() => done(i), 650); }, H.auto ? 600 : 950);
-    } else A.querySelectorAll('.opt').forEach(b => b.onclick = () => { initAudio(); done(+b.dataset.i); });
+    } else {
+      A.querySelectorAll('.opt').forEach(b => b.onclick = () => { if (picked) return; initAudio(); done(+b.dataset.i); });
+      if (mir) closeUI = uiOpen(pl, {k:'ask', t:pt || plainText(title), s:ps == null ? plainText(sub) : ps, o:opts.map(o => ({ic:plainText(o.ic), t:plainText(o.t), s:plainText(o.s), d:o.dis ? 1 : 0}))}, v => {
+        const i = +v; if (fin || picked || !opts[i] || opts[i].dis) return;
+        picked = true; const b = A.querySelector(`[data-i="${i}"]`); if (b) b.classList.add('pick'); try { sfx.star(); } catch(e){}      // スマホでえらんだものを、先生の画面でも光らせてから進む
+        setTimeout(() => done(i), 450);
+      });
+    }
   });
 }
 
@@ -8592,7 +9308,11 @@ function renderHUD(){
     tree:'🎄 最後の大工事！ スマホの問題を解いて、ツリーに明かりを灯そう',
     end: isCoop() ? (H.coopEnd === 'win' ? '🎄 こがね町に明かりが戻った！' : H.coopEnd ? '🌙 ゲーム終了' : '🎄 さいごのラウンド終了！ 最後の大工事へ') : `🏆 ${H.maxRound}ラウンド終了！`,
   })[H.phase] || '';
-  if (ph.dataset.t !== txt){ ph.dataset.t = txt; ph.textContent = txt; ph.classList.remove('pop'); void ph.offsetWidth; ph.classList.add('pop'); }
+  // 自分の番の人がスマホでつながっているときは、「スマホのサイコロをタップ！」と出す（ふりはじめたら消す）
+  const hint = H.phase === 'roll' && cur && phoneOn(cur) && !asleep(cur) && !H.busy && !H.asking && !H.voWait ? '📱 スマホのサイコロをタップ！' : '';
+  if (ph.dataset.t !== txt || (ph.dataset.h || '') !== hint){ const pop = ph.dataset.t !== txt; ph.dataset.t = txt; ph.dataset.h = hint; ph.textContent = txt;
+    if (hint && txt){ const s = document.createElement('span'); s.className = 'ph-hint'; s.textContent = hint; ph.appendChild(s); }
+    if (pop){ ph.classList.remove('pop'); void ph.offsetWidth; ph.classList.add('pop'); } }
   const ft = $('#floorTag');
   if (MAP && MAP.floors && cur && H.phase === 'roll' && NODE[cur.pos]){ const F = MAP.floors[NODE[cur.pos].floor], nm = F.name.split(' ');
     ft.innerHTML = `<b style="color:${F.col}">${nm[0]}</b>${nm[1]}`; ft.style.borderColor = F.col; ft.classList.add('on'); }
@@ -8680,6 +9400,7 @@ function snap(){
 function undo(){
   if (H.busy || H.asking || !H.hist.length) return;
   VO.cut();                           // 1つ戻すと画面が前の場面に変わるので、いまの声は止める
+  ROLL.key = '';                      // スマホのサイコロも、新しく出しなおす
   const s = JSON.parse(H.hist.pop());
   const objs = {}; H.players.forEach(p => { objs[p.id] = p.obj; });
   H.players.forEach(p => { if (!s.players.some(q => q.id === p.id)) removePawn(p); });
@@ -8707,7 +9428,7 @@ async function mainAction(){
 }
 async function takeTurn(pl){
   if (H.busy) return;
-  snap(); H.busy = true; renderHUD();
+  snap(); H.busy = true; rollSync(); if (ROLL.id && ROLL.to === pkey(pl)) ROLL.st = 'go'; renderHUD();      // スマホのサイコロを「ふっているところ」にする
   await VO.idle();                    // ラウンドのはじめの声が終わってから、サイコロをふる
   if (isCoop()) closeCard();
   camFollow(pl.obj.position, .9); await sleep(H.auto ? 250 : 450);
@@ -8715,7 +9436,7 @@ async function takeTurn(pl){
   const usable = [...new Set(pl.items.filter(k => k === 'dice2' || k === 'boots'))];
   if (usable.length){
     const opts = usable.map(k => ({v:k, ic:ITEMS[k].ic, t:ITEMS[k].name + 'を使う', s:ITEMS[k].desc})).concat([{v:null, ic:'✋', t:'使わない'}]);
-    const use = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, 'アイテムを使う？', opts, isBot(pl) ? (Math.random() < .65 ? usable[0] : null) : undefined);
+    const use = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, 'アイテムを使う？', opts, isBot(pl) ? (Math.random() < .65 ? usable[0] : null) : undefined, pl, 'アイテムを使う？', '');
     if (use){ removeItem(pl, use); if (use === 'dice2') dice = 2; else plus = 3; renderHUD(); }
   }
   const n = await rollDice(pl, dice, plus);
@@ -8762,6 +9483,7 @@ async function rollDice(pl, count, plus){
     }
   });
   const n = vals.reduce((a, b) => a + b, 0) + plus;
+  if (ROLL.id && ROLL.to === pkey(pl)){ ROLL.st = 'done'; ROLL.v = vals.slice(); ROLL.plus = plus || 0; ROLL.n = n; netPublish(true); }      // スマホのサイコロも、同じ目で止まる
   const dn = $('#dicenum');
   dn.textContent = (count > 1 || plus) ? `${vals.join('+')}${plus ? '+3' : ''}=${n}` : n;
   dn.classList.toggle('long', count > 1 || !!plus);
@@ -8780,7 +9502,7 @@ async function chooseRoute(pl, nd){
   let bp;
   if (isBot(pl)){ const gt = opts.find(id => NODE[id].gate); bp = gt ? (Math.random() < .85 ? gt : opts.find(id => id !== gt)) : pick(opts); }
   const v = await ask(`${ico(pl, 'ci big')} ${esc(pl.name)}さん`, '分かれ道！ どっちに進む？',
-    opts.map(id => { const L = ROUTE_LABEL[id], co = isCoop(); return {v:id, ic:co && NODE[id].gate ? '❄️' : L[0], t:L[1], s:co ? (NODE[id].gate ? '協力モードはカギなしで通れる！ ツリーまで一気に' : L[2].replace('🏪ショップ', '💼職業安定所')) : L[2]}; }), isBot(pl) ? bp : undefined);
+    opts.map(id => { const L = ROUTE_LABEL[id], co = isCoop(); return {v:id, ic:co && NODE[id].gate ? '❄️' : L[0], t:L[1], s:co ? (NODE[id].gate ? '協力モードはカギなしで通れる！ ツリーまで一気に' : L[2].replace('🏪ショップ', '💼職業安定所')) : L[2]}; }), isBot(pl) ? bp : undefined, pl, '分かれ道！ どっちに進む？', '');
   if (fv && VO.speaking()){ hl([v]); await fv; hl([]); }      // 声が終わるまで、選んだ道を光らせて待つ
   if (NODE[v].gate){ if (isCoop()){ await banner('❄️ 氷の湖の近道へ！', 1000); } else { removeItem(pl, 'key'); renderHUD(); await banner('🔑 カギで<br>氷の湖の門が開いた！', 1100); } }
   return v;
@@ -8794,7 +9516,7 @@ async function shopInner(pl, passing){
   opts.push({v:null, ic:'👋', t:'買わない'});
   let bp;
   if (isBot(pl)){ const can = opts.filter(o => o.v && !o.dis); bp = can.length && Math.random() < .7 ? pick(can).v : null; }
-  const v = await ask('🏪 サンタのアイテムショップ', `${ico(pl)} ${esc(pl.name)}さん（⭐${pl.stars}）${passing ? '　通りがかりに寄れます' : ''}`, opts, isBot(pl) ? bp : undefined);
+  const v = await ask('🏪 サンタのアイテムショップ', `${ico(pl)} ${esc(pl.name)}さん（⭐${pl.stars}）${passing ? '　通りがかりに寄れます' : ''}`, opts, isBot(pl) ? bp : undefined, pl, '🏪 サンタのアイテムショップ', `⭐ ${pl.stars}　${passing ? '通りがかりに寄れます' : 'なにを買う？'}`);
   if (v){ pl.items.push(v); gain(pl, -ITEMS[v].price); sfx.shop(); await banner(`${ITEMS[v].ic} ${ITEMS[v].name}を買った！`, 1000); }
 }
 /* ---- 特別な移動（階段・すべり台・トンネル・ゴンドラ・トロッコ・落とし穴） ---- */
@@ -9105,7 +9827,7 @@ function openSetup(){
   for (let i = 0; i < 6; i++){
     const pl = H.players.find(x => x.slot === i);
     SETUP[i] = pl ? pl.char : (SETUP[i] || DEFAULT_CHAR[i]);
-    rows.push(`<div class="setrow"><span class="sw" style="background:${PCOLORS[i]}"></span>
+    rows.push(`<div class="setrow" style="--pc:${PCOLORS[i]}"><span class="sw" style="background:${PCOLORS[i]}"></span>
       <button class="charbtn" id="cb-${i}" data-slot="${i}" title="コマをえらぶ">${charBtnHTML(i)}</button>
       <input type="text" id="sn-${i}" maxlength="10" placeholder="${i+1}人目の名前" value="${pl ? esc(pl.name) : ''}">
       <select id="sl-${i}" class="slv" title="コースとレベル">${COURSE_ORDER.map(c => `<optgroup label="${COURSES[c].ic} ${COURSES[c].name}">${LEVELS.map((L, l) => `<option value="${c}:${l}" ${(pl ? (pl.course || 'chu') + ':' + (pl.level == null ? 1 : pl.level) : 'chu:1') === c + ':' + l ? 'selected' : ''}>${COURSES[c].name.replace(/（.*）/, '')}・${L}</option>`).join('')}</optgroup>`).join('')}</select>
@@ -9151,14 +9873,30 @@ function renderMapSel(){
   $('#mapsel').querySelectorAll('.mapcard').forEach(b => b.onclick = () => { SETUP_MAP = b.dataset.map; renderMapSel(); sfx.star(); });
 }
 let pickSlot = 0, pickCat = 'all';
-function openPicker(slot){ pickSlot = slot; renderPicker(); openModal('m-char'); }
+function openPicker(slot){ pickSlot = slot; delete $('#cgrid').dataset.busy; renderPicker(); openModal('m-char'); csShow(SETUP[pickSlot]); }
+/* 左の舞台に、コマを大きく出す（まばたき・ゆれ・えらんだときに はねる。スマホのコマえらびと同じ絵） */
+function csShow(k, hop){
+  const c = CHARS[k], cv = $('#csLive'); if (!c || !cv) return;
+  cv.dataset.char = k; if (hop) PLive.hop(cv); else PLive.kick();
+  $('#csName').textContent = c.name; $('#csCat').textContent = (CHAR_CATS.find(x => x[0] === c.cat) || ['', ''])[1];
+}
 function renderPicker(){
+  $('#csStage').style.setProperty('--pc', PCOLORS[pickSlot]);
   $('#ctabs').innerHTML = [['all','ぜんぶ'], ...CHAR_CATS].map(([k, n]) => `<button class="btn ${pickCat === k ? 'gold' : ''}" data-cat="${k}">${n}</button>`).join('');
   $('#cpickfor').innerHTML = `<span class="sw" style="background:${PCOLORS[pickSlot]}"></span>${pickSlot + 1}人目${$('#sn-' + pickSlot).value ? '（' + esc($('#sn-' + pickSlot).value) + 'さん）' : ''}のコマ`;
-  $('#cgrid').innerHTML = Object.entries(CHARS).filter(([k, c]) => pickCat === 'all' || c.cat === pickCat)
+  const G = $('#cgrid');
+  G.innerHTML = Object.entries(CHARS).filter(([k, c]) => pickCat === 'all' || c.cat === pickCat)
     .map(([k, c]) => `<button class="ccard ${SETUP[pickSlot] === k ? 'sel' : ''}" data-k="${k}"><img src="${THUMB[k]}" alt=""><span>${c.name}</span></button>`).join('');
   $('#ctabs').querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { pickCat = b.dataset.cat; renderPicker(); });
-  $('#cgrid').querySelectorAll('.ccard').forEach(b => b.onclick = () => { SETUP[pickSlot] = b.dataset.k; $('#cb-' + pickSlot).innerHTML = charBtnHTML(pickSlot); closeModal('m-char'); sfx.star(); });
+  // カーソルをのせると、左の舞台に大きく出る。クリックで決まり、コマが はねるのを見せてから とじる
+  G.querySelectorAll('.ccard').forEach(b => {
+    b.onmouseenter = b.onfocus = () => { if (!G.dataset.busy) csShow(b.dataset.k); };
+    b.onclick = () => { if (G.dataset.busy) return; G.dataset.busy = '1'; const slot = pickSlot;
+      SETUP[slot] = b.dataset.k; $('#cb-' + slot).innerHTML = charBtnHTML(slot); sfx.star();
+      G.querySelectorAll('.ccard').forEach(x => x.classList.toggle('sel', x === b)); csShow(b.dataset.k, true);
+      setTimeout(() => { delete G.dataset.busy; closeModal('m-char'); }, 560); };
+  });
+  G.onmouseleave = () => { if (!G.dataset.busy) csShow(SETUP[pickSlot]); };
 }
 function fillTest(){
   const names = ['じぶん','ロボたろう','ロボはなこ','ロボじろう','ロボさくら'], chars = ['santa','robot','penguin','dragon','bunny'];
@@ -9302,7 +10040,7 @@ async function jobCenter(pl){
     else if (COOP.isVet(pl)) bp = null;
     else bp = want && !cnt[want.v] ? want.v : missing.length && Math.random() < .5 ? missing[0].v : null;
   }
-  const v = await ask('💼 職業安定所<small style="font:700 13px \'Zen Maru Gothic\',sans-serif;color:var(--muted);margin-left:10px;letter-spacing:0">上から、いま町に足りない仕事の順</small>', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined);
+  const v = await ask('💼 職業安定所<small style="font:700 13px \'Zen Maru Gothic\',sans-serif;color:var(--muted);margin-left:10px;letter-spacing:0">上から、いま町に足りない仕事の順</small>', `${ico(pl)} ${esc(pl.name)}さん（いまは ${jobIc(pl)} ${jobName(pl)}）　ここでは資格がなくても転職できる！${pl.job ? '　いまの仕事は「経験」として少し残るよ' : ''}`, opts, isBot(pl) ? bp : undefined, pl, '💼 職業安定所', `いまは ${jobName(pl)}。ここでは、資格がなくても転職できる！`);
   if (v){ const r = COOP.changeJob(S, pl, v, 'center'); if (!r) return; sfx.shop(); renderHUD(); renderTown(); await banner(careerChangeHTML(r), 1700); syncTown(); }
 }
 /* ---- 転職タイム（会議の前）：資格・求人で転職できる ---- */
@@ -10594,11 +11332,14 @@ function placeStagePawn(pl){
   return m;
 }
 function gUI(id, html){ const e = $(id); if (html == null){ e.classList.remove('on'); return e; } e.innerHTML = html; e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); return e; }
-function waitBtn(label, bot){
+/* ガチャの「受けとる」「もう1回まわす」のボタン。pl を渡すと、その人のスマホにも同じボタンが出る */
+function waitBtn(label, bot, pl){
   return new Promise(res => {
     const b = $('#gNext'); b.textContent = label; b.classList.add('on');
-    const done = () => { b.classList.remove('on'); b.onclick = null; res(); };
-    if (bot || GS.fast) setTimeout(done, GS.fast ? 500 : 1400); else b.onclick = () => { initAudio(); done(); };
+    let fin = false, closeUI = null;
+    const done = () => { if (fin) return; fin = true; if (closeUI) closeUI(); b.classList.remove('on'); b.onclick = null; res(); };
+    if (bot || GS.fast) setTimeout(done, GS.fast ? 500 : 1400);
+    else { b.onclick = () => { initAudio(); done(); }; closeUI = uiOpen(pl, {k:'btn', label:plainText(label)}, () => { try { sfx.star(); } catch(e){} done(); }); }
   });
 }
 function chooseGacha(pl){
@@ -10606,11 +11347,18 @@ function chooseGacha(pl){
     const odds = RAR_ORDER.map(r => `<span style="color:${RAR[r].col}">${r} ${ODDS[r]}%</span>`).join('　');
     const html = `<div class="gs-h dela">${ico(pl, 'ci big')} ${esc(pl.name)}さん、どのガチャをまわす？</div>
       <div class="gs-cards">${Object.entries(GACHAS).map(([k, G0]) => `<button class="gs-card" data-g="${k}" style="--gc:${G0.col}"><span class="gs-ic">${G0.ic}</span><b>${G0.name}</b><small>${G0.desc}</small></button>`).join('')}</div>
-      <div class="gs-odds">確率　${odds}<br>${(pl.pity || 0) >= 4 ? '<b style="color:#ffd84a">★ 今回は SR以上 確定！</b>' : `あと${4 - (pl.pity || 0) + 1}回で SR以上 確定`}</div>`;
+      <div class="gs-odds">確率　${odds}<br>${(pl.pity || 0) >= 4 ? '<b style="color:#ffd84a">★ 今回は SR以上 確定！</b>' : `あと${4 - (pl.pity || 0) + 1}回で SR以上 確定`}${phoneOn(pl) ? `<br>📱 ${esc(pl.name)}さんのスマホでも、えらべます` : ''}</div>`;
     const e = gUI('#gSel', html);
-    const done = k => { e.classList.remove('on'); res(k); };
+    let fin = false, picked = false, closeUI = null;
+    const done = k => { if (fin) return; fin = true; if (closeUI) closeUI(); e.classList.remove('on'); res(k); };
     if (isBot(pl)){ const k = pick(Object.keys(GACHAS)); setTimeout(() => { const b = e.querySelector(`[data-g="${k}"]`); if (b) b.classList.add('pick'); setTimeout(() => done(k), GS.fast ? 250 : 600); }, GS.fast ? 250 : 900); }
-    else e.querySelectorAll('.gs-card').forEach(b => b.onclick = () => { initAudio(); sfx.star(); done(b.dataset.g); });
+    else {
+      e.querySelectorAll('.gs-card').forEach(b => b.onclick = () => { if (picked) return; initAudio(); sfx.star(); done(b.dataset.g); });
+      // その人のスマホにも、4つのガチャを出す。スマホでえらんだら、先生の画面でも光らせてから回す
+      closeUI = uiOpen(pl, {k:'gsel', tk:pl.tickets || 0, sure:(pl.pity || 0) >= 4 ? 1 : 0, left:4 - (pl.pity || 0) + 1, g:Object.entries(GACHAS).map(([k, G0]) => ({k, n:G0.name, ic:G0.ic, c:G0.col, d:G0.desc}))}, k => {
+        if (fin || picked || !GACHAS[k]) return; picked = true; const b = e.querySelector(`[data-g="${k}"]`); if (b) b.classList.add('pick'); try { sfx.star(); } catch(er){}
+        setTimeout(() => done(k), GS.fast ? 200 : 500); });
+    }
   });
 }
 async function decideKeep(pl, it){
@@ -10622,13 +11370,15 @@ async function decideKeep(pl, it){
   opts.push({v:'__new', ic:'🙅', t:`${it.name} は、あきらめる`, s:''});
   let bp;
   if (isBot(pl)){ const worst = cand.slice().sort((a, b) => RAR_ORDER.indexOf(a.r) - RAR_ORDER.indexOf(b.r))[0]; bp = RAR_ORDER.indexOf(worst.r) <= RAR_ORDER.indexOf(it.r) ? worst.id : '__new'; }
-  return await ask(same ? `${SLOT_NAME[it.slot]}のアイテムは1つだけ！` : '持てるのは3つまで！', 'どれを手ばなす？', opts, isBot(pl) ? bp : undefined);
+  return await ask(same ? `${SLOT_NAME[it.slot]}のアイテムは1つだけ！` : '持てるのは3つまで！', 'どれを手ばなす？', opts, isBot(pl) ? bp : undefined, pl);
 }
 async function pullFor(pl){
   gUI('#gTop', `<span class="dela">🎰 ガチャタイム</span>　${ico(pl, 'ci big')} <b>${esc(pl.name)}</b>さん　🎟️×${pl.tickets}`);
+  H.gacha = {to:pkey(pl), nm:pl.name, tk:pl.tickets || 0, st:'sel'}; netPublish(true);      // みんなのスマホに「だれのガチャか」を知らせる（st：sel＝えらんでいる／spin＝回している／res＝出た／done＝受けとった）
   placeStagePawn(pl);
   const gk = await chooseGacha(pl);
   setSign(gk);
+  H.gacha = {to:pkey(pl), nm:pl.name, tk:Math.max(0, (pl.tickets || 0) - 1), st:'spin', gn:GACHAS[gk].name, ic:GACHAS[gk].ic, c:GACHAS[gk].col}; netPublish(true);
   const r = rollRarity(pl), ri0 = RAR_ORDER.indexOf(r);
   const pool = ITEMS_C.filter(it => it.g === gk && it.r === r);
   const it = GS.forceItem && ITEM[GS.forceItem] ? ITEM[GS.forceItem] : pick(pool); GS.forceItem = null;
@@ -10702,7 +11452,8 @@ async function pullFor(pl){
   gUI('#gRes', `${isNew ? '<div class="gr-new dela">NEW!</div>' : ''}<div class="gr-stars" style="color:${RAR[r].col}">${starsHTML(r)}</div><div class="gr-rar dela ${r === 'LR' ? 'lr' : ''}" style="color:${RAR[r].col}">${RAR[r].name}</div>
     <div class="gr-name dela">${it.name}</div><div class="gr-desc">${SLOT_NAME[it.slot]}　${it.d}</div><div class="gr-col">コレクション ${pl.got.length} / ${ITEMS_C.length}</div>${isCoop() ? `<div class="gr-coop">${coopItemText(it)}</div>` : ''}`);
   for (let i = 0; i < RAR[r].stars; i++) setTimeout(() => sfx.ding(i), 150 + i * 220);
-  await waitBtn('受けとる', isBot(pl));
+  H.gacha = Object.assign({}, H.gacha, {st:'res', tk:pl.tickets || 0, res:{r, rn:RAR[r].name, st:RAR[r].stars, col:RAR[r].col, name:it.name, slot:SLOT_NAME[it.slot] || '', d:it.d || '', nw:isNew ? 1 : 0, n:pl.got.length, tot:ITEMS_C.length, co:isCoop() ? plainText(coopItemText(it)) : ''}}); netPublish(true);
+  await waitBtn('受けとる', isBot(pl), pl);
   gUI('#gBig', null);
   // 持ち物
   const drop = await decideKeep(pl, it);
@@ -10724,7 +11475,8 @@ async function pullFor(pl){
   if (GS.dark || GS.hemi.intensity < .8) gTween(500, t => lightsDim(.5 + .5 * t));
   gTween(400, t => { GS.pillar.material.opacity *= (1 - t); }).then(() => { GS.pillar.visible = false; });
   renderHUD();
-  await waitBtn(pl.tickets > 0 ? `もう1回まわす（🎟️×${pl.tickets}）` : 'つぎへ', isBot(pl));
+  H.gacha = Object.assign({}, H.gacha, {st:'done', tk:pl.tickets || 0, kept:drop === '__new' ? 0 : 1, gear:pl.gear.map(id => ({n:ITEM[id].name, col:RAR[ITEM[id].r].col}))}); netPublish(true);
+  await waitBtn(pl.tickets > 0 ? `もう1回まわす（🎟️×${pl.tickets}）` : 'つぎへ', isBot(pl), pl);
   gUI('#gRes', null);
 }
 const sparkTex = canvasTex((g, S) => { g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `${S*.8}px ${EMOJI_FONT}`; g.fillText('✨', S/2, S/2 + 4); }, 64);
@@ -10757,7 +11509,7 @@ async function gachaTime(){
     while (pl.tickets > 0){ await pullFor(pl); }
   }
   cover.classList.add('on'); await sleep(450);
-  exitStage(); gUI('#gTop', null);
+  exitStage(); gUI('#gTop', null); H.gacha = null;
   rebuildPawns();
   cover.classList.remove('on');
   BGM.play(prevSong === 'gacha' || !prevSong ? 'main' : prevSong);
@@ -11270,6 +12022,7 @@ window.__H = H; window.__render = renderHUD; window.__dbg = {VO, onJoin, THUMB, 
     const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()), d = Math.max(s.y, s.x * .95) * 2.15;
     cm.position.set(c.x, c.y + s.y * .12, c.z + d); cm.lookAt(c); tr.render(sc, cm); const u = tr.domElement.toDataURL('image/png'); tr.dispose(); try { tr.forceContextLoss(); } catch(e){} return u; },
   math:{makeProblem, PGEN, toQ, parseQ, qeq, fmtAns},      // 問題を作るところ（問題と答えを、まとめて調べるとき用）
+  phone:{ROLL, PUI, ask, phoneRoll, rollSync, onAct, uiOpen, undo, startQuiz, chooseRoute, shop, rollDice, setChar},      // スマホで動かすしくみ（しらべるとき用）
   coop:{summonFx, summonAll, summonTease, pawnShow, asleep, setSkip:v => { showSkip = !!v; }, treeOpen, treeGo, treeEnd, treeCount, TREE, endRollHTML, guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
 }
 
