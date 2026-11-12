@@ -11,6 +11,11 @@
    "once": true,
    "ls": 0.3
   },
+  "song_b": {
+   "gain": 0.41,
+   "once": true,
+   "in": 0.03
+  },
   "opening": {
    "gain": 0.382,
    "once": true,
@@ -75,6 +80,19 @@
    "once": true,
    "next": "finale",
    "end": 43
+  },
+  "song_c": {
+   "gain": 0.38,
+   "once": true,
+   "next": "finale",
+   "end": 58.7,
+   "in": 0.12
+  },
+  "song_a": {
+   "gain": 0.33,
+   "once": true,
+   "next": "finale",
+   "in": 0.3
   }
  }
 }

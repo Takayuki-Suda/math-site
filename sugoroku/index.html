@@ -569,6 +569,15 @@ table.bt{border-collapse:collapse;width:100%;font-size:20px;text-align:center}
 .op-logo .sparks{font-size:34px;letter-spacing:.3em;animation:twk 1s infinite alternate}
 @keyframes twk{to{opacity:.4;transform:scale(1.1)}}
 .op-skip{position:absolute;right:18px;bottom:calc(9vh + 14px);pointer-events:auto;font-size:14px;padding:8px 16px;opacity:.85}
+/* オープニングの歌：絵（上下の黒い帯のあいだ）と、歌詞の字幕（下の黒い帯の中）。字幕は、歌っていることばから金色に変わっていく */
+#songFx{position:absolute;left:0;top:9vh;width:100%;height:82vh;display:none}
+#songFx.on{display:block;animation:sfIn .35s ease-out}
+@keyframes sfIn{from{opacity:0}}
+#songFx.out{opacity:0;transition:opacity .45s ease-out}
+.op-lyric{position:absolute;left:0;right:0;bottom:0;height:9vh;z-index:2;display:flex;align-items:center;justify-content:center;white-space:nowrap;font-size:min(4.4vh,2.5vw);letter-spacing:.03em;color:#fff;opacity:0;transform:translateY(5px);transition:opacity .2s,transform .2s}
+.op-lyric.on{opacity:1;transform:none}
+.op-lyric i{font-style:normal;color:#ffd84a;margin-right:.55em}
+.ly-p{display:inline-block;margin:0 .2em;background:linear-gradient(90deg,#ffd84a var(--p,0%),#fff var(--p,0%));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .introCard{position:absolute;left:50%;bottom:calc(9vh + 26px);transform:translateX(-50%);display:none;align-items:center;gap:16px;padding:12px 30px 12px 14px;border-radius:999px;background:linear-gradient(90deg,var(--pc),rgba(12,18,44,.94) 40%);border:3px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 30px var(--pc)}
 .introCard.on{display:flex;animation:icin .55s cubic-bezier(.2,1.5,.4,1)}
 @keyframes icin{from{transform:translateX(-50%) translateX(-60vw) skewX(-12deg);opacity:0}}
@@ -871,7 +880,8 @@ body.treeon #vo{left:calc(50% - min(1240px,97vw) * .19) !important;bottom:26px !
   <div class="story" id="story"><div class="st-line dela" id="stLine"></div></div>
   <div class="panel right" id="scorePanel"></div>
   <div class="strip" id="strip"></div>
-  <div class="opening" id="opening"><div class="op-logo"><div class="sparks">✨🎄✨</div><div class="t1 dela">WELCOME TO</div><div class="t2 dela">数学すごろく<br>クリスマス会</div><div class="t3">― 冒険のはじまり ―</div></div>
+  <div class="opening" id="opening"><canvas id="songFx" aria-hidden="true"></canvas><div class="op-logo"><div class="sparks">✨🎄✨</div><div class="t1 dela">WELCOME TO</div><div class="t2 dela">数学すごろく<br>クリスマス会</div><div class="t3">― 冒険のはじまり ―</div></div>
+    <div class="op-lyric dela" id="opLyric" aria-hidden="true"></div>
     <button class="btn op-skip" onclick="window.skipShow&&window.skipShow()">スキップ ⏭</button><div class="introCard" id="introCard"></div></div>
   <div class="gachaUI" id="gachaUI"><div class="gTop" id="gTop"></div><div class="gBig" id="gBig"></div><div class="gSel" id="gSel"></div><div class="gRes" id="gRes"></div><button class="gNext" id="gNext"></button><div class="gFlash" id="gFlash"></div><button class="btn gSkip" id="gSkip" onclick="window.gachaFast&&window.gachaFast()">⏩ はやおくり</button></div>
   <div class="cover" id="cover"></div>
@@ -2470,6 +2480,584 @@ window.StageFx = (() => {
     _freeze(t){ frozen = t; kick(); },
   };
 })();
+/* ================= オープニングの歌のアニメーション（協力モード。物語のあとに流れる） =================
+   歌「あかりを ともせ」（music/song_b.mp3）に合わせて動く。絵はすべてここで描いている（画像ファイルは使わない）。
+   キャラクターは CharArt の絵をそのまま使う。出てくるのは、その回の参加者のコマと、村の人たち。
+   曲は 150拍/分（1拍 0.4秒、1小節 1.6秒）。場面の切りかわり（CUT）と歌詞の時刻（LINES）は、曲の音を調べて決めた。
+   曲を作り直したら、CUT と LINES を直す（歌い出しの時刻は、声だけを取り出して、聞き取りの道具で調べる）。
+   絵は「歌の時刻 t」だけで決まる（前のコマの続きを持たない）ので、曲が止まっても・とんでも、絵は曲からずれない。
+   舞台は高さ900・地面の高さ700。よこは画面に合わせて広がる（まん中が 0）。進行は、すごろく盤のほうの openingShow */
+window.SongFx = (() => {
+  const TAU = Math.PI * 2, PI = Math.PI;
+  const FONT = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Meiryo",sans-serif', DELA = '"Dela Gothic One",' + FONT;
+  const REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const T0 = .012, BEAT = .4, GY = 700, TH = 330, TW = 100, TY = GY + 22;      // 1拍めの位置・1拍の長さ（秒）／地面の高さ／ツリーの高さ・半分の幅・根もとの高さ
+  /* 場面の切りかわり（歌の中の秒）。bang 雷／logo タイトル／cast 参加者の紹介／town 町の全景／road 暗い道／flash 雷とかげ／stand 色がつく／
+     alone ひとりと「？」／pair もう1人が来る／clap ハイタッチ／run サビ・走る／tree ツリーが灯る／one 1つと1つ／grow ふえる／next となりどうし／gather ツリーの前／star 星へ／end すごろく盤へ */
+  const CUT = {bang: .81, logo: 1.61, cast: 4.81, town: 12.81, road: 17.6, flash: 20.75, stand: 23.95, alone: 25.3, pair: 28.5, clap: 30.41, run: 32.0, tree: 36.08, one: 36.8, grow: 38.2, next: 39.95, gather: 43.6, star: 44.5, end: 45.2};
+  /* 歌詞：1行 = [[歌い出しの秒, ことば], …, 歌い終わりの秒]。字幕は、ことばごとに金色へ変わっていく。
+     台本の4行め「ぼくらは今 ここに立っている」は、歌では「ぼくらは今」まで（「ここに立っている」は歌っていない）ので、字幕もそうしてある */
+  const LINES = [
+    [[14.46, '雪の町に'], [15.96, '明かりが消えて'], 17.45],
+    [[17.70, '夜は長く'], [19.14, '道も見えない'], 20.65],
+    [[20.88, '雷がよんだ'], [22.38, '名前も知らない'], 23.95],
+    [[24.04, 'ぼくらは今'], 25.25],
+    [[25.40, 'ひとりじゃ'], [26.26, 'とけない'], [27.12, 'なぞだって'], 28.35],
+    [[28.66, 'となりの'], [29.48, 'きみと'], [30.10, 'なら'], 32.2],
+    [[32.66, '数えて'], [33.70, 'つないで'], [35.18, '明かりを'], [36.08, 'ともせ'], 36.75],
+    [[36.92, 'ひとつと'], [37.45, 'ひとつで'], [38.25, '未来が'], [39.28, 'ふえる'], 39.95],
+    [[40.10, 'こたえは'], [41.62, 'きっと'], [42.28, 'となりに'], [43.08, 'ある'], 43.7],
+    [[45.26, 'こがね町を'], [46.52, '救え'], [47.98, '数学の'], [49.10, '力で'], 52.3],
+  ];
+  const cl = (v, a, b) => v < a ? a : v > b ? b : v, lerp = (a, b, t) => a + (b - a) * t;
+  const lin = (a, b, v) => cl((v - a) / (b - a), 0, 1);
+  const sm = (a, b, v) => { const t = lin(a, b, v); return t * t * (3 - 2 * t); };
+  const oB = t => { t = cl(t, 0, 1); return 1 + 2.70158 * Math.pow(t - 1, 3) + 1.70158 * Math.pow(t - 1, 2); };      // 少し行きすぎてから、もどる
+  const oC = t => 1 - Math.pow(1 - cl(t, 0, 1), 3), iC = t => Math.pow(cl(t, 0, 1), 3);
+  const hs = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };      // 番号から決まる、でたらめな数（0〜1）
+  function rng(seed){ let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const bt = t => (t - T0) / BEAT;                                                       // 拍の番号（小数つき）
+  const pulse = (t, n) => { const f = bt(t) / (n || 1); return Math.pow(1 - (f - Math.floor(f)), 3); };      // 拍の頭で 1、すぐ 0 へ
+  const rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+  const shade = (h, k) => { const [r, gg, b] = rgb(h); return `rgb(${Math.round(r * k)},${Math.round(gg * k)},${Math.round(b * k)})`; };
+  const tint = (h, k) => { const [r, gg, b] = rgb(h); return `rgb(${Math.round(r + (255 - r) * k)},${Math.round(gg + (255 - gg) * k)},${Math.round(b + (255 - b) * k)})`; };
+  const flashEnv = a => a < 0 || a >= .55 || REDUCE ? 0 : a < .09 ? 1 : a < .16 ? .3 : a < .25 ? .85 : Math.max(0, 1 - (a - .25) / .3) * .7;      // 雷の光り方（ピカッ、ピカッ、すーっ）
+
+  let cv = null, g = null, ly = null, W = 0, H = 0, dpr = 1, S = 1, Wu = 1600, Y0 = 0, tt = 0, built = false;
+  let cast = [], pairs = [], second = null;
+  let stars = [], peaks = [], trees = [], houses = [], bulbs = [], wires = [], poles = [], tbulbs = [], segs = [], segMax = 1, tower = null;
+  const cam = {x: 0, y: 450, z: 1};
+  const SYM = ['＋', '−', '×', '÷', 'π', '√', '∑', '∞', '＝', '△', 'x²', '％', '∠', '½', 'y=ax', '3.14', '1+1'];
+  const BULB = [['red', '#ff7b7b'], ['gold', '#ffe07a'], ['green', '#8df0b0'], ['blue', '#9cc4ff'], ['white', '#fffbe6']];
+  const VILS = () => (window.CharArt ? CharArt.villagers : []).map((k, i) => ({k, name: '', color: ['#6f9a7c', '#b59ad6', '#3f5fa8', '#2f3f78', '#4c8dff', '#ff9dbd'][i % 6], vil: true}));
+
+  /* ---- 光のにじみ（先に小さな絵にしておいて、はりつけるだけにする） ---- */
+  const glow = {};
+  function mkGlow(){ [['warm', 255, 205, 120], ['gold', 255, 214, 90], ['red', 255, 96, 96], ['green', 110, 240, 150], ['blue', 120, 175, 255], ['white', 255, 255, 240], ['pink', 255, 150, 210], ['violet', 170, 120, 255]].forEach(([k, r, gg, b]) => {
+    const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, `rgba(${r},${gg},${b},1)`); gr.addColorStop(.22, `rgba(${r},${gg},${b},.5)`); gr.addColorStop(.55, `rgba(${r},${gg},${b},.13)`); gr.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 64); glow[k] = c; }); }
+  function G(k, x, y, r, a){ if (a <= .012 || r <= 0) return; g.globalAlpha = a > 1 ? 1 : a; g.drawImage(glow[k], x - r, y - r, r * 2, r * 2); }
+  const add = f => { g.globalCompositeOperation = 'lighter'; f(); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; };      // 光を足して描く
+
+  /* ================= 町をつくる（1回だけ。いつも同じ町になる） ================= */
+  function build(){
+    if (built) return; built = true; mkGlow();
+    const R = rng(20261224);
+    for (let i = 0; i < 130; i++) stars.push({x: (R() * 2 - 1) * 1500, y: R() * 600 - 40, r: 5 + R() * 9, sp: .6 + R() * 1.8, ph: R() * 9});
+    for (let i = 0; i < 13; i++) peaks.push({x: -1560 + i * 260 + (R() - .5) * 170, h: 150 + R() * 200, k: .95 + R() * .6});
+    peaks.sort((a, b) => b.h - a.h);
+    for (let x = -2100; x < 2100; x += 24 + R() * 52) trees.push({x, h: 34 + R() * 52, c: R() < .5 ? '#0a1238' : '#0c173f'});
+    const colB = [['#1c2552', '#10173c'], ['#211f4c', '#12163a'], ['#1d2d55', '#0f183c']];
+    const colF = [['#28315f', '#141b42'], ['#2e2a5b', '#171a40'], ['#35294f', '#1a1838'], ['#263b64', '#131d44'], ['#3a2d57', '#1a193e']];
+    const win = (x, y, w, h, round) => ({x, y, w, h, round: !!round, cx: x + w / 2, dn: cl(Math.abs(x + w / 2) / 1700, 0, 1), on: R() < .74, ph: R() * 40, r: R()});
+    const house = (x, base, w, bh, rh, s, cols, flat, chim, back) => {
+      const h = {x, base, w, bh, rh, s, cols, flat, chim, back, wins: [], door: null};
+      const ww = 22 * s, wh = 27 * s, n = Math.max(1, Math.floor((w - 20 * s) / (37 * s))), rows = bh > 112 * s ? 2 : 1, gap = (w - n * ww) / (n + 1), door = Math.floor(R() * n);
+      for (let r = 0; r < rows; r++) for (let i = 0; i < n; i++){ const wx = x + gap + i * (ww + gap), wy = base - bh + 20 * s + r * (wh + 22 * s);
+        if (r === rows - 1 && i === door && n > 1) h.door = wx; else h.wins.push(win(wx, wy, ww, wh)); }
+      if (!flat && rh > 54 * s) h.wins.push(win(x + w / 2 - 8.5 * s, base - bh - rh * .52, 17 * s, 17 * s, true));
+      houses.push(h); };
+    for (let x = -2100 - R() * 70; x < 2100;){ const s = .76, w = (100 + R() * 75) * s, bh = (85 + R() * 65) * s, rh = (45 + R() * 30) * s;      // うしろの家なみ
+      if (Math.abs(x + w / 2 + 520) > 70) house(x, GY - 12, w, bh, rh, s, colB[Math.floor(R() * 3)], R() < .25, R() < .35, true);
+      x += w + (R() * 24 - 5) * s; }
+    tower = {x: -550, w: 60, bh: 260, base: GY - 12, wins: [win(-540, GY - 255, 40, 40, true), win(-530, GY - 182, 20, 27), win(-530, GY - 127, 20, 27)]}; tower.wins[0].clock = true;      // 時計台
+    for (let x = -2100 - R() * 70; x < 2100;){ const w = 115 + R() * 85, bh = 90 + R() * 65, rh = 45 + R() * 35;      // 手前の家なみ（ツリーの広場は空ける）
+      if (x + w > -132 && x < 132){ x = 132 + R() * 10; continue; }
+      house(x, GY + 8, w, bh, rh, 1, colF[Math.floor(R() * 5)], R() < .2, R() < .5, false);
+      x += w + (R() * 22 - 7); }
+    // 電線と電球（ツリーから左右へ）
+    const span = 300, py = GY - 200, ay = TY - TH * .64; let ci = 0;
+    [-1, 1].forEach(d => { let x1 = d * TW * .12, y1 = ay;
+      for (let k = 1; k < 8; k++){ const x2 = d * span * k, mx = (x1 + x2) / 2, my = Math.max(y1, py) + 40 + Math.abs(x2 - x1) * .04, n = Math.max(3, Math.round(Math.hypot(x2 - x1, py - y1) * 1.06 / 38));
+        wires.push({x1, y1, x2, y2: py, mx, my});
+        for (let i = 1; i < n; i++){ const t = i / n, bx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * mx + t * t * x2, by = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * my + t * t * py + 6; bulbs.push({x: bx, y: by, c: ci++ % 5, dn: cl(Math.abs(bx) / 1700, 0, 1), ph: R() * 30}); }
+        poles.push(x2); x1 = x2; y1 = py; } });
+    for (let i = 0; i < 34; i++){ const f = .1 + R() * .82, hw = TW * (1 - f) * .92; tbulbs.push({x: (R() * 2 - 1) * hw, y: TY - 30 - f * (TH - 36), c: i % 5, ph: R() * 30}); }
+    // 地面に広がる金色の光（リヒテンベルク図形）：ツリーの根もとから、枝分かれしながら左右へ
+    segMax = 1500; let cnt = 0;
+    const grow = (x, y, a, d, depth) => { let n = 0;
+      while (d < segMax && n++ < 80 && cnt < 520){ const len = (22 + R() * 38); a += (R() - .5) * .84;
+        let ny = y + Math.sin(a) * len * .36; if (ny < GY + 12 || ny > 892){ a = -a; ny = cl(y + Math.sin(a) * len * .36, GY + 12, 892); }
+        const nx = x + Math.cos(a) * len; segs.push([x, y, nx, ny, d, depth]); cnt++; x = nx; y = ny; d += len;
+        if (depth < 4 && R() < .17) grow(x, y, a + (R() < .5 ? -1 : 1) * (.45 + R() * .65), d, depth + 1);
+        if (R() < .03 * (depth + 1) * (depth + 1)) break; } };
+    for (let i = 0; i < 12; i++) grow((R() - .5) * 28, TY + 8, (i % 2 ? PI : 0) + (R() - .5) * 1.9, 0, 0);
+  }
+
+  /* ================= 描く部品 ================= */
+  const fill = () => g.fillRect(-Wu / 2 - 30, -Y0 - 30, Wu + 60, 900 + 2 * Y0 + 60);      // 画面ぜんたいをぬる
+  /* カメラ：p は遠さ（0＝うごかない遠い空 〜 1＝町）。遠いものほど、少ししか動かない */
+  function layer(p, f){ g.save(); g.translate(0, 450); const z = 1 + (cam.z - 1) * p; g.scale(z, z); g.translate(-cam.x * p, -450 - (cam.y - 450) * p); f(); g.restore(); }
+  const view = p => { const z = 1 + (cam.z - 1) * p, hw = Wu / 2 / z + 40; return [cam.x * p - hw, cam.x * p + hw]; };
+  function tx(s, x, y, px, col, o){ o = o || {}; g.font = `${o.w || 400} ${px}px ${o.f || DELA}`; g.textAlign = o.al || 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.sh){ g.fillStyle = o.sh; g.fillText(s, x + px * .05, y + px * .08); if (o.st){ g.strokeStyle = o.sh; g.lineWidth = o.sw || px * .18; g.strokeText(s, x + px * .05, y + px * .08); } }
+    if (o.st){ g.strokeStyle = o.st; g.lineWidth = o.sw || px * .18; g.strokeText(s, x, y); }
+    g.fillStyle = col; g.fillText(s, x, y); g.globalAlpha = 1; }
+  function rrect(x, y, w, h, r){ g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function rays(x, y, R, a, rot, n, col){ if (a <= .01) return; g.save(); g.translate(x, y); g.rotate(rot); g.globalAlpha = a; g.fillStyle = col; g.beginPath();
+    for (let i = 0; i < n; i++){ const a0 = i / n * TAU, w = TAU / n * .3; g.moveTo(0, 0); g.lineTo(Math.cos(a0 - w) * R, Math.sin(a0 - w) * R); g.lineTo(Math.cos(a0 + w) * R, Math.sin(a0 + w) * R); g.closePath(); }
+    g.fill(); g.restore(); g.globalAlpha = 1; }
+  function star5(x, y, R, r, rot){ g.beginPath(); for (let k = 0; k < 10; k++){ const a = (rot || 0) - PI / 2 + k * PI / 5, q = k % 2 ? r : R; k ? g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q) : g.moveTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); }
+  function snowLine(pts, lw){ g.strokeStyle = '#e4ecff'; g.lineWidth = lw; g.lineCap = g.lineJoin = 'round'; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); }
+
+  function sky(){ const gr = g.createLinearGradient(0, -80, 0, GY); gr.addColorStop(0, '#040818'); gr.addColorStop(.42, '#0b1740'); gr.addColorStop(.78, '#1a2b66'); gr.addColorStop(1, '#2b3c80'); g.globalAlpha = 1; g.fillStyle = gr; fill(); }
+  function farSky(k){      // 星・月・遠い山・丘と森。k＝明るさ（0〜1）
+    const mx = Math.min(800, Wu / 2 - 170);
+    layer(.06, () => { add(() => { for (const s of stars) G('white', s.x, s.y, s.r, (.25 + .45 * (.5 + .5 * Math.sin(tt * s.sp + s.ph))) * k); G('warm', mx, 132, 300, .3 * k); });
+      g.globalAlpha = k; g.fillStyle = '#fdf2cf'; g.beginPath(); g.arc(mx, 132, 58, 0, TAU); g.fill(); g.fillStyle = 'rgba(205,185,140,.38)';
+      [[-.35, -.2, .22], [.3, .25, .17], [.1, -.45, .12], [-.2, .42, .1]].forEach(([a, b, r]) => { g.beginPath(); g.arc(mx + a * 58, 132 + b * 58, r * 58, 0, TAU); g.fill(); }); g.globalAlpha = 1; });
+    layer(.2, () => { const by = GY - 18, [v0, v1] = view(.2);
+      for (const m of peaks){ const hw = m.h * m.k; if (m.x + hw < v0 || m.x - hw > v1) continue; const ax = m.x, ay = by - m.h, gr = g.createLinearGradient(0, ay, 0, by); gr.addColorStop(0, '#465aa2'); gr.addColorStop(1, '#1a2863');
+        g.fillStyle = gr; g.beginPath(); g.moveTo(ax - hw, by); g.lineTo(ax - hw * .45, by - m.h * .5); g.lineTo(ax, ay); g.lineTo(ax + hw * .5, by - m.h * .46); g.lineTo(ax + hw, by); g.closePath(); g.fill();
+        g.fillStyle = 'rgba(8,14,46,.30)'; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + hw * .5, by - m.h * .46); g.lineTo(ax + hw, by); g.lineTo(ax + hw * .12, by); g.closePath(); g.fill();
+        const d = m.h * .3, lx = ax - hw * .45 * (d / (m.h * .5)), rx = ax + hw * .5 * (d / (m.h * .54));
+        g.fillStyle = 'rgba(226,234,255,.92)'; g.beginPath(); g.moveTo(ax, ay); g.lineTo(lx, ay + d); for (let q = 1; q <= 5; q++) g.lineTo(lx + (rx - lx) * q / 6, ay + d * (q % 2 ? .62 : 1.02)); g.lineTo(rx, ay + d); g.closePath(); g.fill(); } });
+    layer(.5, () => { const hill = x => GY - 40 - (Math.sin(x * .0024 + 1) * .5 + .5) * 46 - Math.sin(x * .007 + 2) * 10, [v0, v1] = view(.5);
+      const gr = g.createLinearGradient(0, GY - 100, 0, GY); gr.addColorStop(0, '#1a2760'); gr.addColorStop(1, '#101a47'); g.fillStyle = gr; g.beginPath(); g.moveTo(v0, 960);
+      for (let x = v0; x <= v1 + 16; x += 16) g.lineTo(x, hill(x)); g.lineTo(v1 + 16, 960); g.closePath(); g.fill();
+      for (const tr of trees){ if (tr.x < v0 - 40 || tr.x > v1 + 40) continue; const b = hill(tr.x) + 7; g.fillStyle = tr.c;
+        for (let q = 0; q < 3; q++){ const yb = b - tr.h * q * .27, hw = tr.h * .3 * (1 - q * .22); g.beginPath(); g.moveTo(tr.x - hw, yb); g.lineTo(tr.x, yb - tr.h * .52); g.lineTo(tr.x + hw, yb); g.closePath(); g.fill(); }
+        g.fillStyle = 'rgba(214,224,255,.5)'; g.beginPath(); g.moveTo(tr.x - tr.h * .08, b - tr.h * .82); g.lineTo(tr.x, b - tr.h * 1.06); g.lineTo(tr.x + tr.h * .08, b - tr.h * .82); g.closePath(); g.fill(); } });
+  }
+  /* 家を1つ（窓の明かりは litW(窓) で決まる）。flat を入れると、その色のかげだけ */
+  function drawHouse(h, litW, flat){
+    const {x, base, w, bh, rh, s, cols} = h, top = base - bh, e = 10 * s;
+    g.globalAlpha = 1; g.fillStyle = flat || cols[0]; g.fillRect(x, top, w, bh + 4);
+    if (!flat){ g.fillStyle = 'rgba(6,10,36,.28)'; g.fillRect(x + w * .72, top, w * .28, bh + 4); }
+    if (h.chim){ const cx = x + w * .72, cw = 17 * s, ct = top - rh * .78; g.fillStyle = flat || cols[1]; g.fillRect(cx, ct, cw, rh * .7); if (!flat) snowLine([[cx - 2 * s, ct], [cx + cw + 2 * s, ct]], 8 * s); }
+    g.fillStyle = flat || cols[1]; g.beginPath();
+    if (h.flat){ g.moveTo(x - e, top); g.lineTo(x + w * .2, top - rh * .7); g.lineTo(x + w * .8, top - rh * .7); g.lineTo(x + w + e, top); } else { g.moveTo(x - e, top); g.lineTo(x + w / 2, top - rh); g.lineTo(x + w + e, top); }
+    g.closePath(); g.fill();
+    if (flat) return;
+    snowLine(h.flat ? [[x - e, top - 2 * s], [x + w * .2, top - rh * .7 - 2 * s], [x + w * .8, top - rh * .7 - 2 * s], [x + w + e, top - 2 * s]] : [[x - e, top - 2 * s], [x + w / 2, top - rh - 2 * s], [x + w + e, top - 2 * s]], 11 * s);
+    if (h.door != null){ g.fillStyle = '#10163a'; g.fillRect(h.door - 2 * s, base - 42 * s, 26 * s, 42 * s + 4); g.fillStyle = '#2f8a57'; g.beginPath(); g.arc(h.door + 11 * s, base - 27 * s, 6.4 * s, 0, TAU); g.fill(); }
+    drawWins(h.wins, litW);
+  }
+  function drawWins(ws, litW){
+    for (const w of ws){ w.a = litW(w); g.globalAlpha = 1; g.fillStyle = '#131a3e'; if (w.round){ g.beginPath(); g.arc(w.cx, w.y + w.h / 2, w.w / 2, 0, TAU); g.fill(); } else g.fillRect(w.x, w.y, w.w, w.h);
+      if (w.a > .02){ g.globalAlpha = w.a; g.fillStyle = '#ffd88a'; if (w.round){ g.beginPath(); g.arc(w.cx, w.y + w.h / 2, w.w / 2, 0, TAU); g.fill(); } else g.fillRect(w.x, w.y, w.w, w.h); }
+      g.globalAlpha = .85; g.strokeStyle = '#131a3e'; g.lineWidth = 2.6; g.beginPath(); const cy = w.y + w.h / 2;
+      if (w.clock){ g.moveTo(w.cx, cy); g.lineTo(w.cx - w.w * .26, cy - w.h * .2); g.moveTo(w.cx, cy); g.lineTo(w.cx + w.w * .22, cy - w.h * .3); } else if (!w.round){ g.moveTo(w.cx, w.y); g.lineTo(w.cx, w.y + w.h); g.moveTo(w.x, cy); g.lineTo(w.x + w.w, cy); } g.stroke(); }
+    add(() => { for (const w of ws) G('warm', w.cx, w.y + w.h / 2, w.w * 2.1, w.a * .5); });
+  }
+  function ground(){ const gr = g.createLinearGradient(0, GY, 0, 900); gr.addColorStop(0, '#3a4b8c'); gr.addColorStop(.35, '#273772'); gr.addColorStop(1, '#151f4b');
+    const [v0, v1] = view(1); g.globalAlpha = 1; g.fillStyle = gr; g.beginPath(); g.moveTo(v0 - 20, 1500);
+    for (let x = Math.floor((v0 - 20) / 20) * 20; x <= v1 + 40; x += 20) g.lineTo(x, GY - 5 + Math.sin(x * .0124) * 5.5 + Math.sin(x * .0036 + 1) * 7.5); g.lineTo(v1 + 40, 1500); g.closePath(); g.fill(); }
+  function cracks(front, a){ if (a <= .02 || front <= 0) return; const fd = segMax * front; add(() => { g.lineCap = 'round';
+    for (let pass = 0; pass < 2; pass++) for (let d = 0; d < 5; d++){ const wd = 4.2 * Math.pow(.76, d); g.globalAlpha = pass ? a * .9 : a * .26; g.strokeStyle = pass ? '#ffc640' : '#ff9a1f'; g.lineWidth = pass ? wd : wd * 3.6; g.beginPath();
+      for (const s of segs) if (s[5] === d && s[4] <= fd){ g.moveTo(s[0], s[1]); g.lineTo(s[2], s[3]); } g.stroke(); }
+    if (front < .98) for (const s of segs) if (s[4] <= fd && s[4] > fd - 80) G('gold', s[2], s[3], 20, .7 * a); }); }
+  function xmasTree(Lt, Ls){      // Lt＝ツリーの電球、Ls＝てっぺんの星（0〜）
+    const hh = TH - 30, mix = (a, b) => Math.round(a + (b - a) * cl(Lt, 0, 1));
+    g.globalAlpha = 1; g.fillStyle = '#2a1c22'; g.fillRect(-12, TY - 34, 24, 34); g.fillStyle = 'rgba(4,7,26,.35)'; g.beginPath(); g.ellipse(0, TY, TW, 12, 0, 0, TAU); g.fill();
+    for (let i = 0; i < 5; i++){ const yb = TY - 30 - i * hh * .17, ya = i === 4 ? TY - TH : yb - hh * .37, hw = TW * (1 - i * .175);
+      g.fillStyle = `rgb(${mix(12, 22) + i * 2},${mix(44, 104) + i * 5},${mix(38, 66) + i * 2})`; g.beginPath(); g.moveTo(-hw, yb); g.lineTo(0, ya); g.lineTo(hw, yb); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(4,10,30,.22)'; g.beginPath(); g.moveTo(0, ya); g.lineTo(hw, yb); g.lineTo(hw * .2, yb); g.closePath(); g.fill();
+      g.strokeStyle = '#e6eeff'; g.lineWidth = 8; g.lineCap = 'round'; g.globalAlpha = .9; g.beginPath(); const n = 5 - i > 2 ? 5 - i : 3;
+      for (let q = 0; q < n; q++){ const xa = -hw + hw * 2 * q / n, xb = -hw + hw * 2 * (q + 1) / n; g.moveTo(xa + 5, yb - 4); g.quadraticCurveTo((xa + xb) / 2, yb + 8, xb - 5, yb - 4); } g.stroke(); g.globalAlpha = 1; }
+    for (const b of tbulbs) b.a = cl(Lt, 0, 1) * (.55 + .45 * Math.sin(tt * 3.1 + b.ph));
+    add(() => { for (const b of tbulbs) G(BULB[b.c][0], b.x, b.y, 22, b.a * .9); });
+    for (const b of tbulbs){ g.globalAlpha = .25 + .75 * b.a; g.fillStyle = b.a > .08 ? BULB[b.c][1] : '#3a4466'; g.beginPath(); g.arc(b.x, b.y, 5.6, 0, TAU); g.fill(); }
+    const sy = TY - TH - 8, sr = 26, pl = .85 + .15 * Math.sin(tt * 2.2), L1 = cl(Ls, 0, 1);
+    add(() => { G('gold', 0, sy, 140 * pl * (1 + Math.max(0, Ls - 1)), L1 * .9); g.globalAlpha = L1 * .5; g.strokeStyle = '#ffe9a0'; g.lineWidth = 3.6; g.beginPath();
+      for (let q = 0; q < 4; q++){ const a = tt * .35 + q * PI / 4, r = 84 * pl; g.moveTo(-Math.cos(a) * r, sy - Math.sin(a) * r); g.lineTo(Math.cos(a) * r, sy + Math.sin(a) * r); } g.stroke(); });
+    g.fillStyle = `rgb(${Math.round(120 + 135 * L1)},${Math.round(108 + 116 * L1)},${Math.round(60 + 42 * L1)})`; star5(0, sy, sr, sr * .45); g.fill();
+  }
+  /* 町の全景。L = {w(窓) 窓の明かり, b(電球) 電線の電球, tree, star, veil 金色のベール, crack {f 広がり, a 明るさ}, vil {mood(x), cheer} 村の人, sky 空の明るさ}
+     extra() は、町と同じ場所（カメラの中）に、あとから描くもの */
+  function town(L, extra){
+    sky(); farSky(L.sky == null ? 1 : L.sky);
+    layer(1, () => { const [v0, v1] = view(1);
+      for (const h of houses) if (h.back && h.x + h.w > v0 && h.x < v1) drawHouse(h, L.w);
+      if (tower.x + 80 > v0 && tower.x - 20 < v1){ const tw = tower, top = tw.base - tw.bh; g.globalAlpha = 1; g.fillStyle = '#20284f'; g.fillRect(tw.x, top, tw.w, tw.bh + 4); g.fillStyle = 'rgba(6,10,36,.3)'; g.fillRect(tw.x + tw.w * .7, top, tw.w * .3, tw.bh);
+        g.fillStyle = '#10173c'; g.beginPath(); g.moveTo(tw.x - 10, top); g.lineTo(tw.x + tw.w / 2, top - 75); g.lineTo(tw.x + tw.w + 10, top); g.closePath(); g.fill(); snowLine([[tw.x - 10, top - 2], [tw.x + tw.w / 2, top - 77], [tw.x + tw.w + 10, top - 2]], 11); drawWins(tw.wins, L.w); }
+      ground();
+      if (L.crack) cracks(L.crack.f, L.crack.a);
+      for (const h of houses) if (!h.back && h.x + h.w > v0 && h.x < v1) drawHouse(h, L.w);
+      // 電線と電球
+      g.globalAlpha = 1; g.strokeStyle = 'rgba(9,13,40,.95)'; g.lineWidth = 3.2; g.beginPath(); for (const w of wires){ g.moveTo(w.x1, w.y1); g.quadraticCurveTo(w.mx, w.my, w.x2, w.y2); } g.stroke();
+      for (const p of poles){ g.fillStyle = '#0b1136'; g.fillRect(p - 4, GY - 200, 8, 215); snowLine([[p - 7, GY - 200], [p + 7, GY - 200]], 7); }
+      for (const b of bulbs) b.a = b.x > v0 && b.x < v1 ? L.b(b) * (.72 + .28 * Math.sin(tt * 2.6 + b.ph)) : 0;
+      add(() => { for (const b of bulbs) G(BULB[b.c][0], b.x, b.y, 21, b.a * .85); });
+      for (const b of bulbs){ if (b.x < v0 || b.x > v1) continue; g.globalAlpha = b.a < .05 ? 1 : b.a; g.fillStyle = b.a < .05 ? '#0c1238' : BULB[b.c][1]; g.beginPath(); g.arc(b.x, b.y, 5, 0, TAU); g.fill(); }
+      g.globalAlpha = 1; xmasTree(L.tree || 0, L.star || 0);
+      if (L.vil && window.CharArt){ const vk = CharArt.villagers; for (let i = 0; i < vk.length; i++){ const sd = i % 2 ? 1 : -1, x = sd * (TW + 70 + Math.floor(i / 2) * 175), k = vk[i], kid = k === 'boy' || k === 'girl', m = L.vil.mood(x), ch = (L.vil.cheer || 0) * m;
+        who(k, x + (1 - m) * Math.sin(tt * 36 + i) * 1.3, GY + 34 + (i % 3) * 10, kid ? 100 : 126, {mood: m, cheer: ch, hop: ch * Math.abs(Math.sin((bt(tt) * .5 + i * .3) * PI)) * 20, sw: Math.sin(tt * 1.4 + i) * (.25 + ch), bp: i * .17, a: .8 + .2 * m}); } }
+      if (extra) extra(v0, v1);
+    });
+    if (L.veil > .01) add(() => { const r = Math.max(Wu * .72, 600); G('warm', -cam.x * cam.z, 760, r * 1.2, L.veil * .55); });
+  }
+  /* 家なみとツリーのかげ（まっくらな場面のうしろ） */
+  function skyline(col){ layer(1, () => { const [v0, v1] = view(1); for (const h of houses) if (h.x + h.w > v0 && h.x < v1) drawHouse(h, null, col);
+    g.fillStyle = col; g.beginPath(); g.moveTo(-TW, TY - 30); g.lineTo(0, TY - TH - 20); g.lineTo(TW, TY - 30); g.closePath(); g.fill(); g.fillRect(v0 - 20, GY - 6, v1 - v0 + 40, 900); }); }
+  /* 雷（町と同じ場所に描く）。age＝落ちてからの秒 */
+  const BOLT = {};
+  function zig(a, b, k, R){ let pts = [a, b]; for (let it = 0; it < 5; it++){ const o = [pts[0]]; for (let i = 1; i < pts.length; i++){ const p = pts[i - 1], q = pts[i], d = Math.hypot(q[0] - p[0], q[1] - p[1]) * k; o.push([(p[0] + q[0]) / 2 + (R() * 2 - 1) * d, (p[1] + q[1]) / 2 + (R() * 2 - 1) * d * .4], q); } pts = o; } return pts; }
+  function bolt(seed, age, sx, ex, ey, wk){
+    if (age < 0 || age >= .55) return; const fl = REDUCE ? .5 * (1 - age / .55) : flashEnv(age), id = seed + '|' + sx + '|' + ex;
+    let B = BOLT[id]; if (!B){ const R = rng(seed * 977 + 13), main = zig([sx, -80], [ex, ey], .16, R); B = BOLT[id] = [{p: main, w: 1}];
+      for (let i = 0; i < 3; i++){ const a = main[Math.floor((.15 + R() * .55) * main.length)], d = (i % 2 ? 1 : -1) * (.12 + R() * .18) * 1100; B.push({p: zig(a, [a[0] + d, a[1] + (.08 + R() * .12) * 900], .2, R), w: .5}); } }
+    add(() => { g.lineCap = g.lineJoin = 'round';
+      for (let pass = 0; pass < 2; pass++) for (const b of B){ g.globalAlpha = fl * (pass ? 1 : .38); g.strokeStyle = pass ? '#fffdf0' : '#ffcf6a'; g.lineWidth = (pass ? 6 : 22) * b.w * (wk || 1); g.beginPath(); b.p.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.stroke(); }
+      G('gold', ex, ey, 220, fl); }); }
+  /* はじけて、のぼっていく数学の記号／火花／花火（どれも、はじまってからの秒 age で形が決まる） */
+  function symBurst(x, y, age, n, seed, sp){ if (age < 0) return; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (let i = 0; i < n; i++){ const life = 2.6 + hs(seed + i * 3.1) * 2, k = age / life; if (k >= 1) continue;
+      const a = -PI * (.05 + .9 * hs(seed + i * 1.7)), v = (150 + 420 * hs(seed + i * 2.3)) * (sp || 1), e = (1 - Math.exp(-age * 1.1)) / 1.1;
+      const px = x + Math.cos(a) * v * e + Math.sin(age * 1.3 + i) * 14, py = y + Math.sin(a) * v * e - 70 * age * (.4 + age * .15), al = Math.min(1, age / .3) * Math.pow(1 - k, .7) * .85, s = 32 + 34 * hs(seed + i * 5.9);
+      add(() => G('gold', px, py, s * 1.5, al * .42));
+      g.globalAlpha = al; g.fillStyle = '#ffe9a6'; g.font = `900 ${s}px ${FONT}`; g.save(); g.translate(px, py); g.rotate((hs(seed + i) - .5) * .8 + age * (hs(seed + i * 7) - .5)); g.fillText(SYM[Math.floor(hs(seed + i * 9.7) * SYM.length)], 0, 0); g.restore(); }
+    g.globalAlpha = 1; }
+  function sparks(x, y, age, n, seed, sp, kinds){ if (age < 0 || age > 1.2) return; add(() => {
+    for (let i = 0; i < n; i++){ const life = .5 + .6 * hs(seed + i * 1.3), k = age / life; if (k >= 1) continue; const a = TAU * hs(seed + i * 2.9), v = (.25 + .75 * hs(seed + i * 4.1)) * sp, e = (1 - Math.exp(-age * .8)) / .8;
+      G(kinds ? kinds[i % kinds.length] : (hs(seed + i * 6.3) < .7 ? 'gold' : 'white'), x + Math.cos(a) * v * e, y + Math.sin(a) * v * e - sp * .25 * age + 380 * age * age, (3 + 5 * hs(seed + i * 8.1)) * 4, 1 - k); } }); }
+  function firework(x, y, age, seed){ if (age < 0 || age > 1.6) return; const K = [['gold', 'white'], ['red', 'pink'], ['green', 'white'], ['blue', 'white'], ['pink', 'gold']][seed % 5];
+    add(() => { if (age < .28){ const k = age / .28; G('white', x, y + 300 * (1 - oC(k)), 12, .9); return; }
+      const a2 = age - .28, n = 46; for (let i = 0; i < n; i++){ const a = i / n * TAU + hs(seed + i) * .2, v = (150 + 150 * hs(seed * 3 + i * 1.7)), e = (1 - Math.exp(-a2 * 2.2)) / 2.2, k = a2 / 1.3; if (k >= 1) continue;
+        G(K[i % 2], x + Math.cos(a) * v * e * 2, y + Math.sin(a) * v * e * 2 + 90 * a2 * a2, 16 * (1 - k * .5), (1 - k) * (.6 + .4 * Math.sin(a2 * 30 + i))); }
+      G('white', x, y, 240 * (1 - lin(0, .35, a2)), .8 * (1 - lin(0, .35, a2))); }); }
+  function snow(t, a){ const n = REDUCE ? 50 : 130, wd = Wu + 80, drift = 18 * t - 190 * Math.cos(t * .21); g.fillStyle = '#fff';
+    for (let i = 0; i < n; i++){ const z = hs(i * 1.9 + 3), r = 1.8 + z * z * 6.5, y = ((hs(i * 3.3) * 1000 + (42 + z * 120) * t) % 1000) - 50, x = ((hs(i * 7.7) * wd + drift * (.4 + z * .5) + Math.sin(t * 1.1 + i) * 22) % wd + wd) % wd - wd / 2;
+      g.globalAlpha = (.35 + z * .5) * a; g.beginPath(); g.arc(x, y * (900 + 2 * Y0) / 900 - Y0, r, 0, TAU); g.fill(); }
+    g.globalAlpha = 1; }
+  function vignette(k){ const gr = g.createRadialGradient(0, 470, Math.min(Wu, 900) * .42, 0, 470, Math.max(Wu, 900) * .78); gr.addColorStop(0, 'rgba(2,5,20,0)'); gr.addColorStop(1, `rgba(2,5,20,${k})`); g.globalAlpha = 1; g.fillStyle = gr; fill(); }
+
+  /* ---- キャラクター ---- */
+  function who(k, x, y, h, o){ o = o || {}; if (!window.CharArt) return; const a = o.a == null ? 1 : o.a;
+    if (o.shadow !== 0){ g.globalAlpha = .3 * a; g.fillStyle = '#040720'; g.beginPath(); g.ellipse(x, y - 2, h * .3 * (1 - (o.hop || 0) / (h * 2)), h * .07, 0, 0, TAU); g.fill(); }
+    g.globalAlpha = a; g.save(); g.translate(x, y - (o.hop || 0)); if (o.rot) g.rotate(o.rot); if (o.flip) g.scale(-1, 1);
+    CharArt.draw(g, k, h, o.ph || 0, {T: tt, bp: o.bp == null ? .37 : o.bp, mood: o.mood == null ? 1 : o.mood, cheer: o.cheer || 0, still: o.still !== false, sw: o.sw || 0, col: o.col}); g.restore(); g.globalAlpha = 1; }
+  const hero = (c, x, y, h, o) => who(c.k, x, y, h, Object.assign({col: c.color}, o));
+  /* かげ絵（1色でぬったキャラクター）。1回作ったら使い回す */
+  const SIL = {};
+  function silImg(c, color){ const id = c.k + '|' + c.color + '|' + color; if (SIL[id]) return SIL[id];
+    const im = document.createElement('canvas'); im.width = 300; im.height = 400; const x = im.getContext('2d'); x.translate(150, 372);
+    if (window.CharArt) CharArt.draw(x, c.k, 270, 0, {T: 0, bp: .5, still: true, col: c.color});
+    x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, 300, 400); return SIL[id] = im; }
+  function sil(c, x, y, h, color, a, k){ k = k || 1; const s = h / 270 * k, fy = y - h / 2 + h * k / 2; g.globalAlpha = a; g.drawImage(silImg(c, color), x - 150 * s, fy - 372 * s, 300 * s, 400 * s); g.globalAlpha = 1; }
+  /* よこ1列にならぶときの、あいだと大きさ */
+  function row(n, hMax, gapMax){ const gap = Math.min(gapMax || 260, (Wu - 240) / Math.max(1, n)), h = Math.min(hMax || 420, gap * 1.7); return {gap, h, x: i => (i - (n - 1) / 2) * gap}; }
+  function namePlate(c, x, y, px, a, maxW){ if (!c.name || a <= 0) return; g.font = `900 ${px}px ${FONT}`; let w = g.measureText(c.name).width + px * 1.3;
+    if (maxW && w > maxW){ px *= maxW / w; w = maxW; }      // 長い名前は、となりの名札と重ならない大きさに
+    const hh = px * 1.6;
+    g.globalAlpha = a; rrect(x - w / 2, y - hh / 2, w, hh, hh / 2); g.fillStyle = c.color; g.fill(); g.lineWidth = Math.max(2.5, px * .1); g.strokeStyle = '#fff'; g.stroke();
+    tx(c.name, x, y + px * .04, px, '#fff', {w: 900, f: FONT, a, st: 'rgba(0,0,0,.35)', sw: px * .12}); }
+
+  /* ================= 場面 ================= */
+  /* 0.0〜4.8秒：しずかな夜 → 雷（0.81秒）→ 金色の光が広がる → タイトル（ロゴは、画面の文字のほうで出す。ここは、うしろの光） */
+  function scTitle(t){
+    const sb = t - CUT.bang, a0 = sb < 0 ? .5 * sm(.1, .75, t) : .5 + .5 * sm(0, .12, sb), k = sm(.8, CUT.cast, t), fl = flashEnv(sb);
+    cam.x = 0; cam.y = 508 - 10 * k; cam.z = 1.22 + .08 * k;
+    town({w: w => w.r < .06 ? .3 : 0, b: () => 0, tree: sm(0, .7, sb) * .45, star: sm(0, .3, sb), veil: .25 * sm(.2, 2.4, sb), crack: sb > 0 ? {f: sm(0, 2.6, sb), a: .95} : null, vil: {mood: () => .15 + .5 * sm(.3, 2, sb)}}, () => {
+      bolt(1, sb, 150, 0, TY - TH - 8);
+      if (!REDUCE){ symBurst(0, TY - TH * .6, sb, 26, 5, 1); sparks(0, TY - TH, sb, 36, 9, 560); sparks(0, TY, sb, 26, 17, 460); } });
+    const la = sm(CUT.logo - .05, CUT.logo + .45, t) * (1 - sm(4.3, 4.75, t));
+    if (la > .01) add(() => { rays(0, 345, 1400, la * .13, t * .22, 16, '#ffd86b'); G('gold', 0, 345, 620, la * .35);
+      if (!REDUCE) for (let i = 0; i < 16; i++){ const tw = Math.max(0, Math.sin(t * (2 + hs(i) * 3) + i * 2.1)); G('white', (hs(i * 3.1) - .5) * 1150, 200 + hs(i * 5.7) * 300, 26 * tw, la * tw); } });
+    snow(t, 1); vignette(.5);
+    if (fl > 0){ g.globalAlpha = fl * .26; g.fillStyle = '#fff3cf'; fill(); }
+    if (a0 < 1){ g.globalAlpha = 1 - a0; g.fillStyle = '#02040d'; fill(); }
+    const wo = iC(lin(4.42, CUT.cast, t)); if (wo > 0){ g.globalAlpha = wo * .92; g.fillStyle = '#fff6d8'; fill(); }
+    g.globalAlpha = 1;
+  }
+  /* 4.8〜12.8秒：参加者の紹介。1人ずつ（その人の色の画面に、大きなコマと名前）→ さいごに全員 */
+  function panelBG(col, t, dir){
+    const hw = Wu / 2 + 30, gr = g.createLinearGradient(-hw, 0, hw, 900); gr.addColorStop(0, shade(col, .26)); gr.addColorStop(.55, shade(col, .6)); gr.addColorStop(1, shade(col, .92));
+    g.globalAlpha = 1; g.fillStyle = gr; fill();
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; const sp = Wu + 500;
+    for (let i = 0; i < 9; i++){ const s = 150 + 170 * hs(i * 3.7), x = (((hs(i * 5.1) * sp - dir * t * (40 + 50 * hs(i))) % sp) + sp) % sp - sp / 2, y = 80 + hs(i * 9.3) * 760;
+      g.globalAlpha = .06 + .05 * hs(i * 2.2); g.font = `900 ${s}px ${FONT}`; g.save(); g.translate(x, y); g.rotate((hs(i * 4.4) - .5) * .7); g.fillText(SYM[i % 12], 0, 0); g.restore(); }
+    if (!REDUCE) for (let i = 0; i < 26; i++){ const len = 200 + 500 * hs(i * 1.3), y = hs(i * 7.9) * 900, v = 1500 + 1700 * hs(i * 2.7), span = Wu + 1400, x = (((hs(i * 6.1) * span - dir * t * v) % span) + span) % span - span / 2;
+      g.globalAlpha = .06 + .12 * hs(i * 8.3); g.fillRect(x - len / 2, y, len, 3 + 5 * hs(i * 3.9)); }
+    g.globalAlpha = 1; }
+  function castOne(i, lt, t){
+    const c = cast[i], sd = i % 2 ? 1 : -1, ax = Math.min(390, Wu * .235), cx = sd * ax, e = oB(lin(0, .3, lt)), xx = lerp(sd * (Wu / 2 + 330), cx, e), hop = REDUCE ? 0 : Math.abs(Math.sin(bt(t) * PI)) * 24;
+    panelBG(c.color, t, sd);
+    add(() => { G('white', cx, 470, 540, .5 * cl(e, 0, 1)); rays(cx, 470, 820, .1 * cl(e, 0, 1), t * .5 * sd, 12, '#fff'); });
+    hero(c, xx, 826, 600, {still: REDUCE, ph: t * 9, hop, cheer: .35 + .65 * pulse(t, 2), bp: .2});
+    // 名前（1文字ずつ、はずんで出る）
+    const nx = -sd * ax, chars = [...(c.name || '')], ny = 440; g.font = `400 100px ${DELA}`;
+    const px = Math.min(170, 2 * Math.min(2 * ax - 270, Wu / 2 - 40 - ax) / Math.max(1, g.measureText(c.name || '').width) * 100);      // 名前のはばを はかって、コマにも画面のはしにも かからない大きさに
+    const ce = oB(lin(.04, .3, lt)); if (ce > 0){ g.save(); g.translate(nx, ny - px * .64 - 44); g.scale(ce, ce); rrect(-150, -30, 300, 60, 30); g.fillStyle = '#ffd23f'; g.fill(); g.lineWidth = 4; g.strokeStyle = '#fff7c9'; g.stroke(); tx(`ENTRY No.${i + 1}`, 0, 3, 32, '#3a2400'); g.restore(); }
+    g.font = `400 ${px}px ${DELA}`; const ws = chars.map(ch => g.measureText(ch).width), tw = ws.reduce((a, b) => a + b, 0); let x = nx - tw / 2;
+    chars.forEach((ch, j) => { const s = oB(lin(.1 + j * .04, .32 + j * .04, lt)); if (s > 0){ g.save(); g.translate(x + ws[j] / 2, ny); g.scale(s, s); tx(ch, 0, 0, px, '#fff', {st: shade(c.color, .3), sh: shade(c.color, .18), sw: px * .2}); g.restore(); } x += ws[j]; });
+    const ue = oC(lin(.25, .55, lt)); g.globalAlpha = 1; g.fillStyle = '#ffd23f'; g.fillRect(nx - tw / 2 * ue, ny + px * .62, tw * ue, 9);
+    if (c.label) tx(c.label + (c.cpu ? '（コンピューター）' : ''), nx, ny + px * .62 + 54, 38, '#fff3c0', {w: 900, f: FONT, a: sm(.3, .55, lt), st: 'rgba(10,14,40,.55)', sw: 7});
+    const wf = 1 - lin(0, .16, lt); if (wf > 0 && !REDUCE){ g.globalAlpha = wf * .6; g.fillStyle = '#fff'; fill(); g.globalAlpha = 1; }
+  }
+  function castAll(lt, t){
+    const gr = g.createRadialGradient(0, 600, 60, 0, 600, 1300); gr.addColorStop(0, '#fff1b8'); gr.addColorStop(.3, '#ffb347'); gr.addColorStop(.7, '#b0508a'); gr.addColorStop(1, '#3a2a70'); g.globalAlpha = 1; g.fillStyle = gr; fill();
+    add(() => rays(0, 640, 1700, .15, t * .2, 18, '#fff3c0'));
+    const n = cast.length, wide = Wu >= 1700, gap = Math.min(300, (Wu - (wide ? 760 : 240)) / Math.max(1, n)), r = {gap, h: Math.min(400, gap * 1.7), x: i => (i - (n - 1) / 2) * gap}, b = bt(t);
+    if (wide){ const vs = VILS(), edge = (n - 1) / 2 * r.gap + r.h * .42, sp = cl((Wu / 2 - 80 - edge - 95) / 2, 60, 135);      // 左右に、村の人たち（はばが足りない画面では、出さない）
+      vs.forEach((v, i) => { const sd = i % 2 ? 1 : -1, q = Math.floor(i / 2), kid = v.k === 'boy' || v.k === 'girl'; who(v.k, sd * (edge + 95 + q * sp), 800 - q * 26, kid ? 180 : 226, {cheer: 1, hop: REDUCE ? 0 : Math.abs(Math.sin((b * .5 + i * .37) * PI)) * 18, sw: Math.sin(t * 4 + i), bp: i * .11, a: sm(.05 + i * .03, .3 + i * .03, lt)}); }); }
+    cast.forEach((c, i) => { const e = oB(lin(i * .05, i * .05 + .3, lt)); hero(c, r.x(i), 826 + (1 - e) * 560, r.h, {hop: REDUCE ? 0 : Math.abs(Math.sin((b * .5 - i * .25) * PI)) * 46, cheer: 1, sw: Math.sin(t * 5 + i), bp: i * .13}); namePlate(c, r.x(i), 856, cl(r.h * .085, 22, 32), sm(.3, .5, lt), r.gap - 10); });
+    const e = oB(lin(.08, .42, lt)), msg = '数学の力を持つ なかまたち！'; if (e > 0){ g.save(); g.translate(0, 140); g.scale(e, e); tx(msg, 0, 0, Math.min(92, (Wu - 150) / 14.6), '#fff', {st: '#7a2a10', sh: '#3a1206'}); g.restore(); }
+    const wf = 1 - lin(0, .16, lt); if (wf > 0 && !REDUCE){ g.globalAlpha = wf * .6; g.fillStyle = '#fff'; fill(); g.globalAlpha = 1; }
+  }
+  /* 紹介は 4.8〜12.8秒の 20拍。1人ぶんの拍の数は人数で決める（1人 8拍 … 6人 2.5拍）。のこりの拍で、全員の場面 */
+  function castPlan(){ const n = Math.max(1, cast.length), per = [8, 8, 5, 4, 3, 2.5][n - 1] || 2, m = Math.min(n, 8); return {per, m, all: Math.min(CUT.town - 2 * BEAT, CUT.cast + m * per * BEAT)}; }
+  function scCast(t){ const p = castPlan(), d = p.per * BEAT; if (t < p.all){ const i = Math.min(p.m - 1, Math.floor((t - CUT.cast + 1e-6) / d)); castOne(i, t - CUT.cast - i * d, t); } else castAll(t - p.all, t); }
+  /* 12.8〜17.6秒：あたたかい明かりの町 →「雪の町に 明かりが消えて」。はしの家から、まん中のツリーへ、明かりが消えていく */
+  function scTown(t){
+    const k = lin(CUT.town, CUT.road, t); cam.x = lerp(-300, 40, k); cam.y = 512; cam.z = 1.24 + .1 * k;
+    const off = (dn, r) => 14.55 + (1 - dn) * 2.35 + r * .3, lt = 1 - sm(16.7, 17.35, t);
+    town({w: w => w.on ? (1 - sm(off(w.dn, w.r), off(w.dn, w.r) + .22, t)) * (.82 + .18 * Math.sin(t * 2.3 + w.ph)) : 0, b: b => 1 - sm(off(b.dn, .2), off(b.dn, .2) + .3, t), tree: lt, star: lt, veil: .85 * (1 - sm(14.6, 17.2, t)), vil: {mood: () => .2 + .8 * lt}});
+    snow(t, 1); vignette(.42 + .3 * sm(15, 17.4, t));
+    // 曲の名前（歌が始まる前の小節）
+    const ca = sm(12.95, 13.3, t) * (1 - sm(14.0, 14.35, t)); if (ca > .01){ const x = -Wu / 2 + 80; tx('オープニングテーマ', x, 742, 30, '#fff', {w: 900, f: FONT, al: 'left', a: ca * .9, st: 'rgba(3,6,24,.7)', sw: 7}); tx('♪ あかりを ともせ', x, 800, 60, '#ffe9a6', {al: 'left', a: ca, st: 'rgba(3,6,24,.8)', sw: 11}); }
+  }
+  /* 17.6〜20.75秒：「夜は長く 道も見えない」。街灯が、遠くから順に消えていく。村の人たちが、さむそうに立っている */
+  function snowman(x, y, h){ g.save(); g.translate(x, y); g.scale(h / 230, h / 230); g.lineWidth = 5; g.strokeStyle = '#8e93ba'; g.lineJoin = 'round';
+    const ball = (cy, r) => { g.beginPath(); g.arc(0, cy, r, 0, TAU); g.fillStyle = '#cfd6ee'; g.fill(); g.stroke(); g.beginPath(); g.arc(-r * .12, cy - r * .12, r * .84, 0, TAU); g.fillStyle = '#f3f6ff'; g.fill(); };
+    g.strokeStyle = '#5a4034'; g.lineWidth = 7; g.beginPath(); g.moveTo(-58, -92); g.lineTo(-104, -128); g.moveTo(58, -92); g.lineTo(100, -120); g.stroke(); g.strokeStyle = '#8e93ba'; g.lineWidth = 5;
+    ball(-62, 66); ball(-158, 46);
+    g.fillStyle = '#3f6fc0'; rrect(-48, -128, 96, 20, 9); g.fill(); g.fillRect(22, -124, 20, 46);      // マフラー
+    g.fillStyle = '#2f3f78'; g.beginPath(); g.moveTo(-34, -194); g.lineTo(-26, -238); g.lineTo(26, -238); g.lineTo(34, -194); g.closePath(); g.fill(); g.fillRect(-44, -200, 88, 10);      // バケツのぼうし
+    g.fillStyle = '#2a2145'; g.beginPath(); g.arc(-16, -166, 5, 0, TAU); g.arc(16, -166, 5, 0, TAU); g.fill();
+    g.fillStyle = '#ff9a3d'; g.beginPath(); g.moveTo(0, -158); g.lineTo(30, -150); g.lineTo(0, -146); g.closePath(); g.fill();
+    g.strokeStyle = '#2a2145'; g.lineWidth = 3.5; g.beginPath(); g.arc(0, -128, 14, 1.2 * PI, 1.8 * PI); g.stroke(); g.restore(); }
+  function scRoad(t){
+    const k = lin(CUT.road, CUT.flash, t), z = 1 + .07 * k, HY = 500;
+    g.save(); g.translate(0, 470); g.scale(z, z); g.translate(0, -470);
+    let gr = g.createLinearGradient(0, -80, 0, HY); gr.addColorStop(0, '#02040f'); gr.addColorStop(.6, '#081234'); gr.addColorStop(1, '#16255e'); g.globalAlpha = 1; g.fillStyle = gr; fill();
+    add(() => { for (const s of stars) if (s.y < HY - 40) G('white', s.x * .7, s.y * .8, s.r * .8, .2 + .3 * (.5 + .5 * Math.sin(t * s.sp + s.ph))); });
+    g.fillStyle = '#0b1436'; g.beginPath(); g.moveTo(-Wu, HY + 4);      // 遠くの森のかげ
+    for (let x = -Wu; x <= Wu; x += 26) g.lineTo(x, HY - 14 - 26 * Math.abs(Math.sin(x * .031)) - 10 * Math.sin(x * .011)); g.lineTo(Wu, HY + 4); g.closePath(); g.fill();
+    gr = g.createLinearGradient(0, HY, 0, 900); gr.addColorStop(0, '#22326e'); gr.addColorStop(.5, '#182456'); gr.addColorStop(1, '#0d153a'); g.fillStyle = gr; g.fillRect(-Wu, HY, Wu * 2, 600);
+    gr = g.createLinearGradient(0, HY, 0, 900); gr.addColorStop(0, '#34468a'); gr.addColorStop(1, '#1a2760'); g.fillStyle = gr; g.beginPath(); g.moveTo(-14, HY); g.lineTo(14, HY); g.lineTo(520, 960); g.lineTo(-520, 960); g.closePath(); g.fill();      // 道
+    g.strokeStyle = 'rgba(200,214,250,.28)'; g.lineWidth = 5; g.beginPath(); g.moveTo(-14, HY); g.lineTo(-520, 960); g.moveTo(14, HY); g.lineTo(520, 960); g.stroke();
+    const OFF = [18.25, 19.05, 19.85];      // 街灯が消える時刻（遠い順）
+    [.16, .4, .8].forEach((d, j) => { const yb = lerp(HY, 930, d), hh = lerp(26, 360, d), on = t < OFF[j] ? (t > OFF[j] - .5 && !REDUCE ? (Math.sin(t * 70 + j) > -.2 ? 1 : .25) : 1) : 0;
+      for (const sd of [-1, 1]){ const x = sd * lerp(14, 520, d) * 1.2, lw = lerp(2, 14, d), hx = x - sd * hh * .22, hy = yb - hh;
+        if (on) add(() => { g.globalAlpha = .16 * on; g.fillStyle = '#ffd88a'; g.beginPath(); g.ellipse(hx, yb + hh * .02, hh * .62, hh * .12, 0, 0, TAU); g.fill(); });
+        g.globalAlpha = 1; g.strokeStyle = '#070c24'; g.lineWidth = lw; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, yb); g.lineTo(x, hy + hh * .08); g.quadraticCurveTo(x, hy, hx, hy); g.stroke();
+        g.fillStyle = on ? '#ffe9a8' : '#232c55'; g.beginPath(); g.arc(hx, hy + lw * .9, lw * 1.25, 0, TAU); g.fill();
+        if (on) add(() => { G('warm', hx, hy + lw, hh * .55, .75 * on); G('white', hx, hy + lw, hh * .14, .8 * on); }); } });
+    // 村の人（手前の左右）と、雪だるま
+    const V = [['grandpa', -Math.min(560, Wu * .36), 872, 250], ['girl', -Math.min(560, Wu * .36) + 170, 884, 190], ['grandma', Math.min(520, Wu * .34) - 150, 880, 240], ['boy', Math.min(520, Wu * .34) + 10, 890, 190]];
+    V.forEach(([kk, x, y, h], i) => { who(kk, x + (REDUCE ? 0 : Math.sin(t * 36 + i * 2) * 1.6), y, h, {mood: 0, sw: Math.sin(t * 1.2 + i) * .2, bp: i * .21});
+      if (!REDUCE) for (let q = 0; q < 2; q++){ const age = ((t + i * .43 + q * .8) % 1.6) / 1.6; g.globalAlpha = .22 * Math.sin(age * PI); g.fillStyle = '#c9d5f5'; g.beginPath(); g.arc(x + h * .16 + age * 30, y - h * .52 - age * 34, 7 + age * 14, 0, TAU); g.fill(); } });
+    g.globalAlpha = 1; snowman(Math.min(520, Wu * .34) + 190, 896, 200);
+    // 闇が、道のむこうから広がる
+    const dk = sm(CUT.road + .3, 20.5, t); gr = g.createLinearGradient(0, HY - 220, 0, 900); gr.addColorStop(0, `rgba(1,2,8,${.9 * dk})`); gr.addColorStop(.45, `rgba(1,2,8,${.8 * dk})`); gr.addColorStop(1, `rgba(1,2,8,${.25 * dk})`); g.fillStyle = gr; g.fillRect(-Wu, HY - 400, Wu * 2, 1400);
+    g.restore(); snow(t, 1); vignette(.7);
+  }
+  /* 20.75〜23.95秒：「雷がよんだ 名前も知らない」。雷が光るたびに、参加者のかげが あらわれる */
+  const FL = [20.81, 21.61, 22.41, 23.21];
+  const flashOf = i => Math.min(3, Math.floor(i * 4 / Math.max(1, cast.length)));      // i番めの人が、何回めの雷であらわれるか
+  function scFlash(t){
+    g.globalAlpha = 1; g.fillStyle = '#03050f'; fill();
+    let fl = 0; for (const f of FL) fl = Math.max(fl, flashEnv(t - f));
+    if (fl > 0){ const gr = g.createLinearGradient(0, 0, 0, 900); gr.addColorStop(0, 'rgba(150,180,255,.6)'); gr.addColorStop(1, 'rgba(60,80,170,.2)'); g.globalAlpha = fl; g.fillStyle = gr; fill(); g.globalAlpha = 1; }
+    cam.x = 0; cam.y = 450; cam.z = 1; skyline('#060a1c');
+    const n = cast.length, r = row(n, 430, 300), y = 800;
+    FL.forEach((f, j) => { const xs = cast.map((c, i) => flashOf(i) === j ? r.x(i) : null).filter(v => v != null), bx = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : (j - 1.5) * 300; bolt(21 + j, t - f, bx + 260 * (j % 2 ? -1 : 1), bx, 690, 1.15); });
+    cast.forEach((c, i) => { const f = FL[flashOf(i)]; if (t < f) return; const near = flashEnv(t - f), x = r.x(i), pop = oB(lin(0, .22, t - f));
+      sil(c, x, y, r.h * pop, '#cfe0ff', Math.max(REDUCE ? .55 : .2, fl * .9, near), 1.075); sil(c, x, y, r.h * pop, '#070b20', 1);
+      tx('？', x, y - r.h * 1.3 + Math.sin(t * 3 + i) * 6, r.h * .22, '#bcd0ff', {a: .8 * lin(.1, .35, t - f), st: '#0a1030'}); });
+    snow(t, .55); vignette(.6);
+    if (fl > 0){ g.globalAlpha = fl * .2; g.fillStyle = '#e6eeff'; fill(); g.globalAlpha = 1; }
+  }
+  /* 23.95〜25.3秒：「ぼくらは今」。金色の光が左から右へ走って、かげに色がつく。名前が出る */
+  function scStand(t){
+    const lt = t - CUT.stand, k = lin(CUT.stand, CUT.alone, t), z = 1 + .08 * oC(k), n = cast.length, r = row(n, 430, 300), y = 800;
+    g.save(); g.translate(0, 700); g.scale(z, z); g.translate(0, -700);
+    let gr = g.createLinearGradient(0, -60, 0, 760); gr.addColorStop(0, '#060a22'); gr.addColorStop(.6, '#1a2462'); gr.addColorStop(1, '#3c3a82'); g.globalAlpha = 1; g.fillStyle = gr; fill();
+    add(() => { for (const s of stars) if (s.y < 420) G('white', s.x * .8, s.y, s.r, .3 + .3 * Math.sin(t * s.sp + s.ph)); G('gold', 0, 800, 1250, .5 * sm(0, .5, lt)); });
+    cam.x = 0; cam.y = 450; cam.z = 1; skyline('#0a0f2a'); layer(1, () => cracks(1, .85 * sm(0, .4, lt)));
+    const band = lerp(-Wu / 2 - 260, Wu / 2 + 260, lin(0, .6, lt));
+    cast.forEach((c, i) => { const x = r.x(i), d = band - x;
+      if (d < 0){ sil(c, x, y, r.h, '#cfe0ff', .22, 1.075); sil(c, x, y, r.h, '#070b20', 1); return; }
+      const e = oB(lin(0, 190, d)); add(() => G('gold', x, y - r.h * .5, r.h * .95, .45 * (1 - lin(150, 700, d))));
+      hero(c, x, y, r.h * (.88 + .12 * e), {sw: Math.sin(t * 3 + i) * .5, cheer: .12, bp: i * .13}); namePlate(c, x, y + 30, cl(r.h * .085, 22, 32), lin(60, 260, d), r.gap - 10); });
+    if (lt < .75 && !REDUCE) add(() => { const g2 = g.createLinearGradient(band - 260, 0, band + 110, 0); g2.addColorStop(0, 'rgba(255,214,90,0)'); g2.addColorStop(.75, 'rgba(255,230,150,.55)'); g2.addColorStop(1, 'rgba(255,255,240,0)'); g.fillStyle = g2; g.fillRect(band - 260, -100, 370, 1100); });
+    g.restore(); snow(t, .6); vignette(.45);
+  }
+  /* 25.3〜32.0秒：「ひとりじゃ とけない なぞだって／となりの きみと なら」。大きな「？」の前に1人 → もう1人が来る → ハイタッチで「！」に変わる */
+  function scPuzzle(t){
+    const clap = t - CUT.clap, sol = sm(0, .5, clap), A = cast[0], B = second, hh = 340, fy = 858;
+    let gr = g.createLinearGradient(0, 0, 0, 900); gr.addColorStop(0, '#170a36'); gr.addColorStop(1, '#0a1236'); g.globalAlpha = 1; g.fillStyle = gr; fill();
+    g.strokeStyle = 'rgba(150,130,255,.10)'; g.lineWidth = 2; g.beginPath(); const off = REDUCE ? 0 : (t * 22) % 90;      // 方眼紙（ゆっくり流れる）
+    for (let x = -Math.ceil(Wu / 180) * 90 - 90 + off; x < Wu / 2 + 90; x += 90){ g.moveTo(x, -Y0 - 20); g.lineTo(x, 920 + Y0); } for (let yy = -90 + off; yy < 990; yy += 90){ g.moveTo(-Wu / 2 - 20, yy); g.lineTo(Wu / 2 + 20, yy); } g.stroke();
+    if (sol > 0){ gr = g.createRadialGradient(0, 330, 30, 0, 330, 1250); gr.addColorStop(0, '#fff6cf'); gr.addColorStop(.3, '#ffbf4d'); gr.addColorStop(1, 'rgba(120,40,120,0)'); g.globalAlpha = sol; g.fillStyle = gr; fill(); g.globalAlpha = 1; add(() => rays(0, 330, 1700, .16 * sol, t * .3, 18, '#fff3c0')); }
+    // まわりを回る式と記号（解けたら、外へ飛んでいく）
+    const ORB = ['□＋□＝？', '√', 'π', 'x²', '÷', '△', '∑', '％', '＝', '∠', '3.14', '∞'], fly = iC(lin(0, .8, clap)), rx = Math.min(600, Wu * .4);
+    ORB.forEach((s, i) => { const a = i / 12 * TAU + (REDUCE ? 0 : t * .35), x = Math.cos(a) * (rx + 1100 * fly), yy = 330 + Math.sin(a) * (250 + 700 * fly); tx(s, x, yy, i ? 56 : 46, sol > .5 ? '#ffe9a6' : '#c9b3ff', {w: 900, f: FONT, a: (.35 + .2 * Math.sin(t * 2 + i)) * (1 - lin(.3, .8, clap))}); });
+    // 大きな「？」→「！」（くるっと回って変わる）
+    const flip = lin(0, .3, clap), sx = REDUCE ? 1 : Math.max(.05, Math.abs(Math.cos(flip * PI))), ex = flip >= .5, ps = 1 + (REDUCE ? 0 : .05 * pulse(t)) + .3 * sm(0, .15, clap) * (1 - sm(.2, .7, clap));
+    add(() => G(ex ? 'gold' : 'violet', 0, 290, 450, ex ? .8 : .5 + .15 * pulse(t)));
+    g.save(); g.translate(0, 290 + (REDUCE ? 0 : Math.sin(t * 1.7) * 10)); g.rotate(REDUCE ? 0 : Math.sin(t * .9) * .05); g.scale(ps * sx, ps);
+    const gq = g.createLinearGradient(0, -215, 0, 215); if (ex){ gq.addColorStop(0, '#fff7c9'); gq.addColorStop(.5, '#ffd23f'); gq.addColorStop(1, '#ff8a3d'); } else { gq.addColorStop(0, '#e9d8ff'); gq.addColorStop(.5, '#a970ff'); gq.addColorStop(1, '#5a3ac0'); }
+    tx(ex ? '！' : '？', 0, 0, 440, gq, {st: ex ? '#8a2a10' : '#1c0f4a', sw: 30}); g.restore();
+    // 2人
+    const meet = sm(29.4, 30.3, t), xA = lerp(-Math.min(330, Wu * .22), -92, meet), xB = lerp(lerp(Wu / 2 + 220, Math.min(330, Wu * .22), oC(lin(CUT.pair + .05, 29.35, t))), 92, meet);
+    const jump = clap >= 0 ? Math.sin(lin(0, .5, clap) * PI) * 110 + (clap > .5 && !REDUCE ? Math.abs(Math.sin((bt(t) * .5) * PI)) * 34 : 0) : 0, ch = sm(29.7, 30.38, t);
+    const moodA = t < 27.0 ? .55 : t < CUT.pair + .7 ? 0 : 1;
+    hero(A, xA, fy, hh, {mood: moodA, cheer: ch, hop: jump, sw: moodA ? Math.sin(t * 2) * .3 : 0, bp: .1});
+    if (t >= CUT.pair) hero(B, xB, fy, hh, {still: t > 29.35 || REDUCE, ph: t * 11, hop: t < 29.35 && !REDUCE ? Math.abs(Math.sin(t * 11)) * 12 : jump, cheer: ch, flip: true, bp: .6});
+    [26.01, 26.81, 27.61].forEach((tq, j) => { const age = t - tq; if (age > 0 && age < .9) tx('？', xA + 70 + j * 26, fy - hh * 1.12 - age * 70, 60, '#c9b3ff', {a: 1 - age / .9, st: '#1c0f4a'}); });
+    const hi = t - 28.95; if (hi > 0 && hi < 1.0) tx('！', xB - 60, fy - hh * 1.14 - oB(lin(0, .2, hi)) * 26, 66, '#ffe07a', {a: 1 - lin(.6, 1, hi), st: '#7a2a10'});
+    if (clap >= 0){ const cy = fy - hh * .95 - 60; sparks(0, cy, clap, 40, 31, 620); add(() => { const k = lin(0, .5, clap); g.globalAlpha = (1 - k) * .9; g.strokeStyle = '#fff3c0'; g.lineWidth = 14 * (1 - k) + 2; g.beginPath(); g.arc(0, cy, 40 + 900 * oC(k), 0, TAU); g.stroke(); G('white', 0, cy, 260 * (1 - k), 1 - k); });
+      if (clap < .45){ g.globalAlpha = 1 - lin(.2, .45, clap); g.fillStyle = '#fff'; star5(0, cy, 90 * oB(lin(0, .2, clap)), 38 * oB(lin(0, .2, clap)), clap * 3); g.fill(); g.globalAlpha = 1; } }
+    vignette(.4 * (1 - sol));
+    const wo = iC(lin(31.15, CUT.run, t)); if (wo > 0){ g.globalAlpha = wo; g.fillStyle = '#fff8e0'; fill(); g.globalAlpha = 1; }
+  }
+  /* 32.0〜36.8秒：サビ「数えて つないで 明かりを ともせ」。みんなで町を走る。拍ごとに電球が1つ灯って、数が出る。さいごにツリーが灯る */
+  const runX = t => -760 + 177 * cl(t - CUT.run, 0, 4.3);
+  function scRun(t){
+    const lt = t - CUT.run, tr = sm(CUT.tree - .05, CUT.tree + .22, t), arrive = sm(36.1, 36.4, t);
+    cam.x = runX(t); cam.y = 566; cam.z = 1.5; const front = cam.x + 240;
+    town({w: w => sm(-90, 30, front - w.cx) * (.86 + .14 * Math.sin(t * 2.3 + w.ph)), b: b => sm(-60, 40, front - b.x), tree: tr, star: tr * (1 + .8 * (1 - lin(0, .5, t - CUT.tree))), veil: .3 * sm(.3, 3, lt) + .5 * tr, vil: {mood: x => sm(-60, 60, front - x), cheer: tr}}, () => {
+      // 数える電球：拍の頭（32.41秒から 0.4秒ごと）に1つずつ灯る
+      const B = []; for (let q = 0; q < 9; q++){ const tb = T0 + (81 + q) * BEAT; B.push({tb, x: runX(tb) + 205, y: GY - 262 + Math.sin(q * 1.9) * 16}); }
+      g.globalAlpha = 1; g.strokeStyle = 'rgba(9,13,40,.95)'; g.lineWidth = 3.2; g.beginPath(); g.moveTo(B[0].x - 150, B[0].y - 30); B.forEach((b, q) => g.quadraticCurveTo(b.x - 36, b.y + 12, b.x, b.y)); g.lineTo(B[8].x + 70, B[8].y - 60); g.stroke();
+      const nl = B.filter(b => t >= b.tb).length;
+      if (nl > 1) add(() => { g.globalAlpha = .75; g.strokeStyle = '#ffd86b'; g.lineWidth = 5; g.beginPath(); g.moveTo(B[0].x, B[0].y); for (let q = 1; q < nl; q++) g.quadraticCurveTo(B[q].x - 36, B[q].y + 12, B[q].x, B[q].y); g.stroke(); });
+      B.forEach((b, q) => { const age = t - b.tb, on = age >= 0, kind = BULB[q % 5];
+        if (on) add(() => { G(kind[0], b.x, b.y + 8, 54 + 40 * (1 - lin(0, .3, age)), .95); G('white', b.x, b.y + 8, 16, .9); });
+        g.globalAlpha = 1; g.fillStyle = on ? kind[1] : '#0c1238'; g.beginPath(); g.arc(b.x, b.y + 8, 11, 0, TAU); g.fill();
+        if (on && age < 1.9){ const s = oB(lin(0, .2, age)); g.save(); g.translate(b.x, b.y - 54 - age * 12); g.scale(s, s); tx(String(q + 1), 0, 0, 54, '#ffe07a', {a: 1 - lin(1.3, 1.9, age), st: '#5a2a06', sw: 10}); g.restore(); }
+        if (on && !REDUCE) sparks(b.x, b.y + 8, age, 8, 40 + q, 200); });
+      if (!REDUCE){ sparks(0, TY - TH - 8, t - CUT.tree, 44, 71, 640); symBurst(0, TY - TH * .6, t - CUT.tree, 16, 77, .8); }
+      // 走る参加者（着いたら、ばんざい）
+      const n = cast.length, gap = Math.min(128, (Wu / cam.z - 330) / Math.max(1, n));
+      cast.forEach((c, i) => { const x = cam.x + 150 - i * gap + (n - 1) * gap * .35, ph = t * 14 + i * 1.3;
+        hero(c, x, GY + 96 + (i % 2) * 8, 196, arrive > .5 ? {cheer: 1, hop: REDUCE ? 0 : Math.abs(Math.sin((bt(t) - i * .2) * PI)) * 34, bp: i * .13} : {still: REDUCE, ph, rot: REDUCE ? 0 : .11, hop: REDUCE ? 0 : Math.abs(Math.sin(ph)) * 13, cheer: .2, bp: i * .13});
+        if (arrive < .5 && !REDUCE){ g.fillStyle = '#fff'; for (let q = 0; q < 3; q++){ g.globalAlpha = .16 - q * .04; g.fillRect(x - 130 - q * 46 - (t * 400 + i * 37) % 60, GY + 40 + q * 22, 70, 4); } g.globalAlpha = 1; } });
+    });
+    snow(t, 1); vignette(.38);
+    const wi = 1 - lin(0, .35, lt); if (wi > 0){ g.globalAlpha = wi; g.fillStyle = '#fff8e0'; fill(); g.globalAlpha = 1; }
+  }
+  /* 36.8〜39.95秒：「ひとつと ひとつで 未来が ふえる」。2人の光が1つになって、2・4・8・16…と、ふえていく（ならび方は、黄金角のうずまき） */
+  function orb(x, y, r, kind, label, k){ add(() => { G(kind, x, y, r * 2.8 * (k || 1), .95); G('white', x, y, r * 1.15, .95); }); if (label) tx(label, x, y + r * .05, r * 1.2, '#fff', {st: '#5a3206', sw: r * .24}); }
+  function scOne(t){
+    const lt = t - CUT.one, A = cast[0], B = second;
+    if (t < CUT.grow){
+      const e = oC(lin(0, .22, lt)), sk = 90, mg = sm(38.0, CUT.grow, t), ax = Math.min(400, Wu * .25), top = -Y0 - 30, bot = 930 + Y0, hold = 250;
+      const half = (sd, col1, col2, c, pl) => { g.save(); g.beginPath();
+        if (sd < 0){ g.moveTo(-Wu / 2 - 40, top); g.lineTo(sk, top); g.lineTo(-sk, bot); g.lineTo(-Wu / 2 - 40, bot); } else { g.moveTo(Wu / 2 + 40, top); g.lineTo(sk, top); g.lineTo(-sk, bot); g.lineTo(Wu / 2 + 40, bot); }
+        g.closePath(); g.clip(); g.translate(sd * (1 - e) * Wu * .6, 0);
+        const gr = g.createLinearGradient(0, 0, sd * Wu / 2, 900); gr.addColorStop(0, col1); gr.addColorStop(1, col2); g.globalAlpha = 1; g.fillStyle = gr; fill();
+        if (!REDUCE){ g.fillStyle = '#fff'; for (let i = 0; i < 14; i++){ const len = 200 + 400 * hs(i * 1.3 + sd), yy = hs(i * 7.9 + sd) * 900, span = Wu + 1200, x = (((hs(i * 6.1) * span + sd * t * (1300 + 900 * hs(i * 2.7))) % span) + span) % span - span / 2; g.globalAlpha = .07 + .1 * hs(i * 8.3); g.fillRect(x - len / 2, yy, len, 4); } g.globalAlpha = 1; }
+        add(() => G('white', sd * ax, 520, 520, .35));
+        hero(c, sd * ax, 868, 500, {cheer: 1, hop: REDUCE ? 0 : 14 * pl, flip: sd > 0, bp: sd > 0 ? .6 : .1});
+        g.restore(); };
+      half(-1, '#7a2f12', '#ffb347', A, sm(36.92, 37.0, t) * (1 - sm(37.0, 37.4, t)));
+      half(1, '#12306e', '#5ac8ff', B, sm(37.45, 37.53, t) * (1 - sm(37.53, 37.9, t)));
+      g.globalAlpha = e; g.strokeStyle = '#fff'; g.lineWidth = 12; g.beginPath(); g.moveTo(sk, top); g.lineTo(-sk, bot); g.stroke(); g.globalAlpha = 1;
+      // 2つの光（1 と 1）。まん中へ集まる
+      const p = (sd, kind, on) => { const hx = sd * ax * e + sd * (1 - e) * Wu * .6, x = lerp(hx, 0, mg), y = lerp(hold, 330, mg) - Math.sin(mg * PI) * 90; orb(x, y, 78 * (1 + .25 * on), kind, mg < .9 ? '1' : '', 1 + .5 * on); };
+      p(-1, 'gold', sm(36.92, 37.0, t) * (1 - sm(37.0, 37.45, t))); p(1, 'blue', sm(37.45, 37.53, t) * (1 - sm(37.53, 38.0, t)));
+      if (mg > 0 && mg < 1 && !REDUCE){ g.globalAlpha = .35 * mg; g.fillStyle = '#fff8e0'; fill(); g.globalAlpha = 1; }
+    } else {
+      // ふえていく光：0.2秒ごとに2倍
+      const st = cl(Math.floor((t - 38.21) / .2), 0, 8), cnt = Math.pow(2, st + 1), since = t - (38.21 + st * .2), c0 = Math.min(Wu * .46, 720) / Math.sqrt(520);
+      let gr = g.createLinearGradient(0, 0, 0, 900); gr.addColorStop(0, '#060a24'); gr.addColorStop(.7, '#1a2a6a'); gr.addColorStop(1, '#3a3f8c'); g.globalAlpha = 1; g.fillStyle = gr; fill();
+      add(() => { G('gold', 0, 330, 700, .3 + .1 * st / 8);
+        for (let i = 0; i < cnt; i++){ const a = i * 2.39996323, rr = Math.sqrt(62500 + c0 * c0 * i), nw = i >= cnt / 2 && st > 0, s = nw ? oB(lin(0, .16, since)) : 1, kind = BULB[i % 5][0];
+          G(kind, Math.cos(a) * rr * 1.25, 330 + Math.sin(a) * rr * .56, (15 + 9 * hs(i)) * s * (1 + .25 * Math.sin(t * 5 + i)), .95); } });
+      const ps = 1 + (REDUCE ? 0 : .3 * (1 - lin(0, .17, since))); g.save(); g.translate(0, 330); g.scale(ps, ps); tx(String(cnt), 0, 6, cnt > 99 ? 190 : 220, '#fff', {st: '#7a2a10', sh: '#3a1206', sw: 30}); g.restore();
+      const hy = 884, hx = Math.min(210, Wu * .14); hero(A, -hx, hy, 250, {cheer: 1, hop: REDUCE ? 0 : Math.abs(Math.sin(bt(t) * PI)) * 22, bp: .1}); hero(B, hx, hy, 250, {cheer: 1, hop: REDUCE ? 0 : Math.abs(Math.sin(bt(t) * PI + .8)) * 22, flip: true, bp: .6});
+      const wi = 1 - lin(0, .22, t - CUT.grow); if (wi > 0 && !REDUCE){ g.globalAlpha = wi * .85; g.fillStyle = '#fff8e0'; fill(); g.globalAlpha = 1; }
+      snow(t, .5);
+    }
+  }
+  /* 39.95〜43.6秒：「こたえは きっと となりに ある」。3段の画面に、となりどうしの2人。あいだに、電球（ひらめき）が灯る */
+  function ideaGlow(x, y, s, k){ if (s <= 0) return; add(() => { G('gold', x, y, 210 * s * (1 + .5 * k), .9); if (!REDUCE) rays(x, y, 190 * s * (1 + k), .3, tt * 1.2, 10, '#fff3a0'); }); }
+  function idea(x, y, s){ if (s <= 0) return; add(() => G('gold', x, y, 90 * s, .8));
+    g.save(); g.translate(x, y); g.scale(s * 1.25, s * 1.25); g.globalAlpha = 1; g.fillStyle = '#c9a24a'; rrect(-17, 26, 34, 26, 6); g.fill(); g.fillStyle = '#fff3a0'; g.beginPath(); g.arc(0, -6, 40, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(-12, -18, 13, 0, TAU); g.fill();
+    g.strokeStyle = '#c9a24a'; g.lineWidth = 5; g.beginPath(); g.moveTo(-12, 22); g.lineTo(-6, 2); g.lineTo(0, 12); g.lineTo(6, 2); g.lineTo(12, 22); g.stroke(); g.restore(); }
+  function scNext(t){
+    const lt = t - CUT.next, close = sm(42.2, 42.9, t), boom = sm(43.08, 43.14, t) * (1 - sm(43.14, 43.6, t));
+    g.globalAlpha = 1; g.fillStyle = '#0a1030'; fill();
+    for (let j = 0; j < 3; j++){ const y0 = j * 300 - (j === 0 ? Y0 + 30 : 0), y1 = (j + 1) * 300 + (j === 2 ? Y0 + 30 : 0), yc = j * 300 + 150, sd = j % 2 ? 1 : -1, e = oC(lin(j * .4 + .02, j * .4 + .27, lt)), [a, b] = pairs[j];
+      g.save(); g.beginPath(); g.rect(-Wu / 2 - 40, y0 + (j ? 5 : 0), Wu + 80, y1 - y0 - (j ? 5 : 0) - (j < 2 ? 5 : 0)); g.clip(); g.translate(sd * (1 - e) * (Wu + 300), 0);
+      const gr = g.createLinearGradient(-Wu / 2, 0, Wu / 2, 0); gr.addColorStop(0, shade(a.color, .55)); gr.addColorStop(.42, tint(a.color, .25)); gr.addColorStop(.5, '#fff6d8'); gr.addColorStop(.58, tint(b.color, .25)); gr.addColorStop(1, shade(b.color, .55)); g.globalAlpha = 1; g.fillStyle = gr; fill();
+      if (!REDUCE){ g.fillStyle = '#fff'; for (let i = 0; i < 9; i++){ const len = 260 + 400 * hs(i * 1.3 + j), span = Wu + 1300, x = (((hs(i * 6.1 + j) * span - sd * t * (700 + 700 * hs(i * 2.7))) % span) + span) % span - span / 2; g.globalAlpha = .1 + .1 * hs(i * 8.3); g.fillRect(x - len / 2, y0 + 20 + hs(i * 7.9 + j) * 260, len, 4); } g.globalAlpha = 1; }
+      const dx = lerp(Math.min(300, Wu * .2), Math.min(205, Wu * .145), close), hh = 400, fy = yc + .6 * hh + 14, bob = REDUCE ? 0 : Math.sin(t * 5 + j) * 4, tb = 41.62 + j * .13, s = oB(lin(0, .25, t - tb));
+      if (t >= tb) ideaGlow(0, yc - 4, s * (1 + .35 * boom), boom);
+      hero(a, -dx, fy + bob, hh, {rot: .07 * close, sw: Math.sin(t * 2 + j) * .3, bp: .1 + j * .2, shadow: 0, cheer: .25 * boom}); hero(b, dx, fy - bob, hh, {rot: -.07 * close, sw: Math.sin(t * 2 + j + 2) * .3, bp: .6 + j * .1, flip: true, shadow: 0, cheer: .25 * boom});
+      if (t < tb) tx('？', 0, yc + Math.sin(t * 4 + j) * 6, 110, '#fff', {a: .85 * e, st: 'rgba(40,30,90,.6)', sw: 16}); else idea(0, yc - 4, s * (1 + .35 * boom));
+      g.restore(); }
+    // 妖精の光（ノエル）が、きらきらを残して飛んでいく
+    const u = lin(41.9, 43.6, t); if (u > 0 && u < 1 && !REDUCE) add(() => { for (let q = 0; q < 14; q++){ const uu = u - q * .011; if (uu < 0) break; const x = lerp(-Wu / 2 - 80, Wu / 2 + 80, uu), y = 790 - 660 * uu + Math.sin(uu * 9) * 70; G(q ? 'pink' : 'white', x, y, (q ? 34 : 44) - q * 2, .85 - q * .055); if (q % 3 === 0) G('white', x + Math.sin(q * 7) * 26, y + 30 + q * 5, 10, .7 - q * .04); } });
+    if (boom > 0 && !REDUCE){ g.globalAlpha = boom * .35; g.fillStyle = '#fff8e0'; fill(); g.globalAlpha = 1; }
+    const wi = 1 - lin(0, .14, lt); if (wi > 0 && !REDUCE){ g.globalAlpha = wi * .7; g.fillStyle = '#fff'; fill(); g.globalAlpha = 1; }
+  }
+  /* 43.6〜45.2秒：明かりの戻った町。ツリーの前で、みんなが とびはねる → カメラが星へ上がって、まっ白に（このあと、すごろく盤が出る） */
+  function scTree(t){
+    const lt = t - CUT.gather, up = iC(lin(CUT.star - .1, CUT.end, t));
+    cam.x = 0; cam.y = lerp(540, TY - TH - 8, up); cam.z = lerp(1.36, 3.6, up);
+    town({w: w => .86 + .14 * Math.sin(t * 2.3 + w.ph), b: () => 1, tree: 1, star: 1 + up * 2.5, veil: .8, vil: {mood: () => 1, cheer: 1}}, () => {
+      const n = cast.length, gap = Math.min(150, 880 / Math.max(1, n));
+      cast.forEach((c, i) => hero(c, (i - (n - 1) / 2) * gap, GY + 112 + (i % 2) * 8, 190, {cheer: 1, hop: REDUCE ? 0 : Math.abs(Math.sin((bt(t) * .5 - i * .22) * PI)) * 50, sw: Math.sin(t * 5 + i), bp: i * .13}));
+      if (!REDUCE){ firework(-520, 200, t - 43.66, 1); firework(440, 150, t - 44.02, 2); firework(-190, 110, t - 44.38, 3); firework(600, 280, t - 44.7, 4); firework(-680, 320, t - 44.86, 0); } });
+    snow(t, 1);
+    if (up > 0) add(() => { const sy = (TY - TH - 8 - cam.y) * cam.z + 450; G('white', 0, sy, 260 + 3200 * up, up); });
+    const wo = iC(lin(44.8, CUT.end, t)); if (wo > 0){ g.globalAlpha = wo; g.fillStyle = '#fffdf2'; fill(); g.globalAlpha = 1; }
+    const wi = 1 - lin(0, .16, lt); if (wi > 0 && !REDUCE){ g.globalAlpha = wi * .7; g.fillStyle = '#fff'; fill(); g.globalAlpha = 1; }
+  }
+
+  /* ================= 1コマを描く ================= */
+  function resize(){
+    const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return false;
+    if (w === W && h === H) return true;
+    W = w; H = h; dpr = cl(Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(1.7e6 / (W * H))) * q, .4, 2);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    S = H / 900; Wu = W / S; Y0 = 0;
+    if (Wu < 1300){ S = W / 1300; Wu = 1300; Y0 = (H / S - 900) / 2; }      // たて長の画面：よこ1300ぶんが入る大きさにして、上下は空と地面でうめる
+    return true;
+  }
+  function draw(t){
+    if (!cv || !resize()) return; build(); tt = t;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; g.fillStyle = '#02040d'; g.fillRect(0, 0, cv.width, cv.height);
+    g.setTransform(dpr * S, 0, 0, dpr * S, dpr * W / 2, dpr * Y0 * S);
+    if (t >= CUT.end){ g.fillStyle = '#fffdf2'; fill(); return; }
+    if (t < CUT.cast) scTitle(t); else if (t < CUT.town) scCast(t); else if (t < CUT.road) scTown(t); else if (t < CUT.flash) scRoad(t); else if (t < CUT.stand) scFlash(t);
+    else if (t < CUT.alone) scStand(t); else if (t < CUT.run) scPuzzle(t); else if (t < CUT.one) scRun(t); else if (t < CUT.next) scOne(t); else if (t < CUT.gather) scNext(t); else scTree(t);
+  }
+
+  /* ================= 歌詞の字幕（下の黒い帯の中） ================= */
+  let lyI = -2;
+  function lyric(t){
+    if (!ly) return; let i = -1;
+    for (let k = 0; k < LINES.length; k++){ const L = LINES[k]; if (t >= L[0][0] - .18 && t < L[L.length - 1] + .4){ i = k; } }
+    if (i !== lyI){ lyI = i;
+      if (i < 0) ly.classList.remove('on');
+      else { ly.innerHTML = '<i>♪</i>' + LINES[i].slice(0, -1).map(p => `<span class="ly-p">${p[1]}</span>`).join(''); ly.classList.remove('on'); void ly.offsetWidth; ly.classList.add('on'); } }
+    if (i >= 0){ const L = LINES[i], ps = ly.querySelectorAll('.ly-p'); for (let k = 0; k < L.length - 1; k++){ const s = L[k][0], e = Math.min(k < L.length - 2 ? L[k + 1][0] : L[L.length - 1], s + [...L[k][1]].length * .34); if (ps[k]) ps[k].style.setProperty('--p', (lin(s, e, t) * 100).toFixed(1) + '%'); } }
+  }
+
+  /* ================= 動かす ================= */
+  let raf = 0, alive = false, clock = null, marks = [], mi = 0, done = null, until = 0, tNow = 0, q = 1, qDown = 0, fN = 0, fAcc = 0, fPrev = 0, bad = false;      // q：絵のこまかさ（動きがおそい機械では下げる）
+  function frame(){
+    raf = 0; if (!alive) return; const t = tNow = clock(), now = performance.now(), dtF = now - fPrev; fPrev = now;
+    if (dtF > 0 && dtF < 250 && t < CUT.end){ fAcc += dtF; if (++fN >= 45){ if (fAcc / fN > 38 && qDown < 2){ qDown++; q *= .72; W = 0; } fN = 0; fAcc = 0; } }
+    while (mi < marks.length && t >= marks[mi][0]){ const f = marks[mi++][1]; try { f(); } catch(e){ console.error('SongFx', e); } }
+    try { if (t < CUT.end + .7) draw(t); lyric(t); } catch(e){ if (!bad){ bad = true; console.error('SongFx', e); } }      // 絵でエラーが出ても、歌と進行は止めない
+    if (t >= until){ finish(true); return; }
+    raf = requestAnimationFrame(frame);
+  }
+  function finish(ok){ alive = false; if (raf) cancelAnimationFrame(raf); raf = 0; lyI = -2; if (ly){ ly.classList.remove('on'); ly.innerHTML = ''; } const f = done; done = null; if (f) f(ok); }
+  return {
+    CUT, LINES, T0, BEAT,
+    init(canvas, lyricEl){ cv = canvas; g = cv.getContext('2d'); ly = lyricEl || null; },
+    /* 出演する人を決める。list = [{k コマの名前, name, color, cpu, label コマの呼び名}] */
+    cast(list){ cast = (list || []).filter(c => c && c.k).slice(0, 8); const vs = VILS(), all = cast.concat(vs.filter(v => v.k === 'girl'), vs.filter(v => v.k !== 'girl'));
+      second = cast[1] || all[cast.length]; pairs = [[all[0], all[1]], [all[2], all[3]], [all[4], all[5]]]; },
+    /* 文字の形（フォント）を先に読みこんでおく（名前の漢字が、はじめの1コマから出るように） */
+    fonts(){ try { const s = cast.map(c => (c.name || '') + (c.label || '')).join('') + LINES.map(L => L.slice(0, -1).map(p => p[1]).join('')).join('') + SYM.join('') + '0123456789ENTRYNo.数学の力を持つなかまたち！？オープニングテーマ♪あかりをともせ（コンピューター）□';
+      return Promise.all([document.fonts.load(`400 40px "Dela Gothic One"`, s), document.fonts.load(`900 40px "Zen Maru Gothic"`, s)]).catch(() => {}); } catch(e){ return Promise.resolve(); } },
+    /* 歌に合わせて動かしはじめる。o = {clock 歌の時刻を返すもの, until この秒まで, marks [[秒, すること], …]}。さいごまで行ったら true、とちゅうで止めたら false */
+    play(o){ if (alive) finish(false); clock = o.clock; until = o.until; marks = (o.marks || []).slice().sort((a, b) => a[0] - b[0]); mi = 0; alive = true; tNow = 0;
+      return new Promise(res => { done = res; raf = requestAnimationFrame(frame); }); },
+    stop(){ if (alive) finish(false); },
+    draw, lyric, now: () => tNow, playing: () => alive,
+    covered: () => alive && tNow < CUT.end,      // 絵が画面をおおっているあいだ（すごろく盤を描かなくてよい）
+  };
+})();
 let actx = null;
 const MOBILE_UA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 function initAudio(){ try { if (!actx){ const AC = window.AudioContext || window.webkitAudioContext; try { actx = new AC({latencyHint:MOBILE_UA ? 'balanced' : 'interactive'}); } catch(e){ actx = new AC(); } } actx.resume(); } catch(e){} try { if (typeof BGM !== 'undefined') BGM.kick(); } catch(e){} }
@@ -2627,7 +3215,7 @@ const FM = (() => {
   }
   return {
     load, has:n => !!(T && T[n] && (host() || (home() && n === 'title'))),
-    play(name){ if (host() && !all){ all = true; warm(Object.keys(T)); } if (cur && cur.name === name && cur.to === 1 && !cur.a.ended){ this.kick(); return; } start(name); },
+    play(name, at){ if (host() && !all){ all = true; warm(Object.keys(T)); } if (at == null && cur && cur.name === name && cur.to === 1 && !cur.a.ended){ this.kick(); return; } start(name, at); },      // at（秒）を入れると、その曲を、その秒から流しなおす
     stop(){ live.forEach(p => { p.to = 0; p.rate = 2; }); cur = null; },
     kick(){ if (blocked && cur){ blocked = false; const pl = cur.a.play(); if (pl && pl.catch) pl.catch(() => { blocked = true; }); } },
     duck(on){ duckT = on ? .45 : 1; if (!live.length) duckV = duckT; },      // 曲が流れていないときは、すぐその大きさにしておく（次の曲が、小さい音から始まらないように）
@@ -3024,19 +3612,19 @@ const BGM = (() => {
   }
   /* 録音した曲（FM）があるときは、そちらを流す */
   const FALL = {lose:'title'};
-  function filePlay(name){
+  function filePlay(name, at){
     FM.load();
     const r = api.resolve ? api.resolve(name) : name, fn = FM.has(r) ? r : FM.has(name) ? name : '';
     if (!fn) return false;
-    curName = name; fileOn = true; stopCur(); if (enabled) FM.play(fn);
+    curName = name; fileOn = true; stopCur(); if (enabled) FM.play(fn, at);
     return true;
   }
   // 幕おろしのあいだは、曲が終わっても、ひとりでに次の曲へ進まない（フィナーレは、幕が閉じてから頭から流す）
   const inShow = () => { try { return Show.busy(); } catch(e){ return false; } };
-  FM.hook(() => { if (curName && enabled) filePlay(curName); }, n => { if (fileOn && !inShow()) filePlay(n); });
+  FM.hook(() => { if (curName && enabled) filePlay(curName); }, n => { if (fileOn && !inShow()) filePlay(api.nextOf ? api.nextOf(curName, n) : n); });
   const api = {
-    play(name){
-      if (filePlay(name)) return;                                  // 録音した曲があれば、そちらを流す
+    play(name, at){
+      if (filePlay(name, at)) return;                              // 録音した曲があれば、そちらを流す（at＝とちゅうの秒から。歌の場面で使う）
       name = SONGS[name] ? name : FALL[name]; if (!name) return;    // 曲のない場面は、今の曲のまま
       if (fileOn){ fileOn = false; FM.stop(); }
       if (name !== curName){ curName = name; if (name !== 'quiz') intensity = 0; } start(); },
@@ -3045,6 +3633,7 @@ const BGM = (() => {
     current:() => curName,
     has:n => FM.has(n),
     resolve:null,                                                  // 場面の名前 → 曲の名前（すごろくの後半は main2、など）。ゲーム側で入れる
+    nextOf:null,                                                   // 曲が終わったときに流す曲を、その場で変える（いまの曲, 決まっている次の曲）→ 次の曲。ゲーム側で入れる
     duck(on){ FM.duck(on); try { if (out && A && typeof actx !== 'undefined' && A === actx) out.gain.setTargetAtTime(VOL * (on ? .55 : 1), A.currentTime, .12); } catch(e){} },   // 声が出ているあいだは音楽を下げる
     setIntensity(v){
       if (fileOn){ intensity = v; if (v > 0 && curName === 'quiz' && FM.has('quiz_hot')) FM.play('quiz_hot'); return; }
@@ -9029,8 +9618,8 @@ function firework(scn, at, opt = {}){
   const col = new THREE.Color(opt.col || pick(FW_COLS)), col2 = new THREE.Color(opt.col2 || pick(FW_COLS));
   const shell = new THREE.Sprite(new THREE.SpriteMaterial({map:fwTex, color:col, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending}));
   shell.scale.setScalar(.5); const from = at.clone(); from.y -= opt.rise != null ? opt.rise : 7; shell.position.copy(from); scn.add(shell);
-  FW.push({kind:'shell', scn, s:shell, from, to:at.clone(), t:0, dur:opt.riseT || .9, col, col2, n:opt.n || 90, size:opt.size || 1});
-  if (!opt.silent) sfx.whistle();
+  FW.push({kind:'shell', scn, s:shell, from, to:at.clone(), t:0, dur:opt.riseT || .9, col, col2, n:opt.n || 90, size:opt.size || 1, quiet:!!opt.quiet});
+  if (!opt.silent && !opt.quiet) sfx.whistle();      // quiet：音を出さない花火（歌が流れているあいだは、絵だけ）
 }
 function burstFW(f){
   const n = f.n, pos = new Float32Array(n * 3), vel = [], cols = new Float32Array(n * 3);
@@ -9046,7 +9635,7 @@ function burstFW(f){
   // 光源を足すと全部の材質の作り直しが起きてカクつくので、環境光を一瞬明るくするだけにする
   const U = f.scn.userData; U.flash = Math.min(1.2, (U.flash || 0) + .55); U.flashCol = f.col;
   FW.push({kind:'burst', scn:f.scn, pts, geo, vel, t:0, dur:1.9});
-  sfx.boom();
+  if (!f.quiet) sfx.boom();
 }
 function flashDecay(scn, dt){ const U = scn && scn.userData; if (!U || !U.amb) return; U.flash = Math.max(0, (U.flash || 0) - dt * 2.2); U.amb.intensity = U.flash * .9; if (U.flashCol) U.amb.color.copy(U.flashCol); }
 function updateFW(dt){
@@ -9066,8 +9655,8 @@ function updateFW(dt){
     }
   }
 }
-function fireworkShow(scn, center, count = 6, spread = 10, gap = 280){
-  for (let i = 0; i < count; i++) setTimeout(() => firework(scn, center.clone().add(new THREE.Vector3((Math.random() - .5) * spread, Math.random() * 3, (Math.random() - .5) * spread * .4)), {size:.8 + Math.random() * .5}), i * gap);
+function fireworkShow(scn, center, count = 6, spread = 10, gap = 280, opt){
+  for (let i = 0; i < count; i++) setTimeout(() => firework(scn, center.clone().add(new THREE.Vector3((Math.random() - .5) * spread, Math.random() * 3, (Math.random() - .5) * spread * .4)), Object.assign({size:.8 + Math.random() * .5}, opt)), i * gap);
 }
 
 /* ================= 雷とリヒテンベルク図形（オープニングの最初） =================
@@ -9399,7 +9988,7 @@ function setLogo(co){
 }
 async function openingShow(){
   showSkip = false; H.busy = true; renderHUD();
-  const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go');
+  const O = $('#opening'); O.classList.add('on'); $('#phase').style.visibility = 'hidden'; $('#floorTag').style.visibility = 'hidden'; document.body.classList.add('showing'); O.querySelector('.op-logo').classList.remove('go', 'out');      // 'out' も外す（前のゲームのぶんが残っていると、2回めのゲームでロゴが出ない）
   const path = TOURS[MAPKEY] || TOURS.dungeon;
   const pc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[0]))), lc = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p[1])));
   cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
@@ -9409,23 +9998,30 @@ async function openingShow(){
     const fl = MAPKEY === 'dungeon' ? Object.values(DF).find(F => Math.abs(F.y - near.p.y) < .5) : null;
     await lightningStrike(new THREE.Vector3(la.x, near.p.y, fl ? (fl.z0 + fl.z1) / 2 : la.z), fl ? {z0:fl.z0, z1:fl.z1, x:19.8} : null, null, isCoop() ? 2.4 : 0); };      // 協力モード：次の行「金色の光が町に広がっていきます」のあいだも、金色の模様を光らせておく
   BGM.stop();
+  const song = isCoop() && !H.auto && songOK(SONG.op);      // オープニングの歌を流せるか（協力モード・音楽がオン・曲のファイルがある・オートでない）
+  if (song) songPrep();                                    // 歌に出る人と、文字の形を、物語のあいだに用意しておく
   let summoned = false;      // 協力モード：物語の中で、参加者の紹介（召喚）がすんでいるか
   if (isCoop()) summoned = await storyShow(strike, pc, lc); else await strike();
-  void O.offsetWidth; O.querySelector('.op-logo').classList.add('go'); BGM.play('opening'); sfx.jingle();
   const fwAt = MAPKEY === 'dungeon' ? new THREE.Vector3(14, 9, 5) : MAP.big ? new THREE.Vector3(2, 13, 2) : new THREE.Vector3(2.5, 9, 7);
-  setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt, 5, 12, 320); }, 900);
-  setTimeout(() => { if (!showSkip) fireworkShow(scene, MAPKEY === 'dungeon' ? new THREE.Vector3(-8, 13, -6) : MAP.big ? new THREE.Vector3(-7, 14, -6) : new THREE.Vector3(-6, 9, -4), 4, 10, 300); }, 3800);
-  setTimeout(() => O.querySelector('.op-logo').classList.add('out'), 3200);
-  const T0 = performance.now(), DUR = 8200;
-  await new Promise(res => {
-    const step = () => {
-      const t = Math.min(1, (performance.now() - T0) / DUR), u = easeIO(t);
-      cam.tpos.copy(pc.getPoint(u)); cam.tlook.copy(lc.getPoint(u)); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook);
-      if (t >= 1 || showSkip) res(); else requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  });
-  O.querySelector('.op-logo').classList.add('out');
+  const fwAt2 = MAPKEY === 'dungeon' ? new THREE.Vector3(-8, 13, -6) : MAP.big ? new THREE.Vector3(-7, 14, -6) : new THREE.Vector3(-6, 9, -4);
+  // 歌とアニメーション（流したら true）。曲が鳴りださなかったとき・歌を流さないときは、下の「ロゴと曲」だけのオープニング
+  const sung = song && !showSkip && await songShow(O, pc, lc, fwAt, fwAt2);
+  if (!sung){
+    void O.offsetWidth; O.querySelector('.op-logo').classList.add('go'); BGM.play('opening'); sfx.jingle();
+    setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt, 5, 12, 320); }, 900);
+    setTimeout(() => { if (!showSkip) fireworkShow(scene, fwAt2, 4, 10, 300); }, 3800);
+    setTimeout(() => O.querySelector('.op-logo').classList.add('out'), 3200);
+    const T0 = performance.now(), DUR = 8200;
+    await new Promise(res => {
+      const step = () => {
+        const t = Math.min(1, (performance.now() - T0) / DUR), u = easeIO(t);
+        cam.tpos.copy(pc.getPoint(u)); cam.tlook.copy(lc.getPoint(u)); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook);
+        if (t >= 1 || showSkip) res(); else requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  { const L = O.querySelector('.op-logo'); if (L.classList.contains('go')) L.classList.add('out'); }      // ロゴが出ているときだけ、消す（出る前にスキップしたときに、一瞬出ないように）
   // 参加者の入場
   const card = $('#introCard');
   for (let i = 0; i < H.players.length && !showSkip && !summoned; i++){      // 物語の中で召喚がすんでいるときは、ここでの紹介はしない
@@ -9438,9 +10034,67 @@ async function openingShow(){
   }
   card.classList.remove('on'); O.classList.remove('on'); $('#phase').style.visibility = ''; $('#floorTag').style.visibility = ''; document.body.classList.remove('showing');
   H.busy = false; camOverview();
-  splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`); BGM.play('main'); sfx.jingle();
+  splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`); BGM.play('main'); if (!sung || showSkip) sfx.jingle();      // 歌をさいごまで流したときは、歌のさいごの音がその合図になるので、ジングルは鳴らさない
   setTimeout(() => { if (H.players[0] && H.phase === 'roll') camFollow(H.players[0].obj.position, 1.1); }, 1300);
   renderHUD();
+}
+/* ================= 歌（協力モード）=================
+   どの場面で、どの歌を流すかは SONG で決める（music/ のファイルの名前。音量などは music/tracks.json）。入れかえるときは、ここを変える。
+   ■ オープニング（SONG.op）：物語のあと、歌「あかりを ともせ」に合わせて、絵（SongFx）と歌詞の字幕を流す。歌のあいだ、ナレーションは流さない
+     ・0〜45.2秒：絵が画面をおおう（そのあいだ、すごろく盤は描かない）。1.6秒でタイトルのロゴ
+     ・45.2秒〜：さいごの行「こがね町を 救え 数学の 力で」で、すごろく盤が出る。ロゴ・花火・カメラの旅。花火は、拍に合わせて開く（音は出さない。歌をじゃましないため）
+     ・54.2秒（曲のさいごの音）で終わり →「ゲームスタート！」
+     ・右下の「スキップ」で、いつでもとばせる。オートのときは、歌を流さない（前からの、ロゴと曲だけのオープニング）
+     ・曲が4秒たっても鳴りださないときも、歌をやめて、前からのオープニングにする
+   ■ 記念写真（SONG.photo）・思い出カード（SONG.cards）：ゲームが終わったあとだけ。くわしくは photoSession・makeCards */
+const SONG = {op:'song_b', photo:'song_c', cards:'song_a'};
+const SONG_END = 54.2;                                                      // オープニングの歌：さいごの音（秒）
+const PHOTO_AT = {from:25.48, c3:29.61, c2:30.41, c1:31.21, say:31.65};      // 記念写真の歌：流しはじめる秒（「ひとりじゃ とけない なぞだって」の頭）／3・2・1（2拍ごと）／「はい、チーズ！」。写真は、その 0.36秒あと＝サビの頭（32.01秒）
+const songOK = n => !!(isCoop() && BGM.enabled && BGM.has(n));
+BGM.nextOf = (cur, n) => cur === SONG.photo && $('#m-cards').classList.contains('on') && songOK(SONG.cards) ? SONG.cards : n;      // 記念写真の歌が終わったとき、思い出カードの画面が開いていたら、カードの歌へ（そうでなければ、フィナーレ）
+/* 歌の時刻（秒）を返すものを作る。その歌が流れているあいだは曲の時刻。流れていないとき・読みこみ待ちで止まっているときは、時計で進める。from＝流しはじめた秒 */
+function songClock(name, from = 0){
+  let base = from, wall = performance.now(), last = -1, lastAt = wall;
+  return () => { const now = performance.now(), est = base + (now - wall) / 1000; let a = null; try { a = FM.current() === name ? FM._cur() : null; } catch(e){}
+    if (!a || a.paused || a.seeking) return est;
+    const ct = a.currentTime; if (ct !== last){ last = ct; lastAt = now; }
+    if (now - lastAt > 700) return est;                                          // 曲が止まっている（読みこみ待ち）
+    if (ct < est - 1.5){ try { a.currentTime = est; } catch(e){} return est; }      // 曲が頭から流れなおした（音楽ボタンを押した、など）：絵の時刻のところから流す
+    base = ct; wall = now; return ct; };
+}
+function songPrep(){
+  try { SongFx.init($('#songFx'), $('#opLyric'));
+    SongFx.cast(H.players.map(pl => ({k:CharArt.has(pl.char) ? pl.char : 'pawn', name:pl.name, color:pl.color, cpu:!!pl.cpu, label:CHARS[pl.char] ? CHARS[pl.char].name : ''})));
+    SongFx.fonts(); } catch(e){ console.error('songPrep', e); }
+}
+async function songShow(O, pc, lc, fwAt, fwAt2){
+  const name = SONG.op, logo = O.querySelector('.op-logo'), cv = $('#songFx'), C = SongFx.CUT;
+  const playing = () => { try { const a = FM.current() === name ? FM._cur() : null; return !!(a && !a.paused && a.currentTime > 0); } catch(e){ return false; } };
+  const logoGo = () => { logo.classList.remove('go', 'out'); void logo.offsetWidth; logo.classList.add('go'); };
+  const off = () => { SongFx.stop(); cv.classList.remove('on', 'out'); };
+  cv.classList.remove('out'); cv.classList.add('on'); try { SongFx.draw(0); } catch(e){ console.error('SongFx', e); }      // まっくらな夜から
+  BGM.play(name, 0);
+  const t0 = performance.now(); while (!playing() && !showSkip && performance.now() - t0 < 4000) await sleep(30);
+  if (showSkip){ off(); return true; }
+  if (!playing()){ off(); return false; }
+  cam.overview = false; cam.pos.copy(pc.getPoint(0)); cam.look.copy(lc.getPoint(0)); cam.tpos.copy(cam.pos); cam.tlook.copy(cam.look);
+  // 花火：開く時刻（拍の頭）の 0.9秒前に上げる。歌のじゃまをしないように、音は出さない
+  const fw = (beat, at) => [SongFx.T0 + beat * SongFx.BEAT - .9, () => { if (!showSkip) firework(scene, at.clone().add(new THREE.Vector3((Math.random() - .5) * 12, Math.random() * 3, (Math.random() - .5) * 4.8)), {size:.8 + Math.random() * .5, quiet:true}); }];
+  let fin = null;
+  SongFx.play({clock:songClock(name), until:SONG_END, marks:[
+    [C.logo, logoGo], [4.1, () => logo.classList.add('out')],                                   // タイトル
+    [C.end, () => { cv.classList.add('out'); logoGo(); }],                                      // 「こがね町を 救え」：絵が消えて、すごろく盤とロゴ
+    [49.9, () => logo.classList.add('out')],                                                    // ロゴは「力で」のとちゅうまで。あとは、町のようすを見せる
+    ...[116, 117, 118, 119, 120].map(b => fw(b, fwAt)), ...[122, 123, 124, 125].map(b => fw(b, fwAt2)), ...[128, 129, 130, 131, 132].map(b => fw(b, fwAt)),      // 「救え」〜後奏：1拍ごとに1つ
+    fw(135.5, fwAt), fw(135.5, fwAt2),                                                          // さいごの音（54.2秒）で、2つ
+  ]}).then(v => { fin = v; });
+  while (fin === null){
+    if (showSkip){ SongFx.stop(); break; }
+    const t = SongFx.now();
+    if (t >= C.end){ const u = easeIO(Math.min(1, (t - C.end) / (SONG_END - C.end))); cam.tpos.copy(pc.getPoint(u)); cam.tlook.copy(lc.getPoint(u)); cam.pos.copy(cam.tpos); cam.look.copy(cam.tlook); }
+    await new Promise(r => requestAnimationFrame(r));
+  }
+  off(); return true;
 }
 
 /* ================= ガチャのステージ ================= */
@@ -9962,22 +10616,34 @@ function grabCanvas(){ composer.render(); return renderer.domElement.toDataURL('
 function loadImg(src){ return new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = src; }); }
 function roundRect(g, x, y, w, h, r){ g.beginPath(); g.roundRect(x, y, w, h, r); }
 let photoBusy = false;
+/* 記念写真。ゲームが終わったあと（協力モード）は、歌（SONG.photo）に合わせてとる：
+   「…なぞだって／となりの きみと なら」のあいだに 3・2・1 → サビ「数えて つないで 明かりを ともせ」の入りで「はい、チーズ！」。歌は、そのままさいごまで流れて、フィナーレの曲へ。
+   お礼の声が流れているあいだに押したら、声が終わってから始める。ゲームのとちゅう・対戦モード・音楽オフのときは、前のまま（勝ったときの曲） */
 async function photoSession(){
   if (photoBusy || !H.players.length) return; photoBusy = true;
+  const song = H.phase === 'end' && !!H.coopEnd && !Show.busy() && songOK(SONG.photo);
   closeModal('m-res'); closeModal('m-photo'); H.busy = true; renderHUD(); initAudio();
-  const cover = $('#cover'); cover.classList.add('on'); await sleep(450);
+  if (song && VO.speaking()){ Show.chip('🔈 声が終わったら、写真をとります…'); await VO.idle(); Show.chip(''); closeModal('m-res'); }
+  const cover = $('#cover'); cover.classList.add('on'); if (song) BGM.stop(); await sleep(450);
   enterStage(); curtainSet(1); GS.machine.M.visible = false; ['#gTop', '#gSel', '#gRes', '#gBig'].forEach(id => gUI(id, null)); $('#gSkip').style.display = 'none';
   photoBanner().visible = true;
   const sorted = [...H.players].sort((a, b) => b.stars - a.stars);
   const ms = stagePhotoModels(sorted);
   GS.camPos.set(0, narrow ? 3.2 : 2.8, narrow ? 17 : 11.4); GS.camLook.set(0, narrow ? 2.4 : 2.1, 0);
   GS.cam.position.set(0, 5, 16); GS.camTarget = null;
-  BGM.play('win'); cover.classList.remove('on');
+  if (song) BGM.play(SONG.photo, PHOTO_AT.from); else BGM.play('win');
+  cover.classList.remove('on');
   confetti3D(120, CONF_COLS.LR, 'rain');
-  await sleep(1600);
-  for (const c of ['3', '2', '1']){ gUI('#gBig', `<div class="gb-count dela">${c}</div>`); tone(c === '1' ? 1568 : 1175, 0, .12, .07, 'triangle'); await sleep(850); }
+  const count = c => { gUI('#gBig', `<div class="gb-count dela">${c}</div>`); tone(c === '1' ? 1568 : 1175, 0, .12, .07, 'triangle'); };
+  if (song){      // 歌の時刻に合わせて数える（歌が流れていないときは、時計で同じ間合い。12秒たったら、待たずに進む）
+    const clk = songClock(SONG.photo, PHOTO_AT.from), t0 = performance.now(), till = async ts => { while (clk() < ts && performance.now() - t0 < 12000) await sleep(16); };
+    await till(PHOTO_AT.c3); count('3'); await till(PHOTO_AT.c2); count('2'); await till(PHOTO_AT.c1); count('1'); await till(PHOTO_AT.say);
+  } else {
+    await sleep(1600);
+    for (const c of ['3', '2', '1']){ count(c); await sleep(850); }
+  }
   gUI('#gBig', `<div class="gb-big dela ur">はい、チーズ！</div>`);
-  fireworkShow(GS.scene, new THREE.Vector3(0, 7.8, -3), 5, 12, 90);
+  fireworkShow(GS.scene, new THREE.Vector3(0, 7.8, -3), 5, 12, 90, song ? {quiet:true} : null);      // 歌のあいだは、花火の音を出さない
   ms.forEach(o => tween(700, t => { o.m.body.position.y = Math.sin(Math.PI * t) * .55; }));
   await sleep(360);
   GS.stepCam(.016); GS.update(GS.T || 0, 0);
@@ -10044,6 +10710,9 @@ async function makeCards(){
   $('#cardGrid').innerHTML = cards.map((c, i) => `<div class="cardItem"><img src="${c.url}" alt=""><button class="btn" onclick="saveCard(${i})">⬇ ${esc(c.pl.name)}さんのカード</button></div>`).join('');
   GS.cards = cards;
   openModal('m-cards'); sfx.fanfare(); photoBusy = false;
+  // ゲームが終わったあと（協力モード）は、思い出カードの画面で歌（SONG.cards）を流す。声が流れているあいだは、声が終わってから。歌が終わったら、フィナーレの曲へ。
+  // 記念写真の歌が流れているあいだは、とちゅうで切らない（終わったら、つづけてカードの歌になる。BGM.nextOf）
+  if (H.phase === 'end' && H.coopEnd && songOK(SONG.cards)) VO.idle().then(() => { if ($('#m-cards').classList.contains('on') && H.coopEnd && !Show.busy() && ![SONG.cards, SONG.photo].includes(BGM.current()) && songOK(SONG.cards)) BGM.play(SONG.cards, 0); });
 }
 let dlNS;
 async function saveImage(url, filename){
@@ -10096,7 +10765,7 @@ function closePhoto(){
   closeModal('m-photo'); closeModal('m-cards');
   if (!GS.active) return;
   const cover = $('#cover'); cover.classList.add('on');
-  setTimeout(() => { clearPhoto(); if (GS.banner) GS.banner.visible = false; GS.machine.M.visible = true; $('#gSkip').style.display = ''; gUI('#gTop', null); exitStage(); camOverview(); H.busy = false; renderHUD(); BGM.play(H.phase === 'end' ? 'win' : 'main'); cover.classList.remove('on'); }, 450);
+  setTimeout(() => { clearPhoto(); if (GS.banner) GS.banner.visible = false; GS.machine.M.visible = true; $('#gSkip').style.display = ''; gUI('#gTop', null); exitStage(); camOverview(); H.busy = false; renderHUD(); if (!(H.coopEnd && [SONG.photo, SONG.cards, 'finale'].includes(BGM.current()))) BGM.play(H.phase === 'end' ? 'win' : 'main'); cover.classList.remove('on'); }, 450);      // ゲームが終わったあと、歌（と、歌からつづいたフィナーレ）が流れているあいだは、曲をそのままにする
 }
 window.photoSession = photoSession; window.makeCards = makeCards; window.downloadAllCards = downloadAllCards; window.closePhoto = closePhoto;
 
@@ -10240,7 +10909,7 @@ function autoQuality(){
 function loop(){
   requestAnimationFrame(loop);
   if (!$('#v-host').classList.contains('on')) return;
-  autoQuality();
+  if (SongFx.covered()) perfS.last = 0; else autoQuality();      // オープニングの歌の絵が出ているあいだは、すごろく盤を描いていないので、はからない
   const dt = Math.min(clock.getDelta(), .05), T = clock.elapsedTime, now = performance.now();
   for (let i = tweens.length - 1; i >= 0; i--){
     const tw = tweens[i], t = Math.min(1, (now - tw.t0) / tw.ms);
@@ -10268,7 +10937,7 @@ function loop(){
     pl.obj.userData.bub.position.y = pl.obj.userData.bubY + .06 * Math.sin(T * 3 + pl.id);
     if (!reduceMotion) pl.obj.userData.anim(T + pl.id * 1.7); updatePet(pl, T, dt); });
   floats.forEach(d => { const [x, y] = screenPos(d._anchor); d.style.left = x + 'px'; d.style.top = y + 'px'; });
-  if (!StageFx.covered()) composer.render();      // 幕が閉じきっているあいだは、描かない（エンドロールを軽くする）
+  if (!StageFx.covered() && !SongFx.covered()) composer.render();      // 幕が閉じきっているあいだ・オープニングの歌の絵が出ているあいだは、描かない（軽くする）
 }
 renderHUD(); drawTimer(); loop();
 loadMap(H.mode === 'coop' ? 'town' : 'dungeon');
@@ -10283,7 +10952,7 @@ $('#inviteBtn').onclick = openInvite;
 $('#m-boss .close').addEventListener('click', () => BGM.play(H.phase === 'end' ? (isCoop() && !H.coopEnd ? 'boss' : isCoop() && BGM.has('finale') ? 'finale' : isCoop() && H.coopEnd !== 'win' ? 'lose' : 'win') : H.phase === 'setup' ? 'title' : 'main'));
 addEventListener('pointerdown', () => initAudio(), {once:true});
 setTimeout(() => { prewarmAll(); $('#loading').classList.add('gone'); openSetup(); BGM.resolve = n => n === 'main' && H.phase !== 'setup' && H.phase !== 'lobby' && H.round > Math.floor(H.maxRound / 2) ? 'main2' : n; BGM.idleOK = () => !H.busy && !H.asking && ['setup', 'lobby', 'score', 'quiz', 'quizReady', 'end'].includes(H.phase) && !GS.active; BGM.loadData().then(() => { const need = ['title', 'main', 'quiz', 'gacha', 'opening', 'shop', 'win', 'boss', 'quiz@hot'].some(k => !BGM.ready().includes(k)); bakeAllSfx(); if (need) setTimeout(() => BGM.prerenderAll(), 600); }); }, 400);
-window.__H = H; window.__render = renderHUD; window.__dbg = {VO, onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
+window.__H = H; window.__render = renderHUD; window.__dbg = {VO, onJoin, THUMB, CHARS, NETH, Q, perf:(n = 10) => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); for (let i = 0; i < n; i++) composer.render(); const ms = (performance.now() - t0) / n; let vis = 0, cast = 0; const bgm = BGM.ready().join(','); scene.traverseVisible(o => { if (o.isMesh){ vis++; if (o.castShadow) cast++; } }); const r = {bgm, warm:Q.warmMs, pr:Q.pr, vis, cast, ms:Math.round(ms), calls:renderer.info.render.calls / n, tris:Math.round(renderer.info.render.triangles / n), programs:renderer.info.programs.length, freeze:Q.freeze}; renderer.info.autoReset = true; return JSON.stringify(r); }, R:renderer, scene, cam, gachaTime, pullFor, GS, rebuildPawns, ITEM, ITEMS_C, openingShow, SONG, PHOTO_AT, songClock, photoSession, makeCards, closePhoto, firework, fireworkShow, DG, travelEdge, rideCart, fallHole, getNode:() => NODE, getEdges:() => EDGES, loadMap, placeAll, camOverview, camFollow, takeTurn, moveSteps, land,
   pawns:{makePawn, removePawn, placeAll, camFollow}, charShot:(k, size = 360, ry = -.4) => { const tr = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true}); tr.setSize(size, size); tr.toneMapping = THREE.ACESFilmicToneMapping; tr.toneMappingExposure = 1.05;
     const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight('#cfe0ff', '#40507a', 1.1)); const dl = new THREE.DirectionalLight('#ffffff', 2.2); dl.position.set(2, 4, 5); sc.add(dl);
     const cm = new THREE.PerspectiveCamera(30, 1, .1, 50); const {g} = buildChar(k, '#e0484f'); sc.add(g); g.rotation.y = ry;
