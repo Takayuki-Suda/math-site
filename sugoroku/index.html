@@ -434,7 +434,7 @@ body.coopmode #rulesVs,body:not(.coopmode) #rulesCoop{display:none}
 .wcourse{text-align:center;color:var(--muted);font-size:14px;margin-top:6px}
 .pcourse{display:inline-block;font-size:12px;color:var(--muted);margin:2px 0}
 .pod .pcourse{display:block;font-size:11px}
-.setrow select.slv{font-size:14px;max-width:150px;padding:6px 4px}
+.setrow select.slv{font-size:14px;max-width:208px;padding:6px 4px}      /* しごとの資格コースは、名前が長い（看護・臨床・保健師レベル） */
 @media (max-width:420px){ .csel{grid-template-columns:repeat(3,1fr)} .choice{font-size:16px} .inwrap input{width:84px;font-size:22px} .inwrap input.wide{width:112px} .fields{font-size:20px} }
 .sys{display:inline-flex;align-items:center;gap:6px;font-size:24px;font-weight:700;margin:10px auto}
 .sys .br{font-size:58px;font-weight:300;line-height:1;margin-top:-6px}
@@ -934,11 +934,14 @@ body.playmode .snow{display:none}
 .play .copt small{font-size:9.5px;color:var(--mist)}
 .play .lsel{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
 .play .lopt{padding:10px 4px;border:2px solid transparent;border-radius:14px;background:var(--surf);color:var(--snow);font-size:15px;font-weight:900}
-.play .lopt small{font-size:10.5px;color:var(--mist)}
+.play .lopt small{font-size:10.5px;color:var(--mist);word-break:keep-all}      /* 2行になるときは、区切りのいいところ（<wbr>）で折る */
 .play .copt.sel,.play .lopt.sel{border-color:var(--gold);background:rgba(255,207,74,.13)}
 .play .cfield{gap:3px;margin:0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12px;color:var(--mist)}
 .play #csel .wsub{margin:6px 0 0;font-size:13px;color:var(--mist);text-align:center}
 @media (max-width:400px){.play .csel{grid-template-columns:repeat(3,1fr)}}
+.play .csel.job{grid-template-columns:repeat(3,1fr)}
+.play .cjobh{margin:12px 0 8px;font-size:13px;font-weight:700;color:var(--snow)}
+.play .cjobh small{display:block;margin-top:1px;font-size:11.5px;font-weight:500;color:var(--mist)}
 .play .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
 .play .jbtn{display:flex;align-items:center;gap:10px;min-height:62px;padding:8px 12px;border:none;border-radius:16px;background:var(--surf);box-shadow:inset 0 0 0 1.5px var(--pc);color:var(--snow);font-size:17px;font-weight:900;text-align:left}
 .play .jbtn > span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1245,6 +1248,64 @@ body.playmode .rules{font-size:15.5px;line-height:1.7}
 #m-setup .btn.big.gold{border:none;border-radius:16px;background:linear-gradient(180deg,#ffdc72,#ffc42e);box-shadow:0 4px 0 #d6960e,0 14px 26px -10px rgba(255,207,74,.6);color:#2a1c00}
 #m-setup .mbox > div:last-child .btn{border:none;border-radius:999px;background:#1a2552;box-shadow:none}
 #m-setup .mbox > div:last-child .btn.green{background:#35d08a;color:#04261a;box-shadow:0 3px 0 #1f9c63}
+/* ================= しごとのプロの見せ場（電気・看護・情報） ================= */
+/* ⚡ ツリーの星のスイッチ：先生の画面の右がわに出る（ツリーの画面・町の画面の上。ツリーの絵と、声の字幕にかぶらない場所） */
+.swbox{position:fixed;right:max(16px,calc(50vw - min(1240px,97vw) / 2 + 22px));top:46%;transform:translateY(-50%) scale(.85);z-index:11;width:min(360px,34vw);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s cubic-bezier(.3,1.5,.5,1)}
+.swbox.on{opacity:1;transform:translateY(-50%) scale(1);pointer-events:auto}
+.sw-in{background:linear-gradient(180deg,#2a3150,#12172b);border:4px solid var(--gold);border-radius:24px;padding:14px 18px 14px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.75)}
+.sw-h{font-size:23px;color:var(--gold)}
+.sw-who{margin:6px 0 12px;font-weight:700;color:#dfe7ff;line-height:1.45;font-size:15px}
+.sw-who b{display:block;color:#fff;font-size:21px;word-break:keep-all;overflow-wrap:anywhere}
+.sw-lever{display:block;width:100%;height:92px;border-radius:46px;border:4px solid #7a8098;background:#0b0e1a;position:relative;cursor:pointer;padding:0;overflow:hidden;transition:background .25s,border-color .25s,box-shadow .25s;animation:swpulse 1.2s ease-in-out infinite}
+.sw-knob{position:absolute;left:8px;top:8px;width:68px;height:68px;border-radius:50%;background:linear-gradient(180deg,#f3f5fb,#9aa3bd);box-shadow:0 4px 10px rgba(0,0,0,.5);transition:left .32s cubic-bezier(.3,1.6,.5,1),background .25s}
+.sw-lb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;color:#8b93ad;padding-left:64px;transition:.25s}
+.sw-lever.on{background:linear-gradient(90deg,#ffb300,#ffe27a);border-color:#fff6c8;box-shadow:0 0 36px rgba(255,214,110,.95);animation:none;cursor:default}
+.sw-lever.on .sw-knob{left:calc(100% - 76px);background:linear-gradient(180deg,#fff,#ffe9a6)}
+.sw-lever.on .sw-lb{color:#5a3400;padding-left:0;padding-right:64px}
+@keyframes swpulse{50%{box-shadow:0 0 0 9px rgba(255,210,63,.28)}}
+.sw-note{margin-top:10px;font-size:15px;font-weight:700;color:#dfe7ff;line-height:1.5}
+.sw-note small{display:block;font-size:12px;color:#aeb8d8;font-weight:500;margin-top:2px}
+/* ツリーの画面では、右の列の下に出す（上の「◯ / ◯」と「あとは、てっぺんの星！」の文字が見えるように） */
+@media (min-width:761px){body.treeon .swbox{top:auto;bottom:max(14px,calc(50vh - min(700px,94vh) / 2 + 16px));transform:scale(.85);transform-origin:100% 100%}body.treeon .swbox.on{transform:none}}
+@media (max-width:760px){.swbox{right:50%;top:auto;bottom:118px;transform:translate(50%,0) scale(.85);width:min(360px,92vw)}.swbox.on{transform:translate(50%,0) scale(1)}}
+/* ツリーの画面：星のスイッチを入れる人 */
+.tr-sw{text-align:center;font-size:14px;font-weight:700;color:#ffe9a6;background:rgba(255,210,63,.1);border:1px solid rgba(255,210,63,.5);border-radius:12px;padding:5px 8px;line-height:1.4}
+.tr-sw:empty{display:none}
+.tr-sw small{display:block;font-size:12px;color:#dfe7ff;font-weight:500}
+/* できごとカードの中の「プロの出番」（結果のらんと入れかわる） */
+.cc-res.cc-pro{background:#12306b;color:#fff;border:3px solid #ffd23f;font-size:16.5px;text-align:left;padding:8px 12px 9px}
+.cc-pro .cpro-h{text-align:center;font-size:18px;color:#ffd23f;margin-bottom:2px}
+.cc-pro .cpro-row{display:flex;gap:8px;align-items:flex-start;margin-top:4px;line-height:1.4}
+.cc-pro .cpro-ic{font-size:26px;line-height:1.1;flex:none}
+.cc-pro .cpro-row b{color:#ffe9a6}
+.cc-front.tight .cc-ic{font-size:54px;margin:0}
+.cc-front.tight .cc-ef{display:none}
+.cc-front.tight2 .cc-ic{display:none}
+.cc-front.tight2 .cc-nm{font-size:22px}
+.nobr{display:inline-block}      /* 文を、ことばのまとまりで折る（まとまりのとちゅうでは折らない） */
+/* プロの紹介・お礼の文字（まん中に出る） */
+.prosum small{display:block;font-size:14px;color:#dfe7ff;margin:0 0 4px 1.6em}
+.prosum b{color:#ffe27a}
+/* 名前カード・結果：プロの印 */
+.pchip .pk{margin-left:2px}
+.crm .hero.pro{color:#9fe3ff;font-size:14px}
+#endRoll .er-who i.er-pro{background:rgba(159,227,255,.94);color:#06304a}
+/* 参加者の画面：プロの役わり（待つ画面の面の中）と、星のスイッチ。色と形は、スマホの決まり（--surf・--gold・--mist）に合わせる */
+.play .ppro{margin-top:10px;padding:8px 12px;border-radius:12px;background:rgba(255,207,74,.1);box-shadow:inset 0 0 0 1px rgba(255,207,74,.4);font-size:13px;line-height:1.55;color:var(--snow)}
+.play .ppro b{color:var(--gold)}
+.psw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 5vh;text-align:center}
+.psw-top{font-size:clamp(24px,7.6vw,30px);line-height:1.25;color:var(--gold);text-shadow:0 0 26px rgba(255,207,74,.45)}
+.psw .p-lead{margin:10px 0 24px}
+.psw-btn{position:relative;display:block;width:min(100%,340px);height:112px;padding:0;border:none;border-radius:56px;background:var(--surf);box-shadow:inset 0 0 0 2px rgba(255,207,74,.55),0 0 34px -8px var(--gold);color:var(--snow);overflow:hidden;animation:pswPulse 1.5s ease-in-out infinite}
+.psw-knob{position:absolute;left:12px;top:12px;width:88px;height:88px;border-radius:50%;background:linear-gradient(180deg,#f4f6ff,#9ba8d0);box-shadow:0 5px 12px rgba(0,0,0,.5);transition:left .32s cubic-bezier(.3,1.6,.5,1)}
+.psw-lb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 14px 0 108px;font-size:22px;line-height:1.25;word-break:keep-all}
+.psw-btn:active .psw-knob{left:22px}
+.psw-btn.on{background:linear-gradient(180deg,#ffdc72,#ffc42e);box-shadow:0 0 44px -4px var(--gold);animation:none}
+.psw-btn.on .psw-knob{left:calc(100% - 100px);background:linear-gradient(180deg,#fff,#fff0c0)}
+.psw-btn.on .psw-lb{padding:0 108px 0 14px;color:#2a1c00;font-size:34px}
+.psw-btn:disabled{opacity:1}
+.psw-msg{margin-top:18px;font-size:20px;font-weight:900;line-height:1.45}
+@keyframes pswPulse{50%{box-shadow:inset 0 0 0 2px rgba(255,207,74,.95),0 0 50px -2px var(--gold)}}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1302,6 +1363,7 @@ body.playmode .rules{font-size:15.5px;line-height:1.7}
   <div class="town" id="town"></div>
   <div class="meet" id="meet"></div>
   <div class="treeov" id="tree"></div>
+  <div class="swbox" id="swbox" aria-live="polite"></div>
   <div class="evcard" id="evcard"></div>
   <div class="story" id="story"><div class="st-line dela" id="stLine"></div></div>
   <div class="panel right" id="scorePanel"></div>
@@ -1364,6 +1426,7 @@ body.playmode .rules{font-size:15.5px;line-height:1.7}
     <li>ラウンドの終わりに<b>町の会議</b>。8つの困りごと（🚰水道管・🚃電車・💸赤字・🏚空き家・👴少子高齢化・🏥病院・🏪商店街・❄️雪かき）から、どの工事にお金を使うかスマホで<b>投票</b>します（同じ票数のときは、<b>町の人たちの声</b>で決まります）。工事をすると <b>😊幸せ度</b> が上がり、町の明かりが灯ります。3段階ぜんぶ終わると<b>完成ボーナス</b>！</li>
     <li>会議のあとは<b>こがね町のできごとカード</b>。大雪・火事・詐欺電話などの困ったことは、工事を進めておくか、職業の力や、ガチャのアイテムで<b>ふせげます</b>。</li>
     <li><b>しごと（キャリア）</b>：みんな最初は <b>🌱町の新人</b>。問題に正解すると、その分野の仕事に<b>就職</b>します（🔢計算→🚒消防士／✏️式→⚖️弁護士／📈関数→💻SE／📐図形→🚛衛生のプロ／🎲確率→👮警察官）。★2以上で正解すると、その仕事の<b>📜資格</b>がもらえて、会議の前の<b>🔄転職タイム</b>に転職できます（💼職業安定所のマスなら資格なしでもOK）。同じ仕事を2ラウンドつづけると<b>⭐ベテラン</b>になって力が強くなり、転職しても前の仕事の<b>経験</b>が少し残ります。カードをふせげなかったときは<b>📢町の求人</b>が出て、その仕事に転職した人にボーナス！</li>
+    <li><b>コース</b>は、小学校・中学・高校・大人（SPI）・大学と、<b>しごとの資格コース</b>（⚡電気＝電気工事士・電験／🩺看護＝国家試験の計算／💾情報＝基本情報・応用情報）から選べます。しごとの資格コースの人は、町の「⚡電気のプロ」「🩺看護のプロ」「💾情報のプロ」。物語の中に<b>見せ場</b>があります（電気のプロは、町が救われたとき、ツリーのスイッチを入れる役。勝ち負けは、変わりません）。</li>
     <li><b>ガチャのアイテム</b>も町の役に立ちます：🛡ぶき・そうび＝悪いカードをふせぐ／🐾ペット＝町の人をいやす／👗おしゃれ＝観光客が来てお金／💎台座＝工事が安くなる／📜称号＝その分野のお金アップ。</li>
     <li>🎁 町に寄付（＋予算）、⛄ 町の人がにっこり（＋幸せ度）、❓ できごとカード、🎄 を通ると＋予算。♨️ 温泉（＋幸せ度）、⛏️ 金のかけら（＋予算）、⛩️ 神社のおみくじ、🕳️ 落とし穴（下の階へ）。</li>
     <li><b>こがね町は4つの階</b>（⭐山の上・♨️上の町・🎄下の町・⛏地下の鉱山）。階段・🚡ロープウェイ・🛷そりの大すべり台・🚃トロッコ・🕳マンホール・♨️間欠泉で上下に移動します。<b>分かれ道</b>では、どこへ行くかを選べます。</li>
@@ -4738,8 +4801,12 @@ function saveCourse(){ try { localStorage.setItem('sg_course', JSON.stringify({c
 function sendPref(){ if (!P.room || P.pid == null || !P.course) return; P.prefAt = Date.now(); NET.set(`rooms/${P.room}/pref/${P.pid}`, {course:P.course, level:P.level, at:NET.now()}); }
 function courseSelHTML(){
   const c = P.course;
-  return `<div class="csel">${COURSE_ORDER.map(k => `<button type="button" class="copt ${c === k ? 'sel' : ''}" onclick="pPickCourse('${k}')"><span class="cic">${COURSES[k].ic}</span>${COURSES[k].name.replace(/（.*）/, '')}<small>${COURSES[k].name.match(/（(.*)）/) ? COURSES[k].name.match(/（(.*)）/)[1] : ''}</small></button>`).join('')}</div>
-    ${c ? `<div class="lsel">${LEVELS.map((L, i) => `<button type="button" class="lopt ${P.level === i ? 'sel' : ''}" onclick="pPickLevel(${i})">${L}<small>${LEVEL_NOTE[c][i]}</small></button>`).join('')}</div>
+  const btn = k => `<button type="button" class="copt ${c === k ? 'sel' : ''}" onclick="pPickCourse('${k}')"><span class="cic">${COURSES[k].ic}</span>${COURSES[k].name.replace(/（.*）/, '')}<small>${COURSES[k].name.match(/（(.*)）/) ? COURSES[k].name.match(/（(.*)）/)[1] : ''}</small></button>`;
+  // 学校のコース（5つ）と、しごとの資格コース（3つ）を、2つの段に分けて出す
+  return `<div class="csel">${COURSE_ORDER.filter(k => !COURSES[k].job).map(btn).join('')}</div>
+    <div class="cjobh">しごとの資格コース<small><span class="nobr">資格試験に出る計算。</span><span class="nobr">協力モードでは、</span><span class="nobr">物語に見せ場があるよ</span></small></div>
+    <div class="csel job">${COURSE_ORDER.filter(k => COURSES[k].job).map(btn).join('')}</div>
+    ${c ? `<div class="lsel">${LEVELS.map((L, i) => `<button type="button" class="lopt ${P.level === i ? 'sel' : ''}" onclick="pPickLevel(${i})">${L}<small>${LEVEL_NOTE[c][i].replace(/^(第[一二]種)/, '$1<wbr>').replace(/・/g, '・<wbr>')}</small></button>`).join('')}</div>
     <div class="cfield">${[1,2,3,4,5].map(t => `<span><i style="background:${TCOL[t]}"></i>${TOPICS[t]}：${COURSES[c].f[t]}</span>`).join('')}</div>` : '<div class="wsub" style="text-align:center;margin:4px 0 8px">まずコースをえらんでね</div>'}`;
 }
 function pPickCourse(k){ P.course = k; saveCourse(); sendPref(); try { sfx.star(); } catch(e){} const el = $('#csel'); if (el) el.innerHTML = courseSelHTML(); }
@@ -4831,6 +4898,15 @@ function netUpdate(){
     return;
   }
   if (P.tree){ P.tree = false; clearInterval(P.timer); if (['tstar', 'tres', 'quiz'].includes(P.stage)) P.stage = 'wait'; }
+  // しごとのプロの見せ場。電気のプロ：ツリーの星のスイッチ（先生の画面が「どうぞ」と言ってから、スイッチが入るまで）
+  { const sw = I.mode === 'coop' ? I.sw : null;
+    if (sw && sw.on === 1 && proMine(sw) && P.stage !== 'quiz'){
+      if (P.stage !== 'switch' || P.swId !== sw.id){ P.swId = sw.id; P.swSent = false; initAudio(); keepAwake(); try { sfx.jingle(); } catch(e){} pBuzz([60, 60, 60]); }
+      P.stage = 'switch'; renderPlay(); return;
+    }
+    if (P.stage === 'switch') P.stage = 'wait';
+    // できごとカードの「プロの出番」：自分の出番のときは、音とふるえで知らせる（文は、待つ画面に出る）
+    if (I.mode === 'coop' && I.pro && proMine(I.pro) && P.proId !== I.pro.id){ P.proId = I.pro.id; initAudio(); try { sfx.star(); } catch(e){} pBuzz(60); } }
   const qOpen = I.phase === 'quiz' && me.topic > 0 && I.quizId && !P.done[I.quizId];
   if (P.stage === 'quiz'){ if (I.phase !== 'quiz' || I.quizId !== P.qid) finishQ('time'); return; }
   if (P.stage === 'course' && qOpen && I.quizId === P.qid) return;
@@ -4856,6 +4932,25 @@ function netUpdate(){
   if (P.stage === 'result' && I.phase === 'quiz') return;
   if (P.stage !== 'result' && P.stage !== 'course') P.stage = 'wait';
   renderPlay();
+}
+/* ---- しごとのプロの見せ場（参加者の画面） ---- */
+// 先生の画面からの知らせ（スイッチ・プロの出番）が、自分あてか（who＝'p0,p2' のように、あて先の人がならんでいる）
+function proMine(s){ return !!s && P.pid != null && String(s.who || '').split(',').includes(String(P.pid)); }
+// 電気のプロ：ツリーの星のスイッチを入れる
+function pSwitch(){
+  const s = P.info && P.info.sw; if (!s || !P.room || P.pid == null || P.swSent) return;
+  P.swSent = true; try { const r = NET.set(`rooms/${P.room}/sw/${s.id}/${P.pid}`, {at:NET.now()}); if (r && r.catch) r.catch(() => {}); } catch(e){}
+  initAudio(); keepAwake(); pBuzz(80); try { sfx.shutter(); sfx.star(); } catch(e){} renderPlay();
+}
+// 見せ場のあいだ、待つ画面に出す絵と文（ないときは null）
+function proWait(I, me){
+  if (!pCoop()) return null;
+  const sw = I.sw, pr = I.pro;
+  if (sw){ const nm = esc(sw.names || '');
+    return sw.on === 2 ? ['🌟', proMine(sw) ? 'スイッチ、オン！<br>ツリーの星が光った！' : `電気のプロ ${nm}が<br>ツリーの星のスイッチを入れた！`]
+      : ['⚡', `電気のプロ ${nm}が<br>ツリーの星のスイッチを入れるよ！<br>先生の画面を見てね`]; }
+  if (pr && proMine(pr) && PRO[me.course] && pr.t && pr.t[me.course]) return [PRO[me.course].ic, `${PRO[me.course].nm}の出番！<br>${phr(esc(pr.t[me.course]))}`];
+  return null;
 }
 function sendAns(o){ if (!P.room || P.pid == null || !P.qid) return; NET.set(`rooms/${P.room}/ans/${P.qid}/${P.pid}`, Object.assign({at:NET.now()}, o)); }
 function pJoin(id){
@@ -5040,7 +5135,7 @@ const myCourse = () => `${COURSES[P.course || 'chu'].ic} ${courseLabel(P.course 
 function waitHTML(){
   const I = P.info || {}, me = pMe() || {}, co = pCoop(), R = I.roll, G = I.phase === 'gacha' ? I.gacha : null;
   const mine = String(I.turnId) === String(P.pid), lobby = I.phase === 'setup' || I.phase === 'lobby', cur = P.roster && P.roster[I.turnId];
-  const msg = ({
+  const msg = proWait(I, me) || ({      // しごとのプロの見せ場のあいだは、その文を先に出す
     setup:['⏳', '先生がはじめるのを<br>待っています'],
     lobby:['🎄', '準備OK！<br>もうすぐゲームが始まります'],
     roll:mine ? (R && R.to === P.pid ? ['🎲', 'まもなく、あなたの番！'] : ['🎲', 'あなたの番です！<br>先生の画面を見てね']) : cur && cur.name ? ['', `<span class="pw-turn">${pAv(cur.char, cur.color, 'sm')}${esc(cur.name)}さんの番</span>`] : ['⏳', 'サイコロの順番を待っています'],
@@ -5066,6 +5161,7 @@ function waitHTML(){
     <div class="pcd">
       <div class="pcd-row"><span class="pcd-v">${co ? pJobLine(me) : `⭐ ${me.stars || 0}`}</span><span class="pchips">${me.tickets ? `<span class="pchip2 gold">🎟️ ${me.tickets}</span>` : ''}${me.space ? `<span class="pchip2">📍 ${esc(me.space)}</span>` : ''}</span></div>
       ${co ? `<div class="pcd-note">${JOBS[me.job] ? (me.vet ? JOBS[me.job].vd : JOBS[me.job].d) : `${NEWBIE.d}（${[1, 2, 3, 4, 5].map(t => `${CAT[t].ic}${TOPICS[t]}→${JOBS[TOPIC_JOB[t]].ic}`).join(' ')}）`}${pCareerTags(me) ? `<div class="wcar">${pCareerTags(me)}</div>` : ''}</div>` : ''}
+      ${co && PRO[me.course] ? `<div class="pcd-note ppro"><span class="nobr">${PRO[me.course].ic} あなたは <b>${PRO[me.course].nm}</b>。</span>${phr(PRO[me.course].role + '役！')}</div>` : ''}
       <div class="pcd-row"><span class="pcd-k">${myCourse()}</span><button class="pmini" onclick="P.stage='course';renderPlay()">コースを変える</button></div>
       ${lobby ? `<div class="pcd-row"><span class="pcd-k">コマ：${esc((CHAR_LIST[ck] || [''])[0])}</span><button class="pmini" onclick="pCharOpen()">コマを変える</button></div>` : ''}
     </div>
@@ -5207,6 +5303,13 @@ function renderPlay(){
       <div class="vfoot">⏱ のこり <b id="ct">${Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000))}</b> 秒　${my ? (P.myCareer ? '✅ 決めました（変えられます）' : '👆 タップして決めよう') : ''}</div></div>`);
     clearInterval(P.timer); P.timer = setInterval(() => { const el = $('#ct'); if (!el || P.stage !== 'career'){ clearInterval(P.timer); return; } el.textContent = Math.max(0, Math.ceil((C.endsAt - NET.now()) / 1000)); }, 500);
     return;
+  }
+  if (P.stage === 'switch'){      // 電気のプロ：ツリーの星のスイッチ（知らせが消えていたら、待つ画面へ）
+    if (!(I && I.sw)) P.stage = 'wait';
+    else { pSet(`<div class="psw"><div class="psw-top dela">⚡ <span class="nobr">電気のプロの</span><span class="nobr">出番！</span></div>
+      <p class="p-lead">明かりは、そろった。<br><span class="nobr">ツリーの星のスイッチを</span><span class="nobr">入れられるのは、</span><br><b class="nobr">電気のプロ</b>だけ！</p>
+      <button type="button" class="psw-btn ${P.swSent ? 'on' : ''}" id="swpBtn" onclick="pSwitch()" ${P.swSent ? 'disabled' : ''} aria-label="ツリーの星のスイッチを入れる"><span class="psw-knob"></span><span class="psw-lb dela">${P.swSent ? 'ON！' : 'スイッチを<wbr>入れる！'}</span></button>
+      <div class="psw-msg">${P.swSent ? '入れた！<br>先生の画面を見てね' : '<span class="nobr">タップして、</span><span class="nobr">スイッチを入れよう</span>'}</div></div>`); return; }
   }
   if (P.stage === 'course'){
     pSet(`<div class="pv"><h2 class="p-h">コースとレベル</h2><p class="p-lead">次の問題から、えらんだコースで出ます。</p>
@@ -5436,7 +5539,7 @@ function drawCurve(show){
   $('#curve').innerHTML = g;
 }
 
-/* ============ 問題のしくみ（コース × 5つの分野 × 9段階） ============ */
+/* ============ 問題のしくみ（コース × 5つの分野 × 9段階。8コース × 45 ＝ 360 種類の作り手） ============ */
 // マスの色＝5つの分野（どのコースにも共通）。中身はコースごとにちがう
 const CAT = {1:{name:'計算', ic:'🔢'}, 2:{name:'式', ic:'✏️'}, 3:{name:'関数', ic:'📈'}, 4:{name:'図形', ic:'📐'}, 5:{name:'確率', ic:'🎲'}};
 const COURSES = {
@@ -5445,8 +5548,12 @@ const COURSES = {
   kou:{name:'高校', ic:'📗', f:{1:'数と式・複素数', 2:'方程式・数列', 3:'関数・微分積分', 4:'図形・ベクトル', 5:'場合の数・確率'}},
   spi:{name:'大人（SPI）', ic:'💼', f:{1:'割合・比', 2:'損益算・料金', 3:'速さ・仕事算', 4:'集合（ベン図）', 5:'場合の数・確率'}},
   dai:{name:'大学（数論・楕円曲線）', ic:'🎓', f:{1:'合同式・整数論', 2:'平方剰余・二次形式', 3:'楕円曲線の点の数', 4:'楕円曲線の点の加法', 5:'代数的整数論'}},
+  // しごとの資格コース（2026-11-13 に足した）。job＝「◯◯のプロ」の ◯◯。協力モードの物語で、見せ場がある
+  den:{name:'電気（電気工事士・電験）', ic:'⚡', job:'電気', f:{1:'オームの法則・合成抵抗', 2:'電力・電力量・熱量', 3:'電線の抵抗・電圧降下', 4:'交流の三角形・三相', 5:'場合の数・測定・需要率'}},
+  kan:{name:'看護（国家試験の計算）', ic:'🩺', job:'看護', f:{1:'単位・割合の計算', 2:'薬の量・濃度', 3:'点滴・酸素ボンベ', 4:'体格の指数・熱傷の面積', 5:'保健統計・検査'}},
+  joh:{name:'情報（基本・応用情報）', ic:'💾', job:'情報', f:{1:'2進数・ビットの計算', 2:'論理演算・稼働率', 3:'計算量・データの量', 4:'木・グラフ・日程の図', 5:'確率・期待値・待ち行列'}},
 };
-const COURSE_ORDER = ['sho', 'chu', 'kou', 'spi', 'dai'];
+const COURSE_ORDER = ['sho', 'chu', 'kou', 'spi', 'dai', 'den', 'kan', 'joh'];
 const LEVELS = ['初級', '中級', '上級'];
 const LEVEL_NOTE = {
   sho:['1〜3年生くらい', '4〜5年生くらい', '6年生・中学受験'],
@@ -5454,9 +5561,20 @@ const LEVEL_NOTE = {
   kou:['数I・A', '数II・B', '数III・C・東大レベル'],
   spi:['基本', '標準', '難しめ'],
   dai:['学部1〜2年', '学部3〜4年', '大学院'],
+  den:['第二種電気工事士', '第一種電気工事士', '電験三種'],
+  kan:['看護学校の基礎', '看護師国家試験', '臨床・保健師レベル'],
+  joh:['ITパスポート', '基本情報技術者', '応用情報技術者'],
 };
 const PGEN = {};
-const courseLabel = (c, l) => `${(COURSES[c] || COURSES.chu).name}・${LEVELS[l] != null ? LEVELS[l] : '中級'}`;
+const courseLabel = (c, l) => { const k = COURSES[c] ? c : 'chu', C = COURSES[k], i = LEVELS[l] != null ? l : 1;
+  return C.job ? `${C.name.replace(/（.*）/, '')}・${LEVEL_NOTE[k][i]}` : `${C.name}・${LEVELS[i]}`; };      // しごとの資格コースは「電気・第二種電気工事士」のように出す
+/* しごとの資格コースの人は、協力モードの物語で「◯◯のプロ」になる。role＝役わり（「…役」とつづける）。見せ場のしくみは、先生の画面のほう（しごとのプロの見せ場）にある */
+const PRO = {
+  den:{ic:'⚡', nm:'電気のプロ', role:'町が救われたら、ツリーの星のスイッチを入れる'},
+  kan:{ic:'🩺', nm:'看護のプロ', role:'けが人や急病人が出たら、かけつける'},
+  joh:{ic:'💾', nm:'情報のプロ', role:'あやしい電話や どろぼうから、町を守る'},
+};
+const phr = t => String(t).split(' ').map(x => x.split('、').map((y, i, a) => i < a.length - 1 ? y + '、' : y).filter(Boolean).map(y => `<span class="nobr">${y}</span>`).join('')).join(' ');      // 文を、まとまり（空白と「、」で区切ったもの）ごとに折れるようにする。まとまりのとちゅうでは折らない
 
 /* ---- 分数（有理数）の計算 ---- */
 function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b){ const t = a % b; a = b; b = t; } return a; }
@@ -6078,7 +6196,7 @@ PGEN.kou = {
       return pick([
         () => { const a = nz(-5,5), b = nz(-6,6), c = nz(1,5), d = nz(-6,6); return one(`${expr(`lim<sub>n→∞</sub> <span class="fr"><span>${poly([a, b, 1], 'n')}</span><span>${poly([c, d, 2], 'n')}</span></span>`)}を求めよ。`, Q(a, c), `分母分子を n² でわると ${fr(a, c)}`, {frac:true}); },
         () => { const a = ri(1,6), b = ri(1,6); return one(`${expr(`lim<sub>x→0</sub> <span class="fr"><span>sin ${cx(a)}</span><span>${cx(b)}</span></span>`)}を求めよ。`, Q(a, b), `sin ${cx(a)} / ${cx(a)} → 1 を使って <span class="ans">${fr(a, b)}</span>`, {frac:true}); },
-        () => { const a = nz(-4,4); return one(`${expr(`lim<sub>x→${a}</sub> <span class="fr"><span>x<sup>3</sup> ${a ** 3 < 0 ? '+' : M} ${Math.abs(a ** 3)}</span><span>x ${a < 0 ? '+' : M} ${Math.abs(a)}</span></span>`)}を求めよ。`, 3 * a * a, `因数分解して約分すると ${poly([1, a, a * a])}。ここに x = ${f(a)} を入れて <span class="ans">${3 * a * a}</span>`); },
+        () => { const a = nz(-4,4); return one(`${expr(`lim<sub>x→${f(a)}</sub> <span class="fr"><span>x<sup>3</sup> ${a ** 3 < 0 ? '+' : M} ${Math.abs(a ** 3)}</span><span>x ${a < 0 ? '+' : M} ${Math.abs(a)}</span></span>`)}を求めよ。`, 3 * a * a, `因数分解して約分すると ${poly([1, a, a * a])}。ここに x = ${f(a)} を入れて <span class="ans">${3 * a * a}</span>`); },
       ])();
     },
     function(){ // 数III：部分積分
@@ -6396,7 +6514,7 @@ PGEN.dai = {
     function(){ const pts = [[-2,3],[-1,4],[2,5],[4,9],[8,23]].map(([x, y]) => [Q(x), Q(y * pick([1,-1]))]); const [P, R] = sample(pts, 2); const S = ecAddQ(P, R, 0);
       return {q:`E: y<sup>2</sup> = x<sup>3</sup> + 17（ℚ 上）で P = (${frq(P[0])}, ${frq(P[1])})、Q = (${frq(R[0])}, ${frq(R[1])}) のとき、P + Q = (x, y) を求めよ。<small>分数は 3/4 のように</small>`, fields:[{k:'x', pre:'x =', frac:true}, {k:'y', pre:'y =', frac:true}], ans:{x:S[0], y:S[1]}, ansText:`(${qstr(S[0])}, ${qstr(S[1])})`,
         ex:`λ = (y₂ ${M} y₁)/(x₂ ${M} x₁) = ${frq(qd(qs(R[1], P[1]), qs(R[0], P[0])))}<br>x₃ = λ² ${M} x₁ ${M} x₂ = ${frq(S[0])}、y₃ = λ(x₁ ${M} x₃) ${M} y₁ = ${frq(S[1])}`}; },
-    function(){ const P0 = pick([[-2,3],[-1,4],[2,5],[4,9],[8,23]]), P = [Q(P0[0]), Q(P0[1])], S = ecAddQ(P, P, 0);
+    function(){ const P0 = pick([[-2,3],[-1,4],[2,5],[4,9]]), P = [Q(P0[0]), Q(P0[1])], S = ecAddQ(P, P, 0);      // (8, 23) は出さない：2P の y が 54239/12167 で、数字が10こになり、スマホのボタン（1つのらんに9こまで）で入れられなかった
       return {q:`E: y<sup>2</sup> = x<sup>3</sup> + 17（ℚ 上）で P = (${P0.join(', ')}) のとき、2P = (x, y) を求めよ。<small>分数は 3/4 のように</small>`, fields:[{k:'x', pre:'x =', frac:true}, {k:'y', pre:'y =', frac:true}], ans:{x:S[0], y:S[1]}, ansText:`(${qstr(S[0])}, ${qstr(S[1])})`,
         ex:`λ = 3x₁²/(2y₁) = ${frq(qd(Q(3 * P0[0] * P0[0]), Q(2 * P0[1])))}<br>2P = (${frq(S[0])}, ${frq(S[1])})`}; },
     function(){ const T = pick([[`y<sup>2</sup> = x<sup>3</sup> + 1`, 6, 'ℤ/6ℤ：(−1,0), (0,±1), (2,±3) と O'], [`y<sup>2</sup> = x<sup>3</sup> + 4`, 3, 'ℤ/3ℤ：(0,±2) と O'], [`y<sup>2</sup> = x<sup>3</sup> ${M} x`, 4, 'ℤ/2ℤ × ℤ/2ℤ：(0,0), (±1,0) と O'], [`y<sup>2</sup> = x<sup>3</sup> + 4x`, 4, 'ℤ/4ℤ：(2,±4) は位数4、2(2,4) = (0,0)'], [`y<sup>2</sup> = x<sup>3</sup> + 8`, 2, 'ℤ/2ℤ：(−2,0) と O（k が立方数）'], [`y<sup>2</sup> = x<sup>3</sup> + 2`, 1, '自明（ナゲル・ルッツの定理で調べると O だけ）'], [`y<sup>2</sup> = x<sup>3</sup> ${M} 432`, 3, 'ℤ/3ℤ：(12,±36) と O'], [`y<sup>2</sup> = x<sup>3</sup> + 9`, 3, 'ℤ/3ℤ：(0,±3) と O（k が平方数）']]);
@@ -6426,6 +6544,430 @@ PGEN.dai = {
         ex:`x² ${M} ${d}y² = ±1 の最小の正の解。${x}² ${M} ${d}·${y}² = ${x * x - d * y * y}。<span class="ans">ε = ${x} + ${y === 1 ? '' : y}${sq(d)}</span>`}; },
     function(){ let n; do { n = ri(101, 400); } while (!sqfree(n)); const D = fieldDisc(-n), h = classNumber(D);
       return one(`虚2次体 ℚ(${sq(M + n)}) の類数 h を求めよ。`, h, `判別式 D = ${D}。a ≦ √(|D|/3) ≈ ${Math.sqrt(-D / 3).toFixed(1)} の範囲で被約形式を数えると <span class="ans">${h}</span>`); },
+  ],
+};
+
+/* ============ しごとの資格コース（電気・情報・看護）：3つのコースでいっしょに使う部品 ============
+   どの問題も、資格試験に出る計算の「型」だけを借りて、数字を毎回つくる（過去問の文は使っていない）。
+   法令や現場の判断を問う問題は入れていない。決まった数（1 mL の滴の数、9 の法則の割合、公式など）は、問題の文に書いてある */
+const rd = (n, k = 6) => +(+n).toFixed(k);                      // 小数のごみ（0.30000000000000004 など）を消す
+const b2 = (n, w = 0) => n.toString(2).padStart(w, '0');        // 2進数の文字（w けたに 0 でそろえる）
+const par2 = (a, b) => a * b / (a + b);                         // 並列の合成抵抗（積 ÷ 和）
+const seqBox = s => `<div class="expr" style="font-size:18px;letter-spacing:0">${s}</div>`;      // 操作のならび・データのならび
+const tbl = rows => `<table style="margin:8px auto;border-collapse:collapse;font-size:15px">${rows.map((r, i) => `<tr>${r.map((c, j) => i && j
+  ? `<td style="border:1px solid #4a5d94;padding:4px 12px;text-align:center;font-weight:700">${c}</td>`
+  : `<th style="border:1px solid #4a5d94;padding:4px 10px;text-align:center;font-weight:500;color:#a9b8da">${c}</th>`).join('')}</tr>`).join('')}</table>`;
+const PYTH = [[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[12,16,20]];      // 直角三角形の3辺（交流の三角形で使う）
+const PAR2 = [[3,6],[4,12],[6,12],[10,15],[20,30],[12,24],[5,20],[15,30],[10,40],[8,24],[9,18],[40,60],[6,30],[20,80],[30,60]];      // 並列にすると、合成が整数になる組
+/* ブリッジ回路の図（向かい合う辺：P と X、Q と R） */
+function bridgeSVG(P, Q, R){
+  const W = 250, H = 176, A = [34, 88], B = [216, 88], C = [125, 24], D = [125, 152];
+  const arm = (p, q, t) => { const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+    return `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="#cfd8ee" stroke-width="2"/><rect x="${mx - 27}" y="${my - 12}" width="54" height="24" rx="6" fill="#0b1530" stroke="#f2c94c" stroke-width="2"/><text x="${mx}" y="${my + 5}" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">${t}</text>`; };
+  return `<svg class="graph" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="ブリッジ回路の図"><rect width="${W}" height="${H}" rx="12" fill="#0b1530"/>`
+    + `<line x1="${C[0]}" y1="${C[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#cfd8ee" stroke-width="2"/>`
+    + arm(A, C, P + ' Ω') + arm(C, B, Q + ' Ω') + arm(A, D, R + ' Ω') + arm(D, B, 'X Ω')
+    + `<circle cx="125" cy="88" r="13" fill="#0b1530" stroke="#3ddc97" stroke-width="2"/><text x="125" y="93" font-size="13" font-weight="700" fill="#3ddc97" text-anchor="middle">G</text>`
+    + `<circle cx="${A[0]}" cy="${A[1]}" r="4" fill="#e0484f"/><circle cx="${B[0]}" cy="${B[1]}" r="4" fill="#e0484f"/><text x="14" y="93" font-size="13" fill="#a9b8da" text-anchor="middle">＋</text><text x="236" y="93" font-size="13" fill="#a9b8da" text-anchor="middle">−</text></svg>`;
+}
+/* 道の図（点と、長さのついた線） */
+function netSVG(nodes, edges){
+  const W = 290, H = 184;
+  let g = `<svg class="graph" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="道の図"><rect width="${W}" height="${H}" rx="12" fill="#0b1530"/>`;
+  edges.forEach(([u, v, w]) => { const p = nodes[u], q = nodes[v], mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+    g += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="#cfd8ee" stroke-width="2"/><circle cx="${mx}" cy="${my}" r="11" fill="#0b1530"/><text x="${mx}" y="${my + 5}" font-size="14" font-weight="700" fill="#f2c94c" text-anchor="middle">${w}</text>`; });
+  Object.entries(nodes).forEach(([k, p]) => { g += `<circle cx="${p[0]}" cy="${p[1]}" r="15" fill="#1d3473" stroke="#fff" stroke-width="2"/><text x="${p[0]}" y="${p[1] + 5}" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">${k}</text>`; });
+  return g + '</svg>';
+}
+
+/* ============ 電気コース（初級＝第二種電気工事士／中級＝第一種電気工事士／上級＝電験三種） ============ */
+/* スイッチのつなぎ方（直列＝AND、並列＝OR）。[文, スイッチの数, つくかどうか] */
+const SWITCHES = [
+  ['スイッチ A・B・C を、3つとも直列につないだ', 3, s => s[0] && s[1] && s[2]],
+  ['スイッチ A・B・C を、3つとも並列につないだ', 3, s => s[0] || s[1] || s[2]],
+  ['スイッチ A と B を直列にしたものに、スイッチ C を並列につないだ', 3, s => (s[0] && s[1]) || s[2]],
+  ['スイッチ A と B を並列にしたものに、スイッチ C を直列につないだ', 3, s => (s[0] || s[1]) && s[2]],
+  ['「A と B の直列」と「C と D の直列」を、並列につないだ', 4, s => (s[0] && s[1]) || (s[2] && s[3])],
+  ['「A と B の並列」と「C と D の並列」を、直列につないだ', 4, s => (s[0] || s[1]) && (s[2] || s[3])],
+  ['スイッチ A・B・C を並列にしたものに、スイッチ D を直列につないだ', 4, s => (s[0] || s[1] || s[2]) && s[3]],
+];
+PGEN.den = {
+  /* ---- 計算：オームの法則・合成抵抗 ---- */
+  1: [
+    function(){ const I = pick([2, 4, 5, 8, 10, 20]), R = pick([5, 10, 20, 25, 50]), V = I * R, k = ri(0, 2); if (V > 240) return null;
+      if (k === 0) return one(`${R} Ω の抵抗に ${V} V の電圧を加えると、流れる電流は何 A？`, I, `オームの法則　電流 ＝ 電圧 ÷ 抵抗<br>${V} ÷ ${R} = <span class="ans">${I}</span> A`, {post:'A'});
+      if (k === 1) return one(`${R} Ω の抵抗に ${I} A の電流が流れている。抵抗にかかる電圧は何 V？`, V, `オームの法則　電圧 ＝ 電流 × 抵抗<br>${I} × ${R} = <span class="ans">${V}</span> V`, {post:'V'});
+      return one(`ある抵抗に ${V} V の電圧を加えると、${I} A の電流が流れた。抵抗は何 Ω？`, R, `オームの法則　抵抗 ＝ 電圧 ÷ 電流<br>${V} ÷ ${I} = <span class="ans">${R}</span> Ω`, {post:'Ω'}); },
+    function(){ const a = ri(2, 12), b = ri(2, 12), R = a + b, I = pick([2, 4, 5, 10]), V = R * I; if (V > 250 || a === b) return null;
+      return one(`${a} Ω と ${b} Ω の抵抗を直列につなぎ、${V} V の電圧を加えた。流れる電流は何 A？`, I, `直列の合成抵抗は、たし算。${a} + ${b} = ${R} Ω<br>${V} ÷ ${R} = <span class="ans">${I}</span> A`, {post:'A'}); },
+    function(){ const [a, b] = pick(PAR2), R = par2(a, b);
+      if (Math.random() < .5) return one(`${a} Ω と ${b} Ω の抵抗を並列につないだ。合成抵抗は何 Ω？`, R, `並列の合成抵抗 ＝ 積 ÷ 和<br>(${a} × ${b}) ÷ (${a} + ${b}) = ${a * b} ÷ ${a + b} = <span class="ans">${R}</span> Ω`, {post:'Ω'});
+      const V = R * pick([2, 3, 5, 10]); if (V > 240 || !Number.isInteger(V / a * 2) || !Number.isInteger(V / b * 2)) return null;
+      return one(`${a} Ω と ${b} Ω の抵抗を並列につなぎ、${V} V の電圧を加えた。電源から流れ出る電流は、合わせて何 A？`, rd(V / a + V / b), `並列では、どちらの抵抗にも ${V} V がかかる<br>${a} Ω に ${V} ÷ ${a} = ${dsp(V / a)} A、${b} Ω に ${V} ÷ ${b} = ${dsp(V / b)} A<br>合わせて <span class="ans">${dsp(V / a + V / b)}</span> A`, {post:'A'}); },
+    function(){ const [a, b] = pick(PAR2), c = ri(2, 10), R = c + par2(a, b), I = pick([2, 5, 10]), V = R * I; if (V > 300) return null;
+      return one(`${a} Ω と ${b} Ω を並列にしたものに、${c} Ω を直列につなぎ、${V} V の電圧を加えた。電源から流れ出る電流は何 A？`, I, `並列の部分は (${a} × ${b}) ÷ (${a} + ${b}) = ${par2(a, b)} Ω<br>全体は ${par2(a, b)} + ${c} = ${R} Ω なので、${V} ÷ ${R} = <span class="ans">${I}</span> A`, {post:'A'}); },
+    function(){ const a = ri(1, 9) * 10, b = ri(1, 9) * 10, V = pick([100, 200]); if (a === b) return null; const v = V * b / (a + b); if (!Number.isInteger(v)) return null;
+      return one(`${a} Ω と ${b} Ω の抵抗を直列につなぎ、${V} V の電圧を加えた。${b} Ω の抵抗にかかる電圧は何 V？`, v, `直列では、電圧は抵抗の比に分かれる（分圧）<br>${V} × ${b} ÷ (${a} + ${b}) = <span class="ans">${v}</span> V`, {post:'V'}); },
+    function(){ const P = pick([2, 3, 4, 5, 6, 10, 20]), Q0 = pick([4, 6, 8, 10, 12, 15, 20, 30]), R = pick([3, 4, 5, 6, 8, 9, 10, 12, 15]), X = Q0 * R / P; if (!Number.isInteger(X) || X === R || Q0 === P || X > 99 || X < 2) return null;
+      return one(`ブリッジ回路で、まん中の検流計 G に電流が流れない（つり合っている）とき、X は何 Ω？${bridgeSVG(P, Q0, R)}`, X, `つり合うとき、向かい合う辺の抵抗の積が等しい<br>${P} × X = ${Q0} × ${R} より、X = ${Q0 * R} ÷ ${P} = <span class="ans">${X}</span> Ω`, {pre:'X =', post:'Ω'}); },
+    function(){ const E = pick([6, 9, 12, 24]), r = pick([1, 2]), R = ri(2, 11), I = E / (r + R), V = I * R; if (!Number.isInteger(I * 2) || !Number.isInteger(V * 2)) return null;
+      return one(`起電力 ${E} V、内部抵抗 ${r} Ω の電池に、${R} Ω の抵抗をつないだ。抵抗の両端の電圧（端子電圧）は何 V？`, V, `電流は ${E} ÷ (${r} + ${R}) = ${dsp(I)} A<br>端子電圧は ${dsp(I)} × ${R} = <span class="ans">${dsp(V)}</span> V（電池の中で ${dsp(I * r)} V 下がる）`, {post:'V'}); },
+    function(){ const [a, b] = pick(PAR2.filter(x => x[1] <= 30)), c = ri(2, 9), C = par2(a, b) + c;
+      return one(`${a} μF と ${b} μF のコンデンサを直列にしたものに、${c} μF のコンデンサを並列につないだ。合成の静電容量は何 μF？`, C, `コンデンサは、抵抗と反対。直列が「積 ÷ 和」、並列が「たし算」<br>直列の部分は (${a} × ${b}) ÷ (${a} + ${b}) = ${par2(a, b)} μF<br>${par2(a, b)} + ${c} = <span class="ans">${C}</span> μF`, {post:'μF'}); },
+    function(){ const r = pick([1, 2, 4, 5, 8, 10]), E = pick([10, 12, 20, 24, 40, 100]), P = E * E / (4 * r); if (!Number.isInteger(P) || P > 999) return null;
+      return {q:`起電力 ${E} V、内部抵抗 ${r} Ω の電源に、抵抗 R をつなぐ。R で使われる電力がいちばん大きくなるのは、R が何 Ω のとき？ そのときの電力は何 W？`, fields:[{k:'r', pre:'R =', post:'Ω'}, {k:'p', pre:'電力', post:'W'}], ans:{r, p:P}, ansText:`R = ${r} Ω、電力 ${P} W`,
+        ex:`外につなぐ抵抗が、内部抵抗と同じ ${r} Ω のとき、電力は最大になる<br>電流は ${E} ÷ (${r} + ${r}) = ${dsp(E / (2 * r))} A、電力は ${dsp(E / (2 * r))}² × ${r} = <span class="ans">${P}</span> W`}; },
+  ],
+  /* ---- 式：電力・電力量・熱量 ---- */
+  2: [
+    function(){ const V = pick([100, 200]), I = pick([2, 3, 4, 5, 6, 8, 10, 12, 15]), P = V * I;
+      if (Math.random() < .5) return one(`${V} V の電源につなぐと ${I} A の電流が流れる電気器具がある。消費電力は何 W？`, P, `電力 ＝ 電圧 × 電流<br>${V} × ${I} = <span class="ans">${P}</span> W`, {post:'W'});
+      return one(`消費電力 ${P} W の電気器具を ${V} V の電源につないだ。流れる電流は何 A？`, I, `電流 ＝ 電力 ÷ 電圧<br>${P} ÷ ${V} = <span class="ans">${I}</span> A`, {post:'A'}); },
+    function(){ const P = pick([200, 400, 500, 600, 800, 1000, 1200, 1500, 2000]), m = pick([15, 30, 45, 60, 90, 120, 180]), W = P * m / 60000; if (!Number.isInteger(rd(W * 100))) return null;
+      return one(`消費電力 ${P} W の電気器具を、${m % 60 === 0 ? m / 60 + ' 時間' : m + ' 分間'}使った。使った電力量は何 kWh？`, rd(W), `電力量 ＝ 電力(kW) × 時間(h)<br>${P / 1000} kW × ${dsp(m / 60)} h = <span class="ans">${dsp(W)}</span> kWh`, {post:'kWh'}); },
+    function(){ const k = ri(0, 2);
+      if (k === 0){ const V = pick([100, 200]), R = pick([5, 8, 10, 20, 25, 40, 50, 100]), P = V * V / R; if (!Number.isInteger(P)) return null;
+        return one(`${R} Ω の電熱線に ${V} V の電圧を加えた。消費電力は何 W？`, P, `電力 ＝ 電圧² ÷ 抵抗<br>${V} × ${V} ÷ ${R} = <span class="ans">${P}</span> W`, {post:'W'}); }
+      if (k === 1){ const I = pick([2, 3, 4, 5, 10]), R = pick([2, 4, 5, 8, 10, 20]), P = I * I * R;
+        return one(`${R} Ω の抵抗に ${I} A の電流が流れている。抵抗で使われる電力は何 W？`, P, `電力 ＝ 電流² × 抵抗<br>${I} × ${I} × ${R} = <span class="ans">${P}</span> W`, {post:'W'}); }
+      const P = pick([200, 400, 500, 800, 1000, 1250, 2000]), R = 10000 / P;
+      return one(`100 V で使うと ${P} W になる電熱器がある。この電熱器の抵抗は何 Ω？`, R, `電力 ＝ 電圧² ÷ 抵抗 なので、抵抗 ＝ 電圧² ÷ 電力<br>100 × 100 ÷ ${P} = <span class="ans">${dsp(R)}</span> Ω`, {post:'Ω'}); },
+    function(){ const P = pick([0.5, 1, 1.5, 2, 3]), m = pick([2, 5, 10, 20, 30]), Qh = rd(P * m * 60);
+      return one(`消費電力 ${P} kW の電熱器を、${m} 分間使った。発生する熱量は何 kJ？`, Qh, `1 kW の電熱器は、1 秒に 1 kJ の熱を出す<br>${P} × ${m} × 60 = <span class="ans">${Qh}</span> kJ`, {post:'kJ'}); },
+    function(){ const P = pick([500, 1000, 2000]), [V2, r] = pick([[90, .81], [80, .64], [110, 1.21], [50, .25], [120, 1.44]]), P2 = rd(P * r);
+      return one(`100 V で使うと ${P} W の電熱器を、${V2} V で使うと何 W になる？<small>電熱器の抵抗は、変わらないものとする</small>`, P2, `電力は、電圧の2乗に比例する（電力 ＝ 電圧² ÷ 抵抗）<br>電圧が ${V2 / 100} 倍なので、電力は ${V2 / 100}² = ${r} 倍<br>${P} × ${r} = <span class="ans">${P2}</span> W`, {post:'W'}); },
+    function(){ const [m, dT] = pick([[2, 50], [5, 20], [4, 25], [10, 10], [5, 40], [10, 20], [4, 50], [8, 25], [10, 30], [6, 50], [5, 60], [10, 40], [8, 50]]), P = pick([1, 2]), Qh = rd(4.2 * m * dT), t = rd(Qh / P / 60); if (!Number.isInteger(t)) return null;
+      return one(`${P} kW の電熱器で、${m} kg の水の温度を ${dT} ℃ 上げたい。何分かかる？<small>水 1 kg を 1 ℃ 上げるのに 4.2 kJ。熱は、ぜんぶ水に伝わるものとする</small>`, t, `必要な熱量は 4.2 × ${m} × ${dT} = ${Qh} kJ<br>${P} kW は 1 秒に ${P} kJ なので、${Qh} ÷ ${P} = ${rd(Qh / P)} 秒 = <span class="ans">${t}</span> 分`, {post:'分'}); },
+    function(){ const T = pick([10, 20, 25, 40, 50, 100]), e = pick([90, 92, 94, 95, 96, 98]), out = rd(T * e / 100), loss = rd(T - out), fe = rd(loss * pick([.25, .4, .5])), cu = rd(loss - fe); if (!Number.isInteger(rd(fe * 100)) || !Number.isInteger(rd(out * 10))) return null;
+      return one(`ある変圧器の出力は ${out} kW で、そのときの損失は、鉄損 ${fe} kW、銅損 ${cu} kW である。この変圧器の効率は何 %？`, e, `効率 ＝ 出力 ÷ (出力 ＋ 損失) × 100<br>入力は ${out} + ${fe} + ${cu} = ${T} kW<br>${out} ÷ ${T} × 100 = <span class="ans">${e}</span> %`, {post:'%'}); },
+    function(){ const Qw = pick([2, 5, 10, 20, 50]), Hh = pick([50, 100, 200]), eta = pick([80, 90, 100]), P = rd(9.8 * Qw * Hh * eta / 100);
+      return one(`流量 ${Qw} m³/s、有効落差 ${Hh} m の水力発電所がある。水車と発電機を合わせた効率が ${eta} % のとき、発電できる電力は何 kW？<small>発電できる電力(kW) ＝ 9.8 × 流量 × 有効落差 × 効率</small>`, P, `9.8 × ${Qw} × ${Hh} × ${eta / 100} = <span class="ans">${P}</span> kW`, {post:'kW'}); },
+    function(){ const P = pick([1, 2, 3, 4]), m = pick([10, 20, 30, 40, 50, 60]), dT = pick([20, 30, 40, 50, 60]), t = m * dT / (10 * P); if (!Number.isInteger(t) || t > 240) return null;
+      return one(`${P} kW の電気温水器で、${m} kg の水の温度を ${dT} ℃ 上げたい。熱効率が 70 % のとき、何分かかる？<small>水 1 kg を 1 ℃ 上げるのに 4.2 kJ</small>`, t, `必要な熱量は 4.2 × ${m} × ${dT} = ${rd(4.2 * m * dT)} kJ<br>水に伝わるのは、1 秒に ${P} × 0.7 = ${rd(P * .7)} kJ<br>${rd(4.2 * m * dT)} ÷ ${rd(P * .7)} = ${rd(6 * m * dT / P)} 秒 = <span class="ans">${t}</span> 分`, {post:'分'}); },
+  ],
+  /* ---- 関数：電線の抵抗・電圧降下（比例と反比例） ---- */
+  3: [
+    function(){ const L = pick([10, 20, 50, 100]), r = pick([0.1, 0.2, 0.3, 0.5]), k = pick([2, 3, 4, 5, 10]);
+      return one(`ある電線は、長さ ${L} m で抵抗が ${r} Ω ある。同じ電線 ${L * k} m の抵抗は何 Ω？`, rd(r * k), `電線の抵抗は、長さに比例する<br>長さが ${k} 倍なので、${r} × ${k} = <span class="ans">${rd(r * k)}</span> Ω`, {post:'Ω'}); },
+    function(){ const A = pick([2, 4, 5, 8]), k = pick([2, 3, 4]), R = pick([1.2, 2.4, 3.6, 6]);
+      return one(`断面積 ${A} mm² の電線の抵抗が ${R} Ω だった。同じ材料・同じ長さで、断面積 ${A * k} mm² の電線の抵抗は何 Ω？`, rd(R / k), `電線の抵抗は、断面積に反比例する（太いほど、流れやすい）<br>断面積が ${k} 倍なので、${R} ÷ ${k} = <span class="ans">${rd(R / k)}</span> Ω`, {post:'Ω'}); },
+    function(){ const k = pick([2, 3]), m = pick([1, 2, 3, 6]), v = Q(m, k * k); if (v.d === 1) return null;
+      return one(`電線の直径を ${k} 倍、長さを${m === 1 ? 'そのまま' : ` ${m} 倍`}にすると、抵抗は、もとの何倍になる？<small>分数で答えよう</small>`, v, `直径が ${k} 倍 → 断面積は ${k}² = ${k * k} 倍 → 抵抗は 1/${k * k} 倍${m === 1 ? '' : `<br>長さが ${m} 倍 → 抵抗は ${m} 倍`}<br>${m === 1 ? '答えは ' : `合わせて ${v.n === m ? '' : `${m}/${k * k} = `}`}<span class="ans">${frq(v)}</span> 倍`, {post:'倍', frac:true}); },
+    function(){ const r = pick([0.05, 0.1, 0.15, 0.2, 0.25]), I = pick([10, 20, 30, 40]), v = rd(2 * I * r);
+      return one(`単相2線式の配線で、電線1本の抵抗が ${r} Ω、流れる電流が ${I} A である。電線での電圧降下は何 V？`, v, `単相2線式は、行きと帰りの2本ぶん<br>電圧降下 ＝ 2 × 電流 × 電線1本の抵抗 = 2 × ${I} × ${r} = <span class="ans">${v}</span> V`, {post:'V'}); },
+    function(){ if (Math.random() < .5){ const r = pick([0.05, 0.1, 0.2]), I = pick([10, 20, 25]), Vs = pick([105, 210]), dv = rd(2 * I * r), v = rd(Vs - dv);
+        return one(`単相2線式の配線で、電源の電圧は ${Vs} V、電線1本の抵抗は ${r} Ω、電流は ${I} A である。負荷にかかる電圧は何 V？`, v, `電圧降下は 2 × ${I} × ${r} = ${dv} V<br>${Vs} ${M} ${dv} = <span class="ans">${v}</span> V`, {post:'V'}); }
+      const r = pick([0.1, 0.2, 0.5]), I = pick([10, 20]), v = rd(1.73 * I * r);
+      return one(`三相3線式の配線で、電線1本の抵抗が ${r} Ω、線電流が ${I} A である。電圧降下は何 V？<small>√3 ＝ 1.73 として計算しよう</small>`, v, `三相3線式の電圧降下 ＝ √3 × 電流 × 電線1本の抵抗<br>1.73 × ${I} × ${r} = <span class="ans">${v}</span> V`, {post:'V'}); },
+    function(){ const three = Math.random() < .5, r = pick([0.1, 0.2, 0.5]), I = pick([10, 20, 30]), n = three ? 3 : 2, w1 = rd(I * I * r), w = rd(n * w1);
+      return one(`${three ? '三相3線式' : '単相2線式'}の配線で、電線1本の抵抗が ${r} Ω、${three ? '線電流' : '電流'}が ${I} A である。電線で失われる電力（電力損失）は何 W？`, w, `電線1本の損失は 電流² × 抵抗 = ${I}² × ${r} = ${w1} W<br>電線は ${n} 本なので、${n} × ${w1} = <span class="ans">${w}</span> W`, {post:'W'}); },
+    function(){ if (Math.random() < .6){ const [fq, T] = pick([[50, 20], [100, 10], [200, 5], [25, 40], [500, 2], [1000, 1], [250, 4], [40, 25]]);
+        return Math.random() < .5 ? one(`周波数 ${fq} Hz の交流の周期は何 ms（ミリ秒）？`, T, `周期 ＝ 1 ÷ 周波数<br>1 ÷ ${fq} = ${dsp(1 / fq)} 秒 = <span class="ans">${T}</span> ms`, {post:'ms'})
+          : one(`周期が ${T} ms（ミリ秒）の交流の周波数は何 Hz？`, fq, `周波数 ＝ 1 ÷ 周期<br>1 ÷ ${dsp(T / 1000)} = <span class="ans">${fq}</span> Hz`, {post:'Hz'}); }
+      const fq = pick([50, 60, 100, 400]);
+      return one(`周波数 ${fq} Hz の交流の角周波数 ω は、何π rad/s？`, 2 * fq, `ω ＝ 2π × 周波数 = 2π × ${fq} = <span class="ans">${2 * fq}</span>π rad/s`, {pre:'ω =', post:'π rad/s'}); },
+    function(){ const coil = Math.random() < .5, up = Math.random() < .5, f1 = up ? 50 : 60, f2 = up ? 60 : 50, small = [10, 20, 25, 50], big = [12, 24, 30, 60];
+      const X1 = pick(coil === up ? small : big), X2 = rd(coil ? X1 * f2 / f1 : X1 * f1 / f2);
+      return one(`${coil ? 'コイル' : 'コンデンサ'}のリアクタンスが、${f1} Hz のとき ${X1} Ω だった。${f2} Hz のときは何 Ω？`, X2, coil ? `コイルのリアクタンスは、周波数に比例する<br>${X1} × ${f2} ÷ ${f1} = <span class="ans">${X2}</span> Ω` : `コンデンサのリアクタンスは、周波数に反比例する<br>${X1} × ${f1} ÷ ${f2} = <span class="ans">${X2}</span> Ω`, {post:'Ω'}); },
+    function(){ const [v1, v2, k] = pick([[6.6, 66, 10], [3.3, 6.6, 2], [22, 66, 3], [6.6, 33, 5], [77, 154, 2], [11, 33, 3]]);
+      return one(`同じ電力を、同じ電線で送る。送電の電圧を ${v1} kV から ${v2} kV に上げると、電線で失われる電力は、もとの何分の1になる？<small>力率は同じとする</small>`, k * k, `電圧が ${k} 倍になると、同じ電力を送るための電流は 1/${k} になる<br>損失は 電流² × 抵抗 なので、(1/${k})² = 1/<span class="ans">${k * k}</span>`, {pre:'1 /', ansText:`1/${k * k}`}); },
+  ],
+  /* ---- 図形：交流回路の三角形・三相 ---- */
+  4: [
+    function(){ const [a, b, c] = pick(PYTH), sw = Math.random() < .5, R = sw ? a : b, X = sw ? b : a;
+      return one(`抵抗 ${R} Ω と、リアクタンス ${X} Ω のコイルを直列につないだ交流回路がある。インピーダンスは何 Ω？`, c, `抵抗とリアクタンスを、直角三角形の2辺と考える（三平方の定理）<br>√(${R}² + ${X}²) = √${R * R + X * X} = <span class="ans">${c}</span> Ω`, {post:'Ω'}); },
+    function(){ const [a, b, c] = pick(PYTH), sw = Math.random() < .5, R = sw ? a : b, X = sw ? b : a, V = pick([100, 200]), I = V / c; if (!Number.isInteger(I * 2)) return null;
+      return one(`抵抗 ${R} Ω と、リアクタンス ${X} Ω のコイルを直列につなぎ、交流 ${V} V を加えた。流れる電流は何 A？`, I, `インピーダンスは √(${R}² + ${X}²) = ${c} Ω<br>${V} ÷ ${c} = <span class="ans">${dsp(I)}</span> A`, {post:'A'}); },
+    function(){ const [a, b, c] = pick([[3,4,5],[6,8,10],[12,16,20],[9,12,15]]), sw = Math.random() < .5, R = sw ? a : b, X = sw ? b : a, pf = rd(R / c * 100);
+      return one(`抵抗 ${R} Ω と、リアクタンス ${X} Ω のコイルを直列につないだ交流回路がある。この回路の力率は何 %？`, pf, `インピーダンスは √(${R}² + ${X}²) = ${c} Ω<br>力率 ＝ 抵抗 ÷ インピーダンス = ${R} ÷ ${c} = ${rd(R / c)} → <span class="ans">${pf}</span> %`, {post:'%'}); },
+    function(){ const V = pick([100, 200]), I = pick([5, 10, 15, 20]), pf = pick([60, 80, 90]), P = V * I * pf / 100;
+      return one(`交流 ${V} V の電源に、ある負荷をつなぐと ${I} A の電流が流れた。力率が ${pf} % のとき、消費電力は何 W？`, P, `消費電力 ＝ 電圧 × 電流 × 力率<br>${V} × ${I} × ${pf / 100} = <span class="ans">${P}</span> W`, {post:'W'}); },
+    function(){ const [a, b, c] = pick(PYTH), k = pick([10, 100]), sw = Math.random() < .5, P = (sw ? a : b) * k, Qv = (sw ? b : a) * k, S = c * k;
+      return one(`ある負荷の有効電力は ${P} W、無効電力は ${Qv} var である。皮相電力は何 VA？`, S, `有効電力と無効電力を、直角三角形の2辺と考える<br>√(${P}² + ${Qv}²) = <span class="ans">${S}</span> VA`, {post:'VA'}); },
+    function(){ const [a, b, c] = pick([[3,4,5],[6,8,10],[12,16,20]]), sw = Math.random() < .5, R = sw ? a : b, X = sw ? b : a, V = pick([100, 200]), I = V / c, P = 3 * I * I * R; if (!Number.isInteger(I)) return null;
+      return one(`1相が「抵抗 ${R} Ω とリアクタンス ${X} Ω の直列」である負荷を、Y結線（スター結線）にした。1相にかかる電圧（相電圧）が ${V} V のとき、3相ぜんぶの消費電力は何 W？`, P, `1相のインピーダンスは √(${R}² + ${X}²) = ${c} Ω、電流は ${V} ÷ ${c} = ${I} A<br>電力を使うのは、抵抗だけ。1相で ${I}² × ${R} = ${I * I * R} W<br>3相で 3 × ${I * I * R} = <span class="ans">${P}</span> W`, {post:'W'}); },
+    function(){ const [a, b, c] = pick(PYTH), sw = Math.random() < .5, R = sw ? a : b, X = sw ? b : a, x0 = ri(2, 12), big = X + x0, cap = Math.random() < .5;
+      return one(`抵抗 ${R} Ω、誘導性リアクタンス ${cap ? x0 : big} Ω のコイル、容量性リアクタンス ${cap ? big : x0} Ω のコンデンサを、直列につないだ。インピーダンスは何 Ω？`, c, `コイルとコンデンサのリアクタンスは、打ち消し合う。${big} ${M} ${x0} = ${X} Ω<br>√(${R}² + ${X}²) = <span class="ans">${c}</span> Ω`, {post:'Ω'}); },
+    function(){ const [a, b, c] = pick(PYTH), sw = Math.random() < .5, IR = sw ? a : b, IL = sw ? b : a;
+      return one(`抵抗とコイルを並列につないだ交流回路で、抵抗に ${IR} A、コイルに ${IL} A の電流が流れている。電源から流れ出る電流は何 A？`, c, `抵抗の電流と、コイルの電流は、位相が 90° ずれている。たし算ではなく、直角三角形で考える<br>√(${IR}² + ${IL}²) = <span class="ans">${c}</span> A`, {post:'A'}); },
+    function(){ const [pf, tn, td, tri] = pick([[80, 3, 4, '4 : 3 : 5'], [60, 4, 3, '3 : 4 : 5']]), P = td * pick([3, 5, 6, 10, 15, 20, 25]), Qc = P * tn / td;
+      return one(`消費電力 ${P} kW、力率 ${pf} %（おくれ）の負荷がある。コンデンサを並列につないで、力率を 100 % にしたい。必要なコンデンサの容量は何 kvar？`, Qc, `力率 ${pf} % のとき、有効電力 : 無効電力 : 皮相電力 = ${tri}（直角三角形）<br>無効電力は ${P} × ${tn} ÷ ${td} = ${Qc} kvar。これを、コンデンサで打ち消す<br><span class="ans">${Qc}</span> kvar`, {post:'kvar'}); },
+  ],
+  /* ---- 確率：スイッチの場合の数・測定・需要率 ---- */
+  5: [
+    function(){ const n = ri(3, 7);
+      return one(`入・切のスイッチが ${n} こある。スイッチの入・切の組み合わせは、全部で何通り？`, Math.pow(2, n), `スイッチ1こにつき 2 通り。${n} こなので 2<sup>${n}</sup> = <span class="ans">${Math.pow(2, n)}</span> 通り`, {post:'通り'}); },
+    function(){ const base = pick([100, 101, 102, 105, 200]), d = sample([-4, -3, -2, -1, 0, 1, 2, 3, 4], 5), s = d.reduce((x, y) => x + y, 0); if (s % 5) return null; const xs = d.map(x => base + x);
+      return one(`電圧を 5 回はかったら、${xs.join('、')} V だった。平均は何 V？`, base + s / 5, `(${xs.join(' + ')}) ÷ 5 = ${base * 5 + s} ÷ 5 = <span class="ans">${base + s / 5}</span> V`, {post:'V'}); },
+    function(){ const T = pick([10, 20, 50, 100, 200]), e = pick([-4, -3, -2, -1, 1, 2, 3, 4, 5]), Mv = rd(T * (100 + e) / 100);
+      return one(`真の値が ${T} V の電圧を、ある電圧計ではかったら ${Mv} V だった。この電圧計の誤差は、真の値の何 %？<small>大きく出ているときはプラス、小さく出ているときはマイナスで答えよう</small>`, e, `誤差率 ＝ (測定値 ${M} 真の値) ÷ 真の値 × 100<br>(${Mv} ${M} ${T}) ÷ ${T} × 100 = <span class="ans">${f(e)}</span> %`, {post:'%'}); },
+    function(){ const cap = pick([20, 40, 50, 80, 100, 200]), r = pick([40, 50, 60, 70, 80]), mx = cap * r / 100;
+      return one(`設備容量（全部の機器を合わせた容量）が ${cap} kW の工場で、最大需要電力は ${mx} kW だった。需要率は何 %？`, r, `需要率 ＝ 最大需要電力 ÷ 設備容量 × 100<br>${mx} ÷ ${cap} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const mx = pick([20, 40, 50, 100]), r = pick([25, 40, 50, 60, 75]), avg = mx * r / 100, E = avg * 24;
+      return one(`ある工場の1日の使用電力量は ${E} kWh、最大電力は ${mx} kW だった。この日の負荷率は何 %？`, r, `平均電力は ${E} ÷ 24 = ${avg} kW<br>負荷率 ＝ 平均電力 ÷ 最大電力 × 100 = ${avg} ÷ ${mx} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const a = pick([20, 30, 40, 50, 60]), b = pick([20, 30, 40, 50, 60]), u = pick([1.2, 1.25, 1.5, 1.6]), tot = rd((a + b) / u); if (a === b || !Number.isInteger(tot) || tot < Math.max(a, b)) return null;
+      return one(`A 工場の最大電力は ${a} kW、B 工場の最大電力は ${b} kW である。2つの工場を合わせたときの最大電力（合成最大電力）は ${tot} kW だった。不等率は？`, u, `不等率 ＝ それぞれの最大電力の合計 ÷ 合成最大電力<br>(${a} + ${b}) ÷ ${tot} = <span class="ans">${u}</span><br>最大になる時刻がずれているので、合成最大電力は、合計より小さくなる`); },
+    function(){ const [t, n, fn] = pick(SWITCHES), N = Math.pow(2, n); let c = 0; for (let i = 0; i < N; i++) if (fn(Array.from({length:n}, (_, k) => !!(i >> k & 1)))) c++;
+      return one(`電池とランプの間に、${t}。スイッチの入・切の組み合わせ ${N} 通りのうち、ランプがつくのは何通り？`, c, `直列は「両方とも入」のときにつながる。並列は「どれかが入」のときにつながる<br>${N} 通りを、1つずつ調べる（つかないほうを数えて、${N} から引いてもよい）<br><span class="ans">${c}</span> 通り`, {post:'通り'}); },
+    function(){ const p = pick([0.1, 0.2, 0.3]), ser = Math.random() < .5, ok = rd(1 - p);
+      return ser ? one(`1こが切れている確率が ${p} の電球を、2こ直列につないだ。2こともつく（どちらも切れていない）確率は？<small>小数で答えよう</small>`, rd(ok * ok), `1こが切れていない確率は 1 ${M} ${p} = ${ok}<br>直列は、2こともぶじでないと、つかない。${ok} × ${ok} = <span class="ans">${rd(ok * ok)}</span>`)
+        : one(`1こが切れている確率が ${p} の電球を、2こ並列につないだ。少なくとも1こはつく確率は？<small>小数で答えよう</small>`, rd(1 - p * p), `「2こともつかない」確率は ${p} × ${p} = ${rd(p * p)}<br>1 ${M} ${rd(p * p)} = <span class="ans">${rd(1 - p * p)}</span>`); },
+    function(){ const cap = pick([50, 100, 200, 500]), dr = pick([40, 50, 60, 80]), lr = pick([25, 50, 75]), mx = cap * dr / 100, avg = mx * lr / 100, E = avg * 24; if (!Number.isInteger(avg)) return null;
+      return one(`設備容量 ${cap} kW の工場がある。需要率が ${dr} %、負荷率が ${lr} % のとき、1日（24時間）の使用電力量は何 kWh？`, E, `最大需要電力は ${cap} × ${dr / 100} = ${mx} kW<br>平均電力は ${mx} × ${lr / 100} = ${avg} kW<br>${avg} × 24 = <span class="ans">${E}</span> kWh`, {post:'kWh'}); },
+  ],
+};
+
+/* ============ 情報コース（初級＝ITパスポート／中級＝基本情報技術者／上級＝応用情報技術者） ============ */
+const LOGIC3 = [['(A OR B) AND (NOT C)', (a, b, c) => (a || b) && !c], ['(A AND B) OR C', (a, b, c) => (a && b) || c], ['A AND (B OR C)', (a, b, c) => a && (b || c)], ['(A XOR B) AND C', (a, b, c) => (a !== b) && c],
+  ['(A XOR B) OR C', (a, b, c) => (a !== b) || c], ['NOT (A AND B) AND C', (a, b, c) => !(a && b) && c], ['(NOT A) OR (B AND C)', (a, b, c) => !a || (b && c)], ['A XOR B XOR C', (a, b, c) => (a !== b) !== c], ['NOT (A OR B) OR C', (a, b, c) => !(a || b) || c]];
+const pow2sum = b => [...b].map((c, i) => c === '1' ? Math.pow(2, b.length - 1 - i) : 0).filter(Boolean).join(' + ');      // 1011 → 8 + 2 + 1
+PGEN.joh = {
+  /* ---- 計算：2進数・ビットの計算 ---- */
+  1: [
+    function(){ const n = ri(5, 31), b = b2(n); if (!b.slice(1).includes('1')) return null;
+      return one(`2進数の ${b} を、10進数になおすと？`, n, `右から 1、2、4、8、16 の位<br>${pow2sum(b)} = <span class="ans">${n}</span>`); },
+    function(){ const n = ri(5, 31), b = b2(n); if (!b.slice(1).includes('1')) return null;
+      return one(`10進数の ${n} を、2進数になおすと？`, +b, `「16・8・4・2・1」に分ける（または、2 でわって、あまりを下から読む）<br>${n} = ${pow2sum(b)} → <span class="ans">${b}</span>`, {ansText:b}); },
+    function(){ const hi = ri(1, 15), lo = ri(0, 15), n = hi * 16 + lo, h = n.toString(16).toUpperCase(); if (!/[A-F]/.test(h)) return null;
+      return one(`16進数の ${h} を、10進数になおすと？<small>16進数では、A＝10、B＝11、C＝12、D＝13、E＝14、F＝15</small>`, n, `左のけたは 16 の位、右のけたは 1 の位。${h[0]} は ${hi}、${h[1]} は ${lo}<br>${hi} × 16 + ${lo} = <span class="ans">${n}</span>`); },
+    function(){ const a = ri(5, 15), b = ri(3, 15), s = a + b;
+      return one(`2進数のたし算をしよう。答えも、2進数で。${expr(`${b2(a, 4)} + ${b2(b, 4)}`)}`, +b2(s), `10進数になおすと ${a} + ${b} = ${s}。これを2進数にもどすと <span class="ans">${b2(s)}</span><br>（筆算なら、1 + 1 = 10 で、くり上がる）`, {ansText:b2(s)}); },
+    function(){ const n = ri(1, 100), b = b2(256 - n, 8);
+      return one(`8ビットの「2の補数」で表した ${b} は、10進数でいくつ？<small>いちばん左のビットが 1 のときは、マイナスの数</small>`, -n, `ビットをぜんぶ反転して、1 を足すと、マイナスを取った数になる<br>${b} → 反転 ${b2(n - 1, 8)} → 1 を足して ${b2(n, 8)} = ${n}<br>答えは <span class="ans">${M}${n}</span>`); },
+    function(){ const a = ri(1, 4), plus = Math.random() < .5, k = Math.pow(2, a) + (plus ? 1 : -1); if (k < 3) return null;
+      return one(`ある数 x を、左に ${a} ビットシフトしたもの${plus ? 'に、x を足した' : 'から、x を引いた'}。結果は、x の何倍？<small>けたあふれは、起きないものとする</small>`, k, `左に ${a} ビットシフトすると、2<sup>${a}</sup> = ${Math.pow(2, a)} 倍になる<br>${Math.pow(2, a)}x ${plus ? '+' : M} x = <span class="ans">${k}</span>x`, {post:'倍'}); },
+    function(){ const [d, b] = pick([[0.5, '0.1'], [0.25, '0.01'], [0.75, '0.11'], [0.125, '0.001'], [0.375, '0.011'], [0.625, '0.101'], [0.875, '0.111'], [2.5, '10.1'], [5.75, '101.11'], [3.375, '11.011'], [6.25, '110.01'], [1.625, '1.101']]);
+      return Math.random() < .5 ? one(`10進数の ${d} を、2進数になおすと？`, +b, `小数点より右は、1/2（0.5）、1/4（0.25）、1/8（0.125）の位<br>${d} → <span class="ans">${b}</span>`, {ansText:b})
+        : one(`2進数の ${b} を、10進数になおすと？`, d, `小数点より右は、1/2（0.5）、1/4（0.25）、1/8（0.125）の位<br>${b} → <span class="ans">${d}</span>`); },
+    function(){ const pfx = ri(24, 30), h = Math.pow(2, 32 - pfx) - 2;
+      return one(`IPv4 のネットワーク 192.168.1.0/${pfx} で、機器に割り当てられるアドレス（ホストアドレス）は何こ？`, h, `ホスト部は 32 ${M} ${pfx} = ${32 - pfx} ビット。2<sup>${32 - pfx}</sup> = ${Math.pow(2, 32 - pfx)} こ<br>ネットワークアドレスとブロードキャストアドレスの 2 こは使えないので、<span class="ans">${h}</span> こ`, {post:'こ'}); },
+    function(){ const a = ri(130, 250), b = ri(60, 250), s = a + b; if (s < 256 || s > 500) return null;
+      return one(`8ビットの符号なし整数（0〜255）で、${a} + ${b} を計算した。けたあふれした分は、捨てられる。結果はいくつ？`, s - 256, `${a} + ${b} = ${s}。8ビットに入るのは、255 まで<br>あふれた 256 が消えるので、${s} ${M} 256 = <span class="ans">${s - 256}</span>（256 でわったあまり）`); },
+  ],
+  /* ---- 式：論理演算・稼働率 ---- */
+  2: [
+    function(){ const a = ri(3, 14), b = ri(3, 14), and = Math.random() < .5, r = and ? (a & b) : (a | b); if (a === b) return null;
+      return one(`2進数どうしの論理演算をしよう。答えも、2進数で。${expr(`${b2(a, 4)} ${and ? 'AND' : 'OR'} ${b2(b, 4)}`)}<small>${and ? 'AND：両方が 1 のけただけ、1 になる' : 'OR：どちらかが 1 のけたは、1 になる'}</small>`, +b2(r), `けたごとに、くらべる<br>${b2(a, 4)} ${and ? 'AND' : 'OR'} ${b2(b, 4)} = <span class="ans">${b2(r, 4)}</span>`, {ansText:b2(r, 4)}); },
+    function(){ const a = ri(3, 14), b = ri(3, 14), r = a ^ b; if (a === b) return null;
+      return one(`2進数どうしの論理演算をしよう。答えも、2進数で。${expr(`${b2(a, 4)} XOR ${b2(b, 4)}`)}<small>XOR（排他的論理和）：2つがちがうけただけ、1 になる</small>`, +b2(r), `けたごとにくらべて、ちがうところが 1<br>${b2(a, 4)} XOR ${b2(b, 4)} = <span class="ans">${b2(r, 4)}</span>`, {ansText:b2(r, 4)}); },
+    function(){ const [up, dn] = pick([[90, 10], [190, 10], [480, 20], [99, 1], [45, 5], [196, 4], [240, 10], [380, 20], [970, 30], [72, 8], [160, 40]]), r = rd(up / (up + dn) * 100);
+      return one(`ある装置は、平均 ${up} 時間動くと故障して、修理に平均 ${dn} 時間かかる。この装置の稼働率は何 %？`, r, `稼働率 ＝ 動いている時間 ÷ 全体の時間（MTBF ÷ (MTBF ＋ MTTR)）<br>${up} ÷ (${up} + ${dn}) = ${rd(up / (up + dn))} → <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const a = pick([0.9, 0.8, 0.7, 0.95]), b = pick([0.9, 0.8, 0.7, 0.6]), r = rd(a * b);
+      return one(`稼働率 ${a} の装置 A と、稼働率 ${b} の装置 B を、直列につないだ（両方が動いていないと、システムは止まる）。システム全体の稼働率は？<small>小数で答えよう</small>`, r, `直列は、かけ算<br>${a} × ${b} = <span class="ans">${r}</span>`); },
+    function(){ const a = pick([0.9, 0.8, 0.7]), b = pick([0.9, 0.8, 0.7, 0.6]), r = rd(1 - (1 - a) * (1 - b));
+      return one(`稼働率 ${a} の装置 A と、稼働率 ${b} の装置 B を、並列につないだ（どちらかが動いていれば、システムは動く）。システム全体の稼働率は？<small>小数で答えよう</small>`, r, `「両方とも止まっている」確率を、1 から引く<br>1 ${M} (1 ${M} ${a}) × (1 ${M} ${b}) = 1 ${M} ${rd(1 - a)} × ${rd(1 - b)} = <span class="ans">${r}</span>`); },
+    function(){ const vr = pick([20, 25, 40, 50, 60, 75, 80]), fix = pick([100, 200, 300, 400, 600, 900, 1200]), bep = fix * 100 / (100 - vr); if (!Number.isInteger(bep) || !Number.isInteger(bep * vr / 100)) return null;
+      return one(`ある会社の固定費は ${fix} 万円、変動費率（売上のうち、変動費がしめる割合）は ${vr} % である。損益分岐点の売上高は何万円？`, bep, `損益分岐点 ＝ 固定費 ÷ (1 ${M} 変動費率)<br>${fix} ÷ (1 ${M} ${vr / 100}) = ${fix} ÷ ${rd(1 - vr / 100)} = <span class="ans">${bep}</span> 万円<br>たしかめ：売上 ${bep} ${M} 変動費 ${bep * vr / 100} ${M} 固定費 ${fix} = 0`, {post:'万円'}); },
+    function(){ const a = pick([0.9, 0.8]), b = pick([0.9, 0.8, 0.7, 0.5]), pp = rd(1 - (1 - b) * (1 - b)), r = rd(a * pp);
+      return one(`稼働率 ${a} の装置 A と、「稼働率 ${b} の装置 B を 2 台、並列にしたもの」を、直列につないだ。システム全体の稼働率は？<small>小数で答えよう</small>`, r, `並列の部分は 1 ${M} (1 ${M} ${b})² = 1 ${M} ${rd((1 - b) * (1 - b))} = ${pp}<br>直列は、かけ算。${a} × ${pp} = <span class="ans">${r}</span>`); },
+    function(){ if (Math.random() < .35){ const and = Math.random() < .5;
+        return mc(`論理式 ${and ? 'NOT (A AND B)' : 'NOT (A OR B)'} と、いつも同じ値になるのはどれ？`, and ? '(NOT A) OR (NOT B)' : '(NOT A) AND (NOT B)', [and ? '(NOT A) AND (NOT B)' : '(NOT A) OR (NOT B)', and ? 'A OR B' : 'A AND B', and ? '(NOT A) AND B' : '(NOT A) OR B'], `ド・モルガンの法則：NOT を中に入れると、AND と OR が入れかわる<br>${and ? 'NOT (A AND B) ＝ (NOT A) OR (NOT B)' : 'NOT (A OR B) ＝ (NOT A) AND (NOT B)'}`); }
+      const [t, fn] = pick(LOGIC3), rows = []; for (let i = 0; i < 8; i++){ const a = !!(i & 4), b = !!(i & 2), c = !!(i & 1); if (fn(a, b, c)) rows.push(`(${+a}, ${+b}, ${+c})`); }
+      return one(`A・B・C は、それぞれ 0 か 1。次の論理式の値が 1 になる (A, B, C) の組は、8 通りのうち何通り？${seqBox(t)}`, rows.length, `8 通りを、1つずつ調べる。1 になるのは ${rows.join('、')}<br><span class="ans">${rows.length}</span> 通り`, {post:'通り'}); },
+    function(){ const p = pick([0.9, 0.8, 0.7, 0.5]), q = rd(1 - p), r = rd(3 * p * p * q + p * p * p);
+      return one(`稼働率 ${p} の装置が 3 台ある。3 台のうち 2 台以上が動いていれば、システムは動く。システム全体の稼働率は？<small>小数で答えよう</small>`, r, `3 台とも動く：${p}³ = ${rd(p * p * p)}<br>ちょうど 2 台が動く：3 × ${p}² × ${q} = ${rd(3 * p * p * q)}（止まる 1 台のえらび方が 3 通り）<br>合わせて <span class="ans">${r}</span>`); },
+  ],
+  /* ---- 関数：計算量・データの量・通信 ---- */
+  3: [
+    function(){ const w = pick([100, 200, 400, 500, 800]), h = pick([100, 200, 300, 500]), bpp = pick([1, 3]), kb = w * h * bpp / 1000;
+      return one(`横 ${w} 画素 × たて ${h} 画素の画像がある。1 画素を ${bpp} バイトで表すとき、データの量は何 kバイト？<small>1 kバイト ＝ 1000 バイトとする。圧縮はしない</small>`, kb, `${w} × ${h} × ${bpp} = ${w * h * bpp} バイト = <span class="ans">${kb}</span> kバイト`, {post:'kバイト'}); },
+    function(){ const sp = pick([8, 16, 20, 40, 80, 100]), mb = pick([5, 10, 20, 25, 50, 100]), t = mb * 8 / sp; if (!Number.isInteger(t)) return null;
+      return one(`${mb} Mバイトのファイルを、${sp} Mビット/秒の回線で送る。何秒かかる？<small>1 バイト ＝ 8 ビット</small>`, t, `ファイルは ${mb} × 8 = ${mb * 8} Mビット<br>${mb * 8} ÷ ${sp} = <span class="ans">${t}</span> 秒`, {post:'秒'}); },
+    function(){ const sp = pick([10, 20, 50, 100]), ef = pick([50, 80]), mb = pick([10, 25, 50, 100, 200]), t = mb * 8 / (sp * ef / 100); if (!Number.isInteger(t)) return null;
+      return one(`${mb} Mバイトのファイルを、${sp} Mビット/秒の回線で送る。回線の伝送効率が ${ef} % のとき、何秒かかる？<small>1 バイト ＝ 8 ビット</small>`, t, `じっさいに送れるのは ${sp} × ${ef / 100} = ${sp * ef / 100} Mビット/秒<br>ファイルは ${mb} × 8 = ${mb * 8} Mビット<br>${mb * 8} ÷ ${sp * ef / 100} = <span class="ans">${t}</span> 秒`, {post:'秒'}); },
+    function(){ const n = pick([30, 60, 100, 250, 500, 1000, 2000, 4000]), k = Math.floor(Math.log2(n)) + 1;
+      return one(`小さい順にならんだ ${n} このデータから、二分探索で、1つのデータをさがす。くらべる回数は、最大で何回？`, k, `1回くらべるごとに、さがす範囲が半分になる<br>2<sup>${k - 1}</sup> = ${Math.pow(2, k - 1)} ≦ ${n} ＜ 2<sup>${k}</sup> = ${Math.pow(2, k)} なので、最大 <span class="ans">${k}</span> 回`, {post:'回'}); },
+    function(){ const n = ri(5, 12), c = n * (n - 1) / 2;
+      return one(`${n} このデータを、バブルソート（となりどうしをくらべて、入れかえる）で、小さい順にならべる。くらべる回数は、全部で何回？<small>とちゅうでやめずに、さいごまでくらべるものとする</small>`, c, `1 回めは ${n - 1} 回、2 回めは ${n - 2} 回、…、さいごは 1 回<br>${n - 1} + ${n - 2} + … + 1 = ${n} × ${n - 1} ÷ 2 = <span class="ans">${c}</span> 回`, {post:'回'}); },
+    function(){ const [ns, mips] = pick([[10, 100], [20, 50], [25, 40], [50, 20], [100, 10], [5, 200], [4, 250], [2, 500], [40, 25], [8, 125]]);
+      return one(`1 つの命令を実行するのに、平均 ${ns} ナノ秒かかるコンピュータがある。このコンピュータの性能は何 MIPS？<small>MIPS：1 秒間に実行できる命令の数を、100 万こを単位にして表したもの。1 ナノ秒 ＝ 10 億分の 1 秒</small>`, mips, `1 秒 ＝ 10 億ナノ秒。1 秒間に 10 億 ÷ ${ns} = ${rd(1000 / ns)} × 100 万この命令<br><span class="ans">${mips}</span> MIPS`, {post:'MIPS'}); },
+    function(){ const k = pick([2, 3, 4, 10]), [o, e] = pick([['n²', 2], ['n³', 3]]), r = Math.pow(k, e);
+      if (Math.random() < .5){ const n0 = pick([100, 1000]), t0 = pick([1, 2, 5]); return one(`計算量が O(${o}) のアルゴリズムで、データ ${n0} このときに ${t0} 秒かかった。データが ${n0 * k} こになると、およそ何秒かかる？`, t0 * r, `データが ${k} 倍になると、時間は ${k}<sup>${e}</sup> = ${r} 倍<br>${t0} × ${r} = <span class="ans">${t0 * r}</span> 秒`, {post:'秒'}); }
+      return one(`計算量が O(${o}) のアルゴリズムがある。データの数 n が ${k} 倍になると、計算にかかる時間は、およそ何倍になる？`, r, `${o} の n を ${k} 倍にすると、${k}<sup>${e}</sup> = <span class="ans">${r}</span> 倍`, {post:'倍'}); },
+    function(){ const fs = pick([8, 16, 32, 48]), bits = pick([8, 16]), ch = pick([1, 2]), sec = pick([5, 10, 20, 30, 60]), bps = fs * 1000 * bits / 8 * ch, kb = bps * sec / 1000;
+      return one(`音声を、サンプリング周波数 ${fs} kHz、量子化ビット数 ${bits} ビット、${ch === 1 ? 'モノラル（1 チャンネル）' : 'ステレオ（2 チャンネル）'}で、${sec} 秒間記録する。データの量は何 kバイト？<small>1 kバイト ＝ 1000 バイトとする。圧縮はしない</small>`, kb, `1 秒に ${fs * 1000} 回 × ${bits / 8} バイト × ${ch} チャンネル = ${bps} バイト<br>${sec} 秒で ${bps * sec} バイト = <span class="ans">${kb}</span> kバイト`, {post:'kバイト'}); },
+    function(){ const fq = pick([1, 2, 4, 5]), cpi = pick([2, 4, 5, 8]), N = pick([1, 2, 5, 10, 20]), t = rd(N * cpi / (10 * fq)); if (!Number.isInteger(rd(t * 10))) return null;
+      return one(`クロック周波数 ${fq} GHz の CPU で、${N} 億この命令を実行する。1 命令に、平均 ${cpi} クロックかかるとき、実行時間は何秒？<small>1 GHz ＝ 1 秒間に 10 億クロック</small>`, t, `必要なクロックは ${N} 億 × ${cpi} = ${N * cpi} 億<br>1 秒間のクロックは ${fq * 10} 億<br>${N * cpi} ÷ ${fq * 10} = <span class="ans">${t}</span> 秒`, {post:'秒'}); },
+  ],
+  /* ---- 図形：木・グラフ・日程の図 ---- */
+  4: [
+    function(){ const L = 'ABCDEFGHIJ', c1 = ri(0, 3), c2 = c1 + ri(1, 4), r1 = ri(1, 5), r2 = r1 + ri(1, 8), n = (c2 - c1 + 1) * (r2 - r1 + 1);
+      return one(`表計算ソフトで、セル ${L[c1]}${r1} からセル ${L[c2]}${r2} までの、長方形の範囲をえらんだ。えらんだセルは何こ？`, n, `列は ${L[c1]}〜${L[c2]} の ${c2 - c1 + 1} 列、行は ${r1}〜${r2} の ${r2 - r1 + 1} 行<br>${c2 - c1 + 1} × ${r2 - r1 + 1} = <span class="ans">${n}</span> こ`, {post:'こ'}); },
+    function(){ const n = ri(4, 10), e = n * (n - 1) / 2;
+      return one(`${n} 台のコンピュータを、どの 2 台も、1 本のケーブルで直接つなぐ。ケーブルは何本いる？`, e, `1 台から、ほかの ${n - 1} 台へ。${n} × ${n - 1} = ${n * (n - 1)} 本だが、同じケーブルを 2 回数えている<br>${n * (n - 1)} ÷ 2 = <span class="ans">${e}</span> 本`, {post:'本'}); },
+    function(){ const dpi = pick([100, 200, 300, 600]), w = ri(2, 8), h = ri(2, 10), px = dpi * dpi * w * h / 10000;
+      return one(`スキャナで、横 ${w} インチ × たて ${h} インチの写真を、解像度 ${dpi} dpi で読み取る。画素の数は何万画素？<small>dpi：1 インチあたりの点（画素）の数</small>`, px, `横 ${w} × ${dpi} = ${w * dpi} 画素、たて ${h} × ${dpi} = ${h * dpi} 画素<br>${w * dpi} × ${h * dpi} = ${w * dpi * h * dpi} 画素 = <span class="ans">${px}</span> 万画素`, {post:'万画素'}); },
+    function(){ const d = ri(2, 6), n = Math.pow(2, d + 1) - 1;
+      return Math.random() < .5 ? one(`根の深さを 0 とする。深さ ${d} まで、すきまなくつまった 2 分木（完全 2 分木）がある。ノード（節）は、全部で何こ？`, n, `深さ 0 に 1 こ、深さ 1 に 2 こ、深さ 2 に 4 こ…と、2 倍ずつふえる<br>1 + 2 + 4 + … + 2<sup>${d}</sup> = 2<sup>${d + 1}</sup> ${M} 1 = <span class="ans">${n}</span> こ`, {post:'こ'})
+        : one(`葉（いちばん下のノード）が ${Math.pow(2, d)} こある、完全 2 分木がある。ノード（節）は、全部で何こ？<small>完全 2 分木：どの葉も同じ深さで、葉でないノードは、子を 2 つ持つ</small>`, n, `葉が ${Math.pow(2, d)} こ → その上は ${Math.pow(2, d - 1)} こ → … → 根は 1 こ<br>${Math.pow(2, d)} + ${Math.pow(2, d - 1)} + … + 1 = 2 × ${Math.pow(2, d)} ${M} 1 = <span class="ans">${n}</span> こ`, {post:'こ'}); },
+    function(){ const isQ = Math.random() < .5, vals = sample([1, 2, 3, 4, 5, 6, 7, 8, 9], 5), ops = []; let vi = 0, size = 0;
+      for (let i = 0; i < 6; i++){ if (size > 0 && Math.random() < .4){ ops.push(0); size--; } else if (vi < 5){ ops.push(vals[vi++]); size++; } }
+      if (!size) return null; ops.push(0);
+      // スタックは、さいごの2回がつづけて pop になるものだけ（さいごに入れた数を答えるだけの問題にしない）
+      if (ops.filter(o => !o).length < 2 || (!isQ && ops[ops.length - 2] !== 0)) return null;
+      const run = q => { const s = []; let last = null; ops.forEach(o => { if (o) s.push(o); else last = q ? s.shift() : s.pop(); }); return last; };
+      const a = run(isQ); if (a === run(!isQ)) return null;
+      const nm = o => o ? `${isQ ? 'enq' : 'push'} ${o}` : (isQ ? 'deq' : 'pop');
+      return one(`${isQ ? 'キュー（先に入れたものから、先に出す）' : 'スタック（あとに入れたものから、先に出す）'}に、次の順で操作をした。さいごの ${isQ ? 'deq' : 'pop'} で取り出されるデータは？${seqBox(ops.map(nm).join(' → '))}<small>${isQ ? 'enq 数：その数を入れる<br>deq：データを 1 つ取り出す' : 'push 数：その数をつむ<br>pop：データを 1 つ取り出す'}</small>`, a, `${isQ ? 'キューは、入れた順に出てくる（先入れ先出し）' : 'スタックは、いちばん上（さいごに入れて、まだ残っているもの）から出てくる（後入れ先出し）'}<br>順に追っていくと、さいごに取り出されるのは <span class="ans">${a}</span>`); },
+    function(){ const N = {A:[30, 92], B:[112, 32], C:[112, 152], D:[196, 32], E:[262, 92]}, es = [['A', 'B'], ['A', 'C'], ['B', 'C'], ['B', 'D'], ['C', 'D'], ['C', 'E'], ['D', 'E']].map(([u, v]) => [u, v, ri(1, 9)]);
+      const w = (u, v) => { const e = es.find(x => (x[0] === u && x[1] === v) || (x[1] === u && x[0] === v)); return e ? e[2] : null; };
+      // A から E までの道すじを、ぜんぶ数え上げる（同じ点は2回通らない）
+      const all = []; (function go(p, len){ const u = p[p.length - 1]; if (u === 'E'){ all.push([len, p]); return; } 'ABCDE'.split('').forEach(v => { if (!p.includes(v) && w(u, v) != null) go(p.concat(v), len + w(u, v)); }); })(['A'], 0);
+      all.sort((x, y) => x[0] - y[0]); if (all[0][0] === all[1][0] || all[0][1].length < 4) return null;      // いちばん短い道が1つだけで、3本以上の線を通るもの
+      const best = all[0][1];
+      return one(`A から E まで行く。線の数字は、道のり。いちばん短い道のりは？${netSVG(N, es)}`, all[0][0], `道すじを、ぜんぶくらべる。いちばん短いのは ${best.join(' → ')}<br>${best.slice(1).map((v, i) => w(best[i], v)).join(' + ')} = <span class="ans">${all[0][0]}</span>（2番めに短いのは ${all[1][1].join(' → ')} の ${all[1][0]}）`); },
+    function(){ const a = ri(2, 9), b = ri(2, 9), c = ri(2, 9), d = ri(1, 9);
+      const [t, v, inf] = pick([[`${a} ${b} + ${c} ×`, (a + b) * c, `(${a} + ${b}) × ${c}`], [`${a} ${b} ${c} × +`, a + b * c, `${a} + ${b} × ${c}`], [`${a} ${b} + ${c} ${d} + ×`, (a + b) * (c + d), `(${a} + ${b}) × (${c} + ${d})`], [`${a} ${b} × ${c} ${d} × +`, a * b + c * d, `${a} × ${b} + ${c} × ${d}`], [`${a + b} ${b} ${M} ${c} ×`, a * c, `(${a + b} ${M} ${b}) × ${c}`], [`${a} ${b} ${c} + ×`, a * (b + c), `${a} × (${b} + ${c})`]]);
+      return one(`逆ポーランド記法（後置記法）で書かれた、次の式を計算しよう。${seqBox(t)}<small>数を 2 つ書いたあとに、演算子を書く。「3 4 +」は、3 + 4 のこと</small>`, v, `左から読んで、演算子が出たら、その前の 2 つの数を計算する<br>ふつうの式になおすと ${inf} = <span class="ans">${v}</span>`); },
+    function(){ const A = ri(2, 6), B = ri(2, 6), C = ri(2, 6), D = ri(2, 6), E = ri(2, 5), c = A + C, d = Math.max(A, B) + D, T = Math.max(c, d) + E; if (c === d || A === B) return null;
+      return one(`5 つの作業 A〜E がある。全部の作業が終わるのは、最短で何日後？<small>A（${A} 日）と B（${B} 日）は、はじめから同時に始められる<br>C（${C} 日）は、A が終わってから<br>D（${D} 日）は、A と B の両方が終わってから<br>E（${E} 日）は、C と D の両方が終わってから</small>`, T, `C が終わるのは ${A} + ${C} = ${c} 日後<br>D が始まるのは ${Math.max(A, B)} 日後、終わるのは ${Math.max(A, B)} + ${D} = ${d} 日後<br>E は ${Math.max(c, d)} 日後に始まり、${Math.max(c, d)} + ${E} = <span class="ans">${T}</span> 日後に終わる（いちばん長い道すじ＝クリティカルパス）`, {post:'日後'}); },
+    function(){ const A = ri(2, 6), B = ri(2, 6), C = ri(2, 6), D = ri(2, 6), E = ri(2, 5), c = A + C, d = Math.max(A, B) + D; if (c === d) return null; const late = c < d ? 'C' : 'D', s = Math.abs(c - d);
+      return one(`5 つの作業 A〜E がある。作業 ${late} は、何日までおくれても、全体が終わる日は変わらない？<small>A（${A} 日）と B（${B} 日）は、はじめから同時に始められる<br>C（${C} 日）は、A が終わってから<br>D（${D} 日）は、A と B の両方が終わってから<br>E（${E} 日）は、C と D の両方が終わってから</small>`, s, `C が終わるのは ${A} + ${C} = ${c} 日後、D が終わるのは ${Math.max(A, B)} + ${D} = ${d} 日後<br>E は、おそいほうの ${Math.max(c, d)} 日後に始まる<br>${late} は、${Math.max(c, d)} ${M} ${Math.min(c, d)} = <span class="ans">${s}</span> 日おくれても、E の始まりは変わらない（余裕日数）`, {post:'日'}); },
+  ],
+  /* ---- 確率：確率・期待値・待ち行列 ---- */
+  5: [
+    function(){ const k = ri(0, 2);
+      if (k === 0){ const n = ri(3, 5); return one(`0〜9 の数字だけを使う、${n} けたの暗証番号は、全部で何通り？<small>同じ数字を、何回使ってもよい</small>`, Math.pow(10, n), `1 けたにつき 10 通り。10<sup>${n}</sup> = <span class="ans">${Math.pow(10, n)}</span> 通り`, {post:'通り'}); }
+      if (k === 1) return one(`英字の小文字（a〜z の 26 種類）だけを使う、2 文字のパスワードは、全部で何通り？<small>同じ文字を、2 回使ってもよい</small>`, 676, `26 × 26 = <span class="ans">676</span> 通り`, {post:'通り'});
+      const n = ri(2, 3); return one(`英字の小文字 26 種類と、数字 10 種類を使う、${n} 文字のパスワードは、全部で何通り？<small>同じ文字を、何回使ってもよい</small>`, Math.pow(36, n), `1 文字につき 26 + 10 = 36 通り。36<sup>${n}</sup> = <span class="ans">${Math.pow(36, n)}</span> 通り`, {post:'通り'}); },
+    function(){ const a = pick([0.1, 0.2, 0.3, 0.05]), b = pick([0.1, 0.2, 0.4, 0.5]), r = rd(a * b);
+      return one(`サーバ A が故障する確率は ${a}、サーバ B が故障する確率は ${b} である。2 台が同時に故障する確率は？<small>2 台の故障は、たがいに関係しない（独立）とする。小数で答えよう</small>`, r, `独立なできごとが、両方とも起きる確率は、かけ算<br>${a} × ${b} = <span class="ans">${r}</span>`); },
+    function(){ const p = pick([1, 2, 5, 10, 20]), loss = pick([100, 200, 500, 1000, 2000]), ev = p * loss / 100;
+      return one(`ある障害は、1 年間に ${p} % の確率で起きる。起きたときの損害は ${loss} 万円である。1 年あたりの損害の期待値は何万円？`, ev, `期待値 ＝ 起きる確率 × 損害の大きさ<br>${p / 100} × ${loss} = <span class="ans">${ev}</span> 万円`, {post:'万円'}); },
+    function(){ const n = ri(5, 20), k = n * (n - 1) / 2;
+      return one(`${n} 人が、共通鍵暗号方式で、たがいに秘密の通信をする。どの 2 人の組にも、別べつの鍵がいる。鍵は、全部で何こ必要？`, k, `${n} 人から 2 人をえらぶ組み合わせの数だけ、鍵がいる<br>${n} × ${n - 1} ÷ 2 = <span class="ans">${k}</span> こ（公開鍵暗号方式なら、1 人につき 2 こ、合わせて ${2 * n} こですむ）`, {post:'こ'}); },
+    function(){ const p = pick([0.1, 0.2, 0.5]), n = pick([2, 3]), r = rd(1 - Math.pow(p, n));
+      return one(`故障している確率が ${p} のサーバが ${n} 台ある。少なくとも 1 台が動いている確率は？<small>それぞれの故障は、独立とする。小数で答えよう</small>`, r, `「${n} 台とも故障している」確率は ${p}<sup>${n}</sup> = ${rd(Math.pow(p, n))}<br>1 ${M} ${rd(Math.pow(p, n))} = <span class="ans">${r}</span>`); },
+    function(){ if (Math.random() < .5){ const m = pick([50, 55, 60, 65]), s = pick([5, 10, 20]), z = pick([-2, -1.5, -1, -.5, .5, 1, 1.5, 2]), x = m + s * z; if (!Number.isInteger(x) || x > 100 || x < 0) return null;
+        return one(`あるテストの平均点は ${m} 点、標準偏差は ${s} 点だった。${x} 点を取った人の偏差値は？<small>偏差値 ＝ 50 ＋ 10 × (得点 − 平均点) ÷ 標準偏差</small>`, 50 + 10 * z, `50 + 10 × (${x} ${M} ${m}) ÷ ${s} = 50 + 10 × ${z < 0 ? `(${f(z)})` : z} = <span class="ans">${50 + 10 * z}</span>`); }
+      const [b, s0] = pick([[[2, 4, 4, 4, 5, 5, 7, 9], 2], [[1, 2, 3, 4, 5, 6, 7], 2], [[2, 2, 6, 6], 2], [[3, 3, 5, 5], 1], [[1, 1, 7, 7], 3]]), k = pick([1, 1, 2, 5]), c = ri(0, 5) * 10, xs = b.map(x => x * k + c), n = xs.length, mean = xs.reduce((x, y) => x + y, 0) / n, v = xs.reduce((x, y) => x + (y - mean) * (y - mean), 0) / n;
+      return one(`次の ${n} このデータの標準偏差は？${seqBox(xs.join('、'))}<small>分散 ＝「平均との差の 2 乗」の平均。標準偏差 ＝ 分散の平方根（ルート）</small>`, s0 * k, `平均は ${mean}<br>分散は (${xs.map(x => (x - mean) * (x - mean)).join(' + ')}) ÷ ${n} = ${v}<br>標準偏差は √${v} = <span class="ans">${s0 * k}</span>`); },
+    function(){ const lam = pick([6, 10, 12, 15, 20, 30]), ts = pick([1, 2, 3, 4, 5]), rho = rd(lam * ts / 60 * 100); if (rho >= 100 || !Number.isInteger(rho)) return null;
+      return one(`ある窓口に、1 時間に平均 ${lam} 件の仕事がたのまれる。1 件の処理には、平均 ${ts} 分かかる。この窓口の利用率（処理をしている時間の割合）は何 %？`, rho, `1 時間（60 分）のうち、処理をしているのは ${lam} × ${ts} = ${lam * ts} 分<br>${lam * ts} ÷ 60 × 100 = <span class="ans">${rho}</span> %`, {post:'%'}); },
+    function(){ const [rho, k] = pick([[0.5, 1], [0.6, 1.5], [0.75, 3], [0.8, 4], [0.9, 9]]), ts = pick([2, 4, 5, 6, 10]), w = rd(k * ts);
+      return one(`窓口が 1 つの待ち行列（M/M/1）で、利用率が ${rho}、1 件の平均の処理時間が ${ts} 秒である。処理が始まるまでの、平均の待ち時間は何秒？<small>平均の待ち時間 ＝ 利用率 ÷ (1 − 利用率) × 平均の処理時間</small>`, w, `${rho} ÷ (1 ${M} ${rho}) × ${ts} = ${k} × ${ts} = <span class="ans">${w}</span> 秒<br>利用率が 1 に近づくと、待ち時間は、急に長くなる`, {post:'秒'}); },
+    function(){ const ps = pick([10, 20, 40, 50]), a = pick([60, 80, 90]), b = pick([5, 10, 20, 30]), sp = ps * a / 10, ok = (100 - ps) * b / 10, v = Q(sp, sp + ok);
+      return one(`届くメールの ${ps} % が、迷惑メールである。迷惑メールの ${a} % に、ある単語がふくまれる。ふつうのメールの ${b} % にも、その単語がふくまれる。その単語をふくむメールが、迷惑メールである確率は？<small>分数で答えよう</small>`, v, `メール 1000 通で考える。迷惑メールは ${ps * 10} 通で、そのうち単語をふくむのは ${ps * 10} × ${a / 100} = ${sp} 通<br>ふつうのメールは ${1000 - ps * 10} 通で、そのうち単語をふくむのは ${1000 - ps * 10} × ${b / 100} = ${ok} 通<br>${sp} ÷ (${sp} + ${ok}) = <span class="ans">${frq(v)}</span>`, {frac:true}); },
+  ],
+};
+
+/* ============ 看護コース（初級＝看護学校の基礎／中級＝看護師国家試験／上級＝臨床・保健師レベル） ============ */
+const BURN9 = [['頭', 9], ['右うで', 9], ['左うで', 9], ['体の前（むねとおなか）', 18], ['体のうしろ（せなか）', 18], ['右あし', 18], ['左あし', 18]];      // 9 の法則（大人）
+const BURN9_NOTE = '9 の法則：頭 9 %、うで 1 本 9 %、体の前 18 %、体のうしろ 18 %、あし 1 本 18 %';
+PGEN.kan = {
+  /* ---- 計算：単位・割合の計算 ---- */
+  1: [
+    function(){ const k = ri(0, 3);
+      if (k === 0){ const g = pick([0.1, 0.2, 0.25, 0.5, 0.75, 1.5, 2.5]); return one(`${g} g は何 mg？`, rd(g * 1000), `1 g ＝ 1000 mg<br>${g} × 1000 = <span class="ans">${rd(g * 1000)}</span> mg`, {post:'mg'}); }
+      if (k === 1){ const mg = pick([50, 100, 250, 500, 750, 1500, 2000]); return one(`${mg} mg は何 g？`, mg / 1000, `1000 mg ＝ 1 g<br>${mg} ÷ 1000 = <span class="ans">${mg / 1000}</span> g`, {post:'g'}); }
+      if (k === 2){ const L = pick([0.05, 0.2, 0.5, 1.2, 1.5, 2.5]); return one(`${L} L は何 mL？`, rd(L * 1000), `1 L ＝ 1000 mL<br>${L} × 1000 = <span class="ans">${rd(L * 1000)}</span> mL`, {post:'mL'}); }
+      const ug = pick([50, 100, 250, 500, 1000, 2000]); return one(`${ug} μg（マイクログラム）は何 mg？`, ug / 1000, `1000 μg ＝ 1 mg<br>${ug} ÷ 1000 = <span class="ans">${ug / 1000}</span> mg`, {post:'mg'}); },
+    function(){ const pulse = Math.random() < .6, [sec, mul] = pick([[15, 4], [30, 2], [10, 6], [20, 3]]), n = pulse ? ri(Math.ceil(60 / mul), Math.floor(110 / mul)) : ri(Math.ceil(12 / mul), Math.floor(26 / mul));
+      return one(`${pulse ? '脈拍' : '呼吸'}を ${sec} 秒間数えたら、${n} 回だった。1 分間では何回？`, n * mul, `1 分は 60 秒。${sec} 秒の ${mul} 倍<br>${n} × ${mul} = <span class="ans">${n * mul}</span> 回`, {post:'回'}); },
+    function(){ if (Math.random() < .5){ const w = pick([40, 45, 50, 55, 60, 65, 70, 80]); return one(`大人の体は、体重のおよそ 60 % が水分である。体重 ${w} kg の人の体の水分は、およそ何 kg？`, w * 6 / 10, `${w} × 0.6 = <span class="ans">${w * 6 / 10}</span> kg`, {post:'kg'}); }
+      const w0 = pick([40, 50, 60, 80]), p = pick([2, 3, 4, 5, 10]), w1 = rd(w0 * (100 - p) / 100);
+      return one(`体重が ${w0} kg から ${w1} kg にへった。もとの体重の何 % へった？`, p, `へったのは ${w0} ${M} ${w1} = ${rd(w0 - w1)} kg<br>${rd(w0 - w1)} ÷ ${w0} × 100 = <span class="ans">${p}</span> %`, {post:'%'}); },
+    function(){ const drink = ri(8, 15) * 100, food = ri(6, 10) * 100, iv = pick([0, 500, 1000]), urine = ri(10, 20) * 100, stool = pick([100, 150, 200]), ins = pick([800, 900, 1000]), inn = drink + food + iv, out = urine + stool + ins, bal = inn - out; if (Math.abs(bal) > 1500) return null;
+      return one(`ある患者の、1 日の水分をしらべた。<small>入った量：飲み水 ${drink} mL、食事 ${food} mL${iv ? `、点滴 ${iv} mL` : ''}<br>出た量：尿 ${urine} mL、便 ${stool} mL、不感蒸泄（皮ふや息から出る水分）${ins} mL</small>水分出納（入った量 − 出た量）は何 mL？<small>出た量のほうが多いときは、マイナスで答えよう</small>`, bal, `入った量は ${[drink, food].concat(iv ? [iv] : []).join(' + ')} = ${inn} mL<br>出た量は ${urine} + ${stool} + ${ins} = ${out} mL<br>${inn} ${M} ${out} = <span class="ans">${f(bal)}</span> mL`, {post:'mL'}); },
+    function(){ const m = ri(1, 12), d = ri(1, 21), em = m > 3 ? m - 3 : m + 9, ed = d + 7;
+      return {q:`最終月経の初日が ${m} 月 ${d} 日だった。ネーゲレの計算法で、分娩予定日を求めよう。<small>ネーゲレの計算法：月は、3 を引く（引けないときは、9 を足す）。日は、7 を足す</small>`, fields:[{k:'m', post:'月'}, {k:'d', post:'日'}], ans:{m:em, d:ed}, ansText:`${em} 月 ${ed} 日`,
+        ex:`月：${m > 3 ? `${m} ${M} 3 = ${em}` : `${m} + 9 = ${em}`}<br>日：${d} + 7 = ${ed}<br><span class="ans">${em} 月 ${ed} 日</span>`}; },
+    function(){ const p = pick([40, 50, 60, 70, 80]), fat = pick([30, 40, 50, 60]), c = pick([200, 250, 300, 350]), E = p * 4 + fat * 9 + c * 4;
+      return one(`ある食事にふくまれる栄養素は、たんぱく質 ${p} g、脂質 ${fat} g、炭水化物 ${c} g だった。エネルギーは何 kcal？<small>1 g あたり、たんぱく質 4 kcal、脂質 9 kcal、炭水化物 4 kcal</small>`, E, `${p} × 4 + ${fat} × 9 + ${c} × 4 = ${p * 4} + ${fat * 9} + ${c * 4} = <span class="ans">${E}</span> kcal`, {post:'kcal'}); },
+    function(){ const w = pick([6, 12, 18, 24, 30]), per = pick([80, 100, 120]), day = w * per, hr = day / 24;
+      return one(`体重 ${w} kg の子どもに、1 日に「体重 1 kg あたり ${per} mL」の水分を、24 時間かけて、同じ速さで入れる。1 時間に何 mL？`, hr, `1 日の量は ${w} × ${per} = ${day} mL<br>${day} ÷ 24 = <span class="ans">${hr}</span> mL`, {post:'mL'}); },
+    function(){ const w = pick([40, 50, 60, 80]), h = pick([4, 6, 8]), rate = pick([0.25, 0.5, 1, 1.5]), u = w * h * rate;
+      return one(`体重 ${w} kg の患者の、${h} 時間の尿の量は ${u} mL だった。1 時間・体重 1 kg あたりの尿の量は何 mL？`, rate, `1 時間あたり ${u} ÷ ${h} = ${dsp(u / h)} mL<br>体重 1 kg あたり ${dsp(u / h)} ÷ ${w} = <span class="ans">${rate}</span> mL`, {post:'mL'}); },
+    function(){ const std = pick([20, 25, 30, 40, 50]), p = pick([-20, -10, 10, 20, 30, 40]), w = rd(std * (100 + p) / 100);
+      return one(`標準体重が ${std} kg の子どもの体重をはかったら、${w} kg だった。肥満度は何 %？<small>肥満度 ＝ (じっさいの体重 − 標準体重) ÷ 標準体重 × 100。標準より軽いときは、マイナスになる</small>`, p, `(${w} ${M} ${std}) ÷ ${std} × 100 = ${p < 0 ? `(${f(rd(w - std))})` : rd(w - std)} ÷ ${std} × 100 = <span class="ans">${f(p)}</span> %`, {post:'%'}); },
+  ],
+  /* ---- 式：薬の量・濃度 ---- */
+  2: [
+    function(){ const mg = pick([5, 10, 20, 25, 50, 100]), n = pick([1, 2, 3]), times = pick([2, 3]), dose = mg * n;
+      return one(`1 錠に ${mg} mg ふくまれる薬を、1 回 ${dose} mg、1 日 ${times} 回のむ。1 日に、何錠のむ？`, n * times, `1 回は ${dose} ÷ ${mg} = ${n} 錠<br>${n} × ${times} = <span class="ans">${n * times}</span> 錠`, {post:'錠'}); },
+    function(){ const [name, c, what] = pick([['生理食塩水（0.9 % の食塩水）', 0.9, '食塩'], ['5 % ブドウ糖液', 5, 'ブドウ糖'], ['10 % ブドウ糖液', 10, 'ブドウ糖'], ['20 % ブドウ糖液', 20, 'ブドウ糖']]), v = pick([20, 50, 100, 200, 500, 1000]), g = rd(c * v / 100);
+      return one(`${name} ${v} mL にふくまれる${what}は何 g？<small>${c} % ＝ 100 mL の中に ${c} g</small>`, g, `${v} × ${c} ÷ 100 = <span class="ans">${g}</span> g`, {post:'g'}); },
+    function(){ const [mg, ml] = pick([[10, 2], [20, 2], [50, 5], [100, 2], [40, 4], [250, 5], [500, 10], [5, 1], [20, 1]]), k = pick([0.2, 0.25, 0.4, 0.5, 0.6, 0.75, 0.8]), need = rd(mg * k), vol = rd(ml * k); if (!Number.isInteger(rd(need * 10)) || !Number.isInteger(rd(vol * 100))) return null;
+      return one(`「${mg} mg / ${ml} mL」と書かれた注射薬（${ml} mL の中に、薬が ${mg} mg）がある。${need} mg を使うには、何 mL をとればよい？`, vol, `${ml} mL × ${need} ÷ ${mg} = <span class="ans">${vol}</span> mL<br>（1 mg あたり ${ml} ÷ ${mg} = ${dsp(ml / mg)} mL）`, {post:'mL'}); },
+    function(){ const [c0, c1, V] = pick([[5, 0.2, 1000], [5, 0.05, 2000], [10, 0.5, 2000], [6, 0.1, 3000], [20, 0.5, 1000], [5, 0.1, 500], [10, 0.2, 500], [6, 0.02, 3000], [5, 0.5, 200], [10, 0.1, 1000], [20, 0.05, 2000]]), x = rd(V * c1 / c0);
+      return one(`${c0} % の消毒薬（原液）を水でうすめて、${c1} % の消毒液を ${V} mL つくりたい。原液は何 mL いる？`, x, `できあがりの液にふくまれる薬の量は、原液の中の量と同じ<br>${V} × ${c1} ÷ ${c0} = <span class="ans">${x}</span> mL（のこりの ${rd(V - x)} mL は、水）`, {post:'mL'}); },
+    function(){ const c = pick([5, 10, 20, 50]), v = pick([20, 100, 200, 250, 500, 1000]), g = c * v / 100, kcal = g * 4; if (!Number.isInteger(g)) return null;
+      return one(`${c} % ブドウ糖液 ${v} mL のエネルギーは何 kcal？<small>ブドウ糖 1 g ＝ 4 kcal</small>`, kcal, `ブドウ糖は ${v} × ${c} ÷ 100 = ${g} g<br>${g} × 4 = <span class="ans">${kcal}</span> kcal`, {post:'kcal'}); },
+    function(){ const w = pick([8, 10, 12, 15, 16, 20, 24, 25]), per = pick([5, 10, 15, 20]), conc = pick([20, 25, 40, 50]), dose = w * per, ml = rd(dose / conc); if (!Number.isInteger(rd(ml * 10)) || ml > 15) return null;
+      return one(`体重 ${w} kg の子どもに、1 回「体重 1 kg あたり ${per} mg」の薬をのませる。シロップは、1 mL に薬が ${conc} mg ふくまれている。1 回に、シロップを何 mL のませる？`, ml, `1 回の薬の量は ${w} × ${per} = ${dose} mg<br>${dose} ÷ ${conc} = <span class="ans">${ml}</span> mL`, {post:'mL'}); },
+    function(){ const age = ri(2, 12), adult = pick([100, 200, 250, 300, 400, 500]), fct = age * 4 + 20, child = adult * fct / 100; if (!Number.isInteger(child)) return null;
+      return one(`大人の 1 回量が ${adult} mg の薬がある。アウグスバーガーの式で、${age} 歳の子どもの 1 回量を求めると何 mg？<small>アウグスバーガーの式：子どもの量 ＝ 大人の量 × (年齢 × 4 ＋ 20) ÷ 100</small>`, child, `${age} × 4 + 20 = ${fct}<br>${adult} × ${fct} ÷ 100 = <span class="ans">${child}</span> mg`, {post:'mg'}); },
+    function(){ const u = pick([4, 6, 8, 10, 12, 16, 20, 24, 30]);
+      return one(`インスリンの注射液は、1 mL に 100 単位ふくまれている。${u} 単位を注射するとき、液の量は何 mL？`, u / 100, `1 単位は 1 ÷ 100 = 0.01 mL<br>${u} × 0.01 = <span class="ans">${u / 100}</span> mL`, {post:'mL'}); },
+    function(){ const w = pick([40, 50, 60, 80]), g = pick([1, 2, 3, 5]), conc = pick([1, 2, 3]), mgh = rd(g * w * 60 / 1000), mlh = rd(mgh / conc); if (!Number.isInteger(rd(mlh * 10))) return null;
+      return one(`体重 ${w} kg の患者に、ある薬を ${g} γ（ガンマ）で入れる。薬の液は、1 mL に ${conc} mg ふくまれている。輸液ポンプは、1 時間に何 mL に合わせる？<small>1 γ ＝ 体重 1 kg あたり、1 分間に 1 μg。1000 μg ＝ 1 mg</small>`, mlh, `1 分間に ${g} × ${w} = ${g * w} μg<br>1 時間に ${g * w} × 60 = ${g * w * 60} μg = ${mgh} mg<br>${mgh} ÷ ${conc} = <span class="ans">${mlh}</span> mL`, {post:'mL'}); },
+  ],
+  /* ---- 関数：点滴・酸素ボンベ（比例） ---- */
+  3: [
+    function(){ const [v, h] = pick([[500, 5], [500, 4], [500, 2], [1000, 8], [1000, 10], [1000, 5], [200, 2], [250, 2], [300, 2], [1500, 12], [2000, 20], [600, 4], [900, 6]]);
+      return one(`${v} mL の点滴を、${h} 時間かけて、同じ速さで入れる。1 時間に何 mL？`, v / h, `${v} ÷ ${h} = <span class="ans">${v / h}</span> mL`, {post:'mL'}); },
+    function(){ const mlh = pick([30, 60, 90, 120, 150, 180, 240, 300]);
+      return one(`1 mL が 20 滴の輸液セットで、1 時間に ${mlh} mL の点滴をする。1 分間に何滴？`, mlh / 3, `1 時間（60 分）に ${mlh} × 20 = ${mlh * 20} 滴<br>${mlh * 20} ÷ 60 = <span class="ans">${mlh / 3}</span> 滴`, {post:'滴'}); },
+    function(){ const [v, h] = pick([[500, 5], [500, 4], [500, 3], [500, 6], [1000, 6], [1000, 8], [1000, 12], [200, 3], [250, 2], [1500, 10]]), drops = pick([20, 60]), x = v * drops / (h * 60), r = Math.round(x); if (Math.abs(x - Math.floor(x) - .5) < 1e-9 || r > 250) return null;
+      return one(`${v} mL の点滴を、${h} 時間かけて入れる。1 mL が ${drops} 滴の輸液セットを使うとき、1 分間に何滴？<small>小数第 1 位を四捨五入して、整数で答えよう</small>`, r, `1 分間の滴の数 ＝ 全体の量(mL) × 1 mL の滴の数 ÷ 時間(分)<br>${v} × ${drops} ÷ (${h} × 60) = ${v * drops} ÷ ${h * 60} = ${Number.isInteger(x) ? x : x.toFixed(2) + '…'} → <span class="ans">${r}</span> 滴`, {post:'滴'}); },
+    function(){ const rem = pick([100, 150, 200, 250, 300, 400, 450, 600]), dpm = pick([20, 25, 40, 50, 60, 100]), min = rem * 20 / dpm; if (!Number.isInteger(min) || min % 10) return null;
+      return one(`点滴が、あと ${rem} mL のこっている。1 mL が 20 滴の輸液セットで、1 分間に ${dpm} 滴の速さで入れている。あと何分で終わる？`, min, `のこりは ${rem} × 20 = ${rem * 20} 滴<br>${rem * 20} ÷ ${dpm} = <span class="ans">${min}</span> 分${min >= 60 ? `（${Math.floor(min / 60)} 時間${min % 60 ? ` ${min % 60} 分` : ''}）` : ''}`, {post:'分'}); },
+    function(){ const vol = pick([3.4, 3.4, 10]), p = pick([2, 4, 5, 6, 8, 10, 12, 14]), L = rd(vol * p * 10);
+      return one(`内容積 ${vol} L の酸素ボンベの圧力計が、${p} MPa をさしている。ボンベの中の酸素は、のこり何 L？<small>酸素の量(L) ＝ 内容積(L) × 圧力(MPa) × 10</small>`, L, `${vol} × ${p} × 10 = <span class="ans">${L}</span> L`, {post:'L'}); },
+    function(){ const [p, flow] = pick([[5, 2], [5, 5], [10, 2], [10, 4], [10, 5], [5, 1], [10, 1], [10, 10], [5, 10], [5, 4]]), L = 34 * p, t = L / flow;
+      return one(`内容積 3.4 L の酸素ボンベの圧力計が、${p} MPa をさしている。1 分間に ${flow} L の酸素を使うと、何分使える？<small>酸素の量(L) ＝ 内容積(L) × 圧力(MPa) × 10</small>`, t, `のこりの酸素は 3.4 × ${p} × 10 = ${L} L<br>${L} ÷ ${flow} = <span class="ans">${dsp(t)}</span> 分`, {post:'分'}); },
+    function(){ const [p, flow] = pick([[10, 2], [10, 4], [10, 8], [5, 2], [5, 4], [5, 8], [10, 1], [5, 1]]), L = rd(34 * p * .8), t = L / flow;
+      return one(`内容積 3.4 L の酸素ボンベの圧力計が、${p} MPa をさしている。安全のために、のこりの 8 割だけを使うことにする（安全係数 0.8）。1 分間に ${flow} L の酸素を使うと、何分使える？<small>酸素の量(L) ＝ 内容積(L) × 圧力(MPa) × 10</small>`, t, `のこりの酸素は 3.4 × ${p} × 10 = ${34 * p} L。使えるのは ${34 * p} × 0.8 = ${L} L<br>${L} ÷ ${flow} = <span class="ans">${dsp(t)}</span> 分`, {post:'分'}); },
+    function(){ const V = pick([500, 1000]), H0 = pick([4, 5, 8, 10]), h1 = pick([1, 2, 3, 4]), done = pick([50, 100, 150, 200, 250, 300, 400]); if (h1 >= H0 || done >= V * h1 / H0) return null; const rate = (V - done) / (H0 - h1); if (!Number.isInteger(rate) || rate > 400) return null;
+      return one(`${V} mL の点滴を、${H0} 時間で入れる予定で始めた。${h1} 時間たったとき、入ったのは ${done} mL だった。のこりを、予定の時間どおりに終えるには、ここから 1 時間に何 mL で入れればよい？`, rate, `のこりは ${V} ${M} ${done} = ${V - done} mL、のこりの時間は ${H0} ${M} ${h1} = ${H0 - h1} 時間<br>${V - done} ÷ ${H0 - h1} = <span class="ans">${rate}</span> mL`, {post:'mL'}); },
+    function(){ const w = pick([40, 50, 60, 70, 80]), a = pick([20, 30, 40, 50]), tot = 4 * w * a, hr = tot / 16;
+      return one(`体重 ${w} kg の大人が、体の表面積の ${a} % に熱傷（やけど）をした。バクスターの公式で、はじめの 8 時間の輸液は、1 時間に何 mL？<small>バクスターの公式：24 時間の輸液の量(mL) ＝ 4 × 体重(kg) × 熱傷面積(%)。その半分を、はじめの 8 時間で入れる</small>`, hr, `24 時間の量は 4 × ${w} × ${a} = ${tot} mL<br>はじめの 8 時間で、半分の ${tot / 2} mL<br>${tot / 2} ÷ 8 = <span class="ans">${hr}</span> mL`, {post:'mL'}); },
+  ],
+  /* ---- 図形：体格の指数・熱傷の面積 ---- */
+  4: [
+    function(){ const [h, w, b] = pick([[1.5, 45, 20], [1.5, 54, 24], [1.6, 64, 25], [1.6, 51.2, 20], [1.7, 57.8, 20], [1.8, 64.8, 20], [1.8, 81, 25], [1.5, 49.5, 22], [2, 88, 22], [1.4, 39.2, 20], [2, 100, 25], [1.5, 67.5, 30], [1.6, 76.8, 30]]);
+      return one(`身長 ${rd(h * 100)} cm（${h} m）、体重 ${w} kg の人の BMI は？<small>BMI ＝ 体重(kg) ÷ 身長(m) ÷ 身長(m)</small>`, b, `${w} ÷ ${h} ÷ ${h} = ${w} ÷ ${rd(h * h)} = <span class="ans">${b}</span>`); },
+    function(){ const ps = sample(BURN9, pick([2, 2, 3])), s = ps.reduce((a, x) => a + x[1], 0);
+      return one(`大人の熱傷（やけど）の広さを、「9 の法則」で求める。${ps.map(x => x[0]).join('と、')}の全体をやけどしたとき、熱傷面積は、体の表面積の何 %？<small>${BURN9_NOTE}</small>`, s, `${ps.map(x => `${x[0]} ${x[1]}`).join(' + ')} = <span class="ans">${s}</span> %`, {post:'%'}); },
+    function(){ const [h, w, k] = pick([[50, 4000, 16], [60, 5400, 15], [60, 6300, 17.5], [70, 9800, 20], [75, 9000, 16], [80, 9600, 15], [80, 11200, 17.5], [100, 15000, 15], [100, 16000, 16], [100, 18000, 18], [50, 3500, 14], [80, 12800, 20]]);
+      return one(`身長 ${h} cm、体重 ${w} g（${w / 1000} kg）の乳幼児のカウプ指数は？<small>カウプ指数 ＝ 体重(g) ÷ 身長(cm) ÷ 身長(cm) × 10</small>`, k, `${w} ÷ ${h} ÷ ${h} × 10 = ${w} ÷ ${h * h} × 10 = <span class="ans">${k}</span>`); },
+    function(){ const ps = sample(BURN9, 2), palms = ri(2, 6), s = ps.reduce((a, x) => a + x[1], 0) + palms;
+      return one(`大人の熱傷（やけど）の広さを求める。${ps.map(x => x[0]).join('と、')}の全体と、ほかに「手のひら ${palms} 枚ぶん」をやけどした。熱傷面積は何 %？<small>${BURN9_NOTE}。手のひら 1 枚ぶんは 1 %（手掌法）</small>`, s, `${ps.map(x => `${x[0]} ${x[1]}`).join(' + ')} + 手のひら ${palms} = <span class="ans">${s}</span> %`, {post:'%'}); },
+    function(){ if (Math.random() < .6){ const [h, w] = pick([[1.5, 49.5], [1.6, 56.32], [1.7, 63.58], [1.8, 71.28], [1.4, 43.12]]);
+        return one(`身長 ${rd(h * 100)} cm の人の標準体重は何 kg？<small>標準体重(kg) ＝ 身長(m) × 身長(m) × 22</small>`, w, `${h} × ${h} × 22 = ${rd(h * h)} × 22 = <span class="ans">${w}</span> kg`, {post:'kg'}); }
+      const [h, w] = pick([[1.6, 64], [1.8, 81], [1.5, 56.25], [1.4, 49], [2, 100]]);
+      return one(`身長 ${rd(h * 100)} cm の人の BMI が、ちょうど 25 になるのは、体重が何 kg のとき？<small>BMI ＝ 体重(kg) ÷ 身長(m) ÷ 身長(m)</small>`, w, `体重 ＝ BMI × 身長(m) × 身長(m)<br>25 × ${h} × ${h} = 25 × ${rd(h * h)} = <span class="ans">${w}</span> kg`, {post:'kg'}); },
+    function(){ const d2 = pick([10, 20, 30, 40]), d3 = pick([5, 10, 15, 20, 30]), bi = d3 + d2 / 2;
+      return one(`ある患者の熱傷（やけど）は、Ⅱ度が体の表面積の ${d2} %、Ⅲ度が ${d3} % だった。熱傷指数は？<small>熱傷指数 ＝ Ⅲ度の面積(%) ＋ Ⅱ度の面積(%) × 1/2</small>`, bi, `${d3} + ${d2} × 1/2 = ${d3} + ${d2 / 2} = <span class="ans">${bi}</span>`); },
+    function(){ const whole = sample(BURN9, 1)[0], rest = BURN9.filter(x => x !== whole), halves = sample(rest, 2).map(x => [x[0] + (Math.random() < .5 ? 'の前がわ' : 'のうしろがわ'), x[1] / 2]).filter(x => !/体の/.test(x[0])); if (halves.length < 2) return null;
+      const s = rd(whole[1] + halves[0][1] + halves[1][1]);
+      return one(`大人の熱傷（やけど）の広さを、「9 の法則」で求める。${whole[0]}の全体と、${halves.map(x => x[0]).join('と、')}だけをやけどした。熱傷面積は何 %？<small>${BURN9_NOTE}。頭・うで・あしの「前がわだけ」「うしろがわだけ」は、その半分</small>`, s, `${whole[0]} ${whole[1]} + ${halves.map(x => `${x[0]} ${x[1]}`).join(' + ')} = <span class="ans">${s}</span> %`, {post:'%'}); },
+    function(){ const d2 = pick([10, 20, 30, 40]), d3 = pick([10, 20, 30]), age = ri(20, 80), bi = d3 + d2 / 2;
+      return one(`${age} 歳の患者の熱傷（やけど）は、Ⅱ度が ${d2} %、Ⅲ度が ${d3} % だった。熱傷予後指数は？<small>熱傷指数 ＝ Ⅲ度の面積(%) ＋ Ⅱ度の面積(%) × 1/2<br>熱傷予後指数 ＝ 熱傷指数 ＋ 年齢</small>`, bi + age, `熱傷指数は ${d3} + ${d2} × 1/2 = ${bi}<br>${bi} + ${age} = <span class="ans">${bi + age}</span>`); },
+    function(){ const [h, w, s] = pick([[180, 80, 2], [150, 54, 1.5], [160, 57.6, 1.6], [170, 61.2, 1.7], [180, 64.8, 1.8], [120, 30, 1], [125, 28.8, 1], [90, 10, 0.5], [160, 90, 2]]), per = pick([50, 100, 200]);
+      return one(`身長 ${h} cm、体重 ${w} kg の患者に、「体表面積 1 m² あたり ${per} mg」の薬を使う。薬の量は何 mg？<small>体表面積(m²) ＝ √(身長(cm) × 体重(kg) ÷ 3600)</small>`, rd(s * per), `身長 × 体重 ÷ 3600 = ${rd(h * w)} ÷ 3600 = ${rd(h * w / 3600)}<br>体表面積は √${rd(h * w / 3600)} = ${s} m²<br>${s} × ${per} = <span class="ans">${rd(s * per)}</span> mg`, {post:'mg'}); },
+  ],
+  /* ---- 確率：保健統計・検査 ---- */
+  5: [
+    function(){ const pop = pick([1000, 2000, 4000, 5000, 8000, 10000]), r = pick([20, 25, 28, 30, 32, 35, 40]), old = pop * r / 100;
+      return one(`人口 ${pop} 人の町に、65 歳以上の人が ${old} 人いる。高齢化率（人口のうち、65 歳以上の人の割合）は何 %？`, r, `${old} ÷ ${pop} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const d = [0, 0, 0, 0, 0].map(() => ri(-3, 5)), s = d.reduce((a, x) => a + x, 0); if (s % 5 || new Set(d).size < 3) return null; const xs = d.map(x => ((365 + x) / 10).toFixed(1)), avg = (365 + s / 5) / 10;
+      return one(`5 日間、朝の体温をはかったら、${xs.join('、')} ℃ だった。平均は何 ℃？`, rd(avg), `(${xs.join(' + ')}) ÷ 5 = ${((365 * 5 + s) / 10).toFixed(1)} ÷ 5 = <span class="ans">${avg.toFixed(1)}</span> ℃`, {post:'℃'}); },
+    function(){ const pop = pick([2000, 5000, 10000, 20000, 50000]), r = pick([4, 5, 6, 7, 8, 10, 12]), n = pop * r / 1000;
+      return one(`人口 ${pop} 人の町で、1 年間に ${n} 人の赤ちゃんが生まれた。出生率（人口 1000 人あたりの、生まれた数）は？`, r, `出生率 ＝ 生まれた数 ÷ 人口 × 1000<br>${n} ÷ ${pop} × 1000 = <span class="ans">${r}</span>`); },
+    function(){ const pop = pick([1000, 2000, 4000, 5000, 20000]), r = pick([0.5, 1, 1.5, 2, 2.5, 4, 5]), n = pop * r / 100; if (!Number.isInteger(n)) return null;
+      return one(`ある日の調査で、人口 ${pop} 人の町に、ある病気の患者が ${n} 人いた。有病率は何 %？<small>有病率 ＝ ある時点の患者の数 ÷ 人口</small>`, r, `${n} ÷ ${pop} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const n = pick([200, 400, 500, 800, 1000]), r = pick([2, 4, 5, 8, 10, 15]), c = n * r / 100; if (!Number.isInteger(c)) return null;
+      return one(`ある学校の ${n} 人のうち、この 1 週間で、新しくインフルエンザにかかった人が ${c} 人いた。この 1 週間の罹患率（りかんりつ）は何 %？<small>罹患率 ＝ ある期間に、新しく病気にかかった人の数 ÷ 人口</small>`, r, `${c} ÷ ${n} × 100 = <span class="ans">${r}</span> %`, {post:'%'}); },
+    function(){ const D = pick([20, 40, 50, 100]), N = pick([100, 200, 400, 500]), se = pick([70, 80, 90, 95]), sp = pick([80, 90, 95]), a = D * se / 100, d = N * sp / 100; if (!Number.isInteger(a) || !Number.isInteger(d) || se === sp) return null; const b = D - a, c = N - d;
+      return {q:`ある検査の結果は、次の表のとおりだった。この検査の感度と特異度は、それぞれ何 %？${tbl([['', '陽性', '陰性'], ['病気あり', a, b], ['病気なし', c, d]])}<small>感度：病気のある人を、正しく陽性とする割合<br>特異度：病気のない人を、正しく陰性とする割合</small>`, fields:[{k:'se', pre:'感度', post:'%'}, {k:'sp', pre:'特異度', post:'%'}], ans:{se, sp}, ansText:`感度 ${se} %、特異度 ${sp} %`,
+        ex:`病気のある人は ${a} + ${b} = ${D} 人。感度は ${a} ÷ ${D} × 100 = <span class="ans">${se}</span> %<br>病気のない人は ${c} + ${d} = ${N} 人。特異度は ${d} ÷ ${N} × 100 = <span class="ans">${sp}</span> %`}; },
+    function(){ const a = pick([40, 45, 60, 80, 90]), c = pick([10, 20, 30, 60, 90, 120]), b = pick([5, 10, 20]), d = pick([400, 500, 800, 900]), ppv = rd(a / (a + c) * 100); if (!Number.isInteger(ppv)) return null;
+      return one(`ある検査の結果は、次の表のとおりだった。陽性の人のうち、ほんとうに病気のある人の割合（陽性的中率）は何 %？${tbl([['', '陽性', '陰性'], ['病気あり', a, b], ['病気なし', c, d]])}`, ppv, `陽性の人は ${a} + ${c} = ${a + c} 人。そのうち、病気のある人は ${a} 人<br>${a} ÷ ${a + c} × 100 = <span class="ans">${ppv}</span> %`, {post:'%'}); },
+    function(){ const n1 = pick([100, 200, 500, 1000]), n0 = pick([100, 200, 500, 1000]), r0 = pick([1, 2, 4, 5]), rr = pick([1.5, 2, 3, 4, 5]), r1 = r0 * rr, c1 = n1 * r1 / 100, c0 = n0 * r0 / 100; if (!Number.isInteger(c1) || !Number.isInteger(c0) || r1 > 40) return null;
+      return one(`タバコを吸う ${n1} 人と、吸わない ${n0} 人を、10 年間しらべた。ある病気にかかったのは、吸う人のうち ${c1} 人、吸わない人のうち ${c0} 人だった。タバコを吸う人は、吸わない人の何倍、この病気にかかりやすい？（相対危険）`, rr, `吸う人：${c1} ÷ ${n1} = ${rd(c1 / n1)}<br>吸わない人：${c0} ÷ ${n0} = ${rd(c0 / n0)}<br>相対危険 ＝ ${rd(c1 / n1)} ÷ ${rd(c0 / n0)} = <span class="ans">${rr}</span> 倍`, {post:'倍'}); },
+    function(){ const prev = pick([1, 2, 5, 10]), se = pick([80, 90]), sp = pick([80, 90, 95]), N = 10000, D = N * prev / 100, tp = D * se / 100, fp = (N - D) * (100 - sp) / 100, v = Q(tp, tp + fp);
+      return one(`ある病気の人は、人口の ${prev} % である。この病気の検査は、感度が ${se} %、特異度が ${sp} % である。この検査で陽性になった人が、ほんとうに病気である確率は？<small>分数で答えよう<br>感度：病気のある人が、陽性になる割合<br>特異度：病気のない人が、陰性になる割合</small>`, v, `${N} 人で考える。病気のある人は ${D} 人で、そのうち陽性は ${D} × ${se / 100} = ${tp} 人<br>病気のない人は ${N - D} 人で、そのうち陽性は ${N - D} × ${rd((100 - sp) / 100)} = ${fp} 人<br>${tp} ÷ (${tp} + ${fp}) = <span class="ans">${frq(v)}</span>${fp > tp ? '<br>陽性でも、病気でない人のほうが多い。まれな病気の検査では、よく起きる' : ''}`, {frac:true}); },
   ],
 };
 
@@ -7129,7 +7671,7 @@ let starMesh;
     gift.position.set(Math.cos(i*2.1)*1.2, .15, Math.sin(i*2.1)*1.2 + .4); gift.rotation.y = i; t.add(gift);
   }
   const tl = new THREE.PointLight('#ffcc66', 20, 9, 2); tl.position.y = 2.5; t.add(tl);
-  if (COOPMAP){ TOWN.tree = tl; TOWN.starM = starMesh.material; tl.intensity = 3; starMesh.material.emissiveIntensity = .12; }
+  if (COOPMAP){ TOWN.tree = tl; TOWN.starM = starMesh.material; TOWN.starObj = starMesh; tl.intensity = 3; starMesh.material.emissiveIntensity = .12; }
   t.position.copy(NODE.T.p).add(new THREE.Vector3(2.5, 0, -2.2));
   root.add(shadowAll(t));
 }
@@ -7770,7 +8312,7 @@ function buildBigTown(root){
       bl.material = mats[key]; });
     windows.forEach(m => { m.userData.on = 0; m.emissiveIntensity = .03; m.color.set('#3a3a48'); m.userData.wcol = new THREE.Color('#ffd36b'); });
     houseLights.forEach(l => { l.userData.full = l.intensity; l.intensity = 0; });
-    TOWN = {groups, lit:0, wins:windows, hl:houseLights, star:false, tree:treeLight, starM:starMesh.material,
+    TOWN = {groups, lit:0, wins:windows, hl:houseLights, star:false, tree:treeLight, starM:starMesh.material, starObj:starMesh,
       prep(on){ groups.flat().concat(windows).forEach(m => { m.userData.on = on ? 1 : 0; if (on && m.userData.col) m.color.copy(m.userData.col); if (!on){ m.emissiveIntensity = m.userData.col ? 0 : .03; if (m.userData.col) m.color.set('#30364d'); else m.color.set('#3a3a48'); } }); }};
     treeLight.intensity = 3; starMesh.material.emissiveIntensity = .12; }
 
@@ -8918,7 +9460,7 @@ function netPublish(now){
     const cur = H.players[H.turn];
     const info = {phase:H.phase, round:H.round, maxRound:H.maxRound, turnId:cur ? pkey(cur) : '', quizId:H.quizId || 0, endsAt:H.endsAt || 0, mode:H.mode};
     { const rl = rollSync(); if (rl) info.roll = rl; if (PUI.cur) info.ui = PUI.cur.spec; if (H.gacha) info.gacha = H.gacha; }      // スマホのサイコロ・えらぶ画面・ガチャ
-    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; if (H.tree) info.tree = H.tree; }
+    if (isCoop()){ info.town = {b:TV.budget, h:Math.round(TV.happy), lv:PROJECTS.map(p => TV.lv[p.id] || 0).join(''), end:H.coopEnd || ''}; if (H.vote) info.vote = H.vote; if (H.career) info.career = H.career; if (H.tree) info.tree = H.tree; if (H.sw) info.sw = H.sw; if (H.pro) info.pro = H.pro; }
     const roster = {}; H.players.forEach(pl => { roster[pkey(pl)] = {name:pl.name, color:pl.color, char:pl.char, jid:pl.jid || '', cpu:!!pl.cpu, course:pl.course || 'chu', level:pl.level == null ? 1 : pl.level, topic:H.phase === 'quiz' || H.phase === 'quizReady' ? (needsQ(pl) ? pl.space : 0) : 0, double:!!pl.double, space:spacePlain(pl), stars:pl.stars || 0, tickets:pl.tickets || 0, job:pl.job || '', vet:COOP.isVet(pl) ? 1 : 0, ten:pl.tenure || 0, quals:(pl.quals || []).join(','), exp:(pl.exp || []).join(','), yen:pl.lastYen == null ? null : pl.lastYen}; });
     const ji = JSON.stringify(info), jr = JSON.stringify(roster);
     if (ji !== NETH.last.i){ NETH.last.i = ji; NET.set(`rooms/${NETH.room}/info`, info); }
@@ -9107,7 +9649,7 @@ function loadClip(src, ok, ng, tries = 4){
    5) どの「待つ」にも時間切れがある。音が出せないとき・消音・オートのときは、待たない
    声のファイルは、先生の画面を開いたときにメモリへ先読みする（通信がおそくても、文字と同時に声が出るように）。読めなかった行は、だまってとばす（あとから流さない） */
 const VO = (() => {
-  const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ わたしは妖精のノエル。きょうの司会だよ。あっ、マイクがさかさまだった。えへへ。"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "それでは、はじまり、はじまり〜！ これは、みんなで力を合わせて、こがね町を救うすごろくだよ！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいるみんなが、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち！ えっと、まずは、そう、サイコロ！ サイコロで町を進もう！"], roll_1: ['mc', "次のラウンド、いくよ〜！ いい目が、出ますように！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], roll_5: ['mc', "サイコロ、えいっ！ あ、わたしが投げるんじゃなかった。"], half_1: ['mc', "ここで折り返し！ 幸せ度は、いくつになったかな？ 後半も、いっしょにがんばろう！"], lastround_1: ['mc', "いよいよ、最後のラウンドだよ！ みんな、がんばって！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイムだよ！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増えるの！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書くと、解きやすいよ！ わたしも書こうっと。あれ、えんぴつ、どこ？"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ いそいで、いそいで〜！ あ、でも、落ち着いてね！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだよ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、出てこ〜い！ わたしの魔法じゃ、出せないんだけどね。"], jobnews_exp1: ['mc', "しごとのニュースだよ！ 問題に正解すると、その分野の仕事につけるの。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュース！ 新しい仕事についた人がいるよ。すごーい！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでも大丈夫！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金を、どの困りごとに使うか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。工事が進むと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どの工事を進めましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変えるよ！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金だね！ 次の会議で、大きな工事をしよう！"], build_1: ['vil', "工事スタート！ トンテン、カンテン！"], build_2: ['vil', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_4: ['mc', "ぴかーん！ 明かりがついたよ！ まぶしくて、前が見えない〜！"], build_5: ['vil2', "ありがとう！ これで安心して暮らせるよ。"], build_6: ['vil3', "わあ、直ってる！ うれしいなあ！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['vil', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、進めておいた工事でふせげるの。どきどきするね！"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！ こわいのは、いやだなあ。"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['vil', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['vil', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['vil', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['vil', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['vil', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['vil', "ふせいだー！ ナイス！"], tr_guard_2: ['vil', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_guard_5: ['mc', "やったあ！ 町が守られたよ！ うれしくて、くるくる回っちゃう！"], tr_guard_6: ['vil2', "たすかったよ。ほんとうに、ありがとう。"], tr_guard_7: ['vil3', "すごい、すごい！ さすがだね！"], tr_hit_1: ['vil', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['vil', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], tr_hit_5: ['mc', "あわわ、たいへん！ でも、だいじょうぶ。次はきっと、ふせげるよ！"], tr_hit_6: ['vil2', "こまったなあ。どうしよう。"], tr_hit_7: ['vil3', "うう、たいへんだ。だれか、たすけて〜。"], good_1: ['vil', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], good_4: ['mc', "わあ、いいニュース！ うれしいな！"], good_5: ['vil2', "よかった、よかった。いい日になったね。"], good_6: ['vil3', "やったあ！ うれしい！"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['vil', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。みんなの力で、町のツリーに明かりを灯そう！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻ったよ！ みんな、ほんとうにありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], win_exp4: ['vil2', "明かりが戻った！ ありがとう、みなさん。"], win_exp5: ['vil3', "メリークリスマス！ また来てね！"], lose_exp1: ['mc', "あと少しだったね。でも、みんなが力を合わせた場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"], lobby_exp3: ['mc', "このゲームを作ったのは、須田先生。もと小学校の先生で、大学院では数の世界を研究していたんだよ。"], lobby_exp4: ['snow', "すごい先生なのに、ぼくにも、やさしく教えてくれるんだ。雪だるまなのに。"], lobby_exp5: ['mc', "はじめましての人も、きょうは同じチームのなかま。よかったら、「よろしく」って声をかけてみてね！"], start_exp5: ['mc', "わからないことがあったら、いつでも須田先生に聞いてね。急かさないし、だれかと比べたりもしないよ。"], roll_6: ['mc', "みんなのコマ、いってらっしゃ〜い！"], roll_7: ['snow', "いい目が出たら、ぼくにも分けてね。ぼくの目、ボタンだけど。"], roll_8: ['vil', "さあ、サイコロだ！ 町のみんなも、応援してるぞ！"], roll_9: ['mc', "サイコロの神さま、おねがいします！ あれ、妖精がお祈りしても、いいのかな。"], roll_10: ['vil3', "がんばれ〜！ こっちのマスに来てね！"], roll_11: ['mayor', "次のラウンドですな。みなさん、よろしくお願いしますぞ。"], half_2: ['snow', "もう半分？ はやいなあ。ぼく、まだ半分も、とけてないよ。"], half_3: ['mc', "折り返しだよ！ ここまで、町を助けてくれたみんなに、拍手〜！"], lastround_3: ['mayor', "最後のラウンドです。みなさんの力を、もう一度、かしてくだされ。"], lastround_4: ['mc', "ラストだよ！ みんなで、「がんばろう」って声をかけ合おう！"], quiz_5: ['mc', "数学は、時間がかかっても、ひとつひとつ分かっていけばいい。須田先生が、いつもそう言ってるよ。"], quiz_6: ['snow', "ヒントがほしいときは、須田先生に聞いてみて。ぼくに聞いても、雪の話しかできないから。"], quiz_7: ['mc', "星1つでも、正解は正解！ 自分に合ったむずかしさで、いこう！"], quiz_8: ['vil', "がんばれ！ 町のみんなが、ついてるぞ！"], quiz_9: ['mc', "問題タイム！ えっと、時間は2分。タイマー、スタート！ あ、もう動いてた。"], quiz_10: ['mayor', "あわてず、ていねいに。答えは、にげませんぞ。"], quiz_11: ['vil3', "すごいなあ、みんな。数学、やってみたくなってきた！"], quiz_12: ['snow', "できた人は、心の中でガッツポーズ。まだの人は、深呼吸。"], hurry_3: ['mc', "あと20秒！ 最後まで、あきらめないで！"], hurry_4: ['vil', "のこり20秒だ！ 見直しも、わすれずにな！"], gacha_4: ['snow', "なにが出ても、当たりだよ。ぼくは、はずれたことないもん。回したことも、ないけど。"], gacha_5: ['mc', "ガチャ、ガチャ〜！ いいのが出たら、みんなに見せてあげてね！"], gacha_6: ['vil2', "いいものが、出るといいですな。"], gacha_7: ['vil3', "わくわく！ なにが出るかな！"], jobnews_3: ['mc', "新しい仕事、おめでとう！ みんなで拍手〜！"], jobnews_4: ['vil', "新しいなかまが増えたぞ！ たのもしいな！"], jobnews_5: ['mayor', "町のために働いてくれて、ありがたいことです。"], career_3: ['mc', "転職タイム！ まよったら、みんなに「どの仕事がいいかな？」って聞いてみよう！"], career_4: ['mayor', "町に足りない仕事を、見てくだされ。求人が出ているかもしれませんぞ。"], vet_2: ['mc', "ベテランさんの誕生だよ！ かっこいい〜！"], meeting_4: ['mc', "町の会議だよ！ 「これをやりたい」って、声に出して相談してもいいよ！"], meeting_5: ['vil', "たのむ、うちの近くのことも、わすれないでくれ〜！"], meeting_6: ['vil2', "みなさんで決めたことなら、まちがいないでしょう。"], meeting_7: ['snow', "みんなで決めるって、いいね。ぼくは、いつも一人で立ってるから。"], meet_save_2: ['snow', "ためるのも、作戦だよ。ぼくも、雪をためて大きくなったんだ。"], build_7: ['mc', "工事かんりょう！ みんなのおかげだよ。ありがとう！"], build_8: ['mayor', "りっぱに直りましたな。みなさんに感謝です。"], build_9: ['vil', "おお、きれいになった！ さすがだな！"], build_done_3: ['mc', "ついに完成！ みんな、すごいよ！ 拍手、拍手〜！"], cards_4: ['mc', "カード、めくるよ。せーのっ！ あ、まだ心の準備が。"], cards_5: ['vil', "なにが起きても、みんなでなら乗りこえられるさ！"], cards_6: ['mayor', "町のできごとです。心して、聞いてくだされ。"], tr_snowfall_2: ['vil2', "これは大雪だ。道が、うまってしまう。"], tr_pipe_2: ['mc', "きゃあ、水が！ 水道管が、こわれちゃった！"], tr_fire_2: ['mc', "たいへん、火事だよ！ だれか、消防士さん！"], tr_scam_2: ['mc', "あやしい電話がかかってきたよ。おばあちゃん、出ちゃだめ〜！"], tr_thief_2: ['snow', "どろぼうだ！ ぼく、動けないから、だれか、つかまえて！"], tr_sick_2: ['vil2', "急病人だ。病院まで、遠いんだよなあ。"], tr_leave_2: ['mc', "えっ、引っこしちゃうの？ さびしいよ〜。"], tr_closed_2: ['vil3', "あのお店、しまっちゃうの？ よく行ってたのに。"], tr_bus_2: ['vil', "バスの本数が、またへるのか。こまったなあ。"], tr_interest_2: ['mc', "お金に羽がはえて、飛んでいっちゃう！ まって〜！"], tr_guard_8: ['mc', "守ってくれた人に、みんなで拍手〜！ パチパチパチ！"], tr_guard_9: ['vil', "たのもしいなあ！ これからも、たのむぞ！"], tr_guard_10: ['snow', "ナイス！ みんなも、「ナイス」って言ってあげて！"], tr_guard_11: ['mayor', "おみごと。町の人も、よろこんでおりますぞ。"], tr_hit_8: ['mc', "どんまい、どんまい！ みんなで力を合わせれば、大丈夫！"], tr_hit_9: ['vil', "しかたない。次は、みんなで守ろう！"], tr_hit_10: ['snow', "だれのせいでもないよ。雪のせいに、しておこう。"], tr_hit_11: ['mayor', "こういう日もあります。次の会議で、相談しましょう。"], good_7: ['mc', "やったね！ みんなで、ばんざ〜い！"], good_8: ['vil', "いいことがあると、町が明るくなるなあ！"], good_9: ['snow', "うれしいことは、みんなで分けよう。雪も、分けようか？"], ev_challenge_2: ['snow', "チャレンジマスだ！ 2倍だよ、2倍。ぼくが2人いたら、たいへんだね。"], ev_bonus_2: ['vil3', "ボーナス問題だって！ がんばって！"], ev_gift_2: ['mc', "わあ、寄付が届いたよ！ ありがとう！"], ev_snowman_2: ['mc', "雪だるま、できた！ ゆきまるに、なかまができたよ！"], ev_event_2: ['mc', "あれ？ 町で、なにか起きたみたい！"], summary_4: ['mc', "このラウンドも、おつかれさま！ がんばった自分と、なかまに、拍手〜！"], summary_5: ['mayor', "ここまでの町のようすを、ごらんくだされ。"], summary_6: ['vil', "みんなのおかげで、町が少しずつ、元気になってきたぞ！"], summary_7: ['snow', "まとめの時間だよ。ぼくは、いつも、まとまってるよ。雪だから。"], summary_8: ['mc', "いいチームになってきたね！ この調子で、いこう！"], boss_exp3: ['mc', "この式はね、「楕円曲線」っていうの。須田先生が大学院で研究していた、数学の世界の入り口だよ。"], boss_exp4: ['snow', "むずかしそう。でも、みんなで考えれば、こわくないよ。"], lose_exp3: ['mayor', "みなさんの力は、町にしっかり残りました。ありがとう。"], outro_exp1: ['mc', "きょうは、いっしょに遊んでくれて、ありがとう！"], outro_exp2: ['snow', "ありがとう〜！ ぼく、とけるまで、わすれないよ。"], outro_exp3: ['vil', "ありがとう！ また、いつでも来てくれよな！"], outro_exp4: ['vil2', "ありがとうございました。"], outro_exp5: ['vil3', "ありがとう！ たのしかった〜！"], outro_exp6: ['mc', "さいしょは、はじめましてだった人も、もう町のなかまだね。さいごに、みんなで「ありがとう」って言い合おう！"], outro_exp7: ['mayor', "このゲームを作ったのは、須田先生です。ストアカで、算数や数学を教えておられますぞ。"], outro_exp8: ['mc', "小学校の算数から、大学の数学まで。「なぜ？」を、いっしょに、ゆっくり考えてくれる先生だよ。"], outro_exp9: ['snow', "ぼくも習いたいな。雪だるまでも、いいかな？"], outro_exp10: ['mc', "よかったら、須田先生の講座も、のぞいてみてね。それじゃあ、またね〜！"], fork_exp1: ['mc', "分かれ道だよ！ こがね町には、山の上、上の町、下の町、地下の鉱山、4つの階があるの。"], fork_exp2: ['snow', "どこへ行くかは、自分で決めていいんだよ。ぼくは、どこにも行けないけど。"], fork_1: ['mc', "分かれ道！ どっちに行く？ まよったら、みんなに聞いてみよう！"], fork_2: ['vil', "どっちの道も、おもしろいぞ！ 好きなほうを選びな！"], fork_3: ['snow', "右かな、左かな。ぼくなら、ころがりやすいほう。"], fork_4: ['mayor', "分かれ道ですな。行きたいほうを、お選びくだされ。"], ev_ropeway_1: ['mc', "ロープウェイで、山の上へ出発！ わあ、町がどんどん小さくなる〜！"], ev_ropeway_2: ['snow', "高いところは、にがてだなあ。でも、山の上は雪がいっぱいで、うれしい。"], ev_ropeway_3: ['vil3', "いってらっしゃ〜い！ 山の上は、星がきれいだよ！"], ev_slide_1: ['mc', "そりの大すべり台！ しっかりつかまって〜！ きゃ〜！"], ev_slide_2: ['snow', "びゅーん！ いいなあ。ぼくがすべると、雪玉になっちゃう。"], ev_slide_3: ['vil', "山の上から下の町まで、ひとっとびだ！ 気をつけてな！"], ev_manhole_1: ['mc', "マンホールの近道だよ！ まっくらだけど、こわくない、こわくない。…ちょっとこわい。"], ev_manhole_2: ['vil2', "古い水道管を通って、地下の鉱山へ。足もとに、気をつけてくださいね。"], ev_geyser_1: ['mc', "間欠泉だ！ お湯の力で、地上までひとっとび！ あったかそう〜！"], ev_geyser_2: ['snow', "お湯！？ ぼくは、えんりょしておくよ。とけちゃうから。"], ev_geyser_3: ['vil', "どっかーん！ こがね鉱山の名物、間欠泉だ！"], ev_cart_1: ['mc', "トロッコに乗って、出発しんこう〜！ ガタンゴトン、ガタンゴトン！"], ev_cart_2: ['vil', "鉱山のトロッコだ！ しっかりつかまってな！"], ev_cart_3: ['snow', "はやい、はやい！ ぼくも乗りたい。重くて、動かないかな。"], ev_onsen_1: ['mc', "温泉だ〜！ ぽかぽか、いい気持ち。町の人も、にっこりだね！"], ev_onsen_2: ['vil2', "いいお湯ですよ。ゆっくり、あたたまっていってくださいね。"], ev_onsen_3: ['snow', "温泉かあ。ぼくは、見てるだけにするね。足湯も、だめ。"], ev_gold_1: ['mc', "わあ、金のかけらを見つけたよ！ きらきら！ 町の予算が増えるね！"], ev_gold_2: ['vil', "おお、金だ！ こがね町の名前は、この金から来てるんだぞ！"], ev_gold_3: ['mayor', "金のかけらですな。町のために、大切に使わせていただきます。"], ev_shrine_1: ['mc', "神社でおみくじ！ いいのが出ますように。どきどき！"], ev_shrine_2: ['mayor', "山の上の神社です。町を、むかしから見守ってくれております。"], ev_daikichi_1: ['mc', "大吉〜！ すごい、すごい！ 町にいいことが、2つも起きたよ！"], ev_daikichi_2: ['vil3', "大吉だ！ やったあ！ おめでとう！"], ev_kichi_1: ['mc', "いいおみくじだね！ 町に、いいことがあったよ！"], ev_kichi_2: ['snow', "吉だ。ぼくは、毎日が雪で、毎日が大吉。"], ev_hole_1: ['mc', "あっ、落とし穴！ きゃ〜！ …だいじょうぶ？ 下の階に落ちただけだよ！"], ev_hole_2: ['snow', "落ちちゃった。でも、だいじょうぶ。下にも、道はあるよ。"], ev_hole_3: ['vil', "おっと、落とし穴だ！ けがは、ないか？"], fl_2_1: ['mc', "上の町、温泉通りに到着！ ゆげが、もくもく。いいにおい〜。"], fl_2_2: ['vil2', "ようこそ、温泉通りへ。むかしは、お客さんでいっぱいだったんですよ。"], fl_3_1: ['mc', "下の町に、もどってきたよ！ ツリー広場は、もうすぐ！"], fl_3_2: ['vil', "おかえり！ 下の町は、商店街と駅がある、町のまん中だ！"], fl_4_1: ['mc', "地下のこがね鉱山に到着！ 金の結晶が、きらきら光ってるよ！"], fl_4_2: ['snow', "地下は、すずしくていいね。ぼく、ここに住もうかな。"], fl_4_3: ['mayor', "ここが、こがね鉱山です。むかし、町はこの金でさかえたのですぞ。"], lap_1: ['mc', "町のツリーを通過！ 町の予算が増えたよ。ぐるっと回ってきたね！"], lap_2: ['vil3', "おかえりなさい！ ツリーが、まってたよ！"], call_sosu1: ['vil2', "たいへん、たいへん！ こがね町のうわさ、聞きました！"], call_sosu2: ['vil2', "うちの そすう村は、お金が 2円、3円、5円、7円…。はんぱな数しか のこってないんです！"], call_ensyu1: ['vil', "まって！ えんしゅう町は、電車が ぐるぐる回って、止まりません！"], call_mugen1: ['vil3', "むげん島は、こまりごとが むげんに あるんです〜！"], call_sosu3: ['vil2', "つぎは、うちに来てください！"], call_ensyu2: ['vil', "うちが先です！"], call_mugen2: ['vil3', "うちも〜！"], call_noel: ['mc', "わわっ、どの町も たいへん！ みんな、また 力をかしてくれる？"], call_next: ['mc', "つづく…？"], call_again: ['mc', "また いっしょに 挑戦しよう！"], call_end: ['mc', "おしまい！ また いっしょに 遊ぼうね！"], build_water_1: ['vil', "古い管を、ぜんぶ点検したぞ。あぶないところが、よくわかった！"], build_water_2: ['vil2', "管が半分、新しくなったよ。水の出が、ぜんぜんちがう！"], build_water_3: ['mc', "新しい水道のできあがり！ お水がおいしい〜！ ごくごく。"], build_train_1: ['vil', "線路の修理がはじまったぞ！ トンテン、カンテン！"], build_train_2: ['vil3', "駅がきれいに直ったよ！ ベンチも、ぴかぴか。早く電車、来ないかな。"], build_train_3: ['mayor', "ついに、電車がまた走りますぞ。出発、進行〜！"], build_debt_1: ['mayor', "町のムダづかいを見直しました。わたしのおやつ代も、へらしましたぞ。"], build_debt_2: ['vil2', "借金を半分、返せたよ。のこり半分。もうひとがんばり！"], build_debt_3: ['mc', "赤字がゼロになったよ！ ゼロって、こんなにうれしい数だったんだね！"], build_akiya_1: ['vil', "空き家を、1けんずつ調べたぞ。まだ使える家が、たくさんあった！"], build_akiya_2: ['vil3', "空き家がリフォームされて、ぴかぴか！ わたしが住みたいくらい！"], build_akiya_3: ['vil2', "新しい家族が、引っこしてきたよ。ようこそ、こがね町へ！"], build_aging_1: ['vil2', "子育ての相談窓口ができたよ。こまったときは、いつでも聞けるね。"], build_aging_2: ['vil3', "保育園ができたよ！ 朝から、にぎやかな声がする！"], build_aging_3: ['mayor', "町に、子どもの声が戻ってきました。これが、町のいちばんの宝ですな。"], build_hosp_1: ['vil', "救急車がふえたぞ。これで、いざというときも、すぐに走れる！"], build_hosp_2: ['vil2', "町に診療所ができたよ。近くにお医者さんがいると、安心だなあ。"], build_hosp_3: ['mc', "町の病院のできあがり！ もう、遠くまで行かなくていいんだね！"], build_shop_1: ['vil', "空いていたお店に、新しいお店が入るぞ。なに屋さんかな？"], build_shop_2: ['mc', "クリスマス市のはじまり〜！ いいにおい。あっ、おなかが鳴っちゃった。"], build_shop_3: ['vil3', "商店街に、人がいっぱい！ シャッターが、ぜんぶ開いたよ！"], build_snow_1: ['vil', "雪かき当番を決めたぞ。みんなでやれば、あっというまだ！"], build_snow_2: ['snow', "除雪車が来たよ。かっこいい！ …ぼくは、どけないでね。"], build_snow_3: ['snow', "雪まつりの準備ができたよ。ぼくのなかまが、いっぱいだ！"], tr_sickb_1: ['vil', "急病人です！ いそいで、お医者さんのところへ！"], tr_sickb_2: ['vil2', "急病人だ。でも、町にお医者さんがいるから、すぐだよ。"], lobby_exp2r: ['deer', "トナカイのプラスだよ！ ゆきまるの、いちばんの友だち。よろしくね！"], lobby_exp4r: ['deer', "プラスにも、教えてくれるよ！ トナカイなのに！"], start_exp3r: ['deer', "プラスも、チームだよ！ 足は4本あるから、ゆきまるの分まで走るね！"], quiz_exp3r: ['deer', "まちがえた数だけ、かしこくなるんだよ。じゃあ、ゆきまるは天才だね！"], fork_exp2r: ['deer', "行きたいところがあったら、そりに乗せてあげる！ いつでも言ってね！"], hurry_2r: ['deer', "ねちゃだめ〜！ あと少し、いっしょに応援しよう！"], gacha_2r: ['deer', "じゃあ、プラスが回してあげる！ …あ、プラスの手も、ひづめだった。"], jobnews_2r: ['deer', "ゆきまるは、町でいちばんの雪だるまだよ。それって、すごい仕事だよ！"], meeting_7r: ['deer', "ひとりじゃないよ。プラスが、毎日となりに来てるでしょ！"], cards_2r: ['deer', "じゃあ、プラスは、いい予感！ これで、半分ずつだね！"], tr_hit_2r: ['deer', "いなくならないよ！ 冬になったら、プラスがまた作るもん。町だって、また元気になるよ！"], lastround_2r: ['deer', "えらい、えらい！ さいごまで、いっしょに立ってよう！"], win_exp2r: ['deer', "やったー！ ゆきまる、いっしょにバンザイ！"], lose_exp2r: ['deer', "春になっても、だいじょうぶ。冬になったら、また会えるよ。だから、みんなも、また来てね！"], outro_exp2r: ['deer', "プラスは、ずーっとわすれないよ！ ありがとう〜！"], outro_exp9r: ['deer', "いいに決まってるよ！ プラスも、いっしょに習う！"], roll_12: ['deer', "サイコロ、えいっ！ どんな目でも、プラスにいこう！"], quiz_13: ['deer', "わかるところまでで、いいんだよ。プラスが、うしろで応援してる！"], tr_guard_12: ['deer', "やった〜！ 守ってくれた人、かっこいい！ プラスも、あんなふうになりたい！"], tr_hit_12: ['deer', "だいじょうぶ、プラスにいこう！ 次は、きっと守れるよ！"], good_10: ['deer', "わーい、いいこと！ いいことは、みんなで山分けだ〜！"], summary_9: ['deer', "おつかれさま！ みんなの力が、また1つ、プラスされたね！"], tree_exp1: ['mc', "みんなのスマホに、問題が出るよ。正解すると、ツリーに明かりが灯るの。星の数だけ、灯るよ！"], tree_exp2: ['snow', "じっくり1問でも、かんたんな問題をたくさんでも、いいんだって。ぼくは、じっくり派。"], tree_exp2r: ['deer', "プラスは、たくさん派！ どっちも、同じ明かりだよ！"], tree_exp3: ['mayor', "時間は3分です。まちがえても、明かりはへりません。安心して、挑戦してくだされ。"], tree_first_1: ['vil', "おっ、1つ灯ったぞ！ その調子だ！"], tree_half_1: ['mc', "半分、灯ったよ！ きれい〜！ あと半分、いけるいける！"], tree_hurry_1: ['mc', "あと30秒！ さいごの1問、おねがい！"], tree_ok_exp1: ['mc', "ぜんぶ灯った〜！ みんなの明かりで、ツリーがぴっかぴか！"], tree_ok_exp2: ['deer', "てっぺんの星も、光ったよ！ みんな、すごい、すごい！"], tree_ng_exp1: ['mayor', "時間です。あと少しでしたな。でも、灯った明かりは、消えませんぞ。"], tie_exp1: ['mc', "あれれ、同じ票数だ！ こういうときは、町の人たちの声を聞いてみよう！"], tie_exp2: ['mayor', "町のことは、みんなで決める。わたしひとりでは、決めませんぞ。"], tie_1: ['mc', "また同じ票数！ 町の人たちは、どれがいいのかな？"], tie_2: ['mayor', "同じ票数ですな。では、町のみなさんの声を、聞いてみましょう。"], tie_3: ['snow', "同じ票数か〜。ぼくは、どれもいいと思う。…それじゃ、決まらないね。"], tie_3r: ['deer', "だから、町のみんなに聞くんだよ！ せーの！"], tienone_1: ['mc', "あれ？ だれも投票しなかったみたい。じゃあ、町の人たちに聞いてみよう！"], tiev_water: ['vil', "水道管を、たのむ！ うちの水、朝いちばんは、にごってるんだ。"], tiev_train: ['vil3', "電車がいいな！ となり町の友だちに、会いに行きたいの！"], tiev_debt: ['vil2', "まずは、借金を返しましょう。あとが、ずっと楽になりますよ。"], tiev_akiya: ['vil', "空き家を、たのむ！ となりが空き家で、夜はまっくらなんだ。"], tiev_aging: ['vil3', "子どもたちのことを、おねがい！ 公園が、しーんとしてて、さみしいの。"], tiev_hosp: ['vil2', "病院を、おねがいします。うちのおばあちゃんが、心配でね。"], tiev_shop: ['vil', "商店街を、たのむ！ コロッケ屋がしまって、さみしいんだ。"], tiev_snow: ['vil2', "雪かきを、おねがいします。けさも、げんかんが開かなくてね。"], join_exp1: ['mc', "まずは、スマホで参加しよう！ カメラでQRコードを写すか、チャットのリンクを開いてね。"], join_exp2: ['mc', "ページが開いたら、名前を入れて、コマとコースをえらんで、「参加する」をタップ！"], join_exp3: ['mc', "もう自分の名前が出ている人は、名前をタップするだけだよ。"], join_exp4: ['mc', "「つながっている人」に、自分の名前が出たら、じゅんびOK！ わからないときは、先生に聞いてね。"], rejoin_1: ['mc', "もどり方を説明するね。まず、スマホの画面をつけてみて。もどらないときは、QRコードをもう一度写して、自分の名前をタップ！ つづきから遊べるよ。"], quiz_exp4: ['mc', "スマホの画面が消えていたら、もう一度つけてね。問題が出てこないときは、先生に教えてね。"]};
+  const L = {lobby_exp1: ['mc', "ようこそ、こがね町へ！ わたしは妖精のノエル。きょうの司会だよ。あっ、マイクがさかさまだった。えへへ。"], lobby_exp2: ['snow', "ぼくは雪だるまの、ゆきまる。待ってるあいだに、とけないように気をつけるね。"], start_exp1: ['mc', "それでは、はじまり、はじまり〜！ これは、みんなで力を合わせて、こがね町を救うすごろくだよ！"], start_exp2: ['mc', "だれかと競争するんじゃないよ。ここにいるみんなが、ひとつのチーム！"], start_exp3: ['snow', "えっ、ぼくも？ 足はないけど、気持ちは前に進んでるよ！"], start_exp4: ['mc', "町の人の「幸せ度」を100にできたら、みんなの勝ち！ えっと、まずは、そう、サイコロ！ サイコロで町を進もう！"], roll_1: ['mc', "次のラウンド、いくよ〜！ いい目が、出ますように！"], roll_2: ['snow', "ころころ〜。あ、ぼくが転がって、どうするんだ。"], roll_3: ['mc', "どこに止まるかな？ わくわくするね！"], roll_4: ['mc', "サイコロタイム！ 止まったマスの色が、次の問題の分野だよ。"], roll_5: ['mc', "サイコロ、えいっ！ あ、わたしが投げるんじゃなかった。"], half_1: ['mc', "ここで折り返し！ 幸せ度は、いくつになったかな？ 後半も、いっしょにがんばろう！"], lastround_1: ['mc', "いよいよ、最後のラウンドだよ！ みんな、がんばって！"], lastround_2: ['snow', "さいごか〜。ぼく、まだ立ってるよ。えらい？"], quiz_exp1: ['mc', "問題タイムだよ！ 自分のスマホを見てね。止まったマスの色の問題が出るよ。時間は2分！"], quiz_exp2: ['mc', "星の数で、むずかしさを選べるよ。星3つは、正解すると町のお金が、どーんと増えるの！"], quiz_exp3: ['snow', "まちがえても、だれにも見えないから大丈夫。ぼくなんて、毎日まちがえてるよ。"], quiz_1: ['mc', "問題タイム、スタート！ スマホを見てね！"], quiz_2: ['snow', "じっくり考えていいよ。あわてない、あわてない。"], quiz_3: ['mc', "紙に書くと、解きやすいよ！ わたしも書こうっと。あれ、えんぴつ、どこ？"], quiz_4: ['snow', "ぼくの頭は雪でできてるけど、応援だけは、だれにも負けないよ！"], hurry_1: ['mc', "のこり20秒！ いそいで、いそいで〜！ あ、でも、落ち着いてね！"], hurry_2: ['snow', "あと20秒だよ〜。ぼくなら、もうあきらめて寝てる。"], gacha_exp1: ['mc', "ガチャタイム！ 正解した人は、ガチャを回せるよ。"], gacha_exp2: ['mc', "出てきたアイテムは、自分のものだけど、町を守る力にもなるんだよ！"], gacha_1: ['mc', "ガチャタイム！ なにが出るかな？"], gacha_2: ['snow', "ぼくも回したいな。手は、木の枝だけど。"], gacha_3: ['mc', "レアなアイテム、出てこ〜い！ わたしの魔法じゃ、出せないんだけどね。"], jobnews_exp1: ['mc', "しごとのニュースだよ！ 問題に正解すると、その分野の仕事につけるの。"], jobnews_exp2: ['mc', "計算なら消防士、関数ならエンジニア、確率なら警察官。仕事の力で、町を守ろう！"], jobnews_1: ['mc', "しごとのニュース！ 新しい仕事についた人がいるよ。すごーい！"], jobnews_2: ['snow', "みんな、どんどん立派になっていく。ぼくは、ずっと雪だるま。"], career_exp1: ['mc', "転職タイム！ 資格を持っている人は、ちがう仕事に変われるよ。"], career_exp2: ['mc', "いま、町に足りない仕事はどれかな？ スマホで選んでね。そのままでも大丈夫！"], career_1: ['mc', "転職タイム！ 仕事を変える人は、スマホで選んでね。"], career_2: ['snow', "ぼくの仕事？ 立っていること。けっこう、たいへんなんだよ。"], vet_1: ['mayor', "ベテランの誕生です。同じ仕事を続けると、力が強くなりますぞ。"], meeting_exp1: ['mayor', "町長です。町の会議をはじめます。集まったお金を、どの困りごとに使うか、決めましょう。"], meeting_exp2: ['mc', "スマホで投票してね。水道管、電車、病院。工事が進むと、町がどんどん強くなるよ！"], meeting_1: ['mayor', "町の会議の時間です。さて、どの工事を進めましょうか。"], meeting_2: ['mc', "投票タイム！ みんなの1票が、町を変えるよ！"], meeting_3: ['snow', "ぼくは雪かきに1票。あ、ぼくも、かかれちゃうか。"], meet_save_1: ['mc', "今回は貯金だね！ 次の会議で、大きな工事をしよう！"], build_1: ['vil', "工事スタート！ トンテン、カンテン！"], build_2: ['vil', "直った、直った！ 町がまたひとつ、元気になったよ！"], build_3: ['snow', "わあ、明かりがついた！ まぶしい、あったかい、とける〜！"], build_4: ['mc', "ぴかーん！ 明かりがついたよ！ まぶしくて、前が見えない〜！"], build_5: ['vil2', "ありがとう！ これで安心して暮らせるよ。"], build_6: ['vil3', "わあ、直ってる！ うれしいなあ！"], build_done_1: ['mayor', "完成です。みなさんのおかげで、町にボーナスが入りますぞ。"], build_done_2: ['vil', "完成、おめでとう！ これで、毎ラウンドいいことが起きるよ！"], cards_exp1: ['mc', "さあ、町のできごとカード！ いいことも、こまったことも起きるよ。"], cards_exp2: ['mc', "こまったことは、仕事やアイテム、進めておいた工事でふせげるの。どきどきするね！"], cards_1: ['mc', "ドキドキの、できごとカード！"], cards_2: ['snow', "いやな予感がする。ぼくの予感、けっこう当たるんだ。"], cards_3: ['mc', "なにが出るかな、なにが出るかな〜！ こわいのは、いやだなあ。"], tr_snowfall_1: ['snow', "大雪だ！ ぼくはうれしいけど、みんなは、たいへんだ！"], tr_pipe_1: ['vil', "たいへん！ 水道管が破裂した！ 水が、水が〜！"], tr_fire_1: ['vil', "火事だ！ 空き家が燃えてる！ 消防士さんは、いる！？"], tr_scam_1: ['snow', "あやしい電話だ！ 「オレだよ、オレ」って、だれだよ！"], tr_thief_1: ['vil', "あっ、空き巣だ！ おまわりさーん！"], tr_sick_1: ['vil', "急病人です！ でも、病院が遠い。いそいで、救急車！"], tr_leave_1: ['mayor', "若い家族が、町を出ていこうとしています。さびしいですな。"], tr_closed_1: ['vil', "ああっ、またお店のシャッターが下りちゃう！"], tr_bus_1: ['snow', "バスが行っちゃった。次は、あしたかな。"], tr_interest_1: ['mayor', "借金の利子の支払いです。町のお金が、飛んでいきます。"], tr_guard_1: ['vil', "ふせいだー！ ナイス！"], tr_guard_2: ['vil', "お仕事パワーで、町を守った！ かっこいい！"], tr_guard_3: ['snow', "すごい！ ぼく、感動して、とけそう！"], tr_guard_4: ['mayor', "助かりました。町を守ってくれて、ありがとう。"], tr_guard_5: ['mc', "やったあ！ 町が守られたよ！ うれしくて、くるくる回っちゃう！"], tr_guard_6: ['vil2', "たすかったよ。ほんとうに、ありがとう。"], tr_guard_7: ['vil3', "すごい、すごい！ さすがだね！"], tr_hit_1: ['vil', "ああ〜、ふせげなかった。でも大丈夫、次で取り返そう！"], tr_hit_2: ['snow', "どんまい！ ぼくなんて、春になったら、いなくなるんだから。"], tr_hit_3: ['vil', "いたたた。町に足りない仕事が、あるのかも？"], tr_hit_4: ['mayor', "むむ。次の会議で、対策を考えましょう。"], tr_hit_5: ['mc', "あわわ、たいへん！ でも、だいじょうぶ。次はきっと、ふせげるよ！"], tr_hit_6: ['vil2', "こまったなあ。どうしよう。"], tr_hit_7: ['vil3', "うう、たいへんだ。だれか、たすけて〜。"], good_1: ['vil', "やったー！ いいことが起きたよ！"], good_2: ['snow', "いいニュースだ！ ぼく、なにもしてないけど、うれしい！"], good_3: ['mayor', "これは、うれしい知らせですな。"], good_4: ['mc', "わあ、いいニュース！ うれしいな！"], good_5: ['vil2', "よかった、よかった。いい日になったね。"], good_6: ['vil3', "やったあ！ うれしい！"], ev_challenge_1: ['mc', "チャレンジマス！ 正解すると、お金が2倍だよ！"], ev_bonus_1: ['mc', "ボーナス問題！ もう1問、挑戦できるよ！"], ev_gift_1: ['snow', "町に寄付が届いたよ！ ありがたや、ありがたや。"], ev_snowman_1: ['snow', "雪だるまを作ってくれたの！？ やった、なかまが増えた！"], ev_event_1: ['vil', "おっと、町でなにか起きたみたい！"], summary_1: ['mc', "ラウンドのまとめ！ 町は、どう変わったかな？"], summary_2: ['snow', "ふう、1ラウンドおわり。ぼく、まだ立ってるよ！"], summary_3: ['mc', "ここまでの結果を、見てみよう！"], boss_exp1: ['mayor', "最後のラウンドが終わりました。幸せ度は、あと少し足りません。"], boss_exp2: ['mc', "でも、まだチャンスがあるよ！ 最後の大工事。みんなの力で、町のツリーに明かりを灯そう！"], win_exp1: ['mc', "やったー！ こがね町に、明かりが戻ったよ！ みんな、ほんとうにありがとう！"], win_exp2: ['snow', "ううっ、うれしくて。とけてないよ、泣いてるんだよ！"], win_exp3: ['mayor', "町を代表して、お礼を言います。メリークリスマス！"], win_exp4: ['vil2', "明かりが戻った！ ありがとう、みなさん。"], win_exp5: ['vil3', "メリークリスマス！ また来てね！"], lose_exp1: ['mc', "あと少しだったね。でも、みんなが力を合わせた場所には、ちゃんと明かりが灯ってるよ。"], lose_exp2: ['snow', "また遊びに来てね。ぼく、ここで待ってる。春までは。"], lobby_exp3: ['mc', "このゲームを作ったのは、須田先生。もと小学校の先生で、大学院では数の世界を研究していたんだよ。"], lobby_exp4: ['snow', "すごい先生なのに、ぼくにも、やさしく教えてくれるんだ。雪だるまなのに。"], lobby_exp5: ['mc', "はじめましての人も、きょうは同じチームのなかま。よかったら、「よろしく」って声をかけてみてね！"], start_exp5: ['mc', "わからないことがあったら、いつでも須田先生に聞いてね。急かさないし、だれかと比べたりもしないよ。"], roll_6: ['mc', "みんなのコマ、いってらっしゃ〜い！"], roll_7: ['snow', "いい目が出たら、ぼくにも分けてね。ぼくの目、ボタンだけど。"], roll_8: ['vil', "さあ、サイコロだ！ 町のみんなも、応援してるぞ！"], roll_9: ['mc', "サイコロの神さま、おねがいします！ あれ、妖精がお祈りしても、いいのかな。"], roll_10: ['vil3', "がんばれ〜！ こっちのマスに来てね！"], roll_11: ['mayor', "次のラウンドですな。みなさん、よろしくお願いしますぞ。"], half_2: ['snow', "もう半分？ はやいなあ。ぼく、まだ半分も、とけてないよ。"], half_3: ['mc', "折り返しだよ！ ここまで、町を助けてくれたみんなに、拍手〜！"], lastround_3: ['mayor', "最後のラウンドです。みなさんの力を、もう一度、かしてくだされ。"], lastround_4: ['mc', "ラストだよ！ みんなで、「がんばろう」って声をかけ合おう！"], quiz_5: ['mc', "数学は、時間がかかっても、ひとつひとつ分かっていけばいい。須田先生が、いつもそう言ってるよ。"], quiz_6: ['snow', "ヒントがほしいときは、須田先生に聞いてみて。ぼくに聞いても、雪の話しかできないから。"], quiz_7: ['mc', "星1つでも、正解は正解！ 自分に合ったむずかしさで、いこう！"], quiz_8: ['vil', "がんばれ！ 町のみんなが、ついてるぞ！"], quiz_9: ['mc', "問題タイム！ えっと、時間は2分。タイマー、スタート！ あ、もう動いてた。"], quiz_10: ['mayor', "あわてず、ていねいに。答えは、にげませんぞ。"], quiz_11: ['vil3', "すごいなあ、みんな。数学、やってみたくなってきた！"], quiz_12: ['snow', "できた人は、心の中でガッツポーズ。まだの人は、深呼吸。"], hurry_3: ['mc', "あと20秒！ 最後まで、あきらめないで！"], hurry_4: ['vil', "のこり20秒だ！ 見直しも、わすれずにな！"], gacha_4: ['snow', "なにが出ても、当たりだよ。ぼくは、はずれたことないもん。回したことも、ないけど。"], gacha_5: ['mc', "ガチャ、ガチャ〜！ いいのが出たら、みんなに見せてあげてね！"], gacha_6: ['vil2', "いいものが、出るといいですな。"], gacha_7: ['vil3', "わくわく！ なにが出るかな！"], jobnews_3: ['mc', "新しい仕事、おめでとう！ みんなで拍手〜！"], jobnews_4: ['vil', "新しいなかまが増えたぞ！ たのもしいな！"], jobnews_5: ['mayor', "町のために働いてくれて、ありがたいことです。"], career_3: ['mc', "転職タイム！ まよったら、みんなに「どの仕事がいいかな？」って聞いてみよう！"], career_4: ['mayor', "町に足りない仕事を、見てくだされ。求人が出ているかもしれませんぞ。"], vet_2: ['mc', "ベテランさんの誕生だよ！ かっこいい〜！"], meeting_4: ['mc', "町の会議だよ！ 「これをやりたい」って、声に出して相談してもいいよ！"], meeting_5: ['vil', "たのむ、うちの近くのことも、わすれないでくれ〜！"], meeting_6: ['vil2', "みなさんで決めたことなら、まちがいないでしょう。"], meeting_7: ['snow', "みんなで決めるって、いいね。ぼくは、いつも一人で立ってるから。"], meet_save_2: ['snow', "ためるのも、作戦だよ。ぼくも、雪をためて大きくなったんだ。"], build_7: ['mc', "工事かんりょう！ みんなのおかげだよ。ありがとう！"], build_8: ['mayor', "りっぱに直りましたな。みなさんに感謝です。"], build_9: ['vil', "おお、きれいになった！ さすがだな！"], build_done_3: ['mc', "ついに完成！ みんな、すごいよ！ 拍手、拍手〜！"], cards_4: ['mc', "カード、めくるよ。せーのっ！ あ、まだ心の準備が。"], cards_5: ['vil', "なにが起きても、みんなでなら乗りこえられるさ！"], cards_6: ['mayor', "町のできごとです。心して、聞いてくだされ。"], tr_snowfall_2: ['vil2', "これは大雪だ。道が、うまってしまう。"], tr_pipe_2: ['mc', "きゃあ、水が！ 水道管が、こわれちゃった！"], tr_fire_2: ['mc', "たいへん、火事だよ！ だれか、消防士さん！"], tr_scam_2: ['mc', "あやしい電話がかかってきたよ。おばあちゃん、出ちゃだめ〜！"], tr_thief_2: ['snow', "どろぼうだ！ ぼく、動けないから、だれか、つかまえて！"], tr_sick_2: ['vil2', "急病人だ。病院まで、遠いんだよなあ。"], tr_leave_2: ['mc', "えっ、引っこしちゃうの？ さびしいよ〜。"], tr_closed_2: ['vil3', "あのお店、しまっちゃうの？ よく行ってたのに。"], tr_bus_2: ['vil', "バスの本数が、またへるのか。こまったなあ。"], tr_interest_2: ['mc', "お金に羽がはえて、飛んでいっちゃう！ まって〜！"], tr_guard_8: ['mc', "守ってくれた人に、みんなで拍手〜！ パチパチパチ！"], tr_guard_9: ['vil', "たのもしいなあ！ これからも、たのむぞ！"], tr_guard_10: ['snow', "ナイス！ みんなも、「ナイス」って言ってあげて！"], tr_guard_11: ['mayor', "おみごと。町の人も、よろこんでおりますぞ。"], tr_hit_8: ['mc', "どんまい、どんまい！ みんなで力を合わせれば、大丈夫！"], tr_hit_9: ['vil', "しかたない。次は、みんなで守ろう！"], tr_hit_10: ['snow', "だれのせいでもないよ。雪のせいに、しておこう。"], tr_hit_11: ['mayor', "こういう日もあります。次の会議で、相談しましょう。"], good_7: ['mc', "やったね！ みんなで、ばんざ〜い！"], good_8: ['vil', "いいことがあると、町が明るくなるなあ！"], good_9: ['snow', "うれしいことは、みんなで分けよう。雪も、分けようか？"], ev_challenge_2: ['snow', "チャレンジマスだ！ 2倍だよ、2倍。ぼくが2人いたら、たいへんだね。"], ev_bonus_2: ['vil3', "ボーナス問題だって！ がんばって！"], ev_gift_2: ['mc', "わあ、寄付が届いたよ！ ありがとう！"], ev_snowman_2: ['mc', "雪だるま、できた！ ゆきまるに、なかまができたよ！"], ev_event_2: ['mc', "あれ？ 町で、なにか起きたみたい！"], summary_4: ['mc', "このラウンドも、おつかれさま！ がんばった自分と、なかまに、拍手〜！"], summary_5: ['mayor', "ここまでの町のようすを、ごらんくだされ。"], summary_6: ['vil', "みんなのおかげで、町が少しずつ、元気になってきたぞ！"], summary_7: ['snow', "まとめの時間だよ。ぼくは、いつも、まとまってるよ。雪だから。"], summary_8: ['mc', "いいチームになってきたね！ この調子で、いこう！"], boss_exp3: ['mc', "この式はね、「楕円曲線」っていうの。須田先生が大学院で研究していた、数学の世界の入り口だよ。"], boss_exp4: ['snow', "むずかしそう。でも、みんなで考えれば、こわくないよ。"], lose_exp3: ['mayor', "みなさんの力は、町にしっかり残りました。ありがとう。"], outro_exp1: ['mc', "きょうは、いっしょに遊んでくれて、ありがとう！"], outro_exp2: ['snow', "ありがとう〜！ ぼく、とけるまで、わすれないよ。"], outro_exp3: ['vil', "ありがとう！ また、いつでも来てくれよな！"], outro_exp4: ['vil2', "ありがとうございました。"], outro_exp5: ['vil3', "ありがとう！ たのしかった〜！"], outro_exp6: ['mc', "さいしょは、はじめましてだった人も、もう町のなかまだね。さいごに、みんなで「ありがとう」って言い合おう！"], outro_exp7: ['mayor', "このゲームを作ったのは、須田先生です。ストアカで、算数や数学を教えておられますぞ。"], outro_exp8: ['mc', "小学校の算数から、大学の数学まで。「なぜ？」を、いっしょに、ゆっくり考えてくれる先生だよ。"], outro_exp9: ['snow', "ぼくも習いたいな。雪だるまでも、いいかな？"], outro_exp10: ['mc', "よかったら、須田先生の講座も、のぞいてみてね。それじゃあ、またね〜！"], fork_exp1: ['mc', "分かれ道だよ！ こがね町には、山の上、上の町、下の町、地下の鉱山、4つの階があるの。"], fork_exp2: ['snow', "どこへ行くかは、自分で決めていいんだよ。ぼくは、どこにも行けないけど。"], fork_1: ['mc', "分かれ道！ どっちに行く？ まよったら、みんなに聞いてみよう！"], fork_2: ['vil', "どっちの道も、おもしろいぞ！ 好きなほうを選びな！"], fork_3: ['snow', "右かな、左かな。ぼくなら、ころがりやすいほう。"], fork_4: ['mayor', "分かれ道ですな。行きたいほうを、お選びくだされ。"], ev_ropeway_1: ['mc', "ロープウェイで、山の上へ出発！ わあ、町がどんどん小さくなる〜！"], ev_ropeway_2: ['snow', "高いところは、にがてだなあ。でも、山の上は雪がいっぱいで、うれしい。"], ev_ropeway_3: ['vil3', "いってらっしゃ〜い！ 山の上は、星がきれいだよ！"], ev_slide_1: ['mc', "そりの大すべり台！ しっかりつかまって〜！ きゃ〜！"], ev_slide_2: ['snow', "びゅーん！ いいなあ。ぼくがすべると、雪玉になっちゃう。"], ev_slide_3: ['vil', "山の上から下の町まで、ひとっとびだ！ 気をつけてな！"], ev_manhole_1: ['mc', "マンホールの近道だよ！ まっくらだけど、こわくない、こわくない。…ちょっとこわい。"], ev_manhole_2: ['vil2', "古い水道管を通って、地下の鉱山へ。足もとに、気をつけてくださいね。"], ev_geyser_1: ['mc', "間欠泉だ！ お湯の力で、地上までひとっとび！ あったかそう〜！"], ev_geyser_2: ['snow', "お湯！？ ぼくは、えんりょしておくよ。とけちゃうから。"], ev_geyser_3: ['vil', "どっかーん！ こがね鉱山の名物、間欠泉だ！"], ev_cart_1: ['mc', "トロッコに乗って、出発しんこう〜！ ガタンゴトン、ガタンゴトン！"], ev_cart_2: ['vil', "鉱山のトロッコだ！ しっかりつかまってな！"], ev_cart_3: ['snow', "はやい、はやい！ ぼくも乗りたい。重くて、動かないかな。"], ev_onsen_1: ['mc', "温泉だ〜！ ぽかぽか、いい気持ち。町の人も、にっこりだね！"], ev_onsen_2: ['vil2', "いいお湯ですよ。ゆっくり、あたたまっていってくださいね。"], ev_onsen_3: ['snow', "温泉かあ。ぼくは、見てるだけにするね。足湯も、だめ。"], ev_gold_1: ['mc', "わあ、金のかけらを見つけたよ！ きらきら！ 町の予算が増えるね！"], ev_gold_2: ['vil', "おお、金だ！ こがね町の名前は、この金から来てるんだぞ！"], ev_gold_3: ['mayor', "金のかけらですな。町のために、大切に使わせていただきます。"], ev_shrine_1: ['mc', "神社でおみくじ！ いいのが出ますように。どきどき！"], ev_shrine_2: ['mayor', "山の上の神社です。町を、むかしから見守ってくれております。"], ev_daikichi_1: ['mc', "大吉〜！ すごい、すごい！ 町にいいことが、2つも起きたよ！"], ev_daikichi_2: ['vil3', "大吉だ！ やったあ！ おめでとう！"], ev_kichi_1: ['mc', "いいおみくじだね！ 町に、いいことがあったよ！"], ev_kichi_2: ['snow', "吉だ。ぼくは、毎日が雪で、毎日が大吉。"], ev_hole_1: ['mc', "あっ、落とし穴！ きゃ〜！ …だいじょうぶ？ 下の階に落ちただけだよ！"], ev_hole_2: ['snow', "落ちちゃった。でも、だいじょうぶ。下にも、道はあるよ。"], ev_hole_3: ['vil', "おっと、落とし穴だ！ けがは、ないか？"], fl_2_1: ['mc', "上の町、温泉通りに到着！ ゆげが、もくもく。いいにおい〜。"], fl_2_2: ['vil2', "ようこそ、温泉通りへ。むかしは、お客さんでいっぱいだったんですよ。"], fl_3_1: ['mc', "下の町に、もどってきたよ！ ツリー広場は、もうすぐ！"], fl_3_2: ['vil', "おかえり！ 下の町は、商店街と駅がある、町のまん中だ！"], fl_4_1: ['mc', "地下のこがね鉱山に到着！ 金の結晶が、きらきら光ってるよ！"], fl_4_2: ['snow', "地下は、すずしくていいね。ぼく、ここに住もうかな。"], fl_4_3: ['mayor', "ここが、こがね鉱山です。むかし、町はこの金でさかえたのですぞ。"], lap_1: ['mc', "町のツリーを通過！ 町の予算が増えたよ。ぐるっと回ってきたね！"], lap_2: ['vil3', "おかえりなさい！ ツリーが、まってたよ！"], call_sosu1: ['vil2', "たいへん、たいへん！ こがね町のうわさ、聞きました！"], call_sosu2: ['vil2', "うちの そすう村は、お金が 2円、3円、5円、7円…。はんぱな数しか のこってないんです！"], call_ensyu1: ['vil', "まって！ えんしゅう町は、電車が ぐるぐる回って、止まりません！"], call_mugen1: ['vil3', "むげん島は、こまりごとが むげんに あるんです〜！"], call_sosu3: ['vil2', "つぎは、うちに来てください！"], call_ensyu2: ['vil', "うちが先です！"], call_mugen2: ['vil3', "うちも〜！"], call_noel: ['mc', "わわっ、どの町も たいへん！ みんな、また 力をかしてくれる？"], call_next: ['mc', "つづく…？"], call_again: ['mc', "また いっしょに 挑戦しよう！"], call_end: ['mc', "おしまい！ また いっしょに 遊ぼうね！"], build_water_1: ['vil', "古い管を、ぜんぶ点検したぞ。あぶないところが、よくわかった！"], build_water_2: ['vil2', "管が半分、新しくなったよ。水の出が、ぜんぜんちがう！"], build_water_3: ['mc', "新しい水道のできあがり！ お水がおいしい〜！ ごくごく。"], build_train_1: ['vil', "線路の修理がはじまったぞ！ トンテン、カンテン！"], build_train_2: ['vil3', "駅がきれいに直ったよ！ ベンチも、ぴかぴか。早く電車、来ないかな。"], build_train_3: ['mayor', "ついに、電車がまた走りますぞ。出発、進行〜！"], build_debt_1: ['mayor', "町のムダづかいを見直しました。わたしのおやつ代も、へらしましたぞ。"], build_debt_2: ['vil2', "借金を半分、返せたよ。のこり半分。もうひとがんばり！"], build_debt_3: ['mc', "赤字がゼロになったよ！ ゼロって、こんなにうれしい数だったんだね！"], build_akiya_1: ['vil', "空き家を、1けんずつ調べたぞ。まだ使える家が、たくさんあった！"], build_akiya_2: ['vil3', "空き家がリフォームされて、ぴかぴか！ わたしが住みたいくらい！"], build_akiya_3: ['vil2', "新しい家族が、引っこしてきたよ。ようこそ、こがね町へ！"], build_aging_1: ['vil2', "子育ての相談窓口ができたよ。こまったときは、いつでも聞けるね。"], build_aging_2: ['vil3', "保育園ができたよ！ 朝から、にぎやかな声がする！"], build_aging_3: ['mayor', "町に、子どもの声が戻ってきました。これが、町のいちばんの宝ですな。"], build_hosp_1: ['vil', "救急車がふえたぞ。これで、いざというときも、すぐに走れる！"], build_hosp_2: ['vil2', "町に診療所ができたよ。近くにお医者さんがいると、安心だなあ。"], build_hosp_3: ['mc', "町の病院のできあがり！ もう、遠くまで行かなくていいんだね！"], build_shop_1: ['vil', "空いていたお店に、新しいお店が入るぞ。なに屋さんかな？"], build_shop_2: ['mc', "クリスマス市のはじまり〜！ いいにおい。あっ、おなかが鳴っちゃった。"], build_shop_3: ['vil3', "商店街に、人がいっぱい！ シャッターが、ぜんぶ開いたよ！"], build_snow_1: ['vil', "雪かき当番を決めたぞ。みんなでやれば、あっというまだ！"], build_snow_2: ['snow', "除雪車が来たよ。かっこいい！ …ぼくは、どけないでね。"], build_snow_3: ['snow', "雪まつりの準備ができたよ。ぼくのなかまが、いっぱいだ！"], tr_sickb_1: ['vil', "急病人です！ いそいで、お医者さんのところへ！"], tr_sickb_2: ['vil2', "急病人だ。でも、町にお医者さんがいるから、すぐだよ。"], lobby_exp2r: ['deer', "トナカイのプラスだよ！ ゆきまるの、いちばんの友だち。よろしくね！"], lobby_exp4r: ['deer', "プラスにも、教えてくれるよ！ トナカイなのに！"], start_exp3r: ['deer', "プラスも、チームだよ！ 足は4本あるから、ゆきまるの分まで走るね！"], quiz_exp3r: ['deer', "まちがえた数だけ、かしこくなるんだよ。じゃあ、ゆきまるは天才だね！"], fork_exp2r: ['deer', "行きたいところがあったら、そりに乗せてあげる！ いつでも言ってね！"], hurry_2r: ['deer', "ねちゃだめ〜！ あと少し、いっしょに応援しよう！"], gacha_2r: ['deer', "じゃあ、プラスが回してあげる！ …あ、プラスの手も、ひづめだった。"], jobnews_2r: ['deer', "ゆきまるは、町でいちばんの雪だるまだよ。それって、すごい仕事だよ！"], meeting_7r: ['deer', "ひとりじゃないよ。プラスが、毎日となりに来てるでしょ！"], cards_2r: ['deer', "じゃあ、プラスは、いい予感！ これで、半分ずつだね！"], tr_hit_2r: ['deer', "いなくならないよ！ 冬になったら、プラスがまた作るもん。町だって、また元気になるよ！"], lastround_2r: ['deer', "えらい、えらい！ さいごまで、いっしょに立ってよう！"], win_exp2r: ['deer', "やったー！ ゆきまる、いっしょにバンザイ！"], lose_exp2r: ['deer', "春になっても、だいじょうぶ。冬になったら、また会えるよ。だから、みんなも、また来てね！"], outro_exp2r: ['deer', "プラスは、ずーっとわすれないよ！ ありがとう〜！"], outro_exp9r: ['deer', "いいに決まってるよ！ プラスも、いっしょに習う！"], roll_12: ['deer', "サイコロ、えいっ！ どんな目でも、プラスにいこう！"], quiz_13: ['deer', "わかるところまでで、いいんだよ。プラスが、うしろで応援してる！"], tr_guard_12: ['deer', "やった〜！ 守ってくれた人、かっこいい！ プラスも、あんなふうになりたい！"], tr_hit_12: ['deer', "だいじょうぶ、プラスにいこう！ 次は、きっと守れるよ！"], good_10: ['deer', "わーい、いいこと！ いいことは、みんなで山分けだ〜！"], summary_9: ['deer', "おつかれさま！ みんなの力が、また1つ、プラスされたね！"], tree_exp1: ['mc', "みんなのスマホに、問題が出るよ。正解すると、ツリーに明かりが灯るの。星の数だけ、灯るよ！"], tree_exp2: ['snow', "じっくり1問でも、かんたんな問題をたくさんでも、いいんだって。ぼくは、じっくり派。"], tree_exp2r: ['deer', "プラスは、たくさん派！ どっちも、同じ明かりだよ！"], tree_exp3: ['mayor', "時間は3分です。まちがえても、明かりはへりません。安心して、挑戦してくだされ。"], tree_first_1: ['vil', "おっ、1つ灯ったぞ！ その調子だ！"], tree_half_1: ['mc', "半分、灯ったよ！ きれい〜！ あと半分、いけるいける！"], tree_hurry_1: ['mc', "あと30秒！ さいごの1問、おねがい！"], tree_ok_exp1: ['mc', "ぜんぶ灯った〜！ みんなの明かりで、ツリーがぴっかぴか！"], tree_ok_exp2: ['deer', "てっぺんの星も、光ったよ！ みんな、すごい、すごい！"], tree_ng_exp1: ['mayor', "時間です。あと少しでしたな。でも、灯った明かりは、消えませんぞ。"], tie_exp1: ['mc', "あれれ、同じ票数だ！ こういうときは、町の人たちの声を聞いてみよう！"], tie_exp2: ['mayor', "町のことは、みんなで決める。わたしひとりでは、決めませんぞ。"], tie_1: ['mc', "また同じ票数！ 町の人たちは、どれがいいのかな？"], tie_2: ['mayor', "同じ票数ですな。では、町のみなさんの声を、聞いてみましょう。"], tie_3: ['snow', "同じ票数か〜。ぼくは、どれもいいと思う。…それじゃ、決まらないね。"], tie_3r: ['deer', "だから、町のみんなに聞くんだよ！ せーの！"], tienone_1: ['mc', "あれ？ だれも投票しなかったみたい。じゃあ、町の人たちに聞いてみよう！"], tiev_water: ['vil', "水道管を、たのむ！ うちの水、朝いちばんは、にごってるんだ。"], tiev_train: ['vil3', "電車がいいな！ となり町の友だちに、会いに行きたいの！"], tiev_debt: ['vil2', "まずは、借金を返しましょう。あとが、ずっと楽になりますよ。"], tiev_akiya: ['vil', "空き家を、たのむ！ となりが空き家で、夜はまっくらなんだ。"], tiev_aging: ['vil3', "子どもたちのことを、おねがい！ 公園が、しーんとしてて、さみしいの。"], tiev_hosp: ['vil2', "病院を、おねがいします。うちのおばあちゃんが、心配でね。"], tiev_shop: ['vil', "商店街を、たのむ！ コロッケ屋がしまって、さみしいんだ。"], tiev_snow: ['vil2', "雪かきを、おねがいします。けさも、げんかんが開かなくてね。"], join_exp1: ['mc', "まずは、スマホで参加しよう！ カメラでQRコードを写すか、チャットのリンクを開いてね。"], join_exp2: ['mc', "ページが開いたら、名前を入れて、コマとコースをえらんで、「参加する」をタップ！"], join_exp3: ['mc', "もう自分の名前が出ている人は、名前をタップするだけだよ。"], join_exp4: ['mc', "「つながっている人」に、自分の名前が出たら、じゅんびOK！ わからないときは、先生に聞いてね。"], rejoin_1: ['mc', "もどり方を説明するね。まず、スマホの画面をつけてみて。もどらないときは、QRコードをもう一度写して、自分の名前をタップ！ つづきから遊べるよ。"], quiz_exp4: ['mc', "スマホの画面が消えていたら、もう一度つけてね。問題が出てこないときは、先生に教えてね。"], prointro_1: ['mc', "きょうは、しごとのプロが、来てくれたよ！"], prointro_den_1: ['mayor', "電気のプロのかた。町が救われたときは、ツリーの星のスイッチを、おねがいしますぞ。"], prointro_kan_1: ['vil2', "看護のプロのかた。けが人や急病人が出たら、どうか、たすけてくださいね。"], prointro_joh_1: ['vil', "情報のプロのかた。あやしい電話や、どろぼうから、町を守ってくれよな！"], sw_exp1: ['mc', "明かりは、そろったよ！ でも、ツリーの星のスイッチを入れられるのは、電気のプロだけ！"], sw_exp2: ['mayor', "電気のプロのかた。星のスイッチを、おねがいしますぞ。"], sw_on_1: ['vil3', "ついた！ 星が光った！ 電気のプロ、ありがとう！"], pro_kan_1: ['vil2', "看護のプロが、すぐに来てくれた。ああ、よかった。"], pro_kan_2: ['mc', "看護のプロの出番だよ！ そばにいてくれると、安心だね！"], pro_kan_3: ['snow', "来るのが、はやい！ ぼくも、とけそうなときは、みてもらおう。"], pro_joh_1: ['vil', "さすが、情報のプロ！ くわしい人がいると、心強いなあ！"], pro_joh_2: ['mc', "情報のプロの出番だよ！ コンピューターの力で、町をたすけてくれたの！"], pro_joh_3: ['snow', "すごいなあ。ぼくの頭の中は、雪だけなのに。"], pro_den_1: ['vil3', "電気のプロだ！ たのもしいなあ！"], pro_den_2: ['mc', "電気のプロの出番だよ！ 安全第一で、しっかり仕事をしてくれたよ！"], pro_thanks_1: ['mayor', "しごとのプロのみなさんにも、お礼を言いますぞ。ありがとう。"]};
   const WHO = {mc: ["🧚", "ノエル", "#ffb3de"], snow: ["⛄", "ゆきまる", "#9fd8ff"], mayor: ["🎩", "町長", "#c9b3ff"], vil: ["👨", "村の人", "#b3f0d0"], vil2: ["🙂", "村の人", "#ffe9a6"], vil3: ["😊", "村の人", "#ffcfa6"], deer: ["🦌", "プラス", "#ff9d7a"]}, DIR = 'narration/vo/', ids = Object.keys(L);
   // 画面に出る文字から、どの場面かを見分ける（上から順に調べる）
   const MAP = [[/ゲームスタート/, 'start'], [/ロープウェイで/, 'ev_ropeway'], [/そりの大すべり台/, 'ev_slide'], [/マンホールから/, 'ev_manhole'], [/間欠泉で/, 'ev_geyser'], [/トロッコに乗って/, 'ev_cart'],
@@ -9294,7 +9836,7 @@ function renderHUD(){
   { const bl = $('#bossLbl'), tx = isCoop() ? ' おまけ' : ' ボス問題'; if (bl && bl.textContent !== tx){ bl.textContent = tx; $('#bossBtn').title = isCoop() ? 'おまけ：先生が研究していた世界（楕円曲線）' : 'ボス問題'; } }
   $('#hround').textContent = H.phase === 'setup' || H.phase === 'lobby' ? '' : `ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}`;
   const ph = $('#phase');
-  const txt = ({
+  const txt = H.sw && H.sw.on === 1 ? '⚡ 電気のプロのかた、ツリーの星のスイッチを、おねがいします！' : ({
     setup:'「⚙ 参加者」で名前を入れてね',
     lobby:'📲 みんながつながったら「ゲームをはじめる」',
     roll: cur ? `${cur.emoji} ${cur.name}さんの番！` : '',
@@ -9383,7 +9925,7 @@ function renderStrip(){
   const stripHTML = H.players.map((pl, i) => { const rk = ranks.indexOf(pl.stars) + 1, top = rk === 1 && pl.stars > 0;
     if (CO) return `<div class="pchip co ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
       <span class="em">${ico(pl, 'cimg')}<span class="jb ${COOP.isVet(pl) ? 'vet' : pl.job ? '' : 'nb'}" title="${jobName(pl)}">${jobIc(pl)}</span></span>
-      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? (asleep(pl) ? '💤' : '📱') : ''}${esc(pl.name)}<small>${jobName(pl).replace('システムエンジニア', 'SE')}${COOP.isVet(pl) ? '⭐' : ''} ${spaceText(pl)}</small></span>
+      <span class="nm">${pl.cpu ? '🤖' : connected(pl) ? (asleep(pl) ? '💤' : '📱') : ''}${esc(pl.name)}${proOf(pl) ? `<span class="pk" title="${PRO[proOf(pl)].nm}（${PRO[proOf(pl)].role}役）">${PRO[proOf(pl)].ic}</span>` : ''}<small>${jobName(pl).replace('システムエンジニア', 'SE')}${COOP.isVet(pl) ? '⭐' : ''} ${spaceText(pl)}</small></span>
       ${pl.tickets ? `<span class="tk">🎟️${pl.tickets}</span>` : ''}${pl.lastYen ? `<span class="st yen dela ${pl._bump ? 'bump' : ''}">+${fmtYen(pl.lastYen).replace('円', '')}</span>` : ''}${quizMark(pl)}</div>`;
     return `<div class="pchip ${H.phase === 'roll' && i === H.turn ? 'turn' : ''}" style="--pc:${pl.color}">
       <span class="em">${ico(pl, 'cimg')}<span class="rk dela ${top ? 'r1' : ''}">${top ? '👑' : rk}</span></span>
@@ -9830,7 +10372,7 @@ function openSetup(){
     rows.push(`<div class="setrow" style="--pc:${PCOLORS[i]}"><span class="sw" style="background:${PCOLORS[i]}"></span>
       <button class="charbtn" id="cb-${i}" data-slot="${i}" title="コマをえらぶ">${charBtnHTML(i)}</button>
       <input type="text" id="sn-${i}" maxlength="10" placeholder="${i+1}人目の名前" value="${pl ? esc(pl.name) : ''}">
-      <select id="sl-${i}" class="slv" title="コースとレベル">${COURSE_ORDER.map(c => `<optgroup label="${COURSES[c].ic} ${COURSES[c].name}">${LEVELS.map((L, l) => `<option value="${c}:${l}" ${(pl ? (pl.course || 'chu') + ':' + (pl.level == null ? 1 : pl.level) : 'chu:1') === c + ':' + l ? 'selected' : ''}>${COURSES[c].name.replace(/（.*）/, '')}・${L}</option>`).join('')}</optgroup>`).join('')}</select>
+      <select id="sl-${i}" class="slv" title="コースとレベル">${COURSE_ORDER.map(c => `<optgroup label="${COURSES[c].ic} ${COURSES[c].name}">${LEVELS.map((L, l) => `<option value="${c}:${l}" ${(pl ? (pl.course || 'chu') + ':' + (pl.level == null ? 1 : pl.level) : 'chu:1') === c + ':' + l ? 'selected' : ''}>${COURSES[c].name.replace(/（.*）/, '')}・${COURSES[c].job ? LEVEL_NOTE[c][l] : L}</option>`).join('')}</optgroup>`).join('')}</select>
       <label><input type="checkbox" id="sc-${i}" ${pl && pl.cpu ? 'checked' : ''}>🤖</label></div>`);
   }
   $('#setrows').innerHTML = rows.join(''); SETUP_MAP = MAPKEY; renderModeSel(); renderMapSel(); openModal('m-setup');
@@ -9931,7 +10473,7 @@ function resetGame(){
   H.players.forEach(removePawn); H.players = [];
   if (NETH.room){ NET.set(`rooms/${NETH.room}/join`, null); NET.set(`rooms/${NETH.room}/claim`, null); }
   H.round = 1; H.turn = 0; H.phase = 'setup'; H.auto = false; H.t = 120; drawTimer(); camOverview(); BGM.play('title');
-  treeClose(); H.coop = null; H.coopEnd = null; H.vote = null; H.career = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
+  treeClose(); swClose(); H.coop = null; H.coopEnd = null; H.vote = null; H.career = null; TV.budget = 0; TV.happy = COOP_CFG.startHappy; TV.lv = {}; $('#meet').classList.remove('on'); closeCard(); townLights(true); renderTown(); renderModeSel();
   saveSetup();
 }
 
@@ -10010,9 +10552,9 @@ function townLights(instant){
   const setWin = () => TOWN.wins.forEach((m, i) => { const on = TOWN.lit >= (i + 1) * 2.5; m.userData.on = on ? 1 : 0; m.color.copy(on ? m.userData.wcol : new THREE.Color('#3a3a48')); if (TOWN.hl[i]) TOWN.hl[i].intensity = on ? TOWN.hl[i].userData.full : 0; });
   const star = on => { TOWN.star = on; if (TOWN.starM) TOWN.starM.emissiveIntensity = on ? 2.2 : .12; if (TOWN.tree) TOWN.tree.intensity = on ? 20 : 3; };
   clearInterval(lightsT);
-  if (instant){ for (let g = 0; g < 10; g++) setG(g, g < target); TOWN.lit = target; setWin(); star(target >= 10); return; }
+  if (instant){ for (let g = 0; g < 10; g++) setG(g, g < target); TOWN.lit = target; setWin(); star(target >= 10 && !swHold()); return; }      // 電気のプロがいるときは、プロがスイッチを入れるまで、星は光らない
   lightsT = setInterval(() => {
-    if (TOWN.lit === target){ clearInterval(lightsT); setWin(); star(TOWN.lit >= 10); return; }
+    if (TOWN.lit === target){ clearInterval(lightsT); setWin(); star(TOWN.lit >= 10 && !swHold()); return; }
     if (TOWN.lit < target){ setG(TOWN.lit, true); TOWN.lit++; try { sfx.ding(TOWN.lit); } catch(e){} }
     else { TOWN.lit--; setG(TOWN.lit, false); try { tone(220, 0, .12, .05, 'triangle'); } catch(e){} }
     setWin();
@@ -10187,6 +10729,7 @@ async function showCardInner(r, i, n, C){
   }
   syncTown();
   await Promise.all([sleep(fast ? 1100 : r.wanted ? 3400 : 2600), voice]);      // 結果の声が終わるまで、カードを出しておく
+  await proCard(r, C);                                                           // しごとのプロの出番（このカードに合うプロがいるときだけ）
   C.classList.remove('on');
   await sleep(250);
 }
@@ -10405,12 +10948,168 @@ async function coopRoundEnd(){
   if (S.won || S.lost){ coopFinish(S.won ? 'win' : 'lose'); return true; }
   renderHUD(); return false;
 }
+/* ================= しごとのプロの見せ場（電気・看護・情報）=================
+   しごとの資格コース（COURSES の job）で参加している人は、物語の中で「◯◯のプロ」になる（PRO。コンピューターの参加者は、ならない）。
+   ・はじめ：ゲームスタートの前に、プロの紹介と役わり（proIntro）
+   ・できごとカード：プロに合うカード（PRO_CARD）が出たら、結果のあとに「プロの出番」（proCard）
+   ・町が救われた瞬間：電気のプロがいたら、ツリーの星は、プロがスイッチを入れるまで光らない（switchScene）。
+     最後の大工事で成功したとき（treeEnd）と、ゲームのとちゅうで幸せ度が100になったとき（coopFinish）の、どちらでも同じ
+   ・さいご：プロへのお礼（proThanksHTML）。結果の画面・思い出カード・エンドロールにも出る（coopHeroes の pro）
+   どれも見せ方だけ。幸せ度・お金・勝ち負けは変えない（計算の部分 COOP は、さわらない）。プロがいないときは、何も出ない（前とまったく同じ流れ）。
+   声：prointro_…／pro_kan_…・pro_joh_…・pro_den_…／sw_…・sw_on_…／pro_thanks_…。声のファイルがないあいだは、文字と絵だけで進む */
+function proOf(pl){ return pl && !pl.cpu && PRO[pl.course] ? pl.course : ''; }
+function prosOf(c){ return isCoop() ? H.players.filter(pl => proOf(pl) === c) : []; }
+function proNames(ps){ return ps.map(pl => `<span class="nobr">${esc(pl.name)}さん</span>`).join('・'); }      // 名前のとちゅうでは折らない
+const PRO_ORDER = ['den', 'kan', 'joh'];
+/* プロのしたこと（さいごのお礼・結果・思い出カード・エンドロールに出す文）。プロでない人は '' */
+function proDeed(pl){
+  const c = proOf(pl), S = H.coop; if (!c || !S || !isCoop()) return '';
+  const n = (S.pro || {})[pl.id] || 0;
+  if (c === 'den') return S.sw === 1 ? 'ツリーの星のスイッチを入れた' : n ? `電気の力で、町をささえた（${n}回）` : '町の電気を見守った';
+  if (c === 'kan') return n ? `けが人や急病人に、かけつけた（${n}回）` : '町の人の健康を見守った';
+  return n ? `情報の力で、町を守った（${n}回）` : '町の通信を見守った';
+}
+/* ---- はじめの紹介（ゲームスタートの前）。skip＝幕あけをスキップしたとき（文字だけ、短く）。紹介を出したら true ---- */
+async function proIntro(skip){
+  if (!isCoop() || !H.coop) return false;
+  const cs = PRO_ORDER.filter(c => prosOf(c).length); if (!cs.length) return false;
+  const ph = $('#phase'); ph.style.visibility = 'hidden';      // 上の「◯◯さんの番！」は、紹介が終わってから出す
+  try {
+    // プロのコマが、紹介の文字の下に見えるように、少し引いたところから見る。コマのまわりに、星をちらす
+    const p0 = prosOf(cs[0])[0]; if (p0 && p0.obj) camFollow(p0.obj.position.clone().add(new THREE.Vector3(0, 0, -5.8)), 1.2);
+    const spark = () => cs.forEach(c => prosOf(c).forEach(pl => { if (pl.obj){ ripple(NODE[pl.pos].p, pl.color); burst(pl.obj.position.clone().add(new THREE.Vector3(0, 1.6, 0)), 8); } }));
+    spark(); if (!skip){ setTimeout(() => { try { spark(); } catch(e){} }, 1400); sfx.fanfare(); }
+  } catch(e){}
+  try {
+    await banner(`<div class="rsum prosum"><div class="dela">🌟 きょうは、しごとのプロが来てくれた！</div>${cs.map(c => `<div>${PRO[c].ic} <b>${proNames(prosOf(c))}</b>　${PRO[c].nm}<small>${PRO[c].role}役</small></div>`).join('')}</div>`,
+      skip ? 1500 : 2600 + cs.length * 900, {key:skip ? [] : ['prointro_1', ...cs.map(c => `prointro_${c}_1`)]});
+  } finally { ph.style.visibility = ''; }
+  return true;
+}
+/* ---- できごとカードの「プロの出番」 ----
+   どのカードで、どのプロが、何をするか。[ふせいだとき, ふせげなかったとき]（いいことのカードは1つ）。カードの数字（幸せ度・お金）は変えない */
+const PRO_CARD = {
+  sick:{kan:['かけつけて、病院まで つきそった！', 'かけつけて、応急手当をした！']},
+  fire:{kan:['けが人が いないか、見てまわった！', 'やけどをした人を、手当てした！']},
+  snowfall:{kan:['お年寄りの 見守りに まわった！', '雪道で ころんだ人を、手当てした！'], den:['電線に つもった雪を、点検した！', '雪で 切れた電線を、直した！']},
+  scam:{joh:['あやしい電話番号を、町じゅうに 知らせた！', '電話を ブロックする設定を、教えてまわった！']},
+  thief:{joh:['防犯カメラを、点検した！', '防犯カメラの記録から、手がかりを 見つけた！']},
+  closed:{joh:['お店の ホームページを、新しくした！', 'ネットで買える お店を作って、手伝った！']},
+  lighting:{den:['点灯式の 配線を、引き受けた！']},
+};
+const proVoLast = {};      // 前に流した声（同じ声を、つづけて流さない）
+function proVoice(c){
+  const ids = Object.keys(VO.lines).filter(i => i.startsWith(`pro_${c}_`) && /^\d+$/.test(i.slice(c.length + 5))); if (!ids.length) return null;
+  let pool = ids.filter(i => i !== proVoLast[c]); if (!pool.length) pool = ids;
+  return proVoLast[c] = pool[Math.floor(Math.random() * pool.length)];
+}
+/* カードの結果（ふせいだ・ふせげなかった）を見せたあとに呼ぶ。結果のらんを「プロの出番」に書きかえて、声が終わるまで出しておく。
+   H.pro＝スマホへ知らせる中身 {id, who:'p0,p2', t:{kan:'文', …}}（自分の出番の人のスマホに、同じ文が出る） */
+async function proCard(r, C){
+  const c = r && r.card, m = c && PRO_CARD[c.id], S = H.coop; if (!m || !S || !isCoop()) return;
+  const ok = !!c.good || !!r.by || !(r.dh || r.dy), rows = [], who = [], t = {}, vo = [];
+  PRO_ORDER.forEach(k => { const ps = m[k] ? prosOf(k) : []; if (!ps.length) return;
+    t[k] = m[k][ok ? 0 : m[k].length - 1]; vo.push(proVoice(k));
+    rows.push(`<div class="cpro-row"><span class="cpro-ic">${PRO[k].ic}</span><span><b>${PRO[k].nm} ${proNames(ps)}</b>が、<br>${phr(t[k])}</span></div>`);
+    ps.forEach(pl => { who.push(pl); S.pro = S.pro || {}; S.pro[pl.id] = (S.pro[pl.id] || 0) + 1; }); });
+  const res = C && C.querySelector('#ccRes'); if (!rows.length || !res) return;
+  // 結果のらんを、いちど消して（色と中身を、見えないうちに入れかえる）、ポンと出しなおす。
+  // プロの人数が多くて、カードにおさまらないときは、上の絵を小さくする（それでも足りなければ、絵を消す）。高さは、ちぢめていない大きさ（transform なし）ではかる
+  res.style.transition = 'none'; res.className = 'cc-res cc-pro'; res.innerHTML = `<div class="cpro-h dela">🌟 しごとのプロの出番！</div>${rows.join('')}`; res.style.transform = 'none';
+  { const fr = C.querySelector('.cc-front'); if (fr){ fr.classList.remove('tight', 'tight2'); if (fr.scrollHeight > fr.clientHeight + 1){ fr.classList.add('tight'); if (fr.scrollHeight > fr.clientHeight + 1) fr.classList.add('tight2'); } } }
+  res.style.transform = ''; void res.offsetWidth; res.style.transition = ''; res.classList.add('show');
+  try { sfx.star(); setTimeout(() => { try { sfx.chime(); } catch(e){} }, 160); } catch(e){}
+  H.pro = {id:(Date.now() % 1e9) + 1, who:who.map(pkey).join(','), t}; netPublish(true);
+  try { await Promise.all([sleep(H.auto ? 900 : 2800), VO.cue(vo.filter(Boolean))]); }      // 声は、文字が出た瞬間に。声が終わるまで、カードを出しておく
+  finally { H.pro = null; netPublish(); }
+}
+/* ---- ⚡ ツリーの星のスイッチ ----
+   H.sw＝スマホへ知らせる中身 {id, on:1（どうぞ）｜2（入った）, who:'p0,p2'（電気のプロ）, names:'たろうさん・はなこさん'}
+   入れ方は3つ：プロのスマホの「スイッチを入れる！」／先生が画面のスイッチをクリック（スマホのない人のとき）／時間切れ（SW_SECS 秒。説明の声が終わってから数える）。
+   だれか1人が入れれば、入る。スマホは rooms/部屋/sw/回のid/p番号 に書く */
+const SW_SECS = 30;
+const SW = {id:0, open:false, res:null, off:null, timer:null, endsAt:0, hideT:0};
+function swHold(){ return isCoop() && !!H.coop && !H.coop.sw && prosOf('den').length > 0; }      // 星を、まだ光らせない（電気のプロがいて、スイッチがまだ）
+/* 町のツリーの、てっぺんの星の場所 */
+function starPos(){
+  try { if (TOWN && TOWN.starObj){ TOWN.starObj.updateWorldMatrix(true, false); return TOWN.starObj.getWorldPosition(new THREE.Vector3()); } } catch(e){}
+  return NODE.T.p.clone().add(new THREE.Vector3(0, 4.5, 0));
+}
+function swRender(){
+  const B = $('#swbox'), s = H.sw; if (!B) return;
+  if (!s){ B.classList.remove('on'); return; }
+  const on = s.on === 2;
+  B.innerHTML = `<div class="sw-in"><div class="sw-h dela">⚡ ツリーの星のスイッチ</div>
+    <div class="sw-who">${on ? 'スイッチを入れたのは' : 'スイッチを入れるのは'}<b>電気のプロ　${esc(s.names)}</b></div>
+    <button type="button" class="sw-lever ${on ? 'on' : ''}" id="swLever" onclick="swHand()" ${on ? 'disabled' : ''} title="スマホのない人のときは、先生がここをクリック"><span class="sw-knob"></span><span class="sw-lb dela">${on ? 'ON' : 'OFF'}</span></button>
+    <div class="sw-note">${on ? '🌟 星が、光った！' : `📱 スマホの「スイッチを入れる！」をタップ<small>スマホのない人のときは、先生が上のスイッチをクリック<span id="swLeft"></span></small>`}</div></div>`;
+  B.classList.add('on');
+}
+function swHide(){ clearTimeout(SW.hideT); const B = $('#swbox'); if (B) B.classList.remove('on'); }
+function swDone(by){ if (!SW.open) return; SW.open = false; clearInterval(SW.timer); if (SW.off){ SW.off(); SW.off = null; } const r = SW.res; SW.res = null; if (r) r(by); }
+function swHand(){ initAudio(); swDone('hand'); }
+function swTick(){
+  if (!SW.open || !SW.endsAt) return;
+  const left = Math.max(0, Math.ceil((SW.endsAt - NET.now()) / 1000)), el = $('#swLeft');
+  if (el) el.textContent = left <= 15 ? `　あと ${left} 秒で、ひとりでに入ります` : '';
+  if (left <= 0) swDone('time');
+}
+/* スイッチの場面を片づける（「さいしょから」のとき） */
+function swClose(){ swDone('new'); swHide(); H.sw = null; H.pro = null; }
+/* スイッチの場面。where＝'tree'（最後の大工事のツリーの画面）｜'town'（町の画面）。スイッチが入ったら true を返す（そのあと、呼んだ側が星を光らせて、swHide で片づける） */
+async function switchScene(where, auto){
+  const S = H.coop, ps = prosOf('den'); if (!S || S.sw || !ps.length) return false;
+  auto = !!(auto || H.auto);
+  const id = (Date.now() % 1e9) + 1;
+  swDone('new'); swHide();                                    // 前の回が残っていたら片づける
+  Object.assign(SW, {id, open:true, endsAt:0});
+  H.sw = {id, on:1, who:ps.map(pkey).join(','), names:ps.map(pl => pl.name + 'さん').join('・')};
+  try { if (where === 'town'){ BGM.play('boss'); if (!H.view) camFollow(starPos().add(new THREE.Vector3(0, -2.6, 0)), 1.05); } sfx.whoosh(); sfx.drumroll(1.1); } catch(e){}
+  swRender(); renderHUD(); if (where === 'tree') renderTree(); netPublish(true);
+  const said = VO.cue('sw');                                  // 「スイッチを、おねがいします」の声は、スイッチの絵が出た瞬間に
+  const by = await new Promise(res => {
+    SW.res = res;
+    if (NETH.room) SW.off = NET.on(`rooms/${NETH.room}/sw/${id}`, v => { if (!SW.open || SW.id !== id || !v) return; const ks = Object.keys(v).filter(k => ps.some(pl => pkey(pl) === k)); if (ks.length) swDone(ks); });
+    if (auto) setTimeout(() => { if (SW.id === id) swDone('auto'); }, 900);
+    else Promise.race([said, sleep(20000)]).then(() => { if (SW.open && SW.id === id) SW.endsAt = NET.now() + SW_SECS * 1000; });      // 時間切れは、声が終わってから数える
+    clearInterval(SW.timer); SW.timer = setInterval(swTick, 250);
+  });
+  if (SW.id !== id || by === 'new' || H.coop !== S) return false;      // 「さいしょから」などで、場面が片づけられた
+  S.sw = 1; H.sw = Object.assign({}, H.sw, {on:2});
+  VO.cut();                                                   // 「おねがいします」の声が残っていたら止める（次の声は、星が光った瞬間に）
+  swRender(); try { sfx.shutter(); sfx._sweep(.04, .75, 170, 1900, .07, 'sawtooth'); } catch(e){}
+  renderHUD(); netPublish(true);
+  await sleep(auto ? 250 : 520);                              // スイッチが動いてから、星が光る
+  SW.hideT = setTimeout(swHide, 9000);                        // 片づけは、呼んだ側がする（swHide）。わすれたときのための時間切れ
+  return true;
+}
+/* ---- さいごのお礼（勝っても負けても。プロがいたときだけ） ---- */
+function proThanksHTML(){
+  if (!isCoop() || !H.coop) return '';
+  const rows = []; PRO_ORDER.forEach(c => prosOf(c).forEach(pl => rows.push(`<div>${PRO[c].ic} <b>${esc(pl.name)}</b>さん　${proDeed(pl)}</div>`)));
+  return rows.length ? `<div class="rsum prosum"><div class="dela">🌟 しごとのプロ、ありがとう！</div>${rows.join('')}</div>` : '';
+}
+window.swHand = swHand;
 /* ---- ゲームのおわり ---- */
 async function coopFinish(kind){
   const S = H.coop; if (!S || H.coopEnd) return;
+  const auto = H.auto;
   H.coopEnd = kind; H.phase = 'end'; H.auto = false; H.busy = true; camOverview(); renderHUD(); netPublish(true);
   $('#meet').classList.remove('on'); closeCard(); H.career = null;
   if (kind === 'win'){
+    // 電気のプロがいるとき：町の明かりがそろっても、ツリーの星は、プロがスイッチを入れるまで光らない（最後の大工事で、もう入れたあとは、ここでは出ない）
+    if (swHold()){
+      S.happy = Math.max(S.happy, COOP_CFG.goal); syncTown();
+      for (let i = 0; i < 40 && TOWN && TOWN.lit < 10; i++) await sleep(100);      // 町の明かりが、ぜんぶ灯るのを待つ（長くても4秒）
+      await sleep(auto ? 200 : 700);
+      if (await switchScene('town', auto)){
+        townLights(true);
+        try { const sp = starPos(); burst(sp, 18); setTimeout(() => { try { burst(sp, 12); } catch(e){} }, 350); sfx.reveal(2); } catch(e){}      // 星のまわりに、光のつぶ
+        await Promise.all([VO.cue('sw_on'), sleep(auto ? 300 : 1500)]);      // 「電気のプロ、ありがとう！」は、星が光った瞬間に
+      }
+      swHide(); camOverview();      // 花火は、町ぜんたいが見えるところから
+    }
+    S.sw = S.sw || 2;      // スイッチの場面は、もう出ない（あとで電気のコースに変えた人がいても、星は消えない）
     BGM.play('win'); S.happy = Math.max(S.happy, COOP_CFG.goal); syncTown();
     await sleep(600);
     const fc = NODE.T.p.clone().add(new THREE.Vector3(0, 9, -2));
@@ -10425,6 +11124,8 @@ async function coopFinish(kind){
     else { await banner(`🌙 あと少し…<br><small>幸せ度 ${Math.round(S.happy)} / 100</small>`, 2600); }
     await banner('でも、みんなが力を合わせた場所には<br>ちゃんと明かりが灯っている！', 2400);
   }
+  { const th = proThanksHTML(); if (th) await banner(th, 3000, {key:['pro_thanks_1']}); }      // しごとのプロへのお礼（勝っても負けても。プロがいたときだけ）
+  H.sw = null; swHide();
   H.busy = false; renderHUD();
   setTimeout(showResults, 400);
 }
@@ -10433,7 +11134,7 @@ async function coopFinish(kind){
    時間内にぜんぶ灯ったら、町は救われる。時間切れなら、灯った分だけ幸せ度が上がる。まちがえたことは、先生の画面には出ない。
    スマホは rooms/部屋/tree/回のid/p番号/（答えごとの名前） に {s:★, ok:正解か} を書く。先生の画面は、それを足し合わせる。
    明かりの数と幸せ度の計算は COOP.treePlan・COOP.treeApply（計算の部分）にある */
-const TREE = {id:0, on:false, plan:null, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, timer:null, off:null, said:{}, raf:0, bulbs:[], closing:false, going:false, fin:0};
+const TREE = {id:0, on:false, plan:null, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, timer:null, off:null, said:{}, raf:0, bulbs:[], closing:false, going:false, fin:0, hold:false};      // hold＝明かりはそろったが、星は、電気のプロのスイッチを待っている
 window.__dbgTree = TREE;
 /* ツリーの形：3段の三角。[下のはしの高さ, てっぺんの高さ, 下のはしの半分の幅]（高さは 0＝根もと〜1＝てっぺん） */
 const TREE_TIERS = [[0, .5, 1], [.3, .78, .76], [.6, 1, .5]];
@@ -10455,7 +11156,7 @@ function treeOpen(){
   const S = H.coop; if (!S || H.coopEnd || S.tree || H.phase !== 'end' || H.busy) return;
   VO.cut(); closeModal('m-boss'); closeCard(); initAudio();
   const plan = COOP.treePlan(S);
-  Object.assign(TREE, {id:(Date.now() % 1e9) + 1, on:false, plan, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, said:{}, closing:false, going:false, fin:0, bulbs:treeBulbs(plan.bulbs)});
+  Object.assign(TREE, {id:(Date.now() % 1e9) + 1, on:false, plan, by:{}, hand:{}, bot:{}, net:{}, lit:0, endsAt:0, said:{}, closing:false, going:false, fin:0, hold:false, bulbs:treeBulbs(plan.bulbs)});
   H.phase = 'tree'; H.busy = true; H.tree = {id:TREE.id, on:0, need:plan.bulbs, lit:0}; H.endsAt = 0; H.t = COOP_CFG.treeSecs; drawTimer();
   BGM.play('boss'); renderHUD(); netPublish(true);
   renderTree(); $('#tree').classList.add('on'); document.body.classList.add('treeon'); treeLoop();
@@ -10518,10 +11219,15 @@ async function treeEnd(ok){
   TREE.closing = true; TREE.on = false; clearInterval(TREE.timer); if (TREE.off){ TREE.off(); TREE.off = null; }
   const S = H.coop, lit = TREE.lit, plan = TREE.plan;
   H.endsAt = 0; H.tree.on = 0; H.tree.done = ok ? 'ok' : 'ng'; BGM.setIntensity(0); netPublish(true);
+  // 電気のプロがいるとき：明かりがそろっても、てっぺんの星は、プロがスイッチを入れるまで光らない
+  let swd = false;
+  if (ok && swHold()){ TREE.hold = true; renderTree(); try { sfx.chime(); } catch(e){} await sleep(H.auto ? 300 : 1000); swd = await switchScene('tree'); TREE.hold = false; }
   TREE.fin = ok ? performance.now() : 0; renderTree();
   if (ok){ sfx.legend(); confetti(); BGM.play('win'); }
+  if (swd) await Promise.all([VO.cue('sw_on'), sleep(H.auto ? 300 : 1400)]);      // 「電気のプロ、ありがとう！」は、星が光った瞬間に
   await VO.cue(ok ? 'tree_ok' : 'tree_ng');
   await sleep(H.auto ? 600 : ok ? 2200 : 1600);
+  swHide();
   const gain = COOP.treeApply(S, plan, lit);
   treeClose(); H.phase = 'end'; syncTown();
   await banner(ok ? `🎄 ツリーに明かりが灯った！<br><small>😊 幸せ度 +${gain}</small>` : `🎄 ツリーの明かりは ${lit} / ${plan.bulbs}<br><small>😊 幸せ度 +${gain}</small>`, 2200);
@@ -10541,10 +11247,12 @@ function renderTree(){
     M.dataset.built = String(TREE.id);
     M.innerHTML = `<div class="tr-box"><div class="tr-head"><h3 class="dela">🎄 最後の大工事　ツリーに明かりを灯そう</h3><span class="tr-msg" id="trMsg"></span><span class="tr-time dela" id="trT">${fmtT(COOP_CFG.treeSecs)}</span></div>
       <canvas class="tr-cv" id="trCv"></canvas>
-      <div class="tr-side"><div class="tr-count dela"><b id="trLit">0</b><span> / ${P.bulbs}</span><small id="trLeft"></small></div><div class="tr-ppl" id="trPpl"></div><div class="tr-btns" id="trBtns"></div></div></div>`;
+      <div class="tr-side"><div class="tr-count dela"><b id="trLit">0</b><span> / ${P.bulbs}</span><small id="trLeft"></small></div><div class="tr-sw" id="trSw"></div><div class="tr-ppl" id="trPpl"></div><div class="tr-btns" id="trBtns"></div></div></div>`;
   }
   $('#trLit').textContent = TREE.lit;
-  $('#trLeft').textContent = done === 'ok' ? 'ぜんぶ灯った！ 町は救われた！' : done ? `明かりは ${TREE.lit} こ灯った` : `あと ${left} こ灯せば、町は救える！`;
+  { const dp = prosOf('den'), sd = H.coop && H.coop.sw === 1;      // 星のスイッチを入れる人（電気のプロがいるときだけ）
+    $('#trSw').innerHTML = !dp.length ? '' : sd ? `⚡ <b>${proNames(dp)}</b>が、星のスイッチを入れた！` : `⚡ 星のスイッチ係：<b>${proNames(dp)}</b><small>ぜんぶ灯ったら、電気のプロがスイッチを入れる</small>`; }
+  $('#trLeft').textContent = done === 'ok' ? (TREE.hold ? 'ぜんぶ灯った！ あとは、てっぺんの星！' : 'ぜんぶ灯った！ 町は救われた！') : done ? `明かりは ${TREE.lit} こ灯った` : `あと ${left} こ灯せば、町は救える！`;
   $('#trMsg').textContent = done ? '' : TREE.on ? 'スマホの問題に正解すると、★の数だけ明かりが灯るよ' : `幸せ度は、あと ${P.pts}。みんなの明かりで、町を救おう！`;
   $('#trPpl').innerHTML = H.players.map(pl => { const k = pkey(pl), n = TREE.by[k] || 0;
     return `<div class="trp" style="--pc:${pl.color}">${ico(pl, 'pimg')}<b>${pl.cpu ? '🤖' : ''}${esc(pl.name)}</b>${TREE.on && !pl.cpu ? `<span class="tg" title="スマホのない人の正解は、先生がここで入れる（数字は★の数）">${[1, 2, 3].map(s => `<button class="btn" onclick="treeGive('${k}',${s})">＋${s}</button>`).join('')}${TREE.hand[k] ? `<button class="btn" onclick="treeGive('${k}',-1)" title="入れまちがいを1つ消す">−1</button>` : ''}</span>` : ''}<span class="tl">${n ? '💡 ' + n : ''}</span></div>`; }).join('');
@@ -10562,7 +11270,7 @@ function drawTree(now){
   const dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, Hh = cv.clientHeight; if (!W || !Hh) return;
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(Hh * dpr)){ cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr); }
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, Hh);
-  const t = now / 1000, cx = W / 2, top = Hh * .14, base = Hh * .78, th = base - top, hw = Math.min(W * .44, th * .55), all = TREE.lit >= TREE.plan.bulbs;
+  const t = now / 1000, cx = W / 2, top = Hh * .14, base = Hh * .78, th = base - top, hw = Math.min(W * .44, th * .55), all = TREE.lit >= TREE.plan.bulbs && !TREE.hold;      // hold のあいだは、星はまだ光らない
   const fin = TREE.fin ? Math.min(1, (now - TREE.fin) / 1400) : 0, glow = TREE.lit / TREE.plan.bulbs;
   // 夜空と雪
   for (let i = 0; i < 46; i++){ const hx = Math.sin(i * 127.1) * 43758.5453, hy = Math.sin(i * 311.7) * 43758.5453, x = (hx - Math.floor(hx)) * W, y0 = (hy - Math.floor(hy)) * Hh, y = (y0 + t * (14 + (i % 5) * 5)) % Hh;
@@ -10624,7 +11332,8 @@ function coopHeroes(){
     else if (proj) t = `${proj.ic} 「${proj.lv[S.lv[proj.id] - 1]}」の立役者`;
     else if (bl) t = `🛡 ピンチの町を守った`;
     else t = `🤝 こがね町の大切な仲間`;
-    out[pl.id] = {t, total:e.total, ok:pl.okCount || 0, bl};
+    const pc = proOf(pl);
+    out[pl.id] = {t, total:e.total, ok:pl.okCount || 0, bl, pro:pc ? `${PRO[pc].ic} ${PRO[pc].nm}：${proDeed(pl)}` : '', deed:pc ? proDeed(pl) : ''};
   });
   return out;
 }
@@ -10634,7 +11343,7 @@ function coopResultsHTML(){
     <div class="hap hbig"><i style="width:${h}%"></i><b>😊 幸せ度 ${h} / 100</b></div>
     <div class="cr-sub">💰 のこった予算 ${fmtYen(S.budget)}　／　ラウンド ${Math.min(H.round, H.maxRound)} / ${H.maxRound}</div>
     <div class="cr-projs">${PROJECTS.map(p => `<div class="crp ${S.lv[p.id] >= 3 ? 'done' : S.lv[p.id] ? 'some' : ''}"><span>${p.ic}</span><b>${p.name}</b><span class="pips">${[0,1,2].map(i => `<i class="${i < S.lv[p.id] ? 'on' : ''}"></i>`).join('')}</span><small>${S.lv[p.id] ? p.lv[S.lv[p.id] - 1] : 'まだ'}</small></div>`).join('')}</div>
-    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}${(pl.exp || []).length ? `　🎓 ${pl.exp.map(j => '元' + JOBS[j].short).join('・')}` : ''}</span></div><div class="hero">${x.t}</div><div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
+    <div class="cr-ppl">${H.players.map(pl => { const x = hero[pl.id]; return `<div class="crm" style="--pc:${pl.color}">${ico(pl, 'pimg')}<div><div class="nm">${pl.cpu ? '🤖' : ''}${esc(pl.name)}<span class="job">${jobIc(pl)} ${jobName(pl)}${(pl.exp || []).length ? `　🎓 ${pl.exp.map(j => '元' + JOBS[j].short).join('・')}` : ''}</span></div><div class="hero">${x.t}</div>${x.pro ? `<div class="hero pro"><span class="nobr">${x.pro.split('：')[0]}：</span>${phr(x.deed)}</div>` : ''}<div class="st">💰 ${fmtYen(x.total)}　✅ 正解 ${x.ok}問${x.bl ? `　🛡 ${x.bl}回` : ''}</div></div></div>`; }).join('')}</div>
     <div class="cr-math">💡 こがね町の名前は「黄金比（おうごんひ）」から。1 : 1.618… という、自然や建物にかくれている美しい比です</div></div>`;
 }
 
@@ -11071,10 +11780,12 @@ async function openingShow(){
     BGM.play('main'); if (H.players[0] && H.phase === 'roll') camFollow(H.players[0].obj.position, 1.1); else camOverview(); camGlide(2400);
     renderHUD();
     await sleep(550);
+    try { if (await proIntro(false) && H.players[0] && H.phase === 'roll'){ camFollow(H.players[0].obj.position, 1.1); camGlide(1600); } } catch(e){ console.error('proIntro', e); }      // しごとのプロの紹介（プロがいるときだけ）。そのあと、カメラを1人めへ戻す
     H.busy = false; VO.cue('start'); renderHUD();
     return;
   }
   O.classList.remove('on'); document.body.classList.remove('showing');
+  try { await proIntro(showSkip); } catch(e){ console.error('proIntro', e); }      // しごとのプロの紹介（プロがいるときだけ）
   H.busy = false; camOverview();
   splash('ゲームスタート！', `ラウンド 1 / ${H.maxRound}`); BGM.play('main'); if (!sung || showSkip) sfx.jingle();      // 歌のとちゅうでスキップしたとき・歌を流さなかったときは、ジングルが合図
   setTimeout(() => { if (H.players[0] && H.phase === 'roll') camFollow(H.players[0].obj.position, 1.1); }, 1300);
@@ -11818,7 +12529,9 @@ async function composeCard({pl, rk, src}){
   g.font = `900 26px ${JP_FONT}`; g.fillStyle = st[2]; g.fillText(hero ? `💰 ${fmtYen(hero.total)}　／　正解 ${pl.okCount || 0}問　／　コレクション ${(pl.got || []).length}` : `⭐ ${pl.stars}　／　正解 ${pl.okCount || 0}問　／　コレクション ${(pl.got || []).length}`, W / 2, y);
   if (hero){ y += 40; g.font = `900 24px ${JP_FONT}`; g.fillText(hero.t, W / 2, y); }
   y += 44;
-  if (!pl.cpu){ g.font = `900 22px ${JP_FONT}`; g.fillStyle = st[2]; g.globalAlpha = .85; g.fillText(`${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}コース`, W / 2, y); g.globalAlpha = 1; y += 40; }
+  if (!pl.cpu){ const lab = `${(COURSES[pl.course] || COURSES.chu).ic} ${courseLabel(pl.course || 'chu', pl.level == null ? 1 : pl.level)}コース${hero && hero.deed ? `｜${hero.deed}` : ''}`;      // しごとのプロは、したことも書く（長いときは、字を小さくして1行におさめる）
+    let fs = 22; g.font = `900 ${fs}px ${JP_FONT}`; while (fs > 14 && g.measureText(lab).width > W - 120){ fs--; g.font = `900 ${fs}px ${JP_FONT}`; }
+    g.fillStyle = st[2]; g.globalAlpha = .85; g.fillText(lab, W / 2, y); g.globalAlpha = 1; y += 40; }
   (pl.gear || []).forEach(id => { const it = ITEM[id]; const lab = `${'★'.repeat(RAR[it.r].stars)}  ${it.name}`; g.font = `900 22px ${JP_FONT}`; const tw = g.measureText(lab).width + 40;
     g.fillStyle = 'rgba(24,10,44,.82)'; roundRect(g, W / 2 - tw / 2, y - 19, tw, 38, 19); g.fill(); g.fillStyle = RAR[it.r].col; g.fillText(lab, W / 2, y + 1); y += 46; });
   g.fillStyle = st[2]; g.font = `900 26px ${TITLE_FONT}`; g.fillText(st[4], W / 2, Hh - 62);
@@ -11874,7 +12587,7 @@ function endRollHTML(){
   const S = H.coop, hero = coopHeroes(), h = Math.max(0, Math.min(100, Math.round(S.happy))), did = PROJECTS.filter(p => S.lv[p.id] > 0);
   const face = (k, n) => `<img alt="" src="${CharArt.has(k) || CharArt.villagers.includes(k) ? CharArt.thumb(k, n) : THUMB[k] || ''}">`;
   return `<section><p class="er-k">数学すごろく クリスマス会</p><h2 class="dela">こがね町を救え！</h2></section>
-<section><h3>出演</h3>${H.players.map(pl => `<div class="er-who">${face(pl.char, 192)}<div><b>${pl.cpu ? '🤖 ' : ''}${esc(pl.name)}${pl.cpu ? '' : ' さん'}</b><span>${jobIc(pl)} ${jobName(pl)}</span><i>${hero[pl.id].t}</i></div></div>`).join('')}</section>
+<section><h3>出演</h3>${H.players.map(pl => `<div class="er-who">${face(pl.char, 192)}<div><b>${pl.cpu ? '🤖 ' : ''}${esc(pl.name)}${pl.cpu ? '' : ' さん'}</b><span>${jobIc(pl)} ${jobName(pl)}</span><i>${hero[pl.id].t}</i>${hero[pl.id].pro ? `<br><i class="er-pro">${hero[pl.id].pro}</i>` : ''}</div></div>`).join('')}</section>
 <section><h3>こがね町のみなさん</h3><p class="er-line"><small>司会</small>妖精の ノエル</p><p class="er-line">雪だるまの ゆきまる</p><p class="er-line">トナカイの プラス</p><p class="er-line">町長さん</p><div class="er-faces">${CharArt.villagers.map(k => face(k, 144)).join('')}</div><p class="er-line">村のみなさん</p></section>
 <section><h3>みんなでやったこと</h3><p class="er-happy">😊 幸せ度 ${COOP_CFG.startHappy} → ${h}</p>${did.length ? `<div class="er-chips">${did.map(p => `<span>${p.ic} ${p.lv[S.lv[p.id] - 1]}</span>`).join('')}</div>` : ''}</section>
 <section><h3>きょう使った数学</h3><div class="er-chips">${Object.values(CAT).map(c => `<span>${c.ic} ${c.name}</span>`).join('')}</div>${S.tree ? `<p class="er-line" style="margin-top:22px"><small>最後の大工事</small>🎄 ツリーの明かり ${S.tree.lit} / ${S.tree.bulbs}</p>` : ''}</section>
@@ -12023,7 +12736,7 @@ window.__H = H; window.__render = renderHUD; window.__dbg = {VO, onJoin, THUMB, 
     cm.position.set(c.x, c.y + s.y * .12, c.z + d); cm.lookAt(c); tr.render(sc, cm); const u = tr.domElement.toDataURL('image/png'); tr.dispose(); try { tr.forceContextLoss(); } catch(e){} return u; },
   math:{makeProblem, PGEN, toQ, parseQ, qeq, fmtAns},      // 問題を作るところ（問題と答えを、まとめて調べるとき用）
   phone:{ROLL, PUI, ask, phoneRoll, rollSync, onAct, uiOpen, undo, startQuiz, chooseRoute, shop, rollDice, setChar},      // スマホで動かすしくみ（しらべるとき用）
-  coop:{summonFx, summonAll, summonTease, pawnShow, asleep, setSkip:v => { showSkip = !!v; }, treeOpen, treeGo, treeEnd, treeCount, TREE, endRollHTML, guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }}};
+  coop:{summonFx, summonAll, summonTease, pawnShow, asleep, setSkip:v => { showSkip = !!v; }, treeOpen, treeGo, treeEnd, treeCount, TREE, endRollHTML, guardText, cardName, buildVoice, doneVoice, coopHeroes, coopStart, coopRoundEnd, coopMeeting, coopCareerTime, coopRoundEndFx, jobCenter, coopAward, CAREER, coopCards, showCard, buildShow, coopFinish, syncTown, townLights, renderTown, nextRound, finishGame, showResults, makeCards, VOTE, TV, get TOWN(){ return TOWN; }, proOf, prosOf, proDeed, proIntro, proCard, PRO_CARD, switchScene, swDone, swHand, swHold, swRender, SW, proThanksHTML, coopResultsHTML, composeCard}};
 }
 
 </script>
