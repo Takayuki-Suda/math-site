@@ -1037,14 +1037,12 @@ body.playmode .snow{display:none}
 @keyframes dFloat{0%,100%{transform:translateY(2px)}50%{transform:translateY(-10px)}}
 .proll[data-st="open"] .cube{animation:dIdle 6s ease-in-out infinite}
 @keyframes dIdle{0%,100%{transform:rotateX(-22deg) rotateY(-34deg)}50%{transform:rotateX(-30deg) rotateY(30deg)}}
-.proll[data-st="go"] .dice3{animation:dHop .44s ease-in-out infinite alternate}
-@keyframes dHop{from{transform:translateY(10px) scale(.96)}to{transform:translateY(-36px) scale(1.04)}}
-.proll[data-st="go"] .cube{animation:dSpin .6s linear infinite}
-@keyframes dSpin{from{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg)}to{transform:rotateX(720deg) rotateY(360deg) rotateZ(360deg)}}
-.dice3.land{animation:dDrop .95s cubic-bezier(.3,1.4,.5,1) both}
-@keyframes dDrop{0%{transform:translateY(-44px) scale(1.06)}55%{transform:translateY(6px) scale(.97)}76%{transform:translateY(-7px)}100%{transform:none}}
-.dice3.land .cube{animation:dLand .95s cubic-bezier(.2,.8,.3,1) both}
-@keyframes dLand{from{transform:rotateX(-24deg) rotateY(-28deg) rotateX(calc(var(--fx) + 720deg)) rotateY(calc(var(--fy) + 540deg))}to{transform:rotateX(-24deg) rotateY(-28deg) rotateX(var(--fx)) rotateY(var(--fy))}}
+.proll[data-st="ready"] .dice3{animation:dHop .44s ease-in-out infinite alternate}
+@keyframes dHop{from{transform:translateY(-18px) scale(1.03)}to{transform:translateY(-34px) scale(1.07)}}
+.proll[data-st="ready"] .cube{animation:dShake .5s ease-in-out infinite alternate}
+@keyframes dShake{from{transform:rotateX(-30deg) rotateY(-46deg) rotateZ(-7deg)}to{transform:rotateX(-14deg) rotateY(-14deg) rotateZ(7deg)}}
+.dice3.rest .cube{transform:rotateX(var(--fx,0deg)) rotateY(var(--fy,0deg))}      /* 止まったサイコロは、ま上から見た形：出た目の面だけが見える（ななめから見ると、ほかの面の目も見えて、まぎらわしい） */
+.proll[data-st="go"] .pr-tap::after,.proll[data-st="done"] .pr-tap::after{bottom:21%;width:38%;opacity:.8}
 .pr-num{height:0;font-size:0;line-height:1;opacity:0}
 .proll.got .pr-tap{height:min(50vw,196px,34vh)}
 .proll.got .pr-num{height:auto;font-size:92px;opacity:1;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35),0 0 36px rgba(255,207,74,.6);animation:prNum .5s cubic-bezier(.3,1.7,.5,1)}
@@ -1183,6 +1181,51 @@ body.playmode .modal{padding:16px 10px}
 body.playmode .mbox{padding:18px 16px;border:none;border-radius:22px;background:#11193b}
 body.playmode .mbox h2{font-size:21px}
 body.playmode .rules{font-size:15.5px;line-height:1.7}
+/* ---- スマホの「ルールを見る」：大きな文字で、はじめは3つのステップとゴールだけ。くわしい説明は、タップでひらく ---- */
+#rulesPhone{display:none}
+body.playmode #m-rules{padding:0;background:#070b1d}
+body.playmode #m-rules .mbox{position:relative;max-width:none;min-height:100%;padding:0;border-radius:0;background:#070b1d;box-shadow:none}
+body.playmode #m-rules .mbox > h2,body.playmode #m-rules .mbox > .close,body.playmode #rulesCoop,body.playmode #rulesVs{display:none}
+body.playmode #rulesPhone{display:block;max-width:560px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 18px calc(104px + env(safe-area-inset-bottom));color:#fff;font-size:17px;line-height:1.8;font-weight:700;letter-spacing:.02em;word-break:auto-phrase;line-break:strict}      /* 文は、ことばのまとまりで折る（auto-phrase を知らないブラウザでは、ふつうの折り方） */
+body.coopmode .rp-vs,body:not(.coopmode) .rp-coop{display:none}
+.rp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.rp-head h2{margin:0;font-size:30px;line-height:1.3;color:var(--gold)}
+.rp-x{flex:none;width:48px;height:48px;border-radius:50%;background:#1a2552;color:#fff;font-size:22px;font-weight:900;line-height:1}
+.rp-lead{margin:0 0 18px;font-size:18px;line-height:1.75;color:#dfe6ff}
+.rp-lead b{color:var(--gold)}
+.rp-steps{display:grid;gap:12px;margin:0;padding:0;list-style:none;counter-reset:rp}
+.rp-steps li{position:relative;display:grid;grid-template-columns:54px 1fr;column-gap:14px;align-items:center;padding:16px 16px 16px 14px;border-radius:20px;background:#11193b;counter-increment:rp}
+.rp-steps li i{grid-row:1 / span 2;display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:#1d2a5e;font-size:30px;font-style:normal;line-height:1}
+.rp-steps li b{display:block;font-size:22px;line-height:1.4;font-weight:900;color:#fff}
+.rp-steps li b::before{content:counter(rp);display:inline-grid;place-items:center;width:1.5em;height:1.5em;margin-right:.45em;border-radius:50%;background:var(--gold);color:#241a00;font-size:.72em;font-weight:900;vertical-align:.14em}
+.rp-steps li > span{display:block;margin-top:2px;font-size:17px;line-height:1.7;color:#dfe6ff}
+.rp-goal{margin:14px 0 0;padding:18px 16px;border-radius:20px;background:linear-gradient(180deg,#3a2c08,#241a04);box-shadow:inset 0 0 0 2px rgba(255,207,74,.55);text-align:center;font-size:21px;line-height:1.55;font-weight:900;color:#fff}
+.rp-goal em{display:block;margin-bottom:2px;font-style:normal;font-size:15px;letter-spacing:.12em;color:var(--gold)}
+.rp-goal b{color:var(--gold);font-size:1.25em}
+.rp-more{margin:28px 0 10px;font-size:16px;line-height:1.5;color:var(--mist);text-align:center}
+.rp-acc{display:grid;gap:8px}
+.rp-acc details{border-radius:18px;background:#11193b;overflow:hidden}
+.rp-acc summary{display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 16px;font-size:19px;line-height:1.4;font-weight:900;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.rp-acc summary::-webkit-details-marker{display:none}
+.rp-acc summary i{flex:none;width:1.5em;font-size:24px;font-style:normal;text-align:center;line-height:1}
+.rp-acc summary::after{content:"";flex:none;margin-left:auto;width:11px;height:11px;border-right:3px solid var(--gold);border-bottom:3px solid var(--gold);transform:translateY(-3px) rotate(45deg);transition:transform .2s}
+.rp-acc details[open] summary::after{transform:translateY(3px) rotate(-135deg)}
+.rp-acc details[open] summary{color:var(--gold)}
+.rp-acc summary:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+.rp-b{padding:0 16px 16px;font-size:16.5px;line-height:1.85;font-weight:500;color:#eef2ff}
+.rp-b p{margin:0 0 10px}
+.rp-b p:last-child{margin-bottom:0}
+.rp-b b{font-weight:900;color:#ffe9a6}
+.rp-t{display:grid;grid-template-columns:auto 1fr;gap:1px;margin:0 0 10px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.08)}
+.rp-t:last-child{margin-bottom:0}
+.rp-t > *{padding:9px 12px;background:#0b1230;font-size:16.5px;line-height:1.55}
+.rp-t > :nth-child(odd){font-weight:900;white-space:nowrap;color:#fff}
+.rp-t > :nth-child(even){color:#dfe6ff}
+.rp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.rp-chips span{padding:4px 11px;border-radius:999px;background:#0b1230;font-size:15.5px;line-height:1.6;white-space:nowrap}
+.rp-foot{position:fixed;left:0;right:0;bottom:0;z-index:2;padding:22px 18px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(7,11,29,0),#070b1d 34%);pointer-events:none}
+.rp-foot .pbtn{display:block;width:100%;max-width:524px;margin:0 auto;pointer-events:auto}
+@media (max-width:340px){body.playmode #rulesPhone{padding-left:14px;padding-right:14px;font-size:16px}.rp-head h2{font-size:26px}.rp-steps li{grid-template-columns:46px 1fr;column-gap:11px;padding:14px 12px}.rp-steps li i{width:46px;height:46px;font-size:25px}.rp-steps li b{font-size:19.5px}.rp-steps li > span{font-size:16px}.rp-goal{font-size:19px}.rp-acc summary{font-size:17.5px;padding:8px 12px}.rp-b{padding:0 12px 14px;font-size:16px}.rp-t > *{padding:8px 9px;font-size:15.5px}}
 @media (prefers-reduced-motion:reduce){.play *,.play *::before,.play *::after{animation:none !important;transition:none !important}}
 
 /* ================= 先生の画面：スマホで動かすときの知らせ ================= */
@@ -1419,6 +1462,107 @@ body.playmode .rules{font-size:15.5px;line-height:1.7}
 <div class="modal" id="m-rules"><div class="mbox">
   <button class="btn close" onclick="closeModal('m-rules')">とじる</button>
   <h2>🎲 あそびかた</h2>
+  <div id="rulesPhone">
+    <div class="rp-head"><h2>あそびかた</h2><button type="button" class="rp-x" aria-label="とじる" onclick="closeModal('m-rules')">✕</button></div>
+    <div class="rp-coop">
+      <p class="rp-lead">みんなは、同じチーム。<br>数学の力で、<b>こがね町</b>を元気にしよう！</p>
+      <ol class="rp-steps">
+        <li><i>🎲</i><b>サイコロをふる</b><span><span class="nobr">自分の番がきたら、</span><span class="nobr">スマホの</span><span class="nobr">サイコロを</span><span class="nobr">タップ。</span></span></li>
+        <li><i>✏️</i><b>問題をとく</b><span><span class="nobr">止まったマスの</span><span class="nobr">問題が、</span><span class="nobr">スマホに</span><span class="nobr">出ます。</span><span class="nobr">正解すると、</span><span class="nobr">町に</span><span class="nobr">お金が</span><span class="nobr">入ります。</span></span></li>
+        <li><i>🗳️</i><b>会議で投票する</b><span><span class="nobr">どの工事に</span><span class="nobr">お金を</span><span class="nobr">使うか、</span><span class="nobr">みんなで</span><span class="nobr">決めます。</span><span class="nobr">工事をすると、</span><span class="nobr">町に</span><span class="nobr">明かりが</span><span class="nobr">灯ります。</span></span></li>
+      </ol>
+      <p class="rp-goal"><em>ゴール</em><span class="nobr">😊 幸せ度が <b>100</b> に</span><span class="nobr">なったら、</span><br>みんなの勝ち！</p>
+      <p class="rp-more">もっと知りたいときは、タップしてね</p>
+      <div class="rp-acc">
+        <details name="rp"><summary><i>💰</i>お金のふえ方</summary><div class="rp-b">
+          <p>問題に正解すると、<b>町の予算</b>がふえます。むずかしさ（★）は、自分でえらべます。</p>
+          <div class="rp-t"><span>★1</span><span>100万円</span><span>★2</span><span>200万円</span><span>★3</span><span>300万円</span><span>🔥 チャレンジマス</span><span>2倍</span></div>
+        </div></details>
+        <details name="rp"><summary><i>🏛️</i>町の会議と工事</summary><div class="rp-b">
+          <p>ラウンドの終わりに、<b>町の会議</b>があります。</p>
+          <p>町の困りごとは、8つ。</p>
+          <div class="rp-chips"><span>🚰 水道管</span><span>🚃 電車</span><span>💸 赤字</span><span>🏚 空き家</span><span>👴 少子高齢化</span><span>🏥 病院</span><span>🏪 商店街</span><span>❄️ 雪かき</span></div>
+          <p>どの工事にお金を使うか、スマホで<b>投票</b>します。同じ票数のときは、町の人たちの声で決まります。</p>
+          <p>工事をすると <b>😊幸せ度</b>が上がります。3段階ぜんぶ終わると、<b>完成ボーナス</b>！</p>
+        </div></details>
+        <details name="rp"><summary><i>🃏</i>できごとカード</summary><div class="rp-b">
+          <p>会議のあとに、<b>こがね町のできごとカード</b>が出ます。</p>
+          <p>大雪・火事・詐欺電話などの困ったことは、<b>ふせげます</b>。</p>
+          <div class="rp-t"><span>🏗 工事</span><span>先に進めておく</span><span>💼 しごと</span><span>しごとの力でふせぐ</span><span>🎟️ ガチャ</span><span>アイテムでふせぐ</span></div>
+        </div></details>
+        <details name="rp"><summary><i>💼</i>しごと・資格・転職</summary><div class="rp-b">
+          <p>はじめは、みんな <b>🌱町の新人</b>。問題に正解すると、その分野のしごとに<b>就職</b>します。</p>
+          <div class="rp-t"><span>🔢 計算</span><span>🚒 消防士</span><span>✏️ 式</span><span>⚖️ 弁護士</span><span>📈 関数</span><span>💻 SE</span><span>📐 図形</span><span>🚛 衛生のプロ</span><span>🎲 確率</span><span>👮 警察官</span></div>
+          <p><b>📜 資格</b>：★2以上で正解すると、もらえます。</p>
+          <p><b>🔄 転職タイム</b>：会議の前。資格があるしごとに、転職できます（💼職業安定所のマスなら、資格なしでもOK）。</p>
+          <p><b>⭐ ベテラン</b>：同じしごとを2ラウンドつづけると、力が強くなります。転職しても、前のしごとの経験が少し残ります。</p>
+          <p><b>📢 町の求人</b>：カードをふせげなかったときに出ます。そのしごとに転職した人に、ボーナス！</p>
+        </div></details>
+        <details name="rp"><summary><i>🎓</i>コース</summary><div class="rp-b">
+          <p>問題のコースは、自分でえらべます。</p>
+          <div class="rp-chips"><span>小学校</span><span>中学</span><span>高校</span><span>大人（SPI）</span><span>大学</span></div>
+          <p><b>しごとの資格コース</b>も、あります。</p>
+          <div class="rp-t"><span>⚡ 電気</span><span>電気工事士・電験</span><span>🩺 看護</span><span>国家試験の計算</span><span>💾 情報</span><span>基本情報・応用情報</span></div>
+          <p>しごとの資格コースの人は、町の<b>「プロ」</b>。物語の中に、見せ場があります（電気のプロは、町が救われたとき、ツリーのスイッチを入れる役）。勝ち負けは、変わりません。</p>
+        </div></details>
+        <details name="rp"><summary><i>🎟️</i>ガチャのアイテム</summary><div class="rp-b">
+          <p>ガチャのアイテムも、町の役に立ちます。</p>
+          <div class="rp-t"><span>🛡 ぶき・そうび</span><span>悪いカードをふせぐ</span><span>🐾 ペット</span><span>町の人をいやす</span><span>👗 おしゃれ</span><span>観光客が来て、お金</span><span>💎 台座</span><span>工事が安くなる</span><span>📜 称号</span><span>その分野のお金アップ</span></div>
+        </div></details>
+        <details name="rp"><summary><i>🗺️</i>マスのしるし</summary><div class="rp-b">
+          <div class="rp-t"><span>🎁</span><span>町に寄付（＋予算）</span><span>⛄</span><span>町の人がにっこり（＋幸せ度）</span><span>❓</span><span>できごとカード</span><span>🎄</span><span>通ると、＋予算</span><span>♨️</span><span>温泉（＋幸せ度）</span><span>⛏️</span><span>金のかけら（＋予算）</span><span>⛩️</span><span>神社のおみくじ</span><span>🕳️</span><span>落とし穴（下の階へ）</span></div>
+        </div></details>
+        <details name="rp"><summary><i>🏔️</i>町の4つの階</summary><div class="rp-b">
+          <div class="rp-chips"><span>⭐ 山の上</span><span>♨️ 上の町</span><span>🎄 下の町</span><span>⛏ 地下の鉱山</span></div>
+          <p>階段・🚡ロープウェイ・🛷そりの大すべり台・🚃トロッコ・🕳マンホール・♨️間欠泉で、上下に移動します。</p>
+          <p><b>分かれ道</b>では、どこへ行くかを、えらべます。</p>
+        </div></details>
+        <details name="rp"><summary><i>🎄</i>最後の大工事と、勝ち負け</summary><div class="rp-b">
+          <p><b>幸せ度100</b>で、みんなの勝ち！</p>
+          <p>最後のラウンドまでに とどかなかったら、<b>最後の大工事「ツリーに明かりを灯そう」</b>に挑戦。</p>
+          <p>全員のスマホに問題が出て、正解すると、★の数だけ ツリーに明かりが灯ります。<b>3分</b>のあいだに ぜんぶ灯せたら、町は救われます。</p>
+          <p>幸せ度が0になったり、100にとどかなかったら、負け…</p>
+        </div></details>
+      </div>
+    </div>
+    <div class="rp-vs">
+      <p class="rp-lead"><span class="nobr">クリスマス村を進んで、</span><span class="nobr"><b>⭐</b> をあつめよう！</span></p>
+      <ol class="rp-steps">
+        <li><i>🎲</i><b>サイコロをふる</b><span><span class="nobr">自分の番がきたら、</span><span class="nobr">スマホの</span><span class="nobr">サイコロを</span><span class="nobr">タップ。</span></span></li>
+        <li><i>✏️</i><b>問題をとく</b><span><span class="nobr">全員そろったら、</span><span class="nobr">問題タイム（2分）。</span><span class="nobr">止まったマスの</span><span class="nobr">問題が、</span><span class="nobr">スマホに</span><span class="nobr">出ます。</span></span></li>
+        <li><i>⭐</i><b>⭐ をもらう</b><span><span class="nobr">むずかしさ（★1〜★3）を</span><span class="nobr">えらんで</span><span class="nobr">正解すると、</span><span class="nobr">★の数だけ</span><span class="nobr">⭐ が</span><span class="nobr">もらえます。</span></span></li>
+      </ol>
+      <p class="rp-goal"><em>ゴール</em><span class="nobr">さいごに <b>⭐</b> が</span><span class="nobr">いちばん多い人の</span><span class="nobr">勝ち！</span></p>
+      <p class="rp-more">もっと知りたいときは、タップしてね</p>
+      <div class="rp-acc">
+        <details name="rp"><summary><i>🗺️</i>マスのしるし</summary><div class="rp-b">
+          <p>止まった<b>マスの色</b>で、問題の分野が決まります。</p>
+          <div class="rp-t"><span>🔥</span><span>チャレンジマス。正解すると ⭐ が2倍</span><span>🎁</span><span>⭐ ＋2</span><span>⛄</span><span>ほかのみんなに ⭐ ＋1</span><span>🛷</span><span>さらに3マス進む</span><span>❓</span><span>なにかが起こる</span><span>🎄</span><span>通ると ⭐ ＋3</span></div>
+          <p><b>分かれ道</b>では、どっちに行くか、自分で決めます。</p>
+        </div></details>
+        <details name="rp"><summary><i>🏪</i>ショップ</summary><div class="rp-b">
+          <p>⭐ を使って、アイテムが買えます（通りがかりでもOK）。</p>
+          <div class="rp-t"><span>🎲 ダブルサイコロ</span><span>サイコロを2こ ふれる</span><span>👢 スノーブーツ</span><span>＋3マス</span><span>🔑 氷のカギ</span><span>湖の近道を通れる</span></div>
+        </div></details>
+        <details name="rp"><summary><i>🏰</i>ダンジョン</summary><div class="rp-b">
+          <p>階段・🍭すべり台・🚃トロッコ・🧊氷のトンネル・🚡ゴンドラで、上下に移動！</p>
+          <p>❓では、落とし穴に落ちることも。</p>
+          <p>B3の <b>👑大広間</b>に着くと、⭐ ＋5。</p>
+        </div></details>
+        <details name="rp"><summary><i>🎟️</i>ガチャ</summary><div class="rp-b">
+          <p>正解すると、<b>ガチャ券</b>が1枚！ ラウンドの終わりの<b>ガチャタイム</b>で、まわせます。</p>
+          <div class="rp-chips"><span>👗 おしゃれ</span><span>🛡 ぶき</span><span>🐾 ペット</span><span>💎 台座と称号</span></div>
+          <p>N〜LR（レジェンドレア）の5段階。5回以内に、SR以上が必ず出ます。</p>
+          <p>持てるのは<b>3つまで</b>（見た目だけで、⭐には影響しません）。</p>
+        </div></details>
+        <details name="rp"><summary><i>👑</i>さいごは</summary><div class="rp-b">
+          <p>さいごのラウンドで、⭐ がいちばん多い人の勝ち！</p>
+          <p>さいごは、全員で協力する<b>ボス問題</b>。</p>
+        </div></details>
+      </div>
+    </div>
+    <div class="rp-foot"><button type="button" class="pbtn" onclick="closeModal('m-rules')">とじる</button></div>
+  </div>
   <div id="rulesCoop">
   <p class="rlead">🏘 <b>協力モード「こがね町を救え！」</b>　みんなは同じチーム。数学の力で、さびれた町を元気にしよう！</p>
   <ol class="rules">
@@ -1649,7 +1793,7 @@ function route(){
   if (v === 'play') playInit();
 }
 window.addEventListener('hashchange', route);
-function openModal(id){ $('#' + id).classList.add('on'); }
+function openModal(id){ const m = $('#' + id); m.classList.add('on'); if (id === 'm-rules') m.scrollTop = 0; }
 function closeModal(id){ $('#' + id).classList.remove('on'); }
 (function snow(){
   const s = $('#snow');
@@ -5056,30 +5200,62 @@ function renderRoll(){
       <div class="pr-msg" id="prMsg"></div>
       <div class="pr-sub" id="prSub"></div></div>`;
   }
-  // open＝タップを待つ／go＝ころがっている／hold＝タップは届いた。先生の画面の声が終わったら、ころがる／done＝目が出た
-  const sent = !!(P.rollSent && P.rollSent.id === R.id), st = R.st === 'done' ? 'done' : R.st === 'go' ? (R.w ? 'hold' : 'go') : sent ? 'go' : 'open', pr = $('#pr'), me = pMe() || {};
+  // open＝タップを待つ／ready＝タップした。先生の画面がふるのを待つ／hold＝タップは届いた。先生の画面の声が終わったら、ころがる／fly＝ころがっている → 止まって、目が出た
+  const sent = !!(P.rollSent && P.rollSent.id === R.id), st = R.st === 'done' || (R.st === 'go' && R.t0 > 0) ? 'fly' : R.st === 'go' ? (R.w ? 'hold' : 'ready') : sent ? 'ready' : 'open', pr = $('#pr'), me = pMe() || {};
   if (st !== P.rollSt){
-    const prev = P.rollSt; P.rollSt = st; pr.dataset.st = st;
+    const prev = P.rollSt; P.rollSt = st; if (st !== 'fly') pr.dataset.st = st;
     if (st === 'open'){ $('#prMsg').textContent = P.rollMiss === R.id ? 'もう一度、サイコロをタップしてね' : 'サイコロをタップ！'; $('#prSub').textContent = '先生の画面で、サイコロがころがるよ'; $('#prTap').setAttribute('aria-disabled', 'false'); }
-    else if (st === 'go'){ $('#prMsg').textContent = 'ころころ…'; $('#prSub').textContent = '先生の画面を見てね'; $('#prTap').setAttribute('aria-disabled', 'true'); }
+    else if (st === 'ready'){ $('#prMsg').textContent = 'ふるよ！'; $('#prSub').textContent = '先生の画面を見てね'; $('#prTap').setAttribute('aria-disabled', 'true'); }
     else if (st === 'hold'){ $('#prMsg').textContent = 'タップOK！'; $('#prSub').textContent = '先生の画面の声が終わったら、ころがるよ'; $('#prTap').setAttribute('aria-disabled', 'true'); }
     else {
+      /* 先生の画面のサイコロと、同じときに投げて、同じときに止める。目は、止まったときに出す */
       $('#prTap').setAttribute('aria-disabled', 'true');
-      const v = Object.values(R.v || {}).map(Number).filter(x => x >= 1 && x <= 6), quick = P.rollShown === R.id || pReduce() || !prev;      // quick＝もう見せた目（えらぶ画面から戻ったとき など）は、ころがさずに出す
-      $('#prDice').innerHTML = (v.length ? v : [1]).map(n => cubeHTML(n, (quick ? 'rest' : 'land') + (v.length > 1 ? ' two' : ''))).join('');
-      P.rollHold = quick ? 0 : Date.now() + 1700;      // 出た目を見せているあいだ（ころがる 0.95秒＋見る 0.75秒）は、えらぶ画面に切りかえない
-      const show = () => {
-        if (P.rollSt !== 'done' || !$('#prNum') || !(P.info && P.info.roll && P.info.roll.id === R.id)) return;
-        $('#prNum').textContent = R.n; $('#pr').classList.add('got'); $('#prMsg').textContent = `${R.n}マス 進むよ！`;
-        $('#prSub').textContent = v.length > 1 || R.plus ? `${v.join(' + ')}${R.plus ? ' + ' + R.plus : ''} = ${R.n}` : 'コマが進むところを、先生の画面で見てね';
-        if (P.rollShown !== R.id){ P.rollShown = R.id; initAudio(); try { sfx.land(); } catch(e){} pBuzz(60); }
-        renderRoll();
-      };
-      if (quick) show(); else setTimeout(show, 950);
+      const v = Object.values(R.v || {}).map(Number).filter(x => x >= 1 && x <= 6), D = R.d > 0 ? +R.d : 1500, seen = P.rollShown === R.id;
+      let left = seen || !R.t0 ? 0 : R.t0 + D - NET.now(), dur = D;      // left＝先生の画面のサイコロが止まるまでの、のこり時間
+      if (left > D + 300) left = D;      // 時計が合っていないとき
+      const quick = seen || (left <= 0 && !prev);      // quick＝もう見せた目（えらぶ画面から戻ったとき など）や、ページを開きなおしたときは、ころがさずに出す
+      if (!quick && left < 320){ left = dur = pReduce() ? 0 : 420; }      // 知らせがおそく届いたとき（古い先生の画面のときも）：短くころがして、すぐ止める
+      $('#prDice').innerHTML = (v.length ? v : [1]).map(n => cubeHTML(n, 'rest' + (v.length > 1 ? ' two' : ''))).join('');
+      if (!quick){
+        pr.dataset.st = 'go'; $('#prMsg').textContent = 'ころころ…'; $('#prSub').textContent = '先生の画面を見てね';
+        if (!pReduce()) [...$('#prDice').querySelectorAll('.dice3')].forEach((el, i) => dieThrow(el, v[i] || 1, dur - left - i * .06 * dur, dur));
+      }
+      P.rollLand = Date.now() + (quick ? 0 : left); P.rollHold = P.rollLand + 750 + 400;
+      [P.rollShowT, P.rollShowT2].forEach(t => clearTimeout(t));
+      if (quick) pRollShow(R.id, true, true);
+      else { P.rollShowT = setTimeout(() => pRollShow(R.id), Math.max(0, left)); P.rollShowT2 = setTimeout(() => pRollShow(R.id, true), Math.max(0, left) + 350); }
     }
   }
+  if (st === 'fly') pRollShow(R.id);      // 「目が出た」の知らせが、止まったあとに届いたとき
   // 止まったマスが決まったら、下に出す
-  if (st === 'done' && P.rollShown === R.id && me.space && !(Object.values(R.v || {}).length > 1 || R.plus)) $('#prSub').textContent = '📍 止まったマス：' + me.space;
+  if (st === 'fly' && P.rollShown === R.id && me.space && !(Object.values(R.v || {}).length > 1 || R.plus)) $('#prSub').textContent = '📍 止まったマス：' + me.space;
+}
+/* 出た目の数字を出す。サイコロが止まるときで、先生の画面に目が出たあと（スマホのほうが先に出ないように）。知らせが届かないときも、止まって 0.35秒で出す（force） */
+function pRollShow(id, force, quick){
+  const R = P.info && P.info.roll, pr = $('#pr');
+  if (!R || R.id !== id || P.rollSt !== 'fly' || !pr || !$('#prNum') || pr.dataset.st === 'done') return;
+  if (!force && (R.st !== 'done' || Date.now() < (P.rollLand || 0))) return;
+  const v = Object.values(R.v || {}).map(Number).filter(x => x >= 1 && x <= 6);
+  pr.dataset.st = 'done'; $('#prNum').textContent = R.n; pr.classList.add('got'); $('#prMsg').textContent = `${R.n}マス 進むよ！`;
+  $('#prSub').textContent = v.length > 1 || R.plus ? `${v.join(' + ')}${R.plus ? ' + ' + R.plus : ''} = ${R.n}` : 'コマが進むところを、先生の画面で見てね';
+  P.rollHold = quick ? 0 : Date.now() + 750;      // 出た目を見せているあいだ（0.75秒）は、えらぶ画面に切りかえない
+  if (P.rollShown !== R.id){ P.rollShown = R.id; initAudio(); try { sfx.land(); } catch(e){} pBuzz(60); }
+  renderRoll();
+}
+/* サイコロを投げる動き。先生の画面のサイコロ（rollDice）と同じ時間わり：落ちる → 大きくはねる → 小さくはねる → 止まる。
+   el＝.dice3、n＝出る目、at＝もう進んでいる時間（ミリ秒。マイナスなら、そのぶん待ってから）、dur＝ぜんたいの長さ。さいごは、ま上から見た形（出た目の面だけ）で止まる */
+function dieThrow(el, n, at, dur){
+  const cube = el.querySelector('.cube'); if (!cube || !el.animate) return;
+  const r = DIE_ROT[n] || DIE_ROT[1], N = 48, pos = [], rot = [], eo = t => 1 - Math.pow(1 - t, 3), H0 = 150, tx = t => Math.max(0, Math.min(1, t / .94));
+  for (let i = 0; i <= N; i++){
+    const tt = tx(i / N), k = 1 - eo(Math.min(1, tt * 1.12));
+    const y = tt < .42 ? H0 * (1 - Math.pow(tt / .42, 2)) : tt < .66 ? H0 * .226 * Math.sin(Math.PI * (tt - .42) / .24) : tt < .82 ? H0 * .071 * Math.sin(Math.PI * (tt - .66) / .16) : 0;
+    pos.push({transform:`translate(${(-46 * (1 - eo(tt))).toFixed(1)}px,${(-y).toFixed(1)}px) scale(${(1 + .16 * y / H0).toFixed(3)})`});
+    rot.push({transform:`rotateX(${(-24 * Math.min(1, k * 4) + 900 * k).toFixed(1)}deg) rotateY(${(-28 * Math.min(1, k * 4) + 540 * k).toFixed(1)}deg) rotateZ(${(300 * k).toFixed(1)}deg) rotateX(${r[0]}deg) rotateY(${r[1]}deg)`});
+  }
+  const o = {duration:dur, fill:'both', easing:'linear', delay:Math.max(0, -at)};
+  try { const a = el.animate(pos, o), b = cube.animate(rot, o); if (at > 0){ a.currentTime = at; b.currentTime = at; } } catch(e){ return; }
+  [.42, .66, .82].forEach((f, i) => { const t = f * .94 * dur - at; if (t > 0) setTimeout(() => { if (el.isConnected) try { sfx.bounce([.09, .06, .035][i]); } catch(e){} }, t); });      // はねる音も、先生の画面と同じときに
 }
 
 /* ---- えらぶ画面（分かれ道・アイテム・ショップ・職業安定所・ガチャの「どれを手ばなす？」）。先生の画面と同じ選択肢が出る ---- */
@@ -7061,50 +7237,150 @@ const Show = (() => {
 })();
 
 /* ================= よびかけの動画（スタート画面のボタン） =================
-   幕が閉じているあいだだけ押せる。押すと、画面いっぱいに動画（video/yobikake.mp4）が流れる。動画は、押されるまで読みこまない。
+   幕が閉じているあいだだけ押せる。押すと、画面いっぱいに動画が流れる。動画は、押されるまで読みこまない。
    終わったら、ひとりでにスタート画面へもどる。「✕ とじる」か Esc で、とちゅうでも閉じられる。ゲームの流れは変えない。
-   絵の出し方は2つ：
-   ・そのまま（v）　：ブラウザの動画（video）を、ブラウザの操作バーごと見せる
+   絵の出し方は3つ：
+   ・そのまま（v）　：ブラウザの動画（video）を、ブラウザの操作バーごと見せる（スマホ・Mac など）
    ・描き写す（cv）：動画は見えない大きさで流し、その絵を canvas に描き写して見せる。操作バーは自前（止める・時間・つまみ・全画面）
-     Windows の Chrome・Edge は、こちら。動画の絵だけが途中で止まり、時計だけが進むことがあったため（2026-11-12）
-   ためすとき：URL に ?yobi=cv ／ ?yobi=v をつけると、出し方をえらべる。動画の画面で D キーを押すと、左下に調べる数字が出る */
+   ・自分で読む（sw）：ブラウザの動画のしくみを、絵には使わない。動画のファイル（mp4）を自分で取りよせて、1コマずつ
+     ソフトウェアで読み取り（WebCodecs。パソコンの動画用の部品＝GPU を使わない）、canvas に描く。音は、音だけのファイル（m4a）を流し、絵は、その時計に合わせる。
+     Windows の Chrome・Edge は、こちら（2026-11-13）。絵だけが途中で止まることが、「描き写す」にしたあとも起きたため。
+     うまくいかないとき（読み取れない・8秒たっても絵が出ない など）は、ひとりでに「描き写す」に切りかえる
+   ためすとき：URL に ?yobi=sw ／ ?yobi=cv ／ ?yobi=v をつけると、出し方をえらべる。動画の画面で D キーを押すと、左下に調べる数字が出る。
+   起きたこと（止まった・つなぎなおした・切りかえた）は、このブラウザに書きのこす（localStorage の sg_yobi_log。さいごの10回ぶん）。D キーで、前の回のぶんも出る */
 const Yobi = (() => {
-  const q = s => document.querySelector(s), SRC = 'video/yobikake.mp4', UA = navigator.userAgent;
+  const q = s => document.querySelector(s), VER = '?v=2', SRC = 'video/yobikake.mp4' + VER, AUD = 'video/yobikake.m4a' + VER, IDX = 'video/yobikake.idx.json' + VER, UA = navigator.userAgent;
   const FADE = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 300;
-  const PICK = (/[?&]yobi=(cv|v)\b/.exec(location.search) || [])[1];
-  const CV0 = PICK ? PICK === 'cv' : (/Windows NT/.test(UA) && /Chrome\/\d/.test(UA));
-  let st = 0, cv = false, live = false, bad = false, inited = false, drag = false, dbg = false;      // st：0＝閉じている　1＝開いている　2＝閉じるとちゅう
-  let shutT = 0, idleT = 0, endT = 0, holdT = 0, waitT = 0, wdT = 0, raf = 0, lastT = -1, draws = 0, kicks = 0, wdAt = -1, wdN = 0, tText = '';
+  const PICK = (/[?&]yobi=(sw|cv|v)\b/.exec(location.search) || [])[1];
+  const MODE0 = PICK || (/Windows NT/.test(UA) && /Chrome\/\d/.test(UA) ? 'sw' : 'v');
+  let st = 0, cv = false, sw = null, mode = '', live = false, bad = false, inited = false, drag = false, dbg = false;      // st：0＝閉じている　1＝開いている　2＝閉じるとちゅう
+  let shutT = 0, idleT = 0, endT = 0, holdT = 0, waitT = 0, wdT = 0, swT = 0, raf = 0, lastT = -1, draws = 0, kicks = 0, wdAt = -1, wdN = 0, fzF = -1, fzN = 0, pT = 0, tText = '', log = null;
   const msg = s => { q('#yobiMsg').textContent = s || ''; };
   const mmss = t => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+  const ev = k => { if (log && log.ev.length < 40) log.ev.push((q('#yobiV').currentTime || 0).toFixed(1) + ' ' + k); if (dbg) note(); };      // 起きたことを書きとめる（動画の時刻つき）
+  function logs(){ try { return JSON.parse(localStorage.getItem('sg_yobi_log') || '[]') || []; } catch(e){ return []; } }
   // 動画が流れていて、マウスもキーもさわっていないあいだは、「とじる」・操作バー・カーソルをかくす（止めているとき・読みこみ中・読みこめなかったとき・つまみを動かしているときは、出したまま）
   function wake(){ const o = q('#yobi'); o.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (st === 1 && live && !bad && !drag) o.classList.add('idle'); }, 2600); }
-  function toggle(){ const v = q('#yobiV'); if (st !== 1) return; if (v.ended) seek(0); if (v.paused || v.ended){ const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); }
+  function play(){ const v = q('#yobiV'), p = v.play(); if (p && p.catch) p.catch(() => { if (st === 1 && !v.error) msg(''); }); }      // ひとりでに始まらないブラウザでは、▶ を押してもらう
+  function toggle(){ const v = q('#yobiV'); if (st !== 1) return; if (sw){ sw.hold = false; sw.started = true; } if (v.ended) seek(0); if (v.paused || v.ended) play(); else v.pause(); }
   function seek(t){ const v = q('#yobiV'), d = v.duration || 0; if (!d) return; clearTimeout(endT); try { v.currentTime = Math.min(Math.max(0, t), Math.max(0, d - .05)); } catch(e){} lastT = -1; }
   function full(){ const o = q('#yobiIn'); try { if (document.fullscreenElement) document.exitFullscreen(); else if (o.requestFullscreen){ const p = o.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } } catch(e){} }
-  /* 描き写す（1コマごと）：動画のいまの絵を canvas に写し、操作バーの時間とつまみを合わせる */
+
+  /* ---- 自分で読む（sw）：mp4 を取りよせながら、1コマずつ読み取って、ためておく。絵は paint() が、音の時計に合うコマをえらんで描く ---- */
+  function swOpen(){
+    const S = sw = {dead:false, gen:0, J:null, n:0, off:null, size:null, pts:null, key:null, cfg:null, buf:null, have:0, total:0, dec:null, frames:[], next:0, last:-1, out:0, shown:-1, ready:false, started:false, hold:false, low:0, flushed:false, ac:new AbortController()};
+    const fail = e => { if (!S.dead && !(e && e.name === 'AbortError')) swFail(S, String(e && e.message || e).slice(0, 40)); };
+    // コマの位置の表（何バイトめから何バイトが、どの時刻のコマか）
+    fetch(IDX, {signal:S.ac.signal}).then(r => { if (!r.ok) throw new Error('idx' + r.status); return r.json(); }).then(async J => {
+      const n = J.n | 0, s = J.s; if (!(n > 0) || !s || s.length !== n * 4) throw new Error('idx');
+      S.off = new Uint32Array(n); S.size = new Uint32Array(n); S.pts = new Uint32Array(n); S.key = new Uint8Array(n);
+      for (let i = 0, pos = 0; i < n; i++){ pos += s[i * 4]; S.off[i] = pos; S.size[i] = s[i * 4 + 1]; S.pts[i] = s[i * 4 + 2]; S.key[i] = s[i * 4 + 3]; }
+      S.cfg = {codec:J.codec, codedWidth:J.w, codedHeight:J.h, description:Uint8Array.from(atob(J.desc), c => c.charCodeAt(0)), hardwareAcceleration:'prefer-software', optimizeForLatency:false};
+      const ok = await VideoDecoder.isConfigSupported(S.cfg); if (!ok || !ok.supported) throw new Error('cfg');
+      if (S.dead) return;
+      if (S.total && J.bytes && S.total !== J.bytes) throw new Error('size');      // 動画のファイルと、表が合っていない（古いファイルが、ブラウザに残っていた など）
+      const c = q('#yobiC'); c.width = J.w; c.height = J.h; S.J = J; S.n = n; swDecoder(S); swPump(S);
+    }).catch(fail);
+    // 動画のファイル。届いたところから使う
+    fetch(SRC, {signal:S.ac.signal}).then(async r => {
+      if (!r.ok || !r.body) throw new Error('mp4' + r.status);
+      S.total = +r.headers.get('content-length') || 0; if (S.J && S.total && S.J.bytes && S.total !== S.J.bytes) throw new Error('size');
+      S.buf = new Uint8Array(S.total || (1 << 25)); const rd = r.body.getReader();
+      for (;;){ const x = await rd.read(); if (x.done || S.dead) break; const a = x.value;
+        if (S.have + a.length > S.buf.length){ const nb = new Uint8Array(Math.max(S.buf.length * 2, S.have + a.length)); nb.set(S.buf.subarray(0, S.have)); S.buf = nb; }
+        S.buf.set(a, S.have); S.have += a.length; swPump(S); }
+      if (!S.dead){ if (!S.total) S.total = S.have; swPump(S); }
+    }).catch(fail);
+  }
+  function swDecoder(S){
+    const g = ++S.gen; try { if (S.dec && S.dec.state !== 'closed') S.dec.close(); } catch(e){}
+    S.dec = new VideoDecoder({
+      output: f => { if (S.dead || g !== S.gen){ f.close(); return; }
+        let i = S.frames.length; while (i > 0 && S.frames[i - 1].timestamp > f.timestamp) i--; S.frames.splice(i, 0, f);      // 時刻の順にならべる
+        S.out++; if (f.timestamp / 1000 > S.last) S.last = f.timestamp / 1000;
+        if (!S.ready){ S.ready = true; clearTimeout(swT); if (st === 1 && !S.started){ S.started = true; play(); } } },
+      error: e => { if (!S.dead && g === S.gen) swFail(S, 'dec ' + String(e && e.message || e).slice(0, 30)); }});
+    S.dec.ondequeue = () => swPump(S);
+    S.dec.configure(S.cfg); S.flushed = false;
+  }
+  /* 読み取りに、コマを渡す。ためすぎない（先のコマは 12こまで）。まだ届いていないコマの手前で、待つ */
+  function swPump(S){
+    if (S.dead || !S.J || !S.buf || !S.dec || S.dec.state !== 'configured') return;
+    try {
+      while (S.next < S.n && S.frames.length < 12 && S.dec.decodeQueueSize < 6){
+        const i = S.next, a = S.off[i], b = a + S.size[i]; if (b > S.have) break;
+        S.dec.decode(new EncodedVideoChunk({type:S.key[i] ? 'key' : 'delta', timestamp:S.pts[i] * 1000, data:S.buf.subarray(a, b)})); S.next++;
+      }
+      if (S.next >= S.n && !S.flushed){ S.flushed = true; const p = S.dec.flush(); if (p && p.catch) p.catch(() => {}); }      // さいごのコマまで出しきる
+    } catch(e){ swFail(S, 'feed ' + String(e && e.message || e).slice(0, 30)); }
+  }
+  /* 届いているのは、動画の何ミリ秒のところまでか */
+  function swAvail(S){ let i = S.av | 0; while (i < S.n && S.off[i] + S.size[i] <= S.have) i++; S.av = i; return i > 0 ? S.pts[i - 1] : 0; }
+  /* 時刻 t のところから、読みなおす（つまみを動かした・もどした・絵がおくれすぎた）。その前のキーフレームから */
+  function swSeek(S, t){
+    if (S.dead || !S.J) return; const ms = t * 1000 + 1; let k = 0;
+    for (let i = 0; i < S.n; i++) if (S.key[i]){ if (S.pts[i] <= ms) k = i; else break; }
+    S.frames.forEach(f => { try { f.close(); } catch(e){} }); S.frames = []; S.next = k; S.last = -1; S.low = 0;
+    try { swDecoder(S); } catch(e){ swFail(S, 'seek'); return; } swPump(S);
+  }
+  function swClose(S){
+    if (!S || S.dead) return; S.dead = true; clearTimeout(swT); try { S.ac.abort(); } catch(e){}
+    try { if (S.dec && S.dec.state !== 'closed') S.dec.close(); } catch(e){}
+    S.frames.forEach(f => { try { f.close(); } catch(e){} }); S.frames = []; S.buf = null; if (sw === S) sw = null;
+  }
+  /* 自分で読むやり方が、うまくいかなかった：「描き写す」に切りかえて、同じところから つづける */
+  function swFail(S, why){
+    if (!S || S.dead || st !== 1) return; const v = q('#yobiV'), t = v.currentTime || 0, go = !S.started || S.hold || !v.paused;
+    ev('sw→cv ' + why); swClose(S); mode = 'cv'; lastT = -1; fzF = -1; fzN = 0;
+    const on = () => { v.removeEventListener('loadedmetadata', on); if (st === 1 && t > .3) try { v.currentTime = t; } catch(e){} };
+    v.addEventListener('loadedmetadata', on); v.src = SRC; if (go) play();
+  }
+
+  /* 描く（1コマごと）：動画のいまの絵を canvas に出し、操作バーの時間とつまみを合わせる */
   function paint(){
     raf = 0; if (!st || !cv) return; raf = requestAnimationFrame(paint);
-    const v = q('#yobiV'), c = q('#yobiC'), d = v.duration || 0, t = v.currentTime || 0;
-    if (v.readyState >= 2 && v.videoWidth){
+    const v = q('#yobiV'), c = q('#yobiC'), d = v.duration || 0, t = v.currentTime || 0, now = performance.now();
+    if (pT && now - pT > 700 && !v.paused && document.visibilityState === 'visible') ev('gap' + Math.round(now - pT));      // ページぜんたいが、0.7秒より長く止まった
+    pT = now;
+    if (sw){
+      const S = sw, F = S.frames, us = t * 1e6 + 8000; let k = -1;
+      for (let i = 0; i < F.length; i++){ if (F[i].timestamp <= us) k = i; else break; }
+      if (k >= 0){ const f = F[k]; if (f.timestamp !== S.shown){ S.shown = f.timestamp; try { c.getContext('2d').drawImage(f, 0, 0, c.width, c.height); draws++; } catch(e){} }
+        for (let i = 0; i <= k; i++) try { F[i].close(); } catch(e){} F.splice(0, k + 1); }
+      if (S.ready && S.next > 0 && S.next < S.n && t * 1000 - S.pts[S.next - 1] > 1500) swSeek(S, t);      // 絵が 1.5秒より おくれた（ほかの画面を見ていた など）：いまのところから読みなおす
+      else swPump(S);
+      // 絵が、音に追いつけないとき（読みこみが間に合わない など）は、音を待たせる。追いついたら、また流す
+      if (S.J && S.started){
+        const end = S.last >= S.pts[S.n - 1] - 40 || t >= S.J.dur - .15, ahead = S.last - t * 1000;
+        if (!S.hold && !v.paused && !v.ended && !v.seeking && !end){ if (ahead < -120){ if (!S.low) S.low = now; else if (now - S.low > 350){ S.hold = true; S.low = 0; ev('hold'); v.pause(); msg('動画を読みこんでいます…'); } } else S.low = 0; }
+        else if (S.hold && (end || (ahead > 250 && (S.have >= S.total || swAvail(S) - t * 1000 > 3000)))){ S.hold = false; ev('go'); msg(''); play(); }      // 先の3秒ぶんが届いてから、また流す（こまぎれに止まらないように）
+      }
+    } else if (v.readyState >= 2 && v.videoWidth){
       if (c.width !== v.videoWidth || c.height !== v.videoHeight){ c.width = v.videoWidth; c.height = v.videoHeight; lastT = -1; }
       if (t !== lastT){ lastT = t; try { c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); draws++; } catch(e){} }
     }
     const s = mmss(t) + ' / ' + mmss(d); if (s !== tText){ tText = s; q('#yobiT').textContent = s; }
     if (!drag) q('#yobiS').value = d ? Math.round(t / d * 1000) : 0;
-    q('#yobi').classList.toggle('paused', v.paused && !v.ended && !bad);
+    q('#yobi').classList.toggle('paused', v.paused && !v.ended && !bad && !(sw && (sw.hold || !sw.started)));
   }
-  /* 見はり（0.5秒ごと）：先まで読みこめているのに、時計が2秒進まなかったら、いまの場所から つなぎなおす（3回まで。そのとき、調べる数字も出す） */
+  /* 見はり（0.5秒ごと）。つなぎなおすのは、合わせて3回まで
+     ・先まで読みこめているのに、時計が2秒進まない → いまの場所から つなぎなおす
+     ・「描き写す」で、時計は進んでいるのに、新しいコマが 1.5秒 出てこない（絵だけ止まった）→ 同じく、つなぎなおす */
   function watch(){
     if (st !== 1) return; const v = q('#yobiV'); if (dbg) note();
-    if (v.paused || v.ended || v.seeking || bad || document.visibilityState !== 'visible'){ wdN = 0; wdAt = -1; return; }
-    const t = v.currentTime; if (t !== wdAt){ wdAt = t; wdN = 0; return; }
+    if (v.paused || v.ended || v.seeking || bad || document.visibilityState !== 'visible'){ wdN = 0; wdAt = -1; fzN = 0; fzF = -1; return; }
+    const t = v.currentTime;
+    if (t !== wdAt){ wdAt = t; wdN = 0;
+      if (cv && !sw && v.readyState >= 2){ let f = -1; try { f = v.getVideoPlaybackQuality().totalVideoFrames; } catch(e){}
+        if (f < 0 || f !== fzF){ fzF = f; fzN = 0; } else if (++fzN >= 3 && kicks < 3){ fzN = 0; kicks++; ev('frz'); try { v.currentTime = t; } catch(e){} lastT = -1; } }
+      return; }
     let ahead = 0; for (let i = 0; i < v.buffered.length; i++) if (v.buffered.start(i) <= t + .05 && v.buffered.end(i) > t) ahead = v.buffered.end(i) - t;
-    if (ahead > 1 && ++wdN >= 4 && kicks < 3){ wdN = 0; kicks++; dbg = true; try { v.currentTime = t; } catch(e){} lastT = -1; note(); }
+    if (ahead > 1 && ++wdN >= 4 && kicks < 3){ wdN = 0; kicks++; ev('kick'); try { v.currentTime = t; } catch(e){} lastT = -1; }
   }
   function note(){
-    const v = q('#yobiV'); let f = ''; try { const p = v.getVideoPlaybackQuality(); f = p.totalVideoFrames + '-' + p.droppedVideoFrames; } catch(e){}
-    q('#yobiD').textContent = dbg ? `${cv ? 'cv' : 'v'} t${v.currentTime.toFixed(2)} rs${v.readyState} ns${v.networkState} f${f} d${draws} k${kicks} ${v.paused ? 'pause' : 'play'} ${document.visibilityState}` : '';
+    const v = q('#yobiV'), S = sw; let f = ''; try { const p = v.getVideoPlaybackQuality(); f = p.totalVideoFrames + '-' + p.droppedVideoFrames; } catch(e){}
+    const old = logs().filter(x => x.ev && x.ev.length).slice(-3).map(x => `${String(x.at).slice(5, 16)} ${x.m} [${x.ev.join(', ')}]`).join(' ／ ');
+    q('#yobiD').textContent = dbg ? `${mode} t${v.currentTime.toFixed(2)} rs${v.readyState} ns${v.networkState} f${f} d${draws} k${kicks}${S ? ` dec${S.out} q${S.frames.length} ${S.total ? Math.round(S.have / S.total * 100) : 0}%` : ''} ${v.paused ? 'pause' : 'play'} ${document.visibilityState}${log && log.ev.length ? ' [' + log.ev.join(', ') + ']' : ''}${old ? ' ｜前：' + old : ''}` : '';
   }
   function key(e){
     wake(); const k = e.key, tag = e.target && e.target.tagName; if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -7115,17 +7391,18 @@ const Yobi = (() => {
     else if (k === 'Home'){ e.preventDefault(); seek(0); }
     else if (k === 'f' || k === 'F'){ e.preventDefault(); if (!e.repeat) full(); }
   }
-  function setMode(c){ const o = q('#yobi'), v = q('#yobiV'); cv = !!c; o.classList.toggle('cv', cv); v.controls = !cv; v.tabIndex = cv ? -1 : 0; lastT = -1; tText = ''; if (cv && !raf) raf = requestAnimationFrame(paint); }
+  function setMode(c){ const o = q('#yobi'), v = q('#yobiV'); cv = !!c; o.classList.toggle('cv', cv); v.controls = !cv; v.tabIndex = cv ? -1 : 0; lastT = -1; tText = ''; pT = 0; if (cv && !raf) raf = requestAnimationFrame(paint); }
   function init(){
     if (inited) return; inited = true; const o = q('#yobi'), v = q('#yobiV'), s = q('#yobiS');
     ['pointermove', 'pointerdown'].forEach(n => o.addEventListener(n, wake)); o.addEventListener('keydown', key);
     v.addEventListener('playing', () => { live = true; clearTimeout(endT); clearTimeout(waitT); msg(''); wake(); });
-    ['pause', 'waiting', 'seeking'].forEach(n => v.addEventListener(n, () => { live = false; if (n === 'seeking') clearTimeout(endT);
-      if (n === 'waiting'){ clearTimeout(waitT); waitT = setTimeout(() => { if (st === 1 && !bad && !v.paused && v.readyState < 3) msg('動画を読みこんでいます…'); }, 700); }
+    ['pause', 'waiting', 'seeking'].forEach(n => v.addEventListener(n, () => { live = false; if (n === 'seeking'){ clearTimeout(endT); if (sw) swSeek(sw, v.currentTime || 0); }
+      if (n === 'waiting'){ clearTimeout(waitT); waitT = setTimeout(() => { if (st === 1 && !bad && !v.paused && v.readyState < 3){ ev('wait'); msg('動画を読みこんでいます…'); } }, 700); }
       wake(); }));
     v.addEventListener('seeked', () => { lastT = -1; });
     v.addEventListener('ended', () => { live = false; wake(); clearTimeout(endT); endT = setTimeout(close, 900); });      // 終わったら、ひと呼吸おいて、ひとりでに閉じる
-    v.addEventListener('error', () => { if (st !== 1) return; live = false; bad = true; o.classList.add('bad'); clearTimeout(waitT); msg('動画を読みこめませんでした。通信を確かめて、もう一度ためしてください。'); wake(); });
+    v.addEventListener('error', () => { if (st !== 1) return; if (sw){ swFail(sw, 'aud'); return; }      // 音だけのファイルが流せない：ふつうの動画に切りかえる
+      live = false; bad = true; ev('err'); o.classList.add('bad'); clearTimeout(waitT); msg('動画を読みこめませんでした。通信を確かめて、もう一度ためしてください。'); wake(); });
     q('#yobiC').addEventListener('click', () => { if (cv) toggle(); }); q('#yobiPP').addEventListener('click', toggle); q('#yobiFS').addEventListener('click', full);
     q('.yobi-bar').addEventListener('pointerup', () => setTimeout(() => { if (st === 1 && cv) try { q('#yobiC').focus({preventScroll: true}); } catch(e){} }, 0));      // マウスで操作バーを押したあとも、スペース・矢印キーが動画にきくように
     s.addEventListener('pointerdown', () => { drag = true; }); ['pointerup', 'pointercancel', 'change', 'blur'].forEach(n => s.addEventListener(n, () => { drag = false; wake(); }));
@@ -7138,11 +7415,19 @@ const Yobi = (() => {
   function open(){
     if (st || !Show.isPre()) return; const o = q('#yobi'), v = q('#yobiV');
     if (typeof o.showModal !== 'function'){ window.open(SRC, '_blank'); return; }      // とても古いブラウザ：動画だけを別のタブで開く
-    init(); st = 1; live = bad = drag = false; draws = kicks = wdN = 0; wdAt = -1;
+    init(); st = 1; live = bad = drag = false; draws = kicks = wdN = fzN = 0; wdAt = fzF = -1;
     msg('動画を読みこんでいます…'); try { o.showModal(); } catch(e){ st = 0; msg(''); return; }
-    setMode(CV0 && !!q('#yobiC').getContext); wake();
-    v.src = SRC; try { (cv ? q('#yobiC') : v).focus({preventScroll: true}); } catch(e){}
-    const p = v.play(); if (p && p.catch) p.catch(() => { if (st === 1 && !v.error) msg(''); });      // ひとりでに始まらないブラウザでは、▶ を押してもらう
+    const can = !!q('#yobiC').getContext;
+    mode = MODE0 === 'sw' && can && window.VideoDecoder && window.EncodedVideoChunk && window.AbortController && window.fetch ? 'sw' : MODE0 !== 'v' && can ? 'cv' : 'v';
+    log = {at:new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 19), m:mode, ev:[]};
+    setMode(mode !== 'v'); wake();
+    try { (cv ? q('#yobiC') : v).focus({preventScroll: true}); } catch(e){}
+    if (mode === 'sw'){      // 音だけのファイルを用意して、絵の1コマめが読めたら、流しはじめる
+      v.src = AUD; try { v.load(); } catch(e){}
+      try { swOpen(); } catch(e){ sw = null; }
+      if (sw){ const S = sw; clearTimeout(swT); swT = setTimeout(() => { if (sw === S && !S.ready) swFail(S, 'slow'); }, 8000); }
+      else { mode = 'cv'; ev('sw→cv open'); v.src = SRC; play(); }
+    } else { v.src = SRC; play(); }
     clearInterval(wdT); wdT = setInterval(watch, 500);
     clearTimeout(holdT); holdT = setTimeout(() => { if (st === 1) o.classList.add('on'); }, FADE + 80);      // 動画が出たら、うしろの幕とオーケストラの絵は休ませる（StageFx が、この印を見る）
   }
@@ -7155,8 +7440,10 @@ const Yobi = (() => {
   }
   /* 片づける：動画を止めて手ばなす（ゲームのあいだ、メモリを使わないように）。スタート画面は、もとのまま */
   function tidy(){
-    const o = q('#yobi'), v = q('#yobiV'), c = q('#yobiC'); st = 0; live = drag = dbg = false;
-    [shutT, idleT, endT, holdT, waitT].forEach(t => clearTimeout(t)); clearInterval(wdT); if (raf){ cancelAnimationFrame(raf); raf = 0; }
+    const o = q('#yobi'), v = q('#yobiV'), c = q('#yobiC');
+    if (log){ try { log.end = (v.ended ? 'end ' : '') + (v.currentTime || 0).toFixed(1); log.d = draws; const a = logs(); a.push(log); localStorage.setItem('sg_yobi_log', JSON.stringify(a.slice(-10))); } catch(e){} log = null; }
+    st = 0; live = drag = dbg = false; swClose(sw); sw = null; mode = '';
+    [shutT, idleT, endT, holdT, waitT, swT].forEach(t => clearTimeout(t)); clearInterval(wdT); if (raf){ cancelAnimationFrame(raf); raf = 0; }
     try { const f = document.fullscreenElement; if (f && o.contains(f)) document.exitFullscreen().catch(() => {}); else if (v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); } catch(e){}      // 全画面で見ていたら、全画面もやめる
     try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){}
     try { if (o.open) o.close(); } catch(e){}
@@ -7164,7 +7451,7 @@ const Yobi = (() => {
     try { c.width = 16; c.height = 9; } catch(e){}
     try { StageFx.set({}); } catch(e){}
   }
-  return {open, close, busy: () => st > 0};
+  return {open, close, busy: () => st > 0, info: () => ({st, mode, cv, draws, kicks, sw: sw ? {out:sw.out, q:sw.frames.length, have:sw.have, total:sw.total, next:sw.next, ready:sw.ready, hold:sw.hold, last:sw.last} : null, log: log ? log.ev.slice() : null})};
 })();
 
 route();
@@ -9403,15 +9690,15 @@ function uiOpen(pl, spec, onPick){
   PUI.cur = u; netPublish(true);
   return () => { if (PUI.cur === u){ PUI.cur = null; netPublish(true); } };
 }
-const ROLL = {key:'', id:0, to:'', st:'', v:null, plus:0, n:0};      // st：open＝スマホでふれる／go＝ふっているところ／done＝目が出た
+const ROLL = {key:'', id:0, to:'', st:'', v:null, plus:0, n:0, t0:0, d:0};      // st：open＝スマホでふれる／go＝ふっているところ／done＝目が出た。t0＝サイコロがころがりはじめた時刻（サーバーの時計）、d＝止まるまでの長さ（ミリ秒）
 function rollSync(){
   const cur = H.players[H.turn];
   if (H.phase !== 'roll' || !cur || isBot(cur)){ ROLL.key = ''; ROLL.id = 0; return null; }
   const key = H.round + ':' + H.turn + ':' + pkey(cur);
-  if (ROLL.key !== key || (ROLL.st === 'done' && !H.busy)) Object.assign(ROLL, {key, id:uid(), to:pkey(cur), st:'open', v:null, plus:0, n:0});      // 新しい番（目が出たあとなのに動いていない＝「1つ戻す」で同じ番に戻った、も同じ）
-  if (ROLL.st === 'go' && !H.busy && !H.voWait) ROLL.st = 'open';      // ふりはじめなかったとき（ほかの場面と重なった）は、もう一度ふれるように戻す
+  if (ROLL.key !== key || (ROLL.st === 'done' && !H.busy)) Object.assign(ROLL, {key, id:uid(), to:pkey(cur), st:'open', v:null, plus:0, n:0, t0:0, d:0});      // 新しい番（目が出たあとなのに動いていない＝「1つ戻す」で同じ番に戻った、も同じ）
+  if (ROLL.st === 'go' && !H.busy && !H.voWait){ ROLL.st = 'open'; ROLL.t0 = 0; }      // ふりはじめなかったとき（ほかの場面と重なった）は、もう一度ふれるように戻す
   const r = {id:ROLL.id, to:ROLL.to, nm:cur.name, st:ROLL.st === 'open' && (H.busy || H.asking) ? 'wait' : ROLL.st};      // wait＝先生の画面が、まだ準備中（オープニングなど）
-  if (ROLL.st === 'done'){ r.v = ROLL.v; r.plus = ROLL.plus; r.n = ROLL.n; }
+  if (ROLL.st === 'done' || (ROLL.st === 'go' && ROLL.t0)){ r.v = ROLL.v; r.plus = ROLL.plus; r.n = ROLL.n; if (ROLL.t0){ r.t0 = ROLL.t0; r.d = ROLL.d; } }      // ころがりはじめたときに、目と時刻も知らせる（スマホのサイコロが、同じ動きで、同じときに止まるように。スマホは、止まるまで目を見せない）
   if (ROLL.st === 'go' && H.voWait) r.w = 1;      // タップは受けとった。声が終わるのを待っているところ（声が終わったら、ころがす）
   return r;
 }
@@ -10008,7 +10295,8 @@ async function rollDice(pl, count, plus){
     dices[i].visible = true; dices[i].scale.setScalar(1);
   }
   camFollow(lands[0].clone().lerp(starts[0], .3), .85);
-  const H0 = 4.2, half = .55, bounced = [0, 0];
+  const H0 = 4.2, half = .55, bounced = [0, 0], n = vals.reduce((a, b) => a + b, 0) + plus;
+  if (ROLL.id && ROLL.to === pkey(pl)){ ROLL.st = 'go'; ROLL.v = vals.slice(); ROLL.plus = plus || 0; ROLL.n = n; ROLL.t0 = NET.now(); ROLL.d = reduceMotion ? 120 : 1500; netPublish(true); }      // スマホのサイコロも、いま、同じ目に向けてころがりはじめる
   await tween(1500, t => {
     for (let i = 0; i < count; i++){
       const tt = Math.max(0, Math.min(1, (t - i*.06) / (1 - .06)));
@@ -10024,8 +10312,7 @@ async function rollDice(pl, count, plus){
       dices[i].quaternion.copy(qs[i].qf).multiply(q);
     }
   });
-  const n = vals.reduce((a, b) => a + b, 0) + plus;
-  if (ROLL.id && ROLL.to === pkey(pl)){ ROLL.st = 'done'; ROLL.v = vals.slice(); ROLL.plus = plus || 0; ROLL.n = n; netPublish(true); }      // スマホのサイコロも、同じ目で止まる
+  if (ROLL.id && ROLL.to === pkey(pl)){ ROLL.st = 'done'; ROLL.v = vals.slice(); ROLL.plus = plus || 0; ROLL.n = n; netPublish(true); }      // 目が出た（スマホのサイコロも、同じときに止まっている）
   const dn = $('#dicenum');
   dn.textContent = (count > 1 || plus) ? `${vals.join('+')}${plus ? '+3' : ''}=${n}` : n;
   dn.classList.toggle('long', count > 1 || !!plus);
