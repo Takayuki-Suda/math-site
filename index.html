@@ -574,6 +574,7 @@
     animation: fadeUp 0.6s ease forwards;
     animation-delay: 1.6s;
   }
+  @keyframes heroCtaIn { to { opacity: 1; } }
   @keyframes fadeUp {
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
@@ -781,7 +782,17 @@
 
   <h1 class="hero-restart" id="heroTitle">RESTART</h1>
   <p class="hero-restart-sub">やりなおそう、なんどでも。</p>
-  <p style="font-size:clamp(0.80rem,2.2vw,0.92rem);color:#a0b8c8;letter-spacing:0.05em;font-weight:400;margin:0 0 10px;line-height:1.6;">学び直しのための、算数・数学教室です。</p>
+  <p style="font-size:clamp(0.80rem,2.2vw,0.92rem);color:#a0b8c8;letter-spacing:0.05em;font-weight:400;margin:0 0 18px;line-height:1.6;">学び直しのための、算数・数学教室です。</p>
+  <div class="hero-cta">
+  <a class="apply-link" style="padding:12px 32px;font-size:0.92rem;margin-top:0;opacity:0;animation:heroCtaIn 0.7s ease 1.2s forwards;" href="https://www.street-academy.com/steachers/963434?conversion_name=direct_message&amp;openExternalBrowser=1&amp;tracking_code=21caa792b17694b3e742001a63bbc0bf" target="_blank" rel="noopener">
+    ▶ ストアカで予約する
+  </a>
+  <p style="font-size:0.76rem;color:#8899aa;margin:8px 0 26px;letter-spacing:0.04em;line-height:1.8;opacity:0;animation:heroCtaIn 0.7s ease 1.3s forwards;">
+    オンライン（Zoom）の個別指導・1回60分。<br>1回だけでも大丈夫です。<br>
+    <a href="#online" style="color:#7ec8e3;">講座の一覧を見る</a>
+  </p>
+  </div>
+
   <p class="hero-creator-note">制作者もまた、学び直した一人です。</p>
 
   <!-- 数直線アニメーション「旅は、終わらない」 -->
@@ -802,15 +813,9 @@
   </div>
 
   <!-- 事実 → 行動（終点）-->
-  <p class="hero-fact" style="margin-top:8px;">小学生から大人まで対象の算数・数学教室（会津若松）</p>
+  <p class="hero-fact" style="margin-top:8px;margin-bottom:0;">小学生から大人まで対象の算数・数学教室（会津若松）</p>
 
-  <a class="apply-link" style="padding:12px 32px;font-size:0.92rem;margin-top:10px;" href="https://www.street-academy.com/steachers/963434?conversion_name=direct_message&amp;openExternalBrowser=1&amp;tracking_code=21caa792b17694b3e742001a63bbc0bf" target="_blank" rel="noopener">
-    ▶ ストアカで予約する
-  </a>
-  <p style="font-size:0.76rem;color:#8899aa;margin-top:8px;letter-spacing:0.04em;line-height:1.8;">
-    オンライン（Zoom）の個別指導・1回60分。1回だけでも大丈夫です。<br>
-    <a href="#online" style="color:#7ec8e3;">講座の一覧を見る</a>
-  </p>
+
 </section>
 
 <hr class="divider">
