@@ -175,4 +175,10 @@
   }else{
     init();
   }
+
+  /* 教材ページの最後に、ストアカの個別指導の案内を出す（storeaca.js） */
+  var sa=document.createElement('script');
+  sa.src='/math-site/storeaca.js';
+  sa.defer=true;
+  document.head.appendChild(sa);
 })();
