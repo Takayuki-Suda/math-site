@@ -9,10 +9,10 @@
   'use strict';
 
   var SA = {
-    teacher: 'https://www.street-academy.com/steachers/963434',   // 先生のページ（全講座）
-    naze:    'https://www.street-academy.com/myclass/219220',     // 算数〜高校数学の「なぜ？」
-    spi:     'https://www.street-academy.com/myclass/223345',     // 文系・転職SPI
-    kosotsu: 'https://www.street-academy.com/myclass/224289'      // 高卒認定・数学
+    teacher: 'https://www.street-academy.com/steachers/963434?conversion_name=direct_message&openExternalBrowser=1&tracking_code=21caa792b17694b3e742001a63bbc0bf',   // 先生のページ（全講座）
+    naze:    'https://www.street-academy.com/myclass/219220?conversion_name=direct_message&openExternalBrowser=1&tracking_code=6f7e14ae62865609e10b39645025b68a',     // 算数〜高校数学の「なぜ？」
+    spi:     'https://www.street-academy.com/myclass/223345?conversion_name=direct_message&openExternalBrowser=1&tracking_code=d7771ff4891c9a851200ec3024e4326e',     // 文系・転職SPI
+    kosotsu: 'https://www.street-academy.com/myclass/224289?conversion_name=direct_message&openExternalBrowser=1&tracking_code=0fb1d594552d1f2a7e491c56f7ba31dd'      // 高卒認定・数学
   };
 
   var path = location.pathname.replace(/^\/math-site\//, '');
