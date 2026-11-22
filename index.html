@@ -57,10 +57,11 @@
   "makesOffer": {
     "@type": "Offer",
     "availability": "https://schema.org/InStock",
+    "url": "https://www.street-academy.com/steachers/963434",
     "itemOffered": {
       "@type": "Service",
-      "name": "算数・数学の個別指導（対面）",
-      "description": "算数・数学の個別指導（対面）",
+      "name": "算数・数学のオンライン個別指導（ストアカ）",
+      "description": "Zoomでの算数・数学の個別指導。予約はストアカから。",
       "serviceType": "個別指導"
     }
   }
@@ -803,11 +804,12 @@
   <!-- 事実 → 行動（終点）-->
   <p class="hero-fact" style="margin-top:8px;">小学生から大人まで対象の算数・数学教室（会津若松）</p>
 
-  <a class="apply-link" style="padding:12px 32px;font-size:0.92rem;margin-top:10px;" href="mailto:suda.math.aizu@gmail.com">
-    ▶ メールで申し込む
+  <a class="apply-link" style="padding:12px 32px;font-size:0.92rem;margin-top:10px;" href="https://www.street-academy.com/steachers/963434" target="_blank" rel="noopener">
+    ▶ ストアカで予約する
   </a>
-  <p style="font-size:0.76rem;color:#8899aa;margin-top:8px;letter-spacing:0.04em;">
-    話を聞くだけでも、1回だけでも大丈夫です。
+  <p style="font-size:0.76rem;color:#8899aa;margin-top:8px;letter-spacing:0.04em;line-height:1.8;">
+    オンライン（Zoom）の個別指導・1回60分。1回だけでも大丈夫です。<br>
+    <a href="#online" style="color:#7ec8e3;">講座の一覧を見る</a>
   </p>
 </section>
 
@@ -851,57 +853,55 @@
     letter-spacing:.03em; line-height:1.7;
   }
 </style>
-<section class="section reveal">
-  <div class="section-label">お知らせ</div>
-  <div class="club-notice">
-    <h2 class="club-title">🎬 Udemyで動画講座を公開しました</h2>
-    <p class="club-body">
-      「8 + 5 は、どうして 13 になるの？」――今の小学校で教えている算数の考え方を、図とアニメーションで紹介する動画講座です。さくらんぼ計算、くり下がりのひき算、かけ算の意味、九九のきまり、わり算の2つの意味まで、全6回・約38分。大人の学び直しにも、お子さんに算数を教えたい方にも。
-    </p>
-    <div class="club-sep-note">
-      ※ 最初の2本（約11分）は、Udemyのページでそのまま見られます。英語版「Math the Japanese Way」もあります。
-    </div>
-    <div class="udemy-links">
-      <a class="apply-link" href="https://www.udemy.com/course/nihonshiki-sansu-naze-1/?referralCode=46577EAA6BF6A23DDF32" target="_blank" rel="noopener">▶ 日本語版を見る（Udemy）</a>
-      <a class="apply-link apply-link-ghost" href="https://www.udemy.com/course/math-the-japanese-way-1/?referralCode=A692464DD56E41857725" target="_blank" rel="noopener" lang="en">▶ English version</a>
-    </div>
+<style>
+  .sa-lead{font-size:.92rem;color:#c8d4e0;line-height:1.9;margin:0 0 20px;}
+  .sa-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .sa-card{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px 18px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;}
+  .sa-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+  .sa-card.is-main{grid-column:1 / -1;border-color:var(--gold);background:linear-gradient(160deg,rgba(200,168,75,0.12),var(--bg2) 60%);}
+  .sa-tag{font-size:.72rem;color:var(--gold);letter-spacing:.08em;margin-bottom:6px;}
+  .sa-name{font-size:1rem;font-weight:700;color:var(--white);line-height:1.6;margin-bottom:8px;}
+  .sa-text{font-size:.85rem;color:#a8b8c8;line-height:1.8;flex:1;margin:0 0 12px;}
+  .sa-go{font-size:.85rem;font-weight:700;color:var(--gold-lt);}
+  .sa-more{text-align:center;margin-top:22px;}
+  @media(max-width:600px){ .sa-grid{grid-template-columns:1fr;} }
+</style>
+<section class="section reveal" id="online">
+  <div class="section-label">オンライン個別指導（ストアカ）</div>
+  <h2 class="section-title">いまの自分に合う講座から。</h2>
+  <p class="sa-lead">Zoomで、1対1で教えています。予約・お支払いは、学びのマーケット「ストアカ」からどうぞ。</p>
+  <div class="sa-grid">
+    <a class="sa-card is-main" href="https://www.street-academy.com/myclass/219220" target="_blank" rel="noopener">
+      <div class="sa-tag">小学生〜高校生・大人の学び直し</div>
+      <div class="sa-name">算数〜高校数学の「なぜ？」を一緒に解決する個別指導</div>
+      <p class="sa-text">わからないところを、公式の暗記ではなく「なぜそうなるか」から一緒に考えます。受講者レビュー ★5.0（2026年11月時点）。</p>
+      <span class="sa-go">▶ 講座ページを見る</span>
+    </a>
+    <a class="sa-card" href="https://www.street-academy.com/myclass/223345" target="_blank" rel="noopener">
+      <div class="sa-tag">就職・転職・公務員試験</div>
+      <div class="sa-name">数学が苦手な文系のためのSPI個別指導</div>
+      <p class="sa-text">割合・損益算・集合算など、SPIや数的処理を基本からやさしく。</p>
+      <span class="sa-go">▶ 講座ページを見る</span>
+    </a>
+    <a class="sa-card" href="https://www.street-academy.com/myclass/224289" target="_blank" rel="noopener">
+      <div class="sa-tag">高卒認定・平日の朝・昼OK</div>
+      <div class="sa-name">中学からやり直せる 高卒認定・数学</div>
+      <p class="sa-text">中学の内容から、自分のペースで。平日の日中も受けられます。</p>
+      <span class="sa-go">▶ 講座ページを見る</span>
+    </a>
+    <a class="sa-card is-main" data-until="2026-12-26" href="https://www.street-academy.com/myclass/224741" target="_blank" rel="noopener">
+      <div class="sa-tag">12月12日〜25日・親子でも参加できます</div>
+      <div class="sa-name">🎄 数学すごろく クリスマス会</div>
+      <p class="sa-text">小学生も大人も、同じ盤でみんなで町を救うすごろく。問題は一人ひとりのレベルに合わせて出ます（Zoom・90分）。</p>
+      <span class="sa-go">▶ 講座ページを見る</span>
+    </a>
   </div>
-</section>
-
-<hr class="divider">
-
-<!-- ══ お知らせ：ゲーム「数学カードバトル」══ -->
-<section class="section reveal">
-  <div class="section-label">新しいゲーム</div>
-  <div class="club-notice">
-    <h2 class="club-title">🃏 数学カードバトル（小学生〜大学生）</h2>
-    <p class="club-body">
-      問題カードを出し合って戦うカードゲームです。相手がまちがえたらダメージ、正解されたら反撃。相手の苦手な単元をねらったり、特殊カードで逆転したり。小学校低学年から大学生まで 5 つのレベルがあり、どれも 40 枚の問題カードでコンピュータと対戦できます。
-    </p>
-    <div class="udemy-links">
-      <a class="apply-link" href="/math-site/chu/card-battle.html?deck=sho-low">小学校 低学年</a>
-      <a class="apply-link" href="/math-site/chu/card-battle.html?deck=sho-high">小学校 高学年</a>
-      <a class="apply-link" href="/math-site/chu/card-battle.html?deck=chu">中学生</a>
-      <a class="apply-link" href="/math-site/chu/card-battle.html?deck=ko">高校生</a>
-      <a class="apply-link apply-link-ghost" href="/math-site/chu/card-battle.html?deck=dai">大学生</a>
-    </div>
+  <div class="sa-more">
+    <a class="apply-link" style="margin-top:0;" href="https://www.street-academy.com/steachers/963434" target="_blank" rel="noopener">▶ すべての講座と日程を見る</a>
   </div>
-</section>
-
-<hr class="divider">
-
-<!-- ══ お知らせ：ゲーム「グラフ・トレジャー」══ -->
-<section class="section reveal">
-  <div class="section-label">新しいゲーム</div>
-  <div class="club-notice">
-    <h2 class="club-title">📈 グラフ・トレジャー（中学生向け）</h2>
-    <p class="club-body">
-      座標平面に直線を引いて、お宝を集めるゲームです。コンピュータと対戦しながら、傾き・切片・連立方程式（交点）・移項・放物線が身につきます。中1〜中3の学年別ルールつき。スマホでも遊べます。
-    </p>
-    <div class="udemy-links">
-      <a class="apply-link" href="/math-site/chu/graph-treasure.html">▶ 遊んでみる</a>
-    </div>
-  </div>
+  <script>
+    (function(){ var now=new Date(); document.querySelectorAll('[data-until]').forEach(function(el){ if(now>=new Date(el.getAttribute('data-until')+'T00:00:00+09:00')) el.remove(); }); })();
+  </script>
 </section>
 
 <hr class="divider">
@@ -955,6 +955,8 @@
     border:1.5px solid var(--gold);
   }
   .route-btn-ghost:hover{background:rgba(200,168,75,.12);transform:translateY(-2px);}
+  .route-levels{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+  .route-levels .route-btn{padding:10px 18px;font-size:.86rem;}
   @media(max-width:600px){
     .routes-grid{grid-template-columns:1fr;}
   }
@@ -973,7 +975,13 @@
       <div class="route-icon">📖</div>
       <h3 class="route-name">教材で調べて学ぶ</h3>
       <p class="route-text">わからないところを直接調べられる。大人の学び直しにも。</p>
-      <a class="route-btn route-btn-ghost" href="#site-nav">教材を見る</a>
+      <div class="route-levels">
+        <a class="route-btn route-btn-ghost" href="/math-site/sho/index.html">小学生</a>
+        <a class="route-btn route-btn-ghost" href="/math-site/chu/index.html">中学生</a>
+        <a class="route-btn route-btn-ghost" href="/math-site/ko/index.html">高校生</a>
+        <a class="route-btn route-btn-ghost" href="/math-site/dai/index.html">大学</a>
+        <a class="route-btn route-btn-ghost" href="/math-site/in/index.html">大学院</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1105,13 +1113,34 @@
 
 <hr class="divider">
 
+<!-- ══ Udemyの動画講座（サブ）══ -->
+<section class="section reveal">
+  <div class="section-label">動画で学ぶ</div>
+  <div class="club-notice">
+    <h2 class="club-title">🎬 Udemyの動画講座</h2>
+    <p class="club-body">
+      「8 + 5 は、どうして 13 になるの？」――今の小学校で教えている算数の考え方を、図とアニメーションで紹介する動画講座です。さくらんぼ計算、くり下がりのひき算、かけ算の意味、九九のきまり、わり算の2つの意味まで、全6回・約38分。大人の学び直しにも、お子さんに算数を教えたい方にも。
+    </p>
+    <div class="club-sep-note">
+      ※ 最初の2本（約11分）は、Udemyのページでそのまま見られます。英語版「Math the Japanese Way」もあります。
+    </div>
+    <div class="udemy-links">
+      <a class="apply-link" href="https://www.udemy.com/course/nihonshiki-sansu-naze-1/?referralCode=46577EAA6BF6A23DDF32" target="_blank" rel="noopener">▶ 日本語版を見る（Udemy）</a>
+      <a class="apply-link apply-link-ghost" href="https://www.udemy.com/course/math-the-japanese-way-1/?referralCode=A692464DD56E41857725" target="_blank" rel="noopener" lang="en">▶ English version</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+
 <!-- ══ このサービスについて（統合ブロック）══ -->
 <section class="section reveal">
   <div class="section-label">このサービスについて</div>
   <div class="section-body">
     <p><strong style="color:var(--gold-lt)">内容：</strong>わからない単元の整理から、大学レベルの議論まで対応します。</p>
     <p><strong style="color:var(--gold-lt)">スタイル：</strong>一緒に考える対話型。答えを教えるより、考えることを大切にします。急かしません。</p>
-    <p><strong style="color:var(--gold-lt)">オンラインで学ぶなら：</strong>オンラインの個別指導は<a href="https://www.street-academy.com/myclass/219220" target="_blank" rel="noopener" style="color:var(--blue)">ストアカ</a>で、動画で学ぶ講座は<a href="https://www.udemy.com/course/nihonshiki-sansu-naze-1/?referralCode=46577EAA6BF6A23DDF32" target="_blank" rel="noopener" style="color:var(--blue)">Udemy</a>で受け付けています。対面での指導は、メールでご相談ください。</p>
+    <p><strong style="color:var(--gold-lt)">受け方：</strong>Zoomでのオンライン個別指導を、<a href="https://www.street-academy.com/steachers/963434" target="_blank" rel="noopener" style="color:var(--blue)">ストアカ</a>で受け付けています。動画で学びたい方は<a href="https://www.udemy.com/course/nihonshiki-sansu-naze-1/?referralCode=46577EAA6BF6A23DDF32" target="_blank" rel="noopener" style="color:var(--blue)">Udemy</a>の講座もあります。対面での指導は、メールでご相談ください。</p>
   </div>
 </section>
 
@@ -1123,8 +1152,8 @@
         一緒に旅しませんか。
       </h2>
 
-      <a class="apply-link" href="mailto:suda.math.aizu@gmail.com">
-        ▶ メールで申し込む
+      <a class="apply-link" href="https://www.street-academy.com/steachers/963434" target="_blank" rel="noopener">
+        ▶ ストアカで予約する
       </a>
       <p style="font-size:0.82rem;color:#7ec8e3;margin-top:10px;margin-bottom:24px;letter-spacing:0.05em;">
         話を聞くだけでも、1回だけでも大丈夫です。
@@ -1133,7 +1162,7 @@
       <div>
         <div class="apply-step">
           <span class="num">1</span>
-          <span class="apply-step__text"><strong>メール</strong>（<span class="apply-mail">suda.math.aizu<wbr>@gmail.com</span>）でお気軽にご連絡ください</span>
+          <span class="apply-step__text">対面での指導のご相談や、そのほかのお問い合わせは、メールでお気軽にどうぞ。<br><strong class="apply-mail">suda.math.aizu<wbr>@gmail.com</strong></span>
         </div>
       </div>
 
@@ -2462,4 +2491,4 @@ const BGM = (() => {
 
 </script>
 </body>
-</html>\r
+</html>
