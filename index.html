@@ -56,8 +56,6 @@
   },
   "makesOffer": {
     "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "JPY",
     "availability": "https://schema.org/InStock",
     "itemOffered": {
       "@type": "Service",
@@ -412,11 +410,18 @@
     padding: 12px 16px;
     font-size: 0.85rem;
     color: #c8d4e0;
-    margin: 8px 4px;
+    margin: 8px 0;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
   }
+  .apply-step__text {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .apply-mail { overflow-wrap: normal; }
   .apply-step .num {
     width: 22px; height: 22px;
     background: var(--gold);
@@ -1128,7 +1133,7 @@
       <div>
         <div class="apply-step">
           <span class="num">1</span>
-          <strong>メール（suda.math.aizu@gmail.com）</strong>でお気軽にご連絡ください
+          <span class="apply-step__text"><strong>メール</strong>（<span class="apply-mail">suda.math.aizu<wbr>@gmail.com</span>）でお気軽にご連絡ください</span>
         </div>
       </div>
 
