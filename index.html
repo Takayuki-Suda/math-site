@@ -960,8 +960,15 @@
     border:1.5px solid var(--gold);
   }
   .route-btn-ghost:hover{background:rgba(200,168,75,.12);transform:translateY(-2px);}
-  .route-levels{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
-  .route-levels .route-btn{padding:10px 18px;font-size:.86rem;}
+  .kz-list{width:100%;text-align:left;display:flex;flex-direction:column;gap:8px;}
+  .kz-level{border:1px solid var(--gold);border-radius:12px;background:rgba(200,168,75,.05);}
+  .kz-level summary{cursor:pointer;list-style:none;padding:11px 16px;font-weight:700;color:var(--gold-lt);font-size:.92rem;display:flex;justify-content:space-between;align-items:center;}
+  .kz-level summary::-webkit-details-marker{display:none;}
+  .kz-level summary::after{content:'▼';font-size:.7rem;transition:transform .2s;}
+  .kz-level[open] summary::after{transform:rotate(180deg);}
+  .kz-level ul{list-style:none;margin:0;padding:0 16px 10px;}
+  .kz-level li a{display:block;padding:9px 4px;border-top:1px solid var(--line);color:#c8d4e0;text-decoration:none;font-size:.88rem;}
+  .kz-level li a:hover{color:var(--gold-lt);}
   @media(max-width:600px){
     .routes-grid{grid-template-columns:1fr;}
   }
@@ -979,13 +986,64 @@
     <div class="route-card">
       <div class="route-icon">📖</div>
       <h3 class="route-name">教材で調べて学ぶ</h3>
-      <p class="route-text">わからないところを直接調べられる。大人の学び直しにも。</p>
-      <div class="route-levels">
-        <a class="route-btn route-btn-ghost" href="/math-site/sho/index.html">小学生</a>
-        <a class="route-btn route-btn-ghost" href="/math-site/chu/index.html">中学生</a>
-        <a class="route-btn route-btn-ghost" href="/math-site/ko/index.html">高校生</a>
-        <a class="route-btn route-btn-ghost" href="/math-site/dai/index.html">大学</a>
-        <a class="route-btn route-btn-ghost" href="/math-site/in/index.html">大学院</a>
+      <p class="route-text">わからないところを直接調べられる。大人の学び直しにも。<br>学年を押すと、単元の一覧が開きます。</p>
+      <div class="kz-list">
+        <details class="kz-level">
+          <summary>小学生</summary>
+          <ul>
+          <li><a href="/math-site/sho/kazu.html">かずのかぞえかた</a></li>
+          <li><a href="/math-site/sho/tashizan.html">たしざん</a></li>
+          <li><a href="/math-site/sho/hikizan.html">ひきざん</a></li>
+          <li><a href="/math-site/sho/kuku.html">九九の表</a></li>
+          <li><a href="/math-site/sho/bunsu.html">分数の足し算</a></li>
+          <li><a href="/math-site/sho/sankaku.html">三角形の面積</a></li>
+          <li><a href="/math-site/sho/en.html">円の面積</a></li>
+          <li><a href="/math-site/sho/puzzle.html">算数パズル</a></li>
+          </ul>
+        </details>
+        <details class="kz-level">
+          <summary>中学生</summary>
+          <ul>
+          <li><a href="/math-site/chu/moji.html">文字式ってなに？</a></li>
+          <li><a href="/math-site/chu/houteishiki.html">方程式ってなに？</a></li>
+          <li><a href="/math-site/chu/ikiji.html">一次関数・グラフ</a></li>
+          <li><a href="/math-site/chu/niji.html">二次関数・放物線</a></li>
+          <li><a href="/math-site/chu/sanpei.html">三平方の定理</a></li>
+          </ul>
+        </details>
+        <details class="kz-level">
+          <summary>高校生</summary>
+          <ul>
+          <li><a href="/math-site/ko/sankakuhi.html">三角関数</a></li>
+          <li><a href="/math-site/ko/bibun.html">微分・接線</a></li>
+          <li><a href="/math-site/ko/sekibun.html">積分と面積</a></li>
+          <li><a href="/math-site/ko/kyokugen.html">極限とε-δ</a></li>
+          <li><a href="/math-site/ko/daigaku.html">大学数学への扉</a></li>
+          </ul>
+        </details>
+        <details class="kz-level">
+          <summary>大学</summary>
+          <ul>
+          <li><a href="/math-site/dai/senkei.html">線形写像と次元定理</a></li>
+          <li><a href="/math-site/dai/gun.html">群論</a></li>
+          <li><a href="/math-site/dai/fukuso.html">複素関数論</a></li>
+          <li><a href="/math-site/dai/fourier.html">フーリエ解析</a></li>
+          <li><a href="/math-site/dai/seisuron.html">整数論</a></li>
+          <li><a href="/math-site/dai/tahensuu.html">多変数解析・微分形式</a></li>
+          </ul>
+        </details>
+        <details class="kz-level">
+          <summary>大学院</summary>
+          <ul>
+          <li><a href="/math-site/in/aec.html">楕円曲線の数論 ─ 全体地図</a></li>
+          <li><a href="/math-site/in/weakmw.html">弱Mordell–Weil定理</a></li>
+          <li><a href="/math-site/in/kummer.html">Kummer対とコホモロジー</a></li>
+          <li><a href="/math-site/in/descent.html">降下法とMordell–Weil定理</a></li>
+          <li><a href="/math-site/in/selmer.html">Selmer群とШ群</a></li>
+          <li><a href="/math-site/in/atec.html">その先へ ─ Advanced Topics</a></li>
+          <li><a href="/math-site/in/ant.html">代数的整数論の武器庫</a></li>
+          </ul>
+        </details>
       </div>
     </div>
   </div>
