@@ -595,7 +595,12 @@
           '<span class="cb-ch-story">' + esc(c.story) + '</span></label>';
       }).join('') + '</div>' +
       '<label class="cb-cpuch">CPU character: <select id="cb-cc"><option value="random">Random</option>' + CHAR_ORDER.map(function (k) { return '<option value="' + k + '">' + esc(CHARS[k].name) + '</option>'; }).join('') + '</select></label></div>';
-    return chars + '<div class="cb-setup"><div class="cb-box"><h2>Rules</h2><ol class="cb-rules">' +
+    var quick = '<div class="cb-box cb-quick"><h2>Play now</h2><p class="cb-quick-how">Take turns playing problem cards. <b>A wrong answer costs damage equal to the card\'s ★s.</b> Bring your opponent\'s life to 0 to win!</p>' +
+      '<div class="cb-lvs" role="group" aria-label="Level">' + ORDER.map(function (k) { return '<button type="button" class="cb-lv" data-qlv="' + k + '" aria-pressed="' + (k === curDeck) + '">' + esc(DECKS[k].name) + '<small>' + esc(DECKS[k].range) + '</small></button>'; }).join('') + '</div>' +
+      '<button type="button" class="cb-btn cb-main cb-quick-go" id="cb-quick">' + esc('▶ Play now (' + DECKS[curDeck].name + ')') + '</button>' +
+      '<p class="cb-note">You start with an Easy CPU, 10 life each and no time limit. Pick a character (6 mathematicians) and other settings below if you like.</p></div>' +
+      '<p class="cb-more" id="cb-more">Want more? Characters, full rules and settings (optional)</p>';
+    return quick + chars + '<div class="cb-setup"><div class="cb-box"><h2>Rules</h2><ol class="cb-rules">' +
       '<li>You hold 5 cards. On your turn, choose 1 <b>problem card</b> and play it against your opponent.</li>' +
       '<li>Your opponent answers. If they are <b>correct</b>, the player who played the card takes a <b>counterattack of 1 damage</b>, and the one who answered draws 1 card.</li>' +
       '<li>If they are <b>wrong</b>, the player who played the card explains the solution and deals damage equal to the ★s (half if they cannot explain it).</li>' +
@@ -620,9 +625,17 @@
     return { deck: v('dk') || curDeck, cpu: v('cp'), lifeYou: +v('ly'), lifeCpu: +v('lc'), time: +v('tm'), charYou: you, charCpu: cc };
   }
   function on(id, fn) { var e = $(id); if (e) e.onclick = fn; }
+  function syncDeckUI() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-qlv]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-qlv') === curDeck)); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.checked = r.value === curDeck; });
+    var q = $('cb-quick'); if (q) q.textContent = '▶ Play now (' + DECKS[curDeck].name + ')';
+  }
+  function startGame() { lastOpt = readOpt(); setDeck(lastOpt.deck); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); }
   function bindSetup() {
-    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.onchange = function () { setDeck(r.value); }; });
-    on('cb-start', function () { lastOpt = readOpt(); setDeck(lastOpt.deck); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.onchange = function () { setDeck(r.value); syncDeckUI(); }; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-qlv]'), function (b) { b.onclick = function () { setDeck(b.getAttribute('data-qlv')); syncDeckUI(); }; });
+    on('cb-start', startGame);
+    on('cb-quick', startGame);
     bindSound();
   }
   function bindSound() {

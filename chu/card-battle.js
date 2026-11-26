@@ -595,7 +595,12 @@
           '<span class="cb-ch-story">' + esc(c.story) + '</span></label>';
       }).join('') + '</div>' +
       '<label class="cb-cpuch">CPU のキャラクター：<select id="cb-cc"><option value="random">おまかせ</option>' + CHAR_ORDER.map(function (k) { return '<option value="' + k + '">' + esc(CHARS[k].name) + '</option>'; }).join('') + '</select></label></div>';
-    return chars + '<div class="cb-setup"><div class="cb-box"><h2>ルール</h2><ol class="cb-rules">' +
+    var quick = '<div class="cb-box cb-quick"><h2>すぐに遊ぶ</h2><p class="cb-quick-how">問題カードを出し合って、<b>相手がまちがえたら ★ の数だけダメージ</b>。相手のライフを 0 にしたら勝ち！</p>' +
+      '<div class="cb-lvs" role="group" aria-label="レベル">' + ORDER.map(function (k) { return '<button type="button" class="cb-lv" data-qlv="' + k + '" aria-pressed="' + (k === curDeck) + '">' + esc(DECKS[k].name) + '<small>' + esc(DECKS[k].range) + '</small></button>'; }).join('') + '</div>' +
+      '<button type="button" class="cb-btn cb-main cb-quick-go" id="cb-quick">' + esc('▶ すぐに遊ぶ（' + DECKS[curDeck].name + '）') + '</button>' +
+      '<p class="cb-note">CPU は「やさしい」、ライフ 10、時間制限なしで始まります。キャラクター（6 人の数学者）や細かい設定は、下でえらべます。</p></div>' +
+      '<p class="cb-more" id="cb-more">もっとこだわる人へ：キャラクター・くわしいルール・設定（えらばなくても遊べます）</p>';
+    return quick + chars + '<div class="cb-setup"><div class="cb-box"><h2>ルール</h2><ol class="cb-rules">' +
       '<li>手札は 5 枚。自分の番に<b>問題カード</b>を 1 枚えらんで、相手に出す。</li>' +
       '<li>相手が答える。<b>正解</b>なら、出した人に<b>反撃 1 ダメージ</b>。答えた人はカードを 1 枚引ける。</li>' +
       '<li><b>まちがい</b>なら、出した人が解き方を説明して、★ の数だけダメージ（説明できなければ半分）。</li>' +
@@ -620,9 +625,17 @@
     return { deck: v('dk') || curDeck, cpu: v('cp'), lifeYou: +v('ly'), lifeCpu: +v('lc'), time: +v('tm'), charYou: you, charCpu: cc };
   }
   function on(id, fn) { var e = $(id); if (e) e.onclick = fn; }
+  function syncDeckUI() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-qlv]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-qlv') === curDeck)); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.checked = r.value === curDeck; });
+    var q = $('cb-quick'); if (q) q.textContent = '▶ すぐに遊ぶ（' + DECKS[curDeck].name + '）';
+  }
+  function startGame() { lastOpt = readOpt(); setDeck(lastOpt.deck); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); }
   function bindSetup() {
-    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.onchange = function () { setDeck(r.value); }; });
-    on('cb-start', function () { lastOpt = readOpt(); setDeck(lastOpt.deck); if (window.CBSound) window.CBSound.unlock(); newGame(lastOpt); bgm(true); scrollToApp(); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="cb-dk"]'), function (r) { r.onchange = function () { setDeck(r.value); syncDeckUI(); }; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-qlv]'), function (b) { b.onclick = function () { setDeck(b.getAttribute('data-qlv')); syncDeckUI(); }; });
+    on('cb-start', startGame);
+    on('cb-quick', startGame);
     bindSound();
   }
   function bindSound() {
