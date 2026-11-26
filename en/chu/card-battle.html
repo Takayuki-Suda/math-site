@@ -181,6 +181,11 @@ legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;w
 .cb-radio{display:flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;}
 .cb-radio input{accent-color:var(--gold);width:18px;height:18px;}
 .cb-proto{max-width:760px;margin:22px auto 0;font-size:.85rem;color:var(--gray);text-align:center;}
+.cb-print{max-width:760px;margin:28px auto 0;padding:18px 20px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;}
+.cb-print h2{font-size:1.15rem;color:var(--gold-lt);margin-bottom:6px;}
+.cb-print p{font-size:.92rem;color:#d4deee;}
+.cb-print ul{margin:10px 0 0 1.2em;display:flex;flex-direction:column;gap:6px;}
+.cb-print a{color:#a9d4ff;text-underline-offset:3px;}
 
 @media(max-width:760px){
   #cb-app{height:auto;min-height:0;display:flex;flex-direction:column;}
@@ -308,6 +313,15 @@ legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;w
 <main class="cb-wrap">
   <div id="cb-app" aria-live="polite"></div>
   <p class="cb-proto">There are 5 levels: Lower Elementary, Upper Elementary, Middle School, High School and University. Every level has 40 problem cards and 8 special cards, and you play as one of 6 characters (Euclid, Gauss, Riemann, Euler, Fermat and Teiji Takagi).</p>
+  <section class="cb-print" aria-labelledby="cb-print-h">
+    <h2 id="cb-print-h">Print the cards</h2>
+    <p>Play the card edition at the table: 54 cards (6 characters, 8 special cards and 40 middle school problems). Print at 100% (actual size) and cut along the lines. Cards are 63 &times; 88 mm, the size of standard playing cards. You also need 3 small counters (coins or beads) per player.</p>
+    <ul>
+      <li><a href="/math-site/en/chu/printables/math-card-battle-print-at-home-letter.pdf" download>Cards, US Letter (PDF, 6 MB)</a></li>
+      <li><a href="/math-site/en/chu/printables/math-card-battle-print-at-home-a4.pdf" download>Cards, A4 (PDF, 6 MB)</a></li>
+      <li><a href="/math-site/en/chu/printables/math-card-battle-rulebook.pdf" download>Rulebook (PDF, 7 pages)</a></li>
+    </ul>
+  </section>
 </main>
 <script src="/math-site/en/chu/card-battle-decks.js"></script>
 <script src="/math-site/chu/card-battle-sound.js"></script>
