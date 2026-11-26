@@ -116,7 +116,8 @@
     li.className='site-nav__item site-nav__item--lang';
     var a=document.createElement('a');
     a.className='site-nav__link';
-    a.href=href+location.hash;
+    var dq=/[?&](deck=[\w-]+)/.exec(location.search); /* カードバトルのレベルを引きつぐ */
+    a.href=href+(dq?'?'+dq[1]:'')+location.hash;
     a.setAttribute('hreflang', isEn?'ja':'en');
     a.setAttribute('lang', isEn?'ja':'en');
     a.textContent=isEn?'日本語':'English';
