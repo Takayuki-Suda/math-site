@@ -68,7 +68,7 @@
     s = s.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xfee0); })
       .replace(/ルート|sqrt|√/gi, 'r').replace(/pi|π/gi, 'P').replace(/e/g, 'E')
       .replace(/[−ー－‐–]/g, '-').replace(/＋/g, '+').replace(/[／÷]/g, '/').replace(/[×＊]/g, '*')
-      .replace(/（/g, '(').replace(/）/g, ')').replace(/．/g, '.').replace(/\s+/g, '');
+      .replace(/（/g, '(').replace(/）/g, ')').replace(/．/g, '.').replace(/[$¢,]/g, '').replace(/\s+/g, '');  /* $160 / 180¢ / 1,000 も読む */
     var i = 0;
     function expr() { var v = term(); while (s[i] === '+' || s[i] === '-') { var op = s[i++]; var w = term(); v = op === '+' ? v + w : v - w; } return v; }
     function term() {

@@ -51,7 +51,7 @@
       [2, 'Time', 'What time is it 30 minutes after 9:40?', [10, 10], '40 min + 30 min = 70 min = 1 hour 10 min.', '9:40 → 10:10', TIME],
       [2, 'Time', 'What time is it 20 minutes before 4:10?', [3, 50], 'Think of 10 minutes before 4:00.', '4:10 → 4:00 → 3:50', TIME],
       [2, 'Word problems', '4 children share 28 cards equally. How many does each get?', 7, '4 × □ = 28.', '28 ÷ 4 = 7'],
-      [2, 'Word problems', 'A pencil costs 60 yen. How much do 3 pencils cost?', 180, 'Three lots of 60 yen.', '60 × 3 = 180'],
+      [2, 'Word problems', 'A pencil costs 60¢. How many cents do 3 pencils cost?', 180, 'Three lots of 60¢.', '60 × 3 = 180, so 180¢'],
       [2, 'Word problems', '3 plates with 8 peaches each, plus 5 loose peaches. How many in all?', 29, 'Count the plates first.', '8 × 3 = 24, 24 + 5 = 29'],
       // ★3
       [3, 'Addition', '146 + 275', 421, 'Line up the places and start from the ones. You carry twice.', '6 + 5 = 11, 40 + 70 = 110, 100 + 200 = 300, total 421'],
@@ -60,7 +60,7 @@
       [3, 'Subtraction', '1000 − 364', 636, 'Split 1000 into 999 and 1.', '999 − 364 = 635, 635 + 1 = 636'],
       [3, 'Word problems', '30 cookies, 4 per person. How many people get some, and how many are left over?', [7, 2], '4 × 7 = 28.', '30 = 4 × 7 + 2, so 7 people get cookies and 2 are left', ['people', 'left over']],
       [3, 'Time', 'What time is it 1 hour 25 minutes after 10:50 a.m.?', [12, 15], '50 min + 25 min = 75 min = 1 hour 15 min.', '10:50 → 11:50 → 12:15', TIME],
-      [3, 'Word problems', '3 juices at 120 yen each and 1 bread roll at 80 yen. How much in total?', 440, 'Work out the juice first.', '120 × 3 = 360, 360 + 80 = 440'],
+      [3, 'Word problems', '3 comic books at $12 each and a poster at $8. How many dollars in all?', 44, 'Work out the comic books first.', '12 × 3 = 36, 36 + 8 = 44'],
       [3, 'Word problems', 'You buy 6 bags of 8 candies and eat 15. How many are left?', 33, 'First, how many are there altogether?', '8 × 6 = 48, 48 − 15 = 33']
     ]
   };
@@ -93,7 +93,7 @@
       [2, 'Fractions', '4/5 ÷ 2/3', '6/5', 'Flip the second fraction and multiply.', '4/5 × 3/2 = 12/10 = 6/5'],
       [2, 'Fractions', '2 1/3 × 3/7', 1, '2 1/3 is 7/3.', '7/3 × 3/7 = 1'],
       [2, 'Decimals', '3.6 ÷ 0.4', 9, 'Multiply both by 10: 36 ÷ 4.', '36 ÷ 4 = 9'],
-      [2, 'Percent', 'A 2000-yen item is 20% off. What is the sale price?', 1600, '20% off means you pay 80%.', '2000 × 0.8 = 1600'],
+      [2, 'Percent', 'A $200 jacket is 20% off. What is the sale price in dollars?', 160, '20% off means you pay 80%.', '200 × 0.8 = 160'],
       [2, 'Percent', '12 out of 30 people is what percent?', 40, 'Turn 12 ÷ 30 into a percent.', '12 ÷ 30 = 0.4 = 40%'],
       [2, 'Speed', 'A car drives 120 km in 2 hours 30 minutes. What is its speed in km/h?', 48, '2 hours 30 minutes is 2.5 hours.', '120 ÷ 2.5 = 48'],
       [2, 'Speed', 'Home to the station is 1.2 km. Walking at 80 m per minute, how many minutes?', 15, '1.2 km is 1200 m.', '1200 ÷ 80 = 15'],
@@ -106,10 +106,10 @@
       [2, 'Average', 'A, B and C average 70 points. D scores 90. What is the average of all 4?', 75, 'First find the total for the 3 of them.', '70 × 3 = 210, (210 + 90) ÷ 4 = 75'],
       // ★3
       [3, 'Fractions', '3/4 ÷ 0.6 × 2/5', '1/2', '0.6 as a fraction is 3/5.', '3/4 × 5/3 × 2/5 = 30/60 = 1/2'],
-      [3, 'Percent', 'Cost 800 yen. Set the price for a 25% profit. Price in yen?', 1000, '1.25 times the cost.', '800 × 1.25 = 1000'],
-      [3, 'Percent', 'Cost 1000 yen, price 1500 yen, sold at 20% off. Profit in yen?', 200, 'First find the selling price.', '1500 × 0.8 = 1200, 1200 − 1000 = 200'],
+      [3, 'Percent', 'A shop pays $80 for an item and adds 25% profit. Price in dollars?', 100, '1.25 times the cost.', '80 × 1.25 = 100'],
+      [3, 'Percent', 'Cost $100, price $150, sold at 20% off. Profit in dollars?', 20, 'First find the selling price.', '150 × 0.8 = 120, 120 − 100 = 20'],
       [3, 'Speed', 'A path around a pond is 1200 m. A walks 70 m/min, B walks 50 m/min, from the same spot in opposite directions. Minutes until they meet?', 10, 'How many metres do they close up together each minute?', '70 + 50 = 120, 1200 ÷ 120 = 10'],
-      [3, 'Ratio', 'Two brothers have money in the ratio 5 : 3. The difference is 600 yen. How much does the older one have?', 1500, 'The 2-part difference is 600 yen.', '1 part is 300 yen, 5 × 300 = 1500'],
+      [3, 'Ratio', 'Two brothers have money in the ratio 5 : 3. The difference is $60. How many dollars does the older one have?', 150, 'The 2-part difference is $60.', '1 part is $30, 5 × 30 = 150'],
       [3, 'Shapes', 'Area of a sector with radius 6 cm and angle 60° (use π = 3.14)', 18.84, '60/360 of the circle = 1/6.', '6 × 6 × 3.14 ÷ 6 = 18.84'],
       [3, 'Factors', 'How many 2-digit numbers can be divided by both 6 and 8?', 4, 'The least common multiple of 6 and 8 is 24.', '24, 48, 72, 96: 4 numbers'],
       [3, 'Word problems', 'Cranes and turtles: 10 animals and 28 legs in all. How many turtles?', 4, 'If they were all cranes, there would be 20 legs.', '28 − 20 = 8, each turtle adds 2 legs, so 8 ÷ 2 = 4']
@@ -158,7 +158,7 @@
       // ★3
       [3, 'Simultaneous eqs', 'y = 2x + 1\ny = −x + 7', [2, 5], 'Set the right-hand sides equal.', '2x + 1 = −x + 7, 3x = 6, x = 2, y = 5'],
       [3, 'Simultaneous eqs', '3x + 2y = 4\nx + 2y = −4', [4, -4], 'Subtract the second equation from the first and y disappears.', 'Subtracting gives 2x = 8, x = 4, 4 + 2y = −4, y = −4'],
-      [3, 'Simultaneous eqs', 'Apples cost 80 yen and pears 120 yen. 10 fruits in all cost 1000 yen. How many pears?', 5, 'If there are x pears, there are (10 − x) apples.', '80(10 − x) + 120x = 1000, 800 + 40x = 1000, x = 5'],
+      [3, 'Simultaneous eqs', 'Apples cost $2 and pears $3. 10 fruits in all cost $25. How many pears?', 5, 'If there are x pears, there are (10 − x) apples.', '2(10 − x) + 3x = 25, 20 + x = 25, x = 5'],
       [3, 'Linear functions', 'The line y = ax + b passes through (1, 3) and (3, −1). Find a and b', [-2, 5], 'Find the slope a first, then put in a point to get b.', 'a = (−1 − 3) ÷ (3 − 1) = −2, 3 = −2 + b, b = 5', ['a', 'b']],
       [3, 'Linear functions', 'Where do y = x + 3 and y = −2x + 6 cross?', [1, 4], 'The crossing point solves both equations.', 'x + 3 = −2x + 6, 3x = 3, x = 1, y = 4'],
       [3, 'Quadratic eqs', 'Use the quadratic formula:\nx² + 3x + 1 = 0', ['(−3 + √5)/2', '(−3 − √5)/2'], 'x = (−b ± √(b² − 4ac)) / 2a, with a = 1, b = 3, c = 1.', 'b² − 4ac = 9 − 4 = 5, so x = (−3 ± √5)/2', BIG,
