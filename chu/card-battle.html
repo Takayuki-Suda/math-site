@@ -34,6 +34,8 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--whit
 .cb-hero p{color:#c4d0e4;font-size:.92rem;}
 .cb-hero .cb-level{color:var(--gold-lt);font-weight:700;font-size:1rem;}
 .cb-wrap{max-width:1100px;margin:0 auto;padding:6px 14px 40px;}
+.cb-en{margin-top:2px;font-size:.85rem;}
+.cb-en a{color:#a9d4ff;text-decoration:underline;text-underline-offset:3px;}
 
 /* アプリ全体：1 画面に収める */
 #cb-app{height:calc(100vh - var(--site-nav-h,56px) - 14px);height:calc(100dvh - var(--site-nav-h,56px) - 14px);min-height:540px;
@@ -285,7 +287,9 @@ legend{font-size:.85rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px;w
   <h1>数学カードバトル</h1>
   <p class="cb-level" id="cb-level">中学生編（中1〜中3）</p>
   <p>問題カードを出し合って戦おう。相手のライフを 0 にしたら勝ち！</p>
+  <p class="cb-en"><a id="cb-enlink" href="/math-site/en/chu/card-battle.html" lang="en" hreflang="en">🌐 Play in English</a></p>
 </header>
+<script>(function(){var a=document.getElementById('cb-enlink');function u(){var m=/[?&]deck=([\w-]+)/.exec(location.search);a.href='/math-site/en/chu/card-battle.html'+(m?'?deck='+m[1]:'');}u();a.addEventListener('pointerdown',u);a.addEventListener('focus',u);})();</script>
 <main class="cb-wrap">
   <div id="cb-app" aria-live="polite"></div>
   <p class="cb-proto">レベルは 小学校低学年・小学校高学年・中学生・高校生・大学生 の 5 つ。どのレベルも問題カード 40 枚＋特殊カード 8 枚に、キャラクター 6 人（ユークリッド・ガウス・リーマン・オイラー・フェルマー・高木貞治）で遊びます。</p>
