@@ -64,6 +64,29 @@
     if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
   }
 
+  /* ── 「Card Game」メニュー（数学カードバトル英語版の 5 レベル）── 挿入位置は「Why Learn Math?」の直前 */
+  function injectCardMenu(nav){
+    var list=nav.querySelector('.site-nav__list');
+    if(!list || nav.querySelector('.site-nav__item--card')) return;
+    var li=document.createElement('li');
+    li.className='site-nav__item site-nav__item--card';
+    li.innerHTML=
+      '<a class="site-nav__link" role="button" tabindex="0" aria-haspopup="true">Card Game <span class="site-nav__arrow">\u25bc</span></a>'+
+      '<div class="site-nav__dropdown" style="min-width:250px">'+
+        '<a href="/math-site/en/chu/card-battle.html?deck=sho-low">Lower Elementary (Grades 1\u20133)</a>'+
+        '<a href="/math-site/en/chu/card-battle.html?deck=sho-high">Upper Elementary (Grades 4\u20136)</a>'+
+        '<a href="/math-site/en/chu/card-battle.html?deck=chu">Middle School (Grades 7\u20139)</a>'+
+        '<a href="/math-site/en/chu/card-battle.html?deck=ko">High School</a>'+
+        '<a href="/math-site/en/chu/card-battle.html?deck=dai">University</a>'+
+      '</div>';
+    var ref=null, ch=list.children;
+    for(var i=0;i<ch.length;i++){
+      var x=ch[i].querySelector && ch[i].querySelector('a.site-nav__link[href]');
+      if(x && (x.getAttribute('href')||'').indexOf('why.html')>-1){ ref=ch[i]; break; }
+    }
+    if(ref){ list.insertBefore(li,ref); } else { list.appendChild(li); }
+  }
+
   /* ── 言語切替（日本語 ⇄ English）──
      英語版は /math-site/en/ 以下に同じ構成で置いてある。
      ラベルはUnicodeエスケープ（英語版ビルドの翻訳対象にしないため）。 */
@@ -79,7 +102,8 @@
     li.className='site-nav__item site-nav__item--lang';
     var a=document.createElement('a');
     a.className='site-nav__link';
-    a.href=href+location.hash;
+    var dq=/[?&](deck=[\w-]+)/.exec(location.search); /* カードバトルのレベルを引きつぐ */
+    a.href=href+(dq?'?'+dq[1]:'')+location.hash;
     a.setAttribute('hreflang', isEn?'ja':'en');
     a.setAttribute('lang', isEn?'ja':'en');
     a.textContent=isEn?'日本語':'English';
@@ -91,6 +115,7 @@
     var nav=document.querySelector('.site-nav');
     if(!nav) return;
     injectGradMenu(nav);
+    injectCardMenu(nav);
     injectLangSwitch(nav);
     injectCSS();
 
